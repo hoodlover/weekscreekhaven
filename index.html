@@ -3,29 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weeks Creek Haven | Streamside Chinking Log Cabin | Blue Ridge, GA</title>
+    <title>Weeks Creek Haven | Rustic Streamside Chinking Log Cabin | Blue Ridge, GA</title>
     
     <meta name="description" content="Welcome to Weeks Creek Haven (421 Weeks Creek Rd), your rustic streamside log cabin in Blue Ridge, GA. Located in the Aska Adventure Area with Hot Tub, Fast Fiber Internet, and epic 98-inch TV. Book your escape!">
     
     <meta property="og:title" content="Weeks Creek Haven | Blue Ridge, GA Log Cabin">
     <meta property="og:description" content="A unique chinking log cabin escape! Fast Fiber, large Hot Tub, Streamside relaxation, and room for 11 guests. Check our availability!">
-    <meta property="og:image" content="Weeks_Creek_Haven_Social_Preview.jpg"> <meta property="og:url" content="https://weekscreekhaven.com/">
+    <meta property="og:image" content="Weeks_Creek_Haven_Social_Preview.jpg">
+    <meta property="og:url" content="https://weekscreekhaven.com/">
     <meta property="og:type" content="website">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Montserrat', sans-serif; background-color: #fcfaf7; color: #3d3128; scroll-behavior: smooth; }
+        body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
         h1, h2, h3, h4 { font-family: 'Crimson Text', serif; }
+        
+        /* Stylish Rustic Backgrounds */
         .hero-overlay { background: rgba(0, 0, 0, 0.45); }
+        
+        /* Subtle wood texture for main sections */
+        .bg-wood { 
+            background-color: #fcfaf7; /* Fallback */
+            background-image: url('https://www.transparenttextures.com/patterns/p6.png'); /* Light wood texture */
+        }
+        
+        /* Textured stacked stone for highlight sections */
+        .bg-stone-texture { 
+            background-color: #2c241e; /* Fallback rustic color */
+            background-image: url('https://www.transparenttextures.com/patterns/dark-dotted-2.png'); /* Subtle texture on dark background */
+        }
+
         .accent-green { color: #4a5d4e; }
-        .bg-rustic { background-color: #2c241e; }
-        .parchment { background-color: #f4eee0; border: 1px solid #dcd3bd; }
+        .text-rustic-light { color: #f4eee0; }
+        .parchment { background-color: rgba(244, 238, 224, 0.9); border: 1px solid #dcd3bd; }
+        
+        /* Accordion Styles */
         .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
         .accordion-item.active .accordion-content { max-height: 300px; padding-bottom: 20px; }
     </style>
 </head>
-<body>
+<body class="bg-wood">
 
     <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-sm shadow-sm py-4 px-6 flex justify-between items-center border-b border-stone-100">
         <span class="font-bold text-stone-800 tracking-widest uppercase text-xs md:text-sm">Weeks Creek Haven</span>
@@ -59,96 +77,98 @@
                     Weeks Creek Haven (<strong>421 Weeks Creek Rd</strong>) is a unique <strong>chinking log cabin</strong> nestled in the Aska Adventure Area of Blue Ridge, GA. We blend the authentic feel of a traditional log home with high-speed Gigabit Fiber Internet, streamside peace, and a massive 98" screen. Perfect for a family getaway or a quiet mountain retreat.
                 </p>
                 <div class="grid grid-cols-2 gap-x-8 gap-y-6 pt-6 border-t border-stone-200 text-center">
-                    <div><span class="block text-3xl font-bold">11</span><span class="text-xs text-gray-500 uppercase tracking-wider">Guests</span></div>
-                    <div><span class="block text-3xl font-bold">4</span><span class="text-xs text-gray-500 uppercase tracking-wider">Bedrooms</span></div>
-                    <div><span class="block text-2xl font-bold">Gig Fiber</span><span class="text-xs text-gray-500 uppercase tracking-wider">Fast Wi-Fi</span></div>
-                    <div><span class="block text-2xl font-bold">Hot Tub</span><span class="text-xs text-gray-500 uppercase tracking-wider">Relaxation</span></div>
+                    <div><span class="block text-3xl font-bold accent-green">11</span><span class="text-xs text-gray-500 uppercase tracking-wider">Guests</span></div>
+                    <div><span class="block text-3xl font-bold accent-green">4</span><span class="text-xs text-gray-500 uppercase tracking-wider">Bedrooms</span></div>
+                    <div><span class="block text-2xl font-bold accent-green">Gig Fiber</span><span class="text-xs text-gray-500 uppercase tracking-wider">Fast Wi-Fi</span></div>
+                    <div><span class="block text-2xl font-bold accent-green">Hot Tub</span><span class="text-xs text-gray-500 uppercase tracking-wider">Relaxation</span></div>
                 </div>
             </div>
-            <img src="Inside_2.jpeg" alt="Log cabin living room interior" class="rounded-lg shadow-2xl">
+            <img src="Inside_2.jpeg" alt="Log cabin living room interior" class="rounded-lg shadow-2xl border-4 border-white">
         </div>
     </section>
 
-    <section class="bg-rustic text-stone-100 py-24 px-6">
+    <section class="bg-stone-texture text-rustic-light py-24 px-6 shadow-inner">
         <div class="max-w-6xl mx-auto">
             <h2 class="text-4xl text-center mb-16 italic text-stone-200">The Cabin Highlights</h2>
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12 text-center">
-                <div class="p-6 border border-stone-700 rounded-lg shadow-inner parchment text-stone-800">
-                    <h4 class="font-bold text-lg mb-1">Streamside Relaxing</h4>
+                <div class="p-6 border border-stone-700 rounded-lg shadow-xl parchment text-stone-800">
+                    <h4 class="font-bold text-lg mb-1 accent-green">Streamside Relaxing</h4>
                     <p class="text-sm text-stone-600">Pure relaxation and gentle sounds (get away, have fun and play!).</p>
                 </div>
-                <div class="p-6 border border-stone-700 rounded-lg shadow-inner bg-rustic">
-                    <h4 class="font-bold text-lg mb-1">Large Hot Tub</h4>
+                <div class="p-6 border border-stone-700 rounded-lg shadow-inner bg-stone-900/50">
+                    <h4 class="font-bold text-lg mb-1 text-white">Large Hot Tub</h4>
                     <p class="text-sm text-stone-300">Unwind under the stars (Towel Warmer provided!)</p>
                 </div>
-                <div class="p-6 border border-stone-700 rounded-lg shadow-inner bg-rustic">
-                    <h4 class="font-bold text-lg mb-1">98" Big Screen TV</h4>
+                <div class="p-6 border border-stone-700 rounded-lg shadow-inner bg-stone-900/50">
+                    <h4 class="font-bold text-lg mb-1 text-white">98" Big Screen TV</h4>
                     <p class="text-sm text-stone-300">Enjoy movie nights or catch the game on our largest screen.</p>
                 </div>
-                <div class="p-6 border border-stone-700 rounded-lg shadow-inner parchment text-stone-800">
-                    <h4 class="font-bold text-lg mb-1">Gas Fireplace</h4>
+                <div class="p-6 border border-stone-700 rounded-lg shadow-xl parchment text-stone-800">
+                    <h4 class="font-bold text-lg mb-1 accent-green">Gas Fireplace</h4>
                     <p class="text-sm text-stone-600">Cozy living room comfort (ensure screens are closed!).</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="location" class="py-24 bg-stone-100 px-6">
+    <section id="location" class="py-24 px-6 bg-wood border-t border-stone-200">
         <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
             <div class="shadow-xl rounded-lg border-t-8 border-green-800 parchment p-12 space-y-4">
                 <h2 class="text-4xl accent-green">Finding the Haven</h2>
                 <p class="text-gray-700">We are located at <strong>421 Weeks Creek Rd. Blue Ridge, GA 30513</strong>.</p>
                 
-                <div class="bg-amber-100 border-l-4 border-amber-500 p-5 mt-8 mb-6 rounded-r-md">
+                <div class="bg-amber-100/80 border-l-4 border-amber-500 p-5 mt-8 mb-6 rounded-r-md">
                     <p class="text-amber-950 font-bold mb-1.5">⚠️ IMPORTANT Arrival Note:</p>
                     <p class="text-amber-800 text-sm">
-                        Cell phone reception in the mountains is very poor. **Please start your GPS directions while you still have service** (before leaving Blue Ridge or the main highway). Your maps may not update once you are closer. Connect to our Gig Fiber Wi-Fi once you arrive!
+                        Cell phone reception in the mountains is very poor. **Please start your GPS directions while you still have service** (before leaving Blue Ridge or the main highway). Connect to our Gig Fiber Wi-Fi once you arrive!
                     </p>
                 </div>
                 <a href="https://www.google.com/maps/search/?api=1&query=421+Weeks+Creek+Rd+Blue+Ridge+GA+30513" target="_blank" class="text-sm font-bold uppercase tracking-widest text-green-800 hover:underline">
                     Open in Google Maps →
                 </a>
             </div>
-            <div class="shadow-2xl rounded-lg overflow-hidden border-2 border-stone-100 bg-white p-2">
+            <div class="shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white p-2">
                 <img src="01_Welcome.jpg" alt="Map graphic and cabin welcome info" class="w-full h-auto object-cover rounded">
             </div>
         </div>
     </section>
 
-    <section id="rules" class="py-24 px-6 max-w-4xl mx-auto">
-        <h2 class="text-4xl text-center mb-16 accent-green">House Rules & Important Info</h2>
-        <div class="space-y-4">
-            <div class="accordion-item bg-white border border-stone-200 rounded-lg shadow-sm">
-                <button onclick="toggleAccordion(this)" class="w-full text-left p-6 font-bold flex justify-between items-center hover:bg-stone-50 transition">
-                    Occupancy & Safety
-                    <span class="text-xl">+</span>
-                </button>
-                <div class="accordion-content px-6 text-gray-700 text-sm">
-                    Maximum 11 guests. No pets allowed. No smoking on premises. No parties or events. Ensure children are attended around fireplaces/hot tub.
+    <section id="rules" class="py-24 px-6 bg-stone-texture shadow-inner">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl text-center mb-16 text-stone-200">House Rules & Important Info</h2>
+            <div class="space-y-4">
+                <div class="accordion-item bg-white/95 border border-stone-200 rounded-lg shadow-lg overflow-hidden">
+                    <button onclick="toggleAccordion(this)" class="w-full text-left p-6 font-bold flex justify-between items-center hover:bg-stone-50 transition accent-green">
+                        Occupancy & Safety
+                        <span class="text-xl">+</span>
+                    </button>
+                    <div class="accordion-content px-6 text-gray-700 text-sm">
+                        Maximum 11 guests. No pets allowed. No smoking on premises. No parties or events. Ensure children are attended around fireplaces/hot tub.
+                    </div>
                 </div>
-            </div>
-            <div class="accordion-item bg-white border border-stone-200 rounded-lg shadow-sm">
-                <button onclick="toggleAccordion(this)" class="w-full text-left p-6 font-bold flex justify-between items-center hover:bg-stone-50 transition">
-                    Checkout & Cleanliness
-                    <span class="text-xl">+</span>
-                </button>
-                <div class="accordion-content px-6 text-gray-700 text-sm">
-                    Excess mess left at checkout will result in a $250+ fine. Please notify us immediately if anything breaks!
+                <div class="accordion-item bg-white/95 border border-stone-200 rounded-lg shadow-lg overflow-hidden">
+                    <button onclick="toggleAccordion(this)" class="w-full text-left p-6 font-bold flex justify-between items-center hover:bg-stone-50 transition accent-green">
+                        Checkout & Cleanliness
+                        <span class="text-xl">+</span>
+                    </button>
+                    <div class="accordion-content px-6 text-gray-700 text-sm">
+                        Excess mess left at checkout will result in a $250+ fine. Please notify us immediately if anything breaks!
+                    </div>
                 </div>
-            </div>
-            <div class="accordion-item bg-white border border-stone-200 rounded-lg shadow-sm">
-                <button onclick="toggleAccordion(this)" class="w-full text-left p-6 font-bold flex justify-between items-center hover:bg-stone-50 transition">
-                    Wi-Fi, GPS & BBQ
-                    <span class="text-xl">+</span>
-                </button>
-                <div class="accordion-content px-6 text-gray-700 text-sm">
-                    Gig Fiber Wi-Fi (Password: creeklife). Start GPS *before* leaving the driveway. Charcoal BBQ provided—bring charcoal and replace cover once cooled.
+                <div class="accordion-item bg-white/95 border border-stone-200 rounded-lg shadow-lg overflow-hidden">
+                    <button onclick="toggleAccordion(this)" class="w-full text-left p-6 font-bold flex justify-between items-center hover:bg-stone-50 transition accent-green">
+                        Wi-Fi, GPS & BBQ
+                        <span class="text-xl">+</span>
+                    </button>
+                    <div class="accordion-content px-6 text-gray-700 text-sm">
+                        Gig Fiber Wi-Fi (Password: creeklife). Start GPS *before* leaving the driveway. Charcoal BBQ provided—bring charcoal and replace cover once cooled.
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="book" class="py-24 bg-rustic px-6">
+    <section id="book" class="py-24 bg-wood px-6 border-t border-stone-200">
         <div class="max-w-3xl mx-auto bg-white p-8 md:p-14 shadow-2xl rounded-lg border-t-8 border-green-800 parchment">
             <h2 class="text-4xl text-center mb-10 accent-green italic">Inquire About Your Stay</h2>
             <form action="https://formspree.io/f/mzdjnprj" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -175,7 +195,7 @@
                 <a href="#rules" class="hover:text-white">House Rules</a>
             </div>
         </div>
-        <div class="text-center mt-10 text-xs text-stone-600">
+        <div class="text-center mt-10 text-xs text-stone-600 border-t border-stone-800 pt-8">
             &copy; 2026 Heather & Lance | <a href="Welcome_Guide.pdf" class="underline hover:text-white">Welcome Guide (PDF)</a> | Get Away, Have Fun and Play, Enjoy Your Stay
         </div>
     </footer>
