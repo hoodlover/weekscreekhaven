@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check-Out Checklist | Weeks Creek Haven</title>
+    
+    <link rel="icon" type="image/png" href="Weeks_Creek_Haven_Favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Montserrat', sans-serif; color: #3d3128; background-color: #fcfaf7; }
+        h1, h2 { font-family: 'Crimson Text', serif; }
+        .bg-wood { background-image: url('https://www.transparenttextures.com/patterns/p6.png'); }
+        .checklist-item { border-bottom: 1px solid #e7e5e4; padding: 1rem 0; display: flex; align-items: center; gap: 1rem; }
+        input[type="checkbox"] { width: 1.5rem; height: 1.5rem; accent-color: #166534; cursor: pointer; }
+        .parchment { background-color: #f4eee0; border: 1px solid #dcd3bd; border-radius: 0.5rem; }
+    </style>
+</head>
+<body class="bg-wood min-h-screen py-12 px-6">
+
+    <main class="max-w-2xl mx-auto">
+        <div class="text-center mb-10">
+            <a href="index.html" class="text-xs font-bold uppercase tracking-widest text-green-800">← Back Home</a>
+            <h1 class="text-5xl italic accent-green mt-6">Safe Travels!</h1>
+            <p class="text-gray-600 mt-2 italic text-sm">Thank you for staying at Weeks Creek Haven. Before you head out, please help us with these final steps by 10:00 AM.</p>
+        </div>
+
+        <div class="parchment p-8 shadow-xl">
+            <h2 class="text-2xl font-bold mb-4 border-b border-stone-300 pb-2">Departure Checklist</h2>
+            
+            <div class="checklist-item">
+                <input type="checkbox" id="trash">
+                <label for="trash" class="text-sm"><strong>Trash:</strong> Place all bagged trash in the outside bins and ensure lids are secure (to keep wildlife out!).</label>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="dishes">
+                <label for="dishes" class="text-sm"><strong>Dishes:</strong> Load the dishwasher and start the cycle. Please do not leave dirty dishes in the sink.</label>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="fireplace">
+                <label for="fireplace" class="text-sm"><strong>Fireplace:</strong> Ensure the gas log fireplace is fully turned off and the screen is closed.</label>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="hottub">
+                <label for="hottub" class="text-sm"><strong>Hot Tub:</strong> Please place used hot tub towels in the laundry area. Ensure the cover is closed and strapped down.</label>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="lights">
+                <label for="lights" class="text-sm"><strong>Lights & Air:</strong> Turn off all lights. Set the thermostat to 72°F (Summer) or 65°F (Winter).</label>
+            </div>
+
+            <div class="checklist-item border-none">
+                <input type="checkbox" id="lock">
+                <label for="lock" class="text-sm"><strong>Lock Up:</strong> Ensure all windows are closed and the front door is locked behind you.</label>
+            </div>
+
+            <div class="mt-10 bg-white/50 p-4 rounded text-center">
+                <p class="text-xs text-stone-500 mb-4">We hope you had an amazing mountain getaway! Please tag us in your photos or leave us a review.</p>
+                <p class="font-serif italic text-lg accent-green">— Heather & Lance</p>
+            </div>
+        </div>
+
+        <p class="text-center mt-8 text-xs text-stone-400">Checkout Time is 10:00 AM unless otherwise arranged.</p>
+    </main>
+
+</body>
+</html>

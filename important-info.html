@@ -23,25 +23,55 @@
         <p id="errorMsg" class="text-red-600 text-xs mt-4 hidden">Incorrect password. Please check your email.</p>
     </div>
 
-    <div id="privateContent" class="hidden-content max-w-4xl w-full">
-        <div class="parchment p-10 rounded shadow-2xl">
-            <h1 class="font-serif text-4xl mb-6 text-green-900 italic">Important Cabin Info</h1>
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="space-y-4">
-                    <h3 class="font-bold border-b border-stone-300 pb-2">Door & Gate Codes</h3>
-                    <p class="text-2xl tracking-widest font-mono bg-white p-4 rounded text-center border">4210#</p>
-                    <p class="text-xs text-gray-500 italic">*Subject to change. Refer to your check-in email for the most current code.</p>
+<div id="privateContent" class="hidden-content max-w-5xl w-full">
+    <div class="parchment p-8 md:p-14 rounded-lg shadow-2xl space-y-12">
+        
+        <div class="text-center border-b border-stone-300 pb-10">
+            <h1 class="font-serif text-5xl mb-4 text-green-900 italic">Guest Resource Portal</h1>
+            <p class="text-stone-600 max-w-2xl mx-auto italic">Everything you need for a perfect stay at the Haven.</br>Please keep these codes private.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-12">
+            <div class="space-y-8">
+                <div class="bg-green-800 text-white p-10 rounded-lg shadow-lg text-center border-b-4 border-green-950">
+                    <h3 class="text-3xl font-serif mb-4 italic">The Welcome Guide</h3>
+                    <p class="text-sm text-green-100 mb-8 leading-relaxed">
+                        Our full 20+ page guide including fireplace operation, hot tub safety, local hidden gems, and full kitchen inventory.
+                    </p>
+                    <a href="Welcome_Guide.pdf" target="_blank" class="inline-block bg-white text-green-900 px-8 py-3 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-stone-100 transition shadow-md">Download PDF Guide</a>
                 </div>
-                <div class="space-y-4">
-                    <h3 class="font-bold border-b border-stone-300 pb-2">Wi-Fi Details</h3>
-                    <p class="text-sm"><strong>Network:</strong> WeeksCreekHaven</p>
-                    <p class="text-sm"><strong>Password:</strong> creeklife</p>
+
+                <a href="check-out.html" class="flex items-center justify-between bg-stone-800 text-white p-6 rounded-lg hover:bg-black transition shadow">
+                    <span class="font-bold uppercase tracking-widest text-sm">Check-Out Checklist</span>
+                    <span class="text-xl">→</span>
+                </a>
+            </div>
+
+            <div class="space-y-6">
+                <h3 class="font-bold uppercase tracking-widest text-xs text-stone-400 border-b border-stone-200 pb-2">Cabin Access</h3>
+                
+                <div class="bg-white p-6 rounded border border-stone-200 shadow-inner">
+                    <p class="text-xs uppercase font-bold text-stone-400 mb-2">Main Entrance Code</p>
+                    <p class="text-4xl tracking-[0.4em] font-mono text-stone-800">4210#</p>
+                </div>
+
+                <div class="bg-white p-6 rounded border border-stone-200 shadow-inner">
+                    <p class="text-xs uppercase font-bold text-stone-400 mb-2">High-Speed Wi-Fi</p>
+                    <p class="text-sm text-stone-500 mb-1">Network: <span class="text-stone-800 font-bold">WeeksCreekHaven</span></p>
+                    <p class="text-sm text-stone-500">Password: <span class="text-stone-800 font-bold">creeklife</span></p>
+                </div>
+
+                <div class="p-4 bg-amber-50 border border-amber-200 rounded text-xs text-amber-800 italic leading-relaxed">
+                    Note: If you have trouble with the door code, ensure you press the '#' key firmly after the numbers.
                 </div>
             </div>
-            <a href="index.html" class="inline-block mt-12 text-sm font-bold text-green-800 underline">Return to Home Page</a>
+        </div>
+        
+        <div class="text-center pt-10 border-t border-stone-200">
+            <a href="index.html" class="text-xs font-bold text-stone-400 uppercase tracking-widest hover:text-green-800 transition">Return to Public Site</a>
         </div>
     </div>
-
+</div>
     <script>
         function checkPassword() {
             const pass = document.getElementById('passInput').value;

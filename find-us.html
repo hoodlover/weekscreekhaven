@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Us & Recreation | Weeks Creek Haven</title>
+    
+    <link rel="icon" type="image/png" href="Weeks_Creek_Haven_Favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Montserrat', sans-serif; color: #3d3128; background-color: #fcfaf7; }
+        h1, h2, h3 { font-family: 'Crimson Text', serif; }
+        .bg-wood { background-image: url('https://www.transparenttextures.com/patterns/p6.png'); }
+        .parchment { background-color: #f4eee0; border: 1px solid #dcd3bd; }
+        .map-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 0.5rem; shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .map-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    </style>
+</head>
+<body class="bg-wood">
+
+    <nav class="p-6 bg-white shadow-sm flex justify-between items-center fixed w-full z-50">
+        <a href="index.html" class="text-xs font-bold uppercase tracking-widest text-green-800">← Back Home</a>
+        <h1 class="text-2xl text-stone-800">Location & Recreation</h1>
+    </nav>
+
+    <main class="max-w-6xl mx-auto pt-32 pb-24 px-6">
+        
+        <section class="grid md:grid-cols-2 gap-12 mb-20 items-start">
+            <div class="space-y-6">
+                <h2 class="text-5xl italic accent-green">Your Way to the Haven</h2>
+                <p class="text-lg leading-relaxed text-gray-700">
+                    We are located at <strong>421 Weeks Creek Rd</strong>. Please note that while the drive is beautiful, mountain roads can be tricky for GPS.
+                </p>
+                
+                <div class="bg-amber-100 border-l-4 border-amber-500 p-6 rounded-r-lg shadow-sm">
+                    <h4 class="font-bold text-amber-900 mb-2 uppercase tracking-tight text-sm">⚠️ The "No Service" Pro-Tip</h4>
+                    <p class="text-amber-800 text-sm leading-relaxed">
+                        Cell service drops significantly as you enter the Aska Adventure Area. **Load your GPS directions while you are still in downtown Blue Ridge.** Once you arrive, our High-Speed Fiber Wi-Fi will get you back online instantly!
+                    </p>
+                </div>
+
+                <div class="pt-4">
+                    <a href="https://maps.app.goo.gl/YourActualLink" target="_blank" class="inline-block bg-green-800 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-green-900 transition">Open in Google Maps</a>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="map-container border-4 border-white shadow-2xl">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3293.4241!2d-84.321!3d34.812!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzTCsDQ4JzQzLjIiTiA4NMKwMTknMTUuNiJX!5e0!3m2!1sen!2sus!4v1620000000000!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                <p class="text-xs text-gray-500 text-center italic">Tip: Look for the chinking log cabin on the left side of the creek.</p>
+            </div>
+        </section>
+
+        <section class="parchment p-8 md:p-12 rounded-2xl shadow-xl">
+            <h2 class="text-4xl text-center mb-12 italic border-b border-stone-300 pb-4">Nearby Recreation Areas</h2>
+            <div class="grid md:grid-cols-3 gap-10">
+                
+                <div class="space-y-3">
+                    <h3 class="text-2xl font-bold text-green-900">Sandy Bottoms</h3>
+                    <p class="text-sm text-gray-700">Perfect for **river access** and shallow water wading. A great spot to launch a tube or just sit by the Toccoa River.</p>
+                </div>
+
+                <div class="space-y-3">
+                    <h3 class="text-2xl font-bold text-green-900">Deep Hole</h3>
+                    <p class="text-sm text-gray-700">A popular **fishing and camping** area. Known for its deeper waters, it's a favorite starting point for many kayaking trips.</p>
+                </div>
+
+                <div class="space-y-3">
+                    <h3 class="text-2xl font-bold text-green-900">Lake Blue Ridge</h3>
+                    <p class="text-sm text-gray-700">Only 20 minutes away. Visit the **Morganton Point Recreation Area** for swimming, boat rentals, and lakeside picnics.</p>
+                </div>
+
+            </div>
+
+            <div class="mt-12 text-center">
+                <img src="21_Recreation_Areas.jpg" alt="Detailed Recreation Guide" class="max-w-md mx-auto rounded shadow-lg border-4 border-white">
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-stone-900 text-stone-500 py-12 px-6 text-center">
+        <p class="text-white font-serif text-lg">Weeks Creek Haven</p>
+        <p class="text-xs uppercase tracking-widest mt-2 mb-6">Blue Ridge, Georgia</p>
+        <a href="index.html" class="text-green-400 font-bold underline">Return to Main Website</a>
+    </footer>
+
+</body>
+</html>
