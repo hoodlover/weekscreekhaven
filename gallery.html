@@ -45,9 +45,6 @@
 </section>
 
 <script>
-let allPhotos = []; // Store the list of photo URLs
-let currentIndex = 0;
-
 async function loadGallery() {
     const grid = document.getElementById('gallery-grid');
     const loading = document.getElementById('loading-text');
@@ -55,80 +52,35 @@ async function loadGallery() {
     try {
         const response = await fetch('/api/list-photos');
         const blobs = await response.json();
-        
+
         if (blobs.length === 0) {
-            loading.innerText = "No photos yet.";
+            loading.innerText = "No photos yet. Be the first to upload one!";
             return;
         }
-        
-        // Store only the URLs for navigation
-        allPhotos = blobs.map(photo => photo.url);
-        loading.remove();
 
-        allPhotos.forEach((url, index) => {
+        loading.remove(); // Remove loading text
+
+        blobs.forEach(photo => {
             const imgWrapper = document.createElement('div');
-            imgWrapper.className = "aspect-square overflow-hidden rounded-lg shadow-md border-4 border-white cursor-zoom-in";
+            imgWrapper.className = "aspect-square overflow-hidden rounded-lg shadow-md border-4 border-white";
             
-            imgWrapper.onclick = () => openLightbox(index);
-
             const img = document.createElement('img');
-            img.src = url;
+            img.src = photo.url; // Each blob object has a 'url' property
+            img.alt = "Weeks Creek Haven Memory";
             img.className = "w-full h-full object-cover hover:scale-105 transition duration-500";
-            img.loading = "lazy"; // Better performance for many photos
             
             imgWrapper.appendChild(img);
             grid.appendChild(imgWrapper);
         });
     } catch (err) {
-        loading.innerText = "Error loading gallery.";
+        loading.innerText = "Error loading gallery. Please try again later.";
+        console.error(err);
     }
 }
 
-function openLightbox(index) {
-    currentIndex = index;
-    const lightbox = document.getElementById('lightbox');
-    updateLightboxImage();
-    lightbox.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-}
-
-function updateLightboxImage() {
-    const img = document.getElementById('lightbox-img');
-    img.style.opacity = '0'; // Quick fade effect
-    setTimeout(() => {
-        img.src = allPhotos[currentIndex];
-        img.style.opacity = '1';
-    }, 150);
-}
-
-function changePhoto(direction) {
-    // Loop back to start/end if at boundaries
-    currentIndex += direction;
-    if (currentIndex >= allPhotos.length) currentIndex = 0;
-    if (currentIndex < 0) currentIndex = allPhotos.length - 1;
-    updateLightboxImage();
-}
-
-function closeLightbox() {
-    document.getElementById('lightbox').classList.add('hidden');
-    document.body.style.overflow = 'auto';
-}
-
-// Keyboard Navigation (Left/Right/Escape)
-document.addEventListener('keydown', (e) => {
-    if (document.getElementById('lightbox').classList.contains('hidden')) return;
-    
-    if (e.key === "ArrowRight") changePhoto(1);
-    if (e.key === "ArrowLeft") changePhoto(-1);
-    if (e.key === "Escape") closeLightbox();
-});
-
-// Close on background click
-document.getElementById('lightbox').onclick = (e) => {
-    if (e.target.id === 'lightbox') closeLightbox();
-};
-
+// Run the function when the page loads
 window.onload = loadGallery;
+</script>
 
 </head>
 <body class="bg-wood-light min-h-screen">
