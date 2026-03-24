@@ -1,16 +1,18 @@
-const { put } = require('@vercel/blob');
+import { put } from '@vercel/blob';
 
-module.exports = async function handler(request, response) {
+export default async function handler(request, response) {
   if (request.method !== 'POST') {
     return response.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { searchParams } = new URL(request.url, `http://${request.headers.host}`);
-    const filename = searchParams.get('filename') || 'cabin-photo.jpg';
-
-    const blob = await put(`gallery/${filename}`, request, {
+    // Extract the file from the request
+    const { name, contentType, content } = request.body;
+    
+    // Upload to Vercel Blob
+    const blob = await put(`gallery/${name}`, content, {
       access: 'public',
+      contentType: contentType,
       token: process.env.BLOB_READ_WRITE_TOKEN,
     });
 
@@ -18,4 +20,4 @@ module.exports = async function handler(request, response) {
   } catch (error) {
     return response.status(500).json({ error: error.message });
   }
-};
+}
