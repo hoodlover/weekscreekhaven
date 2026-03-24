@@ -18,23 +18,31 @@
         body { font-family: 'Montserrat', sans-serif; color: #3d3128; }
         h1, h2 { font-family: 'Crimson Text', serif; }
         
-        /* Consistent Rustic Backgrounds */
         .bg-wood-light { 
             background-color: #fcfaf7;
-            background-image: url('https://www.transparenttextures.com/patterns/p6.png'); /* Light wood grain */
+            background-image: url('https://www.transparenttextures.com/patterns/p6.png'); 
         }
         
         .bg-stone-header { 
             background-color: #2c241e;
-            background-image: url('https://www.transparenttextures.com/patterns/dark-dotted-2.png'); /* Stone texture */
+            background-image: url('https://www.transparenttextures.com/patterns/dark-dotted-2.png'); 
         }
 
         .gallery-item { break-inside: avoid; margin-bottom: 1.5rem; transition: transform 0.3s ease-in-out; cursor: pointer; }
         .gallery-item:hover { transform: scale(1.02); }
         
         .parchment-label { background-color: rgba(244, 238, 224, 0.95); border-top: 1px solid #dcd3bd; }
-        .info-graphic-border { border: 4px solid white; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2); }
         .accent-green { color: #4a5d4e; }
+
+        /* Lightbox Styles */
+        #lightbox { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; }
+        #lightbox img { max-width: 90%; max-height: 80vh; border: 4px solid white; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); color: white; font-size: 3rem; cursor: pointer; padding: 20px; user-select: none; transition: color 0.2s; }
+        .nav-btn:hover { color: #4ade80; }
+        #prev { left: 20px; }
+        #next { right: 20px; }
+        #close { position: absolute; top: 20px; right: 30px; color: white; font-size: 2rem; cursor: pointer; }
+        #caption { position: absolute; bottom: 40px; color: #f4eee0; font-family: 'Crimson Text', serif; font-style: italic; font-size: 1.5rem; text-align: center; width: 80%; }
     </style>
 </head>
 <body class="bg-wood-light min-h-screen">
@@ -353,6 +361,60 @@
             </div>
         </div>
     </footer>
+<div id="lightbox">
+        <span id="close">&times;</span>
+        <span id="prev" class="nav-btn">&#10094;</span>
+        <img id="lightbox-img" src="" alt="">
+        <div id="caption"></div>
+        <span id="next" class="nav-btn">&#10095;</span>
+    </div>
 
+    <script>
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const caption = document.getElementById('caption');
+        const closeBtn = document.getElementById('close');
+        const prevBtn = document.getElementById('prev');
+        const nextBtn = document.getElementById('next');
+
+        let currentIndex = 0;
+
+        const updateLightbox = (index) => {
+            currentIndex = index;
+            const item = galleryItems[currentIndex];
+            const img = item.querySelector('img');
+            const label = item.querySelector('.parchment-label');
+            
+            lightboxImg.src = img.src;
+            caption.innerText = label.innerText;
+        };
+
+        galleryItems.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                lightbox.style.display = 'flex';
+                updateLightbox(index);
+            });
+        });
+
+        const nextImage = () => updateLightbox((currentIndex + 1) % galleryItems.length);
+        const prevImage = () => updateLightbox((currentIndex - 1 + galleryItems.length) % galleryItems.length);
+
+        closeBtn.onclick = () => lightbox.style.display = 'none';
+        nextBtn.onclick = (e) => { e.stopPropagation(); nextImage(); };
+        prevBtn.onclick = (e) => { e.stopPropagation(); prevImage(); };
+
+        // Keyboard Navigation
+        document.addEventListener('keydown', (e) => {
+            if (lightbox.style.display === 'flex') {
+                if (e.key === "ArrowRight") nextImage();
+                if (e.key === "ArrowLeft") prevImage();
+                if (e.key === "Escape") lightbox.style.display = 'none';
+            }
+        });
+
+        // Close when clicking background
+        lightbox.onclick = (e) => { if (e.target === lightbox) lightbox.style.display = 'none'; };
+    </script>
 </body>
 </html>
