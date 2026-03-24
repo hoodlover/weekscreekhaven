@@ -23,8 +23,7 @@
         <p id="errorMsg" class="text-red-600 text-xs mt-4 hidden">Incorrect password. Please check your email.</p>
     </div>
 
-
-
+<div id="privateContent" class="hidden-content max-w-5xl w-full">
     <div class="parchment p-8 md:p-14 rounded-lg shadow-2xl space-y-12">
         
         <div class="text-center border-b border-stone-300 pb-10">
@@ -39,162 +38,51 @@
                     <p class="text-sm text-green-100 mb-8 leading-relaxed">
                         Our 2 page brief guide including how to use Alexa, close up the cabin and hidden surprises.  A full guide to the cabin and Blue Ridge is at the cabin for ya.
                     </p>
-                    <a href="Welcome_Guide.pdf" target="_blank" class="inline-block bg-white text-green-900 px-8 py-3 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-stone-100 transition shadow-md">Download PDF Guide</a><br><br><br>
-
-<div class="bg-white p-8 rounded-lg shadow-md border border-stone-200">
-    <h3 class="text-xl font-serif mb-4 text-stone-800 italic">Send Guest Welcome Kit</h3>
-    <p class="text-xs text-stone-500 mb-6 uppercase tracking-widest font-bold">Quickly share details with your group</p>
-    
-    <form action="https://formspree.io/f/mzdjnprj" method="POST" class="space-y-4">
-        <input type="hidden" name="_subject" value="Weeks Creek Haven - Guest Info Kit">
-        
-        <div>
-            <label class="block text-[10px] uppercase font-bold text-stone-400 mb-1">Recipient Email</label>
-            <input type="email" name="guest_email" placeholder="friend@email.com" required 
-                   class="w-full border-b border-stone-300 p-2 text-sm text-stone-800 outline-none focus:border-green-800 bg-transparent">
-        </div>
-
-        <div>
-            <label class="block text-[10px] uppercase font-bold text-stone-400 mb-1">Select Email Type</label>
-            <select name="email_type" class="w-full border-b border-stone-300 p-2 text-sm text-stone-800 outline-none bg-transparent">
-                <option value="Arrival Essentials" class="text-stone-800">Arrival Essentials (Address & Door Code)</option>
-                <option value="Full Welcome" class="text-stone-800">Full Welcome (Wi-Fi, Rules, & PDF Guide)</option>
-            </select>
-        </div>
-
-        <button type="submit" class="w-full bg-stone-800 text-white py-3 rounded font-bold uppercase tracking-widest text-[10px] hover:bg-black transition shadow-sm">
-            Send Info Kit
-        </button>
-    </form>
-</div>
-
-<div class="bg-white p-8 rounded-lg shadow-md border border-stone-200 mt-8">
-    <h3 class="text-xl font-serif mb-4 text-stone-800 italic">Add to Photo Gallery</h3>
-    <p class="text-xs text-stone-500 mb-6 uppercase tracking-widest font-bold">Upload new cabin memories</p>
-    
-    <div class="space-y-4">
-        <input type="file" id="photoInput" accept="image/*" 
-               class="w-full text-sm text-stone-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-stone-100 file:text-stone-700 hover:file:bg-stone-200">
-        
-        <button onclick="uploadPhoto()" id="uploadBtn" 
-                class="w-full bg-green-800 text-white py-3 rounded font-bold uppercase tracking-widest text-[10px] hover:bg-green-900 transition shadow-sm">
-            Upload to Vercel
-        </button>
-        <p id="uploadStatus" class="text-[10px] text-center uppercase font-bold hidden"></p>
-    </div>
-</div>
-
-<script>
-async function uploadPhoto() {
-    const fileInput = document.getElementById('photoInput');
-    const status = document.getElementById('uploadStatus');
-    const btn = document.getElementById('uploadBtn');
-    
-    if (!fileInput.files[0]) return alert('Please select a photo first.');
-
-    const file = fileInput.files[0];
-    status.innerText = "Uploading...";
-    status.classList.remove('hidden', 'text-red-600');
-    status.classList.add('text-stone-500');
-    btn.disabled = true;
-
-    // Convert file to base64 or arrayBuffer for the API
-    const reader = new FileReader();
-    reader.readAsArrayBuffer(file);
-    
-    reader.onload = async () => {
-        try {
-            const response = await fetch('/api/upload', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: file.name,
-                    contentType: file.type,
-                    content: Array.from(new Uint8Array(reader.result))
-                })
-            });
-
-            const result = await response.json();
-            if (result.url) {
-                status.innerText = "Success! Photo added.";
-                status.classList.add('text-green-800');
-                fileInput.value = ''; // Reset input
-            } else {
-                throw new Error(result.error);
-            }
-        } catch (err) {
-            status.innerText = "Upload failed: " + err.message;
-            status.classList.add('text-red-600');
-        } finally {
-            btn.disabled = false;
-        }
-    };
-}
-</script>
-
-<div class="bg-white p-8 rounded-lg shadow-md border border-stone-200 mt-8">
-    <h3 class="text-xl font-serif mb-4 text-stone-800 italic">Manage Gallery Photos</h3>
-    <p class="text-xs text-stone-500 mb-6 uppercase tracking-widest font-bold">Remove images from the public gallery</p>
-    
-    <div id="admin-gallery-list" class="space-y-3">
-        <p class="text-xs italic text-stone-400">Loading photos...</p>
-    </div>
-</div>
-
-<script>
-async function loadAdminGallery() {
-    const listContainer = document.getElementById('admin-gallery-list');
-    try {
-        const response = await fetch('/api/list-photos');
-        const blobs = await response.json();
-        
-        listContainer.innerHTML = ''; // Clear loading text
-
-        if (blobs.length === 0) {
-            listContainer.innerHTML = '<p class="text-xs text-stone-400">No photos found.</p>';
-            return;
-        }
-
-        blobs.forEach(photo => {
-            const item = document.createElement('div');
-            item.className = "flex items-center justify-between p-2 border-b border-stone-100 text-sm";
-            
-            // Extract filename from URL for display
-            const fileName = photo.url.split('/').pop();
-            
-            item.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <img src="${photo.url}" class="w-10 h-10 object-cover rounded">
-                    <span class="text-stone-600 truncate max-w-[150px]">${fileName}</span>
+                    <a href="Welcome_Guide.pdf" target="_blank" class="inline-block bg-white text-green-900 px-8 py-3 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-stone-100 transition shadow-md">Download PDF Guide</a>
                 </div>
-                <button onclick="deletePhoto('${photo.url}', this)" 
-                        class="text-[10px] font-bold text-red-700 uppercase tracking-widest hover:underline">
-                    Delete
-                </button>
-            `;
-            listContainer.appendChild(item);
-        });
-    } catch (err) {
-        listContainer.innerHTML = '<p class="text-red-600">Error loading list.</p>';
-    }
-}
-</script>
 
+                <a href="check-out.html" class="flex items-center justify-between bg-stone-800 text-white p-6 rounded-lg hover:bg-black transition shadow">
+                    <span class="font-bold uppercase tracking-widest text-sm">Check-Out Checklist</span>
+                    <span class="text-xl">→</span>
+                </a>
+            </div>
 
+            <div class="space-y-6">
+                <h3 class="font-bold uppercase tracking-widest text-xs text-stone-400 border-b border-stone-200 pb-2">Cabin Access</h3>
+                
+                <div class="bg-white p-6 rounded border border-stone-200 shadow-inner">
+                    <p class="text-xs uppercase font-bold text-stone-400 mb-2">Main Entrance Code</p>
+                    <p class="text-4xl tracking-[0.4em] font-mono text-stone-800">22246#</p>
+                </div>
 
+                <div class="bg-white p-6 rounded border border-stone-200 shadow-inner">
+                    <p class="text-xs uppercase font-bold text-stone-400 mb-2">High-Speed Wi-Fi</p>
+                    <p class="text-sm text-stone-500 mb-1">Network: <span class="text-stone-800 font-bold">WeeksCreekHaven</span></p>
+                    <p class="text-sm text-stone-500">Password: <span class="text-stone-800 font-bold">creeklife</span></p>
+                </div>
 
+                <div class="p-4 bg-amber-50 border border-amber-200 rounded text-xs text-amber-800 italic leading-relaxed">
+                    Note: If you have trouble with the door code, text or call for the lockbox code on the other door.
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center pt-10 border-t border-stone-200">
+            <a href="index.html" class="text-xs font-bold text-stone-400 uppercase tracking-widest hover:text-green-800 transition">Return to Public Site</a>
+        </div>
+    </div>
 </div>
     <script>
         function checkPassword() {
-    const pass = document.getElementById('passInput').value;
-    if (pass.toLowerCase() === 'creeklife') {
-        document.getElementById('passwordGate').style.display = 'none';
-        document.getElementById('privateContent').style.display = 'block';
-        loadAdminGallery(); // <-- Add this line here
-    } else {
-        document.getElementById('errorMsg').classList.remove('hidden');
-    }
-}
+            const pass = document.getElementById('passInput').value;
+            // You can change 'creeklife' to any password you want
+            if (pass.toLowerCase() === 'creeklife') {
+                document.getElementById('passwordGate').style.display = 'none';
+                document.getElementById('privateContent').style.display = 'block';
+            } else {
+                document.getElementById('errorMsg').classList.remove('hidden');
+            }
+        }
     </script>
 </body>
 </html>
