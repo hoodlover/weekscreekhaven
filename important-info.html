@@ -122,42 +122,42 @@ async function uploadPhoto() {
     if (!fileInput.files[0]) return alert('Please select a photo first.');
 
     const file = fileInput.files[0];
+    
+    // UI Updates
     status.innerText = "Uploading...";
-    status.classList.remove('hidden', 'text-red-600');
+    status.classList.remove('hidden', 'text-red-600', 'text-green-800');
     status.classList.add('text-stone-500');
     btn.disabled = true;
 
-    // Convert file to base64 or arrayBuffer for the API
-    const reader = new FileReader();
-    reader.readAsArrayBuffer(file);
-    
-    reader.onload = async () => {
-        try {
-            const response = await fetch('/api/upload', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: file.name,
-                    contentType: file.type,
-                    content: Array.from(new Uint8Array(reader.result))
-                })
-            });
+    try {
+        // We pass the filename in the headers or query string 
+        // because we aren't using a JSON body anymore
+        const response = await fetch(`/api/upload?filename=${encodeURIComponent(file.name)}`, {
+            method: 'POST',
+            body: file, // Send the raw file binary
+            headers: {
+                'content-type': file.type,
+            },
+        });
 
-            const result = await response.json();
-            if (result.url) {
-                status.innerText = "Success! Photo added.";
-                status.classList.add('text-green-800');
-                fileInput.value = ''; // Reset input
-            } else {
-                throw new Error(result.error);
-            }
-        } catch (err) {
-            status.innerText = "Upload failed: " + err.message;
-            status.classList.add('text-red-600');
-        } finally {
-            btn.disabled = false;
+        if (!response.ok) {
+            // This handles the "A server error occurred" issue by getting the text
+            const errorText = await response.text();
+            throw new Error(errorText || 'Server upload failed');
         }
-    };
+
+        const result = await response.json();
+        
+        status.innerText = "Success! Photo added.";
+        status.classList.add('text-green-800');
+        fileInput.value = ''; 
+    } catch (err) {
+        console.error(err);
+        status.innerText = "Upload failed: " + err.message;
+        status.classList.add('text-red-600');
+    } finally {
+        btn.disabled = false;
+    }
 }
 </script>
 <!-- Upload Photos -->
