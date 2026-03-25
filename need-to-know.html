@@ -8,70 +8,63 @@
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="Weeks_Creek_Haven_Favicon.png">
     <style>
-        body { font-family: 'Montserrat', sans-serif; background-color: #2c241e; color: #f4eee0; }
+        body { font-family: 'Montserrat', sans-serif; background-color: #2c241e; color: #f4eee0; scroll-behavior: smooth; }
         h1, h2 { font-family: 'Crimson Text', serif; }
-        .parchment { background-color: #f4eee0; color: #3d3128; }
+        .parchment { background-color: #f4eee0; color: #3d3128; border: 1px solid #dcd3bd; }
+        .accent-green { color: #4a5d4e; }
     </style>
-
 </head>
 
-
-
-
-<body class="py-12 px-6">
-	
-    <div class="max-w-3xl mx-auto">
-       <body class="bg-wood-light min-h-screen">
+<body class="bg-stone-900">
 
     <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-sm shadow-sm py-4 px-6 flex justify-between items-center border-b border-stone-100">
-    <a href="index.html" class="font-bold text-stone-800 tracking-widest uppercase text-xs md:text-sm">Weeks Creek Haven</a>
-    <div class="hidden md:flex space-x-6 text-xs font-bold uppercase tracking-widest items-center">
-        <a href="things-to-do.html" class="hover:text-green-800">To Do & See</a>
-        <a href="need-to-know.html" class="hover:text-green-800">Need to Know</a>
-        <a href="find-us.html" class="hover:text-green-800">Find Us</a>
-        <a href="gallery.html" class="hover:text-green-800">Gallery</a>
-        <a href="important-info.html" class="bg-amber-100 text-amber-900 px-4 py-2 rounded border border-amber-200 hover:bg-amber-200 transition">Friends Info</a>
-    </div>
-</nav>
-        <h1 class="text-5xl my-8 text-center italic">Cabin Essentials</h1>
+        <a href="index.html" class="font-bold text-stone-800 tracking-widest uppercase text-xs md:text-sm hover:text-green-800 transition">Weeks Creek Haven</a>
+        <div class="hidden md:flex space-x-6 text-xs font-bold uppercase tracking-widest items-center">
+            <a href="things-to-do.html" class="hover:text-green-800">To Do & See</a>
+            <a href="need-to-know.html" class="text-green-800 border-b-2 border-green-800">Need to Know</a>
+            <a href="find-us.html" class="hover:text-green-800">Find Us</a>
+            <a href="gallery.html" class="hover:text-green-800">Gallery</a>
+            <a href="important-info.html" class="bg-amber-100 text-amber-900 px-4 py-2 rounded border border-amber-200 hover:bg-amber-200 transition">Friends Info</a>
+        </div>
+    </nav>
 
-        <div class="parchment p-8 rounded-lg shadow-2xl space-y-8">
+    <div class="max-w-4xl mx-auto pt-32 px-6">
+        <h1 class="text-5xl md:text-6xl mb-8 text-center italic">Cabin Essentials</h1>
+
+        <div class="parchment p-8 rounded-lg shadow-2xl space-y-8 mb-12">
             <section>
-                <h2 class="text-2xl font-bold border-b border-stone-300 pb-2 mb-4">Key Cabin Stats</h2>
-                <ul class="grid grid-cols-2 gap-4 text-sm">
+                <h2 class="text-2xl font-bold border-b border-stone-300 pb-2 mb-4 italic accent-green">Key Cabin Stats</h2>
+                <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                     <li><strong>Guests:</strong> 11 Max</li>
-                    <li><strong>Beds:</strong> 11 (If creative!)</li>
-                    <li><strong>Internet:</strong> Gig Fiber</li>
+                    <li><strong>Beds:</strong> 4 Bedrooms (Sleeps up to 11)</li>
+                    <li><strong>Internet:</strong> Gig Fiber Wi-Fi (Password: creeklife)</li>
                     <li><strong>Check-in:</strong> Afternoon of your visit</li>
-<li><strong>Fun</strong> This is a MUST!</li>
-<li><strong>Check-out:</strong> Like maybe 3 or so?</li>
-
+                    <li><strong>Check-out:</strong> Typically around 3:00 PM</li>
+                    <li><strong>Must Have:</strong> Lots of Fun!</li>
                 </ul>
             </section>
 
             <section>
-                <h2 class="text-2xl font-bold border-b border-stone-300 pb-2 mb-4">Emergency Contacts</h2>
-                <p class="text-sm"><strong>Fannin Regional Hospital:</strong> (706) 632-3711 (31 mins away)</p>
-                <p class="text-sm"><strong>Police Station:</strong> 301 Church St. (706) 632-3451</p>
-                <p class="text-sm font-bold mt-2">FOR ALL EMERGENCIES CALL 911</p>
+                <h2 class="text-2xl font-bold border-b border-stone-300 pb-2 mb-4 italic accent-green">Emergency Contacts</h2>
+                <div class="space-y-2">
+                    <p class="text-sm"><strong>Fannin Regional Hospital:</strong> (706) 632-3711 (31 mins away)</p>
+                    <p class="text-sm"><strong>Police Station:</strong> 301 Church St. (706) 632-3451</p>
+                    <p class="text-sm font-bold mt-4 text-red-800">FOR ALL EMERGENCIES CALL 911</p>
+                </div>
             </section>
-        
-</div>
+        </div>
 
- 
-
- <main class="max-w-7xl mx-auto px-6 pb-24">
-        <div class="xlg:columns-2 gap-8">
-
-              <div class="gallery-item info-graphic-border rounded-md overflow-hidden">
-                <img src="02_Need_to_Know.jpg" alt="Key Cabin Stats and Wi-Fi Info" class="w-full">
+        <div class="grid md:grid-cols-2 gap-8 mb-24">
+            <div class="rounded-md overflow-hidden border-4 border-white shadow-2xl">
+                <img src="02_Need_to_Know.jpg" alt="Key Cabin Stats and Wi-Fi Info" class="w-full h-auto">
             </div>
- <div class="gallery-item info-graphic-border rounded-md overflow-hidden">
-                <img src="04_Cool_Stuff.jpg" alt="Cabin Amenities Guide" class="w-full">
+            <div class="rounded-md overflow-hidden border-4 border-white shadow-2xl">
+                <img src="04_Cool_Stuff.jpg" alt="Cabin Amenities Guide" class="w-full h-auto">
             </div>
-
+        </div>
     </div>
-<footer class="bg-stone-900 text-stone-500 py-16 px-6 text-center">
+
+    <footer class="bg-stone-900 text-stone-500 py-16 px-6 text-center border-t border-stone-800">
         <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-8">
             <div class="text-center md:text-left">
                 <p class="text-white text-xl font-serif italic">Weeks Creek Haven</p>
@@ -79,7 +72,7 @@
             </div>
             <div class="flex flex-wrap justify-center gap-6 text-xs font-bold uppercase tracking-widest text-green-400">
                 <a href="index.html" class="hover:text-white">Home</a>
-                <a href="need-to-know.html" class="hover:text-white">Need to Know</a>
+                <a href="things-to-do.html" class="hover:text-white">To Do & See</a>
                 <a href="find-us.html" class="hover:text-white">Find Us</a>
                 <a href="gallery.html" class="hover:text-white">Gallery</a>
                 <a href="important-info.html" class="hover:text-white">Friends Portal</a>
@@ -89,5 +82,6 @@
             © 2026 Heather & Lance | Blue Ridge, Georgia
         </div>
     </footer>
+
 </body>
 </html>
