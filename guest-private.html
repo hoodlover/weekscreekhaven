@@ -10,7 +10,7 @@
     <style>
         body { font-family: 'Montserrat', sans-serif; background-color: #fcfaf7; scroll-behavior: smooth; }
         h1, h2, h3 { font-family: 'Crimson Text', serif; }
-        .hidden-content { display: none; }
+        /* Removed hidden-content class to ensure the portal is visible */
         .parchment { background-color: #f4eee0; border: 1px solid #dcd3bd; }
         .accent-green { color: #4a5d4e; }
     </style>
@@ -24,23 +24,12 @@
             <a href="need-to-know.html" class="hover:text-green-800">Need to Know</a>
             <a href="find-us.html" class="hover:text-green-800">Find Us</a>
             <a href="gallery.html" class="hover:text-green-800">Gallery</a>
-            <a href="important-info.html" class="text-amber-900 bg-amber-100 px-4 py-2 rounded border border-amber-200">Friends Info</a>
-        </div>
+         
     </nav>
 
     <main class="flex flex-col items-center justify-center min-h-screen pt-32 pb-20 px-6">
         
-        <div id="passwordGate" class="max-w-md w-full bg-white p-8 rounded-lg shadow-2xl text-center border-t-8 border-green-800">
-            <h1 class="text-3xl mb-4 italic accent-green">Friends & Family Access</h1>
-            <p class="text-sm text-gray-600 mb-6">Please enter the cabin password provided in your booking details to view door codes and private info.</p>
-            <input type="password" id="passInput" placeholder="Enter Password" 
-                   onkeydown="if(event.key === 'Enter') checkPassword()"
-                   class="w-full border p-3 rounded mb-4 outline-none focus:ring-2 focus:ring-green-800 parchment">
-            <button onclick="checkPassword()" class="w-full bg-green-800 text-white p-3 rounded font-bold uppercase tracking-widest text-xs hover:bg-green-900 transition">Access Info</button>
-            <p id="errorMsg" class="text-red-600 text-xs mt-4 hidden font-bold">Incorrect password. Please check your text/email.</p>
-        </div>
-
-        <div id="privateContent" class="hidden-content max-w-5xl w-full">
+         <div id="privateContent" class="max-w-5xl w-full">
             <div class="parchment p-8 md:p-14 rounded-lg shadow-2xl space-y-12">
                 
                 <div class="text-center border-b border-stone-300 pb-10">
@@ -141,62 +130,19 @@
     </footer>
 
     <script>
-
-async function checkPassword() {
-    const pass = document.getElementById('passInput').value.toLowerCase().trim();
-    
-    const response = await fetch(`https://cabin-password-api.lance-climb.workers.dev?pass=${pass}`);
-    const data = await response.json();
-
-    if (data.page) {
-        window.location.href = data.page;
-    } else {
-        alert("Invalid Password");
-    }
-}
-
-    // 1. Handle Internal Content Reveal (creeklife and booger)
-    if (pass === "creeklife" || pass === "booger") {
-        passwordGate.classList.add('hidden'); // Hide the login box
-        privateContent.classList.remove('hidden-content'); // Show the cabin info
-        return; // Stop here so it doesn't try to redirect
-    }
-
-    // 2. Handle External Redirects (VIP and Admin)
-    const passwordMap = {
-        "havenvip": "vip-guest.html",
-        "admin421": "owner-log.html"
-	"reeves": "
-    };
-
-    if (passwordMap[pass]) {
-        window.location.href = passwordMap[pass];
-    } else {
-        errorMsg.classList.remove('hidden');
-        errorMsg.innerText = "Access denied. Please check your credentials.";
-    }
-}
-
-    if (passwordMap[pass]) {
-        // Redirect the user to their specific page
-        window.location.href = passwordMap[pass];
-    } else {
-        // Show error if password doesn't match any key
-        errorMsg.classList.remove('hidden');
-        errorMsg.innerText = "Access denied. Please check your credentials.";
-    }
-}
-
         async function uploadPhoto() {
             const fileInput = document.getElementById('photoInput');
             const status = document.getElementById('uploadStatus');
             const btn = document.getElementById('uploadBtn');
+            
             if (!fileInput.files[0]) return alert('Please select a photo first.');
+            
             const file = fileInput.files[0];
             status.innerText = "Uploading...";
             status.classList.remove('hidden', 'text-red-600', 'text-green-800');
             status.classList.add('text-stone-500');
             btn.disabled = true;
+            
             try {
                 const response = await fetch(`/api/upload?filename=${encodeURIComponent(file.name)}`, {
                     method: 'POST',
