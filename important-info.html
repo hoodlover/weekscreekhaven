@@ -128,6 +128,14 @@
     </footer>
 
     <script>
+// Check if access was already granted via URL parameter on page load
+window.onload = function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('access') === 'granted') {
+        document.getElementById('passwordGate').style.display = 'none';
+        document.getElementById('privateContent').style.display = 'block';
+    }
+};
         function checkPassword() {
             const pass = document.getElementById('passInput').value.toLowerCase();
             const errorMsg = document.getElementById('errorMsg');
