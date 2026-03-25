@@ -20,10 +20,16 @@
 </head>
 <body class="bg-wood">
 
-    <nav class="p-6 bg-white shadow-sm flex justify-between items-center fixed w-full z-50">
-        <a href="index.html" class="text-xs font-bold uppercase tracking-widest text-green-800">← Back Home</a>
-        <h1 class="text-2xl text-stone-800">Location & Recreation</h1>
-    </nav>
+   <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-sm shadow-sm py-4 px-6 flex justify-between items-center border-b border-stone-100">
+    <a href="index.html" class="font-bold text-stone-800 tracking-widest uppercase text-xs md:text-sm">Weeks Creek Haven</a>
+    <div class="hidden md:flex space-x-6 text-xs font-bold uppercase tracking-widest items-center">
+        <a href="things-to-do.html" class="hover:text-green-800">To Do & See</a>
+        <a href="need-to-know.html" class="hover:text-green-800">Need to Know</a>
+        <a href="find-us.html" class="hover:text-green-800">Find Us</a>
+        <a href="gallery.html" class="hover:text-green-800">Gallery</a>
+        <a href="important-info.html" class="bg-amber-100 text-amber-900 px-4 py-2 rounded border border-amber-200 hover:bg-amber-200 transition">Friends Info</a>
+    </div>
+</nav>
 
     <main class="max-w-6xl mx-auto pt-32 pb-24 px-6">
         
@@ -82,10 +88,23 @@
 
     </main>
 
-    <footer class="bg-stone-900 text-stone-500 py-12 px-6 text-center">
-        <p class="text-white font-serif text-lg">Weeks Creek Haven</p>
-        <p class="text-xs uppercase tracking-widest mt-2 mb-6">Blue Ridge, Georgia</p>
-        <a href="index.html" class="text-green-400 font-bold underline">Return to Main Website</a>
+   <footer class="bg-stone-900 text-stone-500 py-16 px-6 text-center">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-8">
+            <div class="text-center md:text-left">
+                <p class="text-white text-xl font-serif italic">Weeks Creek Haven</p>
+                <p>421 Weeks Creek Rd | Blue Ridge, GA 30513</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-6 text-xs font-bold uppercase tracking-widest text-green-400">
+                <a href="index.html" class="hover:text-white">Home</a>
+                <a href="need-to-know.html" class="hover:text-white">Need to Know</a>
+                <a href="find-us.html" class="hover:text-white">Find Us</a>
+                <a href="gallery.html" class="hover:text-white">Gallery</a>
+                <a href="important-info.html" class="hover:text-white">Friends Portal</a>
+            </div>
+        </div>
+        <div class="text-center mt-10 text-xs text-stone-600 pt-8 border-t border-stone-800 uppercase tracking-widest">
+            © 2026 Heather & Lance | Blue Ridge, Georgia
+        </div>
     </footer>
 
 </body>
