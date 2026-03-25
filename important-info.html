@@ -109,12 +109,6 @@
                 </div>
             </div>
         </div>
-
-
-const passwordMap = {
-    "creeklife": "important-info.html", // Standard Friends Info
-    "havenvip": "vip-guest.html",      // VIP Access
-    "admin421": "owner-log.html"       // Owner Dashboard
     </main>
 
     <footer class="bg-stone-900 text-stone-500 py-16 px-6 text-center border-t border-stone-800">
@@ -138,21 +132,24 @@ const passwordMap = {
             const pass = document.getElementById('passInput').value.toLowerCase();
             const errorMsg = document.getElementById('errorMsg');
 
-            // MULTI-PASSWORD MAPPING
+            // List of valid passwords and their actions
             const passwordMap = {
-                "creeklife": "reveal",      // Standard Access (stays on this page)
-                "vipaccess": "vip-guest.html",    // VIP Redirect
-                "admin421": "owner-log.html"      // Owner Redirect
+                "creeklife": "reveal",           // Standard Friends Info
+                "havenvip": "vip-guest.html",    // VIP Access Page
+                "admin421": "owner-log.html"     // Owner Dashboard
             };
 
             if (passwordMap[pass]) {
                 if (passwordMap[pass] === "reveal") {
+                    // Show the hidden content on THIS page
                     document.getElementById('passwordGate').style.display = 'none';
                     document.getElementById('privateContent').style.display = 'block';
                 } else {
+                    // Redirect to a completely different HTML file
                     window.location.href = passwordMap[pass];
                 }
             } else {
+                // Show error message if password is wrong
                 errorMsg.classList.remove('hidden');
             }
         }
