@@ -70,101 +70,86 @@
     </header>
 
     <main class="max-w-6xl mx-auto px-6 pb-24 space-y-20">
-        
-        <section id="hiking">
-            <div class="flex items-center gap-4 mb-8 pb-3 border-b border-stone-200">
-                <h2 class="text-4xl accent-green">Hiking & Waterfalls</h2>
+    
+    <section id="hiking">
+        <div class="flex items-center gap-4 mb-8 pb-3 border-b border-stone-200">
+            <h2 class="text-4xl accent-green">Hiking & Waterfalls</h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col items-center text-center">
+                <img src="24_Hiking_Trails.jpg" onclick="openLightbox(this.src)" alt="Hiking Trails Guide" class="img-thumbnail rounded-lg mb-4">
+                <h4 class="font-bold accent-green uppercase tracking-wider text-xs">Hiking Overview</h4>
+                <p class="text-xs text-stone-500 mt-2">A comprehensive guide to local trailheads and difficulty levels.</p>
             </div>
 
-            <div class="adventure-card p-6 rounded-xl mb-8 border-l-4 border-l-green-700 shadow-sm text-sm leading-relaxed">
-                <h3 class="text-xl mb-3 font-bold">Trail Highlights</h3>
-                <div class="grid md:grid-cols-2 gap-x-8 gap-y-2">
-                    <p><strong class="accent-green">Swinging Bridge:</strong> Longest swinging bridge east of the Mississippi (270 ft).</p>
-                    <p><strong class="accent-green">Fall Branch Falls:</strong> Short, beginner-friendly double-waterfall hike.</p>
-                    <p><strong class="accent-green">Aska Trail System:</strong> 17 miles of multi-use trails for all skill levels.</p>
-                    <p><strong class="accent-green">Long Branch Loop:</strong> 2.3-mile moderate loop with a historic chimney.</p>
-                </div>
+            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col items-center text-center">
+                <img src="Benton.jpg" onclick="openLightbox(this.src)" alt="Benton MacKaye Trail Guide" class="img-thumbnail rounded-lg mb-4">
+                <h4 class="font-bold accent-green uppercase tracking-wider text-xs">Benton MacKaye Guide</h4>
+                <p class="text-xs text-stone-500 mt-2">Detailed maps for the famous long-distance trail passing through Blue Ridge.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div class="text-center">
-                    <img src="24_Hiking_Trails.jpg" onclick="openLightbox(this.src)" alt="Hiking Trails Guide" class="img-thumbnail rounded-lg">
-                    <p class="mt-2 text-xs uppercase tracking-widest text-stone-400">Hiking Overview</p>
-                </div>
-                <div class="text-center">
-                    <img src="Benton.jpg" onclick="openLightbox(this.src)" alt="Benton MacKaye Trail Guide" class="img-thumbnail rounded-lg">
-                    <p class="mt-2 text-xs uppercase tracking-widest text-stone-400">Benton MacKaye Guide</p>
-                </div>
-                <div class="text-center">
-                    <img src="Swinging_Bridge.jpg" onclick="openLightbox(this.src)" alt="Swinging Bridge Info" class="img-thumbnail rounded-lg">
-                    <p class="mt-2 text-xs uppercase tracking-widest text-stone-400">Swinging Bridge Map</p>
-                </div>
-                <div class="text-center">
-                    <img src="Long_Branch.jpg" onclick="openLightbox(this.src)" alt="Long Branch Loop Guide" class="img-thumbnail rounded-lg">
-                    <p class="mt-2 text-xs uppercase tracking-widest text-stone-400">Long Branch Loop</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="family">
-            <div class="flex items-center gap-4 mb-8 pb-3 border-b border-stone-200">
-                <h2 class="text-4xl accent-green">Family Fun & River Adventures</h2>
+            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col items-center text-center">
+                <img src="Swinging_Bridge.jpg" onclick="openLightbox(this.src)" alt="Swinging Bridge Info" class="img-thumbnail rounded-lg mb-4">
+                <h4 class="font-bold accent-green uppercase tracking-wider text-xs">Swinging Bridge Map</h4>
+                <p class="text-xs text-stone-500 mt-2">Directions to the 270-foot suspension bridge over the Toccoa River.</p>
             </div>
 
-            <div class="adventure-card p-6 rounded-xl mb-8 border-l-4 border-l-blue-700 shadow-sm text-sm leading-relaxed">
-                <h3 class="text-xl mb-3 font-bold">Activities & Outings</h3>
-                <div class="grid md:grid-cols-2 gap-x-8 gap-y-2">
-                    <p><strong class="accent-green">Blue Ridge Railway:</strong> A 26-mile trip to the sister towns of McCaysville and Copperhill.</p>
-                    <p><strong class="accent-green">Mercier Orchards:</strong> Quintessential orchard famous for fried apple pies and cider.</p>
-                    <p><strong class="accent-green">Toccoa River Canoe Trail:</strong> A 13.8-mile trail through rapids and trout streams.</p>
-                    <p><strong class="accent-green">Lake Fun:</strong> Swimming at Morganton Point and boat rentals at Blue Ridge Pier.</p>
-                </div>
+            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col items-center text-center">
+                <img src="Long_Branch.jpg" onclick="openLightbox(this.src)" alt="Long Branch Loop Guide" class="img-thumbnail rounded-lg mb-4">
+                <h4 class="font-bold accent-green uppercase tracking-wider text-xs">Long Branch Loop</h4>
+                <p class="text-xs text-stone-500 mt-2">A moderate 2.3-mile loop perfect for a morning trek.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="family">
+        <div class="flex items-center gap-4 mb-8 pb-3 border-b border-stone-200">
+            <h2 class="text-4xl accent-green">Family Fun & River Adventures</h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col items-center text-center border-l-4 border-l-blue-700">
+                <img src="18_Fun_Things_in_Blue_Ridge.jpg" onclick="openLightbox(this.src)" alt="Family Activities" class="img-thumbnail rounded-lg mb-4">
+                <h4 class="font-bold accent-green uppercase tracking-wider text-xs">Family Fun Guide</h4>
+                <p class="text-xs text-stone-500 mt-2">Top-rated activities for kids and adults alike in downtown Blue Ridge.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div class="text-center">
-                    <img src="18_Fun_Things_in_Blue_Ridge.jpg" onclick="openLightbox(this.src)" alt="Family Activities" class="img-thumbnail rounded-lg">
-                    <p class="mt-2 text-xs uppercase tracking-widest text-stone-400">Family Fun Guide</p>
-                </div>
-                <div class="text-center">
-                    <img src="21_Recreation_Areas.jpg" onclick="openLightbox(this.src)" alt="Recreation Areas Guide" class="img-thumbnail rounded-lg">
-                    <p class="mt-2 text-xs uppercase tracking-widest text-stone-400">Recreation Areas</p>
-                </div>
-                <div class="text-center md:col-span-2">
-                    <img src="Toccoa_River.jpg" onclick="openLightbox(this.src)" alt="Canoe Trail Guide" class="img-thumbnail rounded-lg">
-                    <p class="mt-2 text-xs uppercase tracking-widest text-stone-400">Toccoa River Canoe Trail</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="local">
-            <div class="flex items-center gap-4 mb-8 pb-3 border-b border-stone-200">
-                <h2 class="text-4xl accent-green">Local Dining & Favorites</h2>
+            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col items-center text-center border-l-4 border-l-blue-700">
+                <img src="21_Recreation_Areas.jpg" onclick="openLightbox(this.src)" alt="Recreation Areas Guide" class="img-thumbnail rounded-lg mb-4">
+                <h4 class="font-bold accent-green uppercase tracking-wider text-xs">Recreation Areas</h4>
+                <p class="text-xs text-stone-500 mt-2">Parks, playgrounds, and picnic spots around Fannin County.</p>
             </div>
 
-            <div class="adventure-card p-6 rounded-xl mb-8 border-l-4 border-l-amber-700 shadow-sm text-sm leading-relaxed">
-                <h3 class="text-xl mb-3 font-bold">Provisions & Dining</h3>
-                <div class="grid md:grid-cols-2 gap-x-8 gap-y-2">
-                    <p><strong class="accent-green">Toccoa Riverside Restaurant:</strong> Famed for river views and fresh trout.</p>
-                    <p><strong class="accent-green">Iron Bridge Cafe:</strong> General store charm with breakfast and fishing gear.</p>
-                    <p><strong class="accent-green">Van Zandt’s:</strong> A local favorite for burgers and breakfast right around the corner.</p>
-                    <p><strong class="accent-green">Breweries & Wineries:</strong> Visit Grumpy Old Men Brewing or Bear Claw Vineyards.</p>
-                </div>
+            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col items-center text-center border-l-4 border-l-blue-700">
+                <img src="Toccoa_River.jpg" onclick="openLightbox(this.src)" alt="Canoe Trail Guide" class="img-thumbnail rounded-lg mb-4">
+                <h4 class="font-bold accent-green uppercase tracking-wider text-xs">Toccoa River Canoe Trail</h4>
+                <p class="text-xs text-stone-500 mt-2">Everything you need to know for a day on the water.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="local">
+        <div class="flex items-center gap-4 mb-8 pb-3 border-b border-stone-200">
+            <h2 class="text-4xl accent-green">Local Dining & Favorites</h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col items-center text-center border-l-4 border-l-amber-700">
+                <img src="20_Local_Eats.jpg" onclick="openLightbox(this.src)" alt="Local Eats Guide" class="img-thumbnail rounded-lg mb-4">
+                <h4 class="font-bold accent-green uppercase tracking-wider text-xs">Good Eats Near Cabin</h4>
+                <p class="text-xs text-stone-500 mt-2">The best hidden gems within a 15-minute drive.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div class="text-center">
-                    <img src="20_Local_Eats.jpg" onclick="openLightbox(this.src)" alt="Local Eats Guide" class="img-thumbnail rounded-lg">
-                    <p class="mt-2 text-xs uppercase tracking-widest text-stone-400">Good Eats Near Cabin</p>
-                </div>
-                <div class="text-center">
-                    <img src="BR_Food.jpg" onclick="openLightbox(this.src)" alt="Best Food and Drink" class="img-thumbnail rounded-lg">
-                    <p class="mt-2 text-xs uppercase tracking-widest text-stone-400">Blue Ridge Favorites</p>
-                </div>
+            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col items-center text-center border-l-4 border-l-amber-700">
+                <img src="BR_Food.jpg" onclick="openLightbox(this.src)" alt="Best Food and Drink" class="img-thumbnail rounded-lg mb-4">
+                <h4 class="font-bold accent-green uppercase tracking-wider text-xs">Blue Ridge Favorites</h4>
+                <p class="text-xs text-stone-500 mt-2">Our personal "must-visit" restaurants and breweries.</p>
             </div>
-        </section>
+        </div>
+    </section>
 
-    </main>
+</main>
 
     <footer class="bg-stone-900 text-stone-500 py-16 px-6 text-center">
         <p class="text-white text-xl font-serif italic mb-2">Weeks Creek Haven</p>
