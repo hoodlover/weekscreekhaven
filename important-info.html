@@ -142,15 +142,25 @@
 
     <script>
         function checkPassword() {
-            const pass = document.getElementById('passInput').value;
-            // Matches the password 'creeklife' from provided source
-            if (pass.toLowerCase() === 'creeklife') {
-                document.getElementById('passwordGate').style.display = 'none';
-                document.getElementById('privateContent').style.display = 'block';
-            } else {
-                document.getElementById('errorMsg').classList.remove('hidden');
-            }
-        }
+    const pass = document.getElementById('passInput').value.toLowerCase();
+    const errorMsg = document.getElementById('errorMsg');
+
+    // Map your passwords to specific page URLs
+  const passwordMap = {
+    "creeklife": "important-info.html", // Standard Friends Info
+    "havenvip": "vip-guest.html",      // VIP Access
+    "admin421": "owner-log.html"       // Owner Dashboard
+};
+
+    if (passwordMap[pass]) {
+        // Redirect the user to their specific page
+        window.location.href = passwordMap[pass];
+    } else {
+        // Show error if password doesn't match any key
+        errorMsg.classList.remove('hidden');
+        errorMsg.innerText = "Access denied. Please check your credentials.";
+    }
+}
 
         async function uploadPhoto() {
             const fileInput = document.getElementById('photoInput');

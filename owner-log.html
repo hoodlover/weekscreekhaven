@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Dashboard | Weeks Creek Haven</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background-color: #1a1c1e; color: #e2e8f0; }
+        h1, h2, h3 { font-family: 'Crimson Text', serif; }
+        .admin-card { background-color: #2d2f31; border: 1px solid #3f4144; }
+        .status-fine { color: #4ade80; }
+    </style>
+</head>
+<body class="p-6 md:p-12">
+
+    <header class="max-w-6xl mx-auto mb-12 flex justify-between items-end border-b border-stone-700 pb-8">
+        <div>
+            <h1 class="text-4xl italic text-white">Weeks Creek Haven</h1>
+            <p class="text-xs uppercase tracking-[0.4em] text-stone-500 mt-2">Internal Owner Dashboard</p>
+        </div>
+        <div class="text-right text-xs font-bold uppercase tracking-widest text-stone-400">
+            Welcome, Lance & Heather
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
+        
+        <section class="md:col-span-1 space-y-6">
+            <div class="admin-card p-6 rounded-lg shadow-xl">
+                <h3 class="text-stone-400 uppercase text-[10px] font-bold tracking-widest mb-4">Master Access</h3>
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-[10px] text-stone-500 uppercase">Back Door Lockbox</p>
+                        <p class="text-2xl font-mono text-amber-500">4242</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-stone-500 uppercase">Owner Closet Key</p>
+                        <p class="text-2xl font-mono text-amber-500">7733</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-card p-6 rounded-lg shadow-xl border-l-4 border-green-500">
+                <h3 class="text-stone-400 uppercase text-[10px] font-bold tracking-widest mb-2">System Status</h3>
+                <p class="text-sm">Wi-Fi: <span class="status-fine">Online</span></p>
+                <p class="text-sm">HVAC: <span class="status-fine">Normal</span></p>
+            </div>
+        </section>
+
+        <section class="md:col-span-2 admin-card p-8 rounded-lg shadow-xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl italic text-white">Maintenance & Tasks</h3>
+                <button class="bg-stone-700 hover:bg-stone-600 px-4 py-2 rounded text-[10px] font-bold uppercase tracking-widest transition">Add Entry</button>
+            </div>
+            
+            <table class="w-full text-left text-sm">
+                <thead class="text-stone-500 border-b border-stone-700">
+                    <tr>
+                        <th class="pb-3 font-normal uppercase text-[10px]">Date</th>
+                        <th class="pb-3 font-normal uppercase text-[10px]">Task Description</th>
+                        <th class="pb-3 font-normal uppercase text-[10px]">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-stone-800">
+                    <tr>
+                        <td class="py-4 font-mono text-xs">2026-03-20</td>
+                        <td class="py-4">HVAC Filter Changed (Main Unit)</td>
+                        <td class="py-4 text-green-400">Done</td>
+                    </tr>
+                    <tr>
+                        <td class="py-4 font-mono text-xs">2026-03-15</td>
+                        <td class="py-4">Hot Tub Water Test & Shock</td>
+                        <td class="py-4 text-green-400">Done</td>
+                    </tr>
+                    <tr>
+                        <td class="py-4 font-mono text-xs">Pending</td>
+                        <td class="py-4">Inspect Deck for Loose Boards</td>
+                        <td class="py-4 text-amber-500">Planned</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+    <footer class="mt-20 text-center">
+        <a href="important-info.html" class="text-[10px] font-bold text-stone-600 uppercase tracking-widest hover:text-white transition">Exit to Public Site</a>
+    </footer>
+
+</body>
+</html>
