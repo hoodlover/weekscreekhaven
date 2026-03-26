@@ -7,35 +7,107 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="Weeks_Creek_Haven_Favicon.png">
-   <style>
+    <style>
         body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
         h1, h2, h3, h4 { font-family: 'Crimson Text', serif; }
         
-        /* Consistent Rustic Backgrounds */
-        .bg-wood-light { 
+        /* The "Really Big" Shadow for Titles */
+        .heavy-shadow {
+            text-shadow: 4px 4px 15px rgba(0, 0, 0, 0.9), 0px 0px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .bg-wood { 
             background-color: #fcfaf7;
-            background-image: url('https://www.transparenttextures.com/patterns/p6.png'); /* Light wood texture */
+            background-image: url('/webpic/vintage-wooden-board-textured-background.jpg');
         }
         
+        /* Railroad Tie Navigation Bar */
+        .railroad-tie-nav {
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
+            background-size: auto 100%;
+            background-repeat: repeat-x;
+            border-bottom: 4px solid #2c241e;
+            box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
+        }
+
+        /* Wood Button Transition */
+        .wood-btn {
+            transition: transform 0.2s ease;
+            height: 50px;
+            width: auto;
+            display: block;
+        }
+
+        .wood-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Hero Button specific sizing */
+        .hero-btn {
+            height: 140px;
+            width: auto;
+            margin: 0 auto;
+        }
+
+        /* Hover Swap Logic for Navigation and Hero */
+        .nav-link-group a .hover-img { display: none; }
+        .nav-link-group a:hover .normal-img { display: none; }
+        .nav-link-group a:hover .hover-img { display: block; }
+
         .accent-green { color: #4a5d4e; }
-        .adventure-card { background-color: white; border: 1px solid #e7e5e4; transition: transform 0.2s, box-shadow 0.2s; }
-        .adventure-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-        .parchment { background-color: rgba(244, 238, 224, 0.7); border: 1px solid #dcd3bd; }
-        .category-icon { color: #4a5d4e; width: 2.5rem; height: 2.5rem; } /* Customizing SVG icons */
+        .parchment { background-color: rgba(244, 238, 224, 0.9); border: 1px solid #dcd3bd; }
+        
+        /* Mobile Menu Background */
+        #mobile-menu {
+            background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('/webpic/railroad-tie-texture.jpg');
+            background-size: cover;
+        }
     </style>
 
 </head>
 
 <body class="bg-stone-50">
 
-    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-sm shadow-sm py-4 px-6 flex justify-between items-center border-b border-stone-100">
-        <a href="index.html" class="font-bold text-stone-800 tracking-widest uppercase text-xs md:text-sm hover:text-green-800 transition">Weeks Creek Haven</a>
-        <div class="hidden md:flex space-x-6 text-xs font-bold uppercase tracking-widest items-center">
-            <a href="things-to-do.html" class="hover:text-green-800">To Do & See</a>
-            <a href="need-to-know.html" class="hover:text-green-800">Need to Know</a>
-            <a href="find-us.html" class="hover:text-green-800">Find Us</a>
-            <a href="gallery.html" class="hover:text-green-800">Gallery</a>
-            <a href="important-info.html" class="text-amber-900 bg-amber-100 px-4 py-2 rounded border border-amber-200">Friends Info</a>
+ <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 flex justify-between items-center">
+        <a href="index.html" class="flex-shrink-0">
+            <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16">
+        </a>
+        
+        <div class="hidden md:flex space-x-1 nav-link-group items-center">
+            <a href="things-to-do.html">
+                <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
+                <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
+            </a>
+            <a href="need-to-know.html">
+                <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
+                <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
+            </a>
+            <a href="find-us.html">
+                <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
+                <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
+            </a>
+            <a href="gallery.html">
+                <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
+                <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
+            </a>
+            <a href="important-info.html">
+                <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
+                <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
+            </a>
+        </div>
+
+        <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+
+        <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800">
+            <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
+            <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
+            <a href="find-us.html"><img src="/buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
+            <a href="gallery.html"><img src="/buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
+            <a href="important-info.html"><img src="/buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
         </div>
     </nav>
 

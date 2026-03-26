@@ -15,45 +15,105 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Montserrat', sans-serif; color: #3d3128; }
-        h1, h2 { font-family: 'Crimson Text', serif; }
+        body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
+        h1, h2, h3, h4 { font-family: 'Crimson Text', serif; }
         
-        .bg-wood-light { 
+        /* The "Really Big" Shadow for Titles */
+        .heavy-shadow {
+            text-shadow: 4px 4px 15px rgba(0, 0, 0, 0.9), 0px 0px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .bg-wood { 
             background-color: #fcfaf7;
-            background-image: url('https://www.transparenttextures.com/patterns/p6.png'); 
+            background-image: url('/webpic/vintage-wooden-board-textured-background.jpg');
         }
         
-        .bg-stone-header { 
-            background-color: #2c241e;
-            background-image: url('https://www.transparenttextures.com/patterns/dark-dotted-2.png'); 
+        /* Railroad Tie Navigation Bar */
+        .railroad-tie-nav {
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
+            background-size: auto 100%;
+            background-repeat: repeat-x;
+            border-bottom: 4px solid #2c241e;
+            box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
         }
 
-        .gallery-item { break-inside: avoid; margin-bottom: 1.5rem; transition: transform 0.3s ease-in-out; cursor: pointer; }
-        .gallery-item:hover { transform: scale(1.02); }
-        
-        .parchment-label { background-color: rgba(244, 238, 224, 0.95); border-top: 1px solid #dcd3bd; }
+        /* Wood Button Transition */
+        .wood-btn {
+            transition: transform 0.2s ease;
+            height: 50px;
+            width: auto;
+            display: block;
+        }
+
+        .wood-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Hero Button specific sizing */
+        .hero-btn {
+            height: 140px;
+            width: auto;
+            margin: 0 auto;
+        }
+
+        /* Hover Swap Logic for Navigation and Hero */
+        .nav-link-group a .hover-img { display: none; }
+        .nav-link-group a:hover .normal-img { display: none; }
+        .nav-link-group a:hover .hover-img { display: block; }
+
         .accent-green { color: #4a5d4e; }
-
-        /* Lightbox Styles */
-        #lightbox { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; }
-        #lightbox img { max-width: 90%; max-height: 80vh; border: 4px solid white; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
-        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); color: white; font-size: 3rem; cursor: pointer; padding: 20px; user-select: none; transition: color 0.2s; }
-        .nav-btn:hover { color: #4ade80; }
-        #prev { left: 20px; }
-        #next { right: 20px; }
-        #close { position: absolute; top: 20px; right: 30px; color: white; font-size: 2rem; cursor: pointer; }
-        #caption { position: absolute; bottom: 40px; color: #f4eee0; font-family: 'Crimson Text', serif; font-style: italic; font-size: 1.5rem; text-align: center; width: 80%; }
+        .parchment { background-color: rgba(244, 238, 224, 0.9); border: 1px solid #dcd3bd; }
+        
+        /* Mobile Menu Background */
+        #mobile-menu {
+            background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('/webpic/railroad-tie-texture.jpg');
+            background-size: cover;
+        }
     </style>
- <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-sm shadow-sm py-4 px-6 flex justify-between items-center border-b border-stone-100">
-    <a href="index.html" class="font-bold text-stone-800 tracking-widest uppercase text-xs md:text-sm">Weeks Creek Haven</a>
-    <div class="hidden md:flex space-x-6 text-xs font-bold uppercase tracking-widest items-center">
-        <a href="things-to-do.html" class="hover:text-green-800">To Do & See</a>
-        <a href="need-to-know.html" class="hover:text-green-800">Need to Know</a>
-        <a href="find-us.html" class="hover:text-green-800">Find Us</a>
-        <a href="gallery.html" class="hover:text-green-800">Gallery</a>
-        <a href="important-info.html" class="bg-amber-100 text-amber-900 px-4 py-2 rounded border border-amber-200 hover:bg-amber-200 transition">Friends Info</a>
-    </div>
-</nav>
+ 
+ <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 flex justify-between items-center">
+        <a href="index.html" class="flex-shrink-0">
+            <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16">
+        </a>
+        
+        <div class="hidden md:flex space-x-1 nav-link-group items-center">
+            <a href="things-to-do.html">
+                <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
+                <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
+            </a>
+            <a href="need-to-know.html">
+                <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
+                <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
+            </a>
+            <a href="find-us.html">
+                <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
+                <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
+            </a>
+            <a href="gallery.html">
+                <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
+                <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
+            </a>
+            <a href="important-info.html">
+                <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
+                <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
+            </a>
+        </div>
+
+        <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+
+        <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800">
+            <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
+            <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
+            <a href="find-us.html"><img src="/buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
+            <a href="gallery.html"><img src="/buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
+            <a href="important-info.html"><img src="/buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
+        </div>
+    </nav>
+
 </head>
 <body class="bg-wood-light min-h-screen">
 
