@@ -70,7 +70,7 @@
 
         /* Thumbnail sizing: 1/2 size logic using max-width */
        .img-thumbnail { 
-            border: 4px solid white; 
+          /*  border: 4px solid black; */
             box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
             cursor: zoom-in;
             transition: transform 0.2s;
@@ -93,7 +93,7 @@
             align-items: center;
             justify-content: center;
         }
-        #lightbox img { max-width: 95%; max-height: 90vh; border: 4px solid white; cursor: zoom-out; }
+        #lightbox img { max-width: 95%; max-height: 90vh; border: 4px solid black; cursor: zoom-out; }
         .close-btn {
             position: absolute; top: 20px; right: 30px;
             color: white; font-size: 40px; font-weight: bold; cursor: pointer;
@@ -169,7 +169,7 @@
                 <p class="text-xs text-stone-600 leading-relaxed">A moderate 1-mile round trip hike to a 75-ft double cascade.</p>
             </div>
 
-            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col">
+            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col border-t-4 border-t-green-700">
                 <img src="/info/Swinging_Bridge.jpg" onclick="openLightbox(this.src)" class="img-thumbnail rounded-lg mb-4">
                 <h4 class="font-bold accent-green uppercase tracking-wider text-xs mb-2">Swinging Bridge</h4>
                 <p class="text-xs text-stone-600 leading-relaxed">Longest swinging bridge east of the Mississippi at 270 ft.</p>
