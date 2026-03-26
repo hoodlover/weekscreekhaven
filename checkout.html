@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Until Next Time | Weeks Creek Haven Checkout</title>
+    
+    <link rel="icon" type="image/png" href="/webpic/Weeks_Creek_Haven_Favicon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
+        h1, h2, h3, h4 { font-family: 'Crimson Text', serif; }
+        
+        .heavy-shadow {
+            text-shadow: 4px 4px 15px rgba(0, 0, 0, 0.9), 0px 0px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .bg-wood { 
+            background-color: #fcfaf7;
+            background-image: url('/webpic/vintage-wooden-board-textured-background.jpg');
+        }
+        
+        .railroad-tie-nav {
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
+            background-size: auto 100%;
+            background-repeat: repeat-x;
+            border-bottom: 4px solid #2c241e;
+            box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
+        }
+
+        .wood-btn {
+            transition: transform 0.2s ease;
+            height: 50px;
+            width: auto;
+            display: block;
+        }
+
+        .wood-btn:hover { transform: scale(1.05); }
+
+        .parchment { background-color: rgba(244, 238, 224, 0.9); border: 1px solid #dcd3bd; }
+        
+        .checkout-step {
+            border-left: 6px solid #7c2d12;
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .done-stamp {
+            transform: rotate(-10deg);
+            border: 4px solid #14532d;
+            color: #14532d;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-wood">
+
+    <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 flex justify-between items-center">
+        <a href="index.html" class="flex-shrink-0">
+            <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16">
+        </a>
+    </nav>
+
+    <header class="relative h-[40vh] flex items-center justify-center text-white overflow-hidden">
+        <img src="/gallery/Cabin_Front_1.jpg" alt="Cabin View" class="absolute inset-0 w-full h-full object-cover">
+        <div class="absolute inset-0 bg-black/50"></div>
+        <div class="relative z-10 text-center px-4 mt-12">
+            <h1 class="text-5xl md:text-7xl mb-2 tracking-tight font-serif heavy-shadow uppercase">Safe Travels Home</h1>
+            <p class="text-xl md:text-3xl italic text-stone-200 font-serif heavy-shadow">"Don't let the door hit ya where the Good Lord split ya"</p>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto py-12 px-6">
+        
+        <div class="parchment p-8 md:p-12 rounded-xl shadow-2xl mb-12 border-l-8 border-orange-900/30">
+            <h2 class="text-3xl font-serif italic mb-6 text-stone-900">Before You Head Out...</h2>
+            <p class="mb-8 text-stone-700 leading-relaxed">
+                We hope you had a great stay! To help us get the cabin ready for the next guests, please follow this quick checklist.
+            </p>
+
+            <div class="space-y-6">
+                <div class="checkout-step">
+                    <h3 class="font-bold text-xl text-stone-900">🛏️ Linens & Laundry</h3>
+                    <p>Strip the sheets from the beds you used. Wash sheets, pillowcases, and towels, allowing enough time to start them in the dryer.</p>
+                </div>
+
+                <div class="checkout-step">
+                    <h3 class="font-bold text-xl text-stone-900">🍽️ Kitchen & Food</h3>
+                    <p>Hand wash dishes or start the dishwasher. Please clean out your fridge items and ensure sinks are wiped down.</p>
+                </div>
+
+                <div class="checkout-step">
+                    <h3 class="font-bold text-xl text-stone-900">🗑️ Trash Removal</h3>
+                    <p>Bag and take out the trash. Place food trash in the <strong>bear trash can</strong> and non-food trash in the porch box.</p>
+                </div>
+
+                <div class="checkout-step">
+                    <h3 class="font-bold text-xl text-stone-900">🔥 Safety Check</h3>
+                    <p>Ensure the fireplace is turned to 'Pilot'. Turn off all lights and lock all three smart doors.</p>
+                </div>
+            </div>
+
+            <div class="mt-10 bg-stone-800 text-white p-6 rounded-lg text-center shadow-inner">
+                <h4 class="text-xl font-serif italic mb-2">The Easiest Exit:</h4>
+                <p class="text-2xl font-bold text-green-400 uppercase tracking-widest">"Alexa, Going Home"</p>
+                <p class="text-sm mt-2 opacity-80">Locks doors and turns off lights automatically.</p>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-16">
+            <div class="parchment p-8 rounded-xl shadow-xl border-l-8 border-green-800/30">
+                <h3 class="text-xl font-serif font-bold text-green-900 uppercase mb-4">Leave a Note</h3>
+                <p class="text-stone-700 italic">"Share your favorite adventure, a laugh, or your darkest secret in the guest book before you go!"</p>
+            </div>
+            <div class="parchment p-8 rounded-xl shadow-xl border-l-8 border-blue-800/30">
+                <h3 class="text-xl font-serif font-bold text-blue-900 uppercase mb-4">Cleaning Fee</h3>
+                <p class="text-stone-700">If you don't have time or don't want to clean, no worries! We just ask that you cover the $200 cleaning fee charged to us.</p>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <p class="text-lg font-serif italic text-stone-600 mb-6">Please text us when you leave so we can notify our cleaning team!</p>
+            <div class="done-stamp uppercase tracking-widest">See You Soon!</div>
+        </div>
+
+    </main>
+
+    <footer class="bg-stone-900 text-stone-500 py-12 px-6 text-center mt-20">
+        <p class="text-white text-xl font-serif italic mb-2">Weeks Creek Haven</p>
+        <p>Lance: 770.549.9358 | Heather: 678.993.3617</p>
+    </footer>
+
+</body>
+</html>

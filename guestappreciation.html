@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guest Appreciation Card | Weeks Creek Haven</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        @media print {
+            .no-print { display: none; }
+            body { background: white !important; padding: 0; }
+            .card-container { box-shadow: none !important; border: 1px solid #ddd !important; }
+        }
+        
+        body { font-family: 'Montserrat', sans-serif; background-color: #f3f4f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        h1, h2 { font-family: 'Crimson Text', serif; }
+        
+        .parchment { 
+            background-color: #fdfbf7; 
+            background-image: url('https://www.transparenttextures.com/patterns/p6.png');
+            border: 1px solid #dcd3bd;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card-container max-w-lg w-full parchment p-10 shadow-2xl rounded-sm border-t-[10px] border-green-900 text-center relative">
+        
+        <header class="mb-6">
+            <div class="text-3xl mb-2">🏔️</div>
+            <h1 class="text-4xl font-serif italic text-green-900">Welcome to the Mountains</h1>
+            <p class="text-[10px] uppercase tracking-[0.3em] font-bold text-stone-500 mt-2">Weeks Creek Haven</p>
+        </header>
+
+        <div class="space-y-4 mb-8">
+            <p class="text-stone-800 leading-relaxed font-serif text-lg italic">
+                "We’re so glad you’re staying with us!"
+            </p>
+            <p class="text-sm text-stone-600 leading-relaxed">
+                Thank you for choosing our cabin for your getaway. We hope you find this sanctuary as relaxing and comfortable as we do. Please enjoy this small local treat as a "thank you" for being our guest!
+            </p>
+        </div>
+
+        <div class="py-6 border-y border-stone-200 mb-8">
+            <p class="text-xs uppercase tracking-widest font-bold text-stone-400 mb-2">A Friendly Reminder</p>
+            <p class="text-[11px] text-stone-500 italic">
+                "Enjoy yourselves, what's there is yours to use, have fun and stay off your phones!"
+            </p>
+        </div>
+
+        <footer class="space-y-2">
+            <p class="text-lg font-serif italic text-green-900">Cheers,</p>
+            <p class="text-md font-serif font-bold text-stone-800">Heather & Lance</p>
+            <p class="text-[10px] text-stone-400 mt-4 uppercase tracking-tighter">Your Cabin Away From Home</p>
+        </footer>
+
+        <div class="absolute bottom-4 right-4 opacity-10 text-3xl">🌲</div>
+    </div>
+
+    <div class="no-print fixed bottom-8">
+        <button onclick="window.print()" class="bg-green-800 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-green-900 transition">
+            Print Card (5x7)
+        </button>
+    </div>
+
+</body>
+</html>

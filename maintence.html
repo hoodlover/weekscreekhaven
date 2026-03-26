@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haven Upkeep | Weeks Creek Haven</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Montserrat', sans-serif; color: #3d3128; }
+        h1, h2, h3 { font-family: 'Crimson Text', serif; }
+        .bg-wood { background-image: url('/webpic/vintage-wooden-board-textured-background.jpg'); background-color: #fcfaf7; }
+        .parchment { background-color: rgba(244, 238, 224, 0.9); border: 1px solid #dcd3bd; }
+        input[type="checkbox"] { accent-color: #14532d; width: 1.2rem; height: 1.2rem; }
+    </style>
+</head>
+<body class="bg-wood py-12 px-6">
+
+    <div class="max-w-3xl mx-auto parchment p-8 md:p-12 rounded-xl shadow-2xl border-t-8 border-stone-800">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-serif italic text-green-900 mb-2">Haven Upkeep</h1>
+            <p class="text-stone-600 italic">"Help us keep the sanctuary stocked and sparkly!"</p>
+        </header>
+
+        <form action="https://formspree.io/f/mzdjnprj" method="POST" class="space-y-8">
+            
+            <section>
+                <h3 class="text-xl font-bold uppercase tracking-widest text-stone-800 border-b border-stone-300 mb-4 pb-1">🛒 Restock Needed</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <label class="flex items-center space-x-3 bg-white/50 p-2 rounded">
+                        <input type="checkbox" name="restock[]" value="Coffee Beans"> <span>Coffee Beans</span>
+                    </label>
+                    <label class="flex items-center space-x-3 bg-white/50 p-2 rounded">
+                        <input type="checkbox" name="restock[]" value="Toilet Paper"> <span>Toilet Paper</span>
+                    </label>
+                    <label class="flex items-center space-x-3 bg-white/50 p-2 rounded">
+                        <input type="checkbox" name="restock[]" value="Paper Towels"> <span>Paper Towels</span>
+                    </label>
+                    <label class="flex items-center space-x-3 bg-white/50 p-2 rounded">
+                        <input type="checkbox" name="restock[]" value="Hand Soap"> <span>Hand Soap</span>
+                    </label>
+                    <label class="flex items-center space-x-3 bg-white/50 p-2 rounded">
+                        <input type="checkbox" name="restock[]" value="Dish Tabs"> <span>Dishwasher Tabs</span>
+                    </label>
+                    <label class="flex items-center space-x-3 bg-white/50 p-2 rounded">
+                        <input type="checkbox" name="restock[]" value="Propane"> <span>Propane/Charcoal</span>
+                    </label>
+                </div>
+            </section>
+
+            <section>
+                <h3 class="text-xl font-bold uppercase tracking-widest text-stone-800 border-b border-stone-300 mb-4 pb-1">🛠️ Maintenance Notes</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Anything acting up?</label>
+                        <textarea name="maintenance_issue" rows="3" placeholder="Broken lightbulbs, leaky faucets, Alexa being moody..." class="w-full p-3 border border-stone-300 rounded focus:border-green-800 outline-none parchment"></textarea>
+                    </div>
+                    <p class="text-xs text-stone-500 italic">"If it's urgent, please text Lance immediately at 770.549.9358!"</p>
+                </div>
+            </section>
+
+            <section class="bg-green-900/5 p-6 rounded-lg border border-green-900/20">
+                <h3 class="text-lg font-bold text-green-900 mb-2">✨ Cleanliness Check</h3>
+                <label class="flex items-start space-x-3 cursor-pointer">
+                    <input type="checkbox" name="cleaning_done" class="mt-1" required>
+                    <span class="text-sm">We've stripped the sheets, washed the towels, and taken out the trash.</span>
+                </label>
+            </section>
+
+            <button type="submit" class="w-full bg-stone-900 text-white font-bold py-4 rounded hover:bg-black transition shadow-lg uppercase tracking-widest">
+                Submit Update
+            </button>
+        </form>
+
+        <footer class="mt-12 text-center text-xs text-stone-500 uppercase tracking-widest border-t border-stone-200 pt-6">
+            Weeks Creek Haven | 421 Weeks Creek Rd
+        </footer>
+    </div>
+
+</body>
+</html>

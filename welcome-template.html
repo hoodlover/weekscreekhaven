@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Welcome | Weeks Creek Haven</title>
+    
+    <link rel="icon" type="image/png" href="/webpic/Weeks_Creek_Haven_Favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
+        h1, h2, h3, h4 { font-family: 'Crimson Text', serif; }
+        .heavy-shadow { text-shadow: 4px 4px 15px rgba(0, 0, 0, 0.9); }
+        .bg-wood { background-color: #fcfaf7; background-image: url('/webpic/vintage-wooden-board-textured-background.jpg'); }
+        .railroad-tie-nav { background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg'); background-size: auto 100%; border-bottom: 4px solid #2c241e; }
+        .wood-btn { transition: transform 0.2s ease; height: 50px; display: block; }
+        .parchment { background-color: rgba(244, 238, 224, 0.9); border: 1px solid #dcd3bd; }
+        .vip-card { border-left: 8px solid #14532d; }
+    </style>
+</head>
+<body class="bg-wood">
+
+    <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 flex justify-between items-center">
+        <a href="index.html" class="flex-shrink-0">
+            <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16">
+        </a>
+        <div class="hidden md:flex space-x-4 items-center text-white text-[10px] font-bold uppercase tracking-widest">
+            <a href="welcome.html" class="hover:text-green-400">VIP Home</a>
+            <a href="adventure.html" class="hover:text-green-400">Area Guide</a>
+            <a href="troubleshoot.html" class="hover:text-green-400">Tech Help</a>
+            <a href="onlineguestbook.html" class="hover:text-green-400">Guest Book</a>
+            <a href="checkout.html" class="hover:text-green-400">Checkout</a>
+        </div>
+    </nav>
+
+    <header class="relative h-[50vh] flex items-center justify-center text-white overflow-hidden">
+        <img src="/00_Intro_Page.jpg" alt="Mountain View" class="absolute inset-0 w-full h-full object-cover">
+        <div class="absolute inset-0 bg-black/40"></div>
+        <div class="relative z-10 text-center px-4 mt-12">
+            <h1 class="text-5xl md:text-7xl mb-2 tracking-tight font-serif heavy-shadow uppercase">Welcome, [Guest Name] Family!</h1>
+            <p class="text-xl md:text-3xl italic text-stone-200 font-serif heavy-shadow">Your custom mountain retreat is ready.</p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto py-16 px-6">
+        
+        <div class="parchment p-8 md:p-12 rounded-xl shadow-2xl mb-16 border-l-8 border-green-900/30">
+            <h2 class="text-3xl md:text-4xl mb-4 text-stone-900 font-serif italic text-center underline">A Note from Lance & Heather</h2>
+            <p class="text-lg text-stone-800 leading-relaxed text-center max-w-3xl mx-auto italic font-serif">
+                "We are so happy to have you back for your [Anniversary/Birthday/Third visit]! We've made sure the espresso machine is stocked and the firepit is ready for your stay. Have an amazing time!"
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+            <section class="space-y-8">
+                <div class="parchment p-8 rounded-xl shadow-xl vip-card">
+                    <h3 class="text-2xl font-serif font-bold text-green-900 uppercase tracking-wider mb-4">🔑 Access Details</h3>
+                    <ul class="space-y-4 text-lg">
+                        <li><span class="font-bold">Address:</span> 421 Weeks Creek Rd</li>
+                        <li class="text-red-800"><span class="font-bold">Door Code:</span> 22246</li>
+                        <li><span class="font-bold">Wi-Fi:</span> WeeksCreekHaven</li>
+                        <li><span class="font-bold">Pass:</span> creeklife</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="space-y-8">
+                <div class="rounded-xl shadow-2xl border-4 border-white overflow-hidden">
+                    <img src="/01_Welcome.jpg" alt="Amenities" class="w-full">
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <footer class="bg-stone-900 text-stone-500 py-12 px-6 text-center mt-20">
+        <p class="text-white text-xl font-serif italic">Weeks Creek Haven VIP Portal</p>
+        <p class="text-[10px] uppercase tracking-widest mt-2">© 2026 Heather & Lance | Blue Ridge, Georgia</p>
+    </footer>
+
+</body>
+</html>
