@@ -5,95 +5,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Charles Reeves & Family | Weeks Creek Haven VIP</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Montserrat', sans-serif; background-color: #fcfaf7; }
-        h1, h2, h3 { font-family: 'Crimson Text', serif; }
-        .parchment { background-color: #f4eee0; border: 1px solid #dcd3bd; }
-        .accent-green { color: #4a5d4e; }
+        body { font-family: 'Montserrat', sans-serif; background-color: #f8f6f2; color: #333; }
+        h1, h2, h3, .serif { font-family: 'Crimson Text', serif; }
+        .parchment { 
+            background-color: #fdfbf7; 
+            background-image: url("https://www.transparenttextures.com/patterns/cream-paper.png");
+            border: 1px solid #e2d9c5; 
+        }
+        .hero-gradient {
+            background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(248,246,242,1) 100%);
+        }
     </style>
 </head>
-<body class="bg-stone-50 text-stone-900">
+<body class="antialiased">
 
-    <nav class="w-full bg-white/95 py-6 px-10 flex justify-between items-center border-b border-stone-200 sticky top-0 z-50">
-        <a href="index.html" class="font-bold text-stone-800 tracking-[0.4em] uppercase text-xs">Weeks Creek Haven</a>
-        <span class="text-[10px] text-amber-700 font-bold uppercase tracking-widest">Guest Portal</span>
+    <nav class="w-full bg-white/80 backdrop-blur-md py-6 px-10 flex justify-between items-center border-b border-stone-200 sticky top-0 z-50">
+        <a href="index.html" class="font-semibold text-stone-800 tracking-[0.5em] uppercase text-[10px]">Weeks Creek Haven</a>
+        <div class="h-px w-12 bg-stone-300 hidden md:block"></div>
+        <span class="text-[10px] text-amber-800 font-bold uppercase tracking-widest">VIP Guest Access</span>
     </nav>
 
-    <main class="max-w-5xl mx-auto py-16 px-6">
-        <div class="parchment p-10 md:p-20 rounded-xl shadow-2xl border border-stone-300/50">
+    <main class="max-w-4xl mx-auto py-12 md:py-24 px-6">
+        <div class="parchment relative p-8 md:p-16 rounded-sm shadow-xl">
+            <div class="absolute top-0 left-0 w-16 h-16 border-t border-l border-stone-300 m-4"></div>
+            <div class="absolute bottom-0 right-0 w-16 h-16 border-b border-r border-stone-300 m-4"></div>
             
-            <div class="text-center border-b border-stone-200 pb-12 mb-12">
-                <span class="text-[11px] font-bold uppercase tracking-[0.5em] text-amber-800/80 mb-4 block">A Private Retreat for Our Dearest Friends</span>
-                <h1 class="text-6xl text-green-900 italic leading-tight">Welcome, Charles Reeves & Family</h1>
-                <p class="text-stone-500 mt-6 text-lg max-w-2xl mx-auto font-serif italic">"We are so happy to have you at the Haven. As our inner circle, we want you to feel completely at home. Please enjoy these extra touches during your stay."</p>
+            <div class="text-center pb-12 mb-12 border-b border-stone-200">
+                <h1 class="text-5xl md:text-7xl text-green-900 italic mb-6">Welcome, Charles Reeves & Family</h1>
+                <p class="text-stone-600 text-lg md:text-xl max-w-xl mx-auto serif leading-relaxed italic">
+                    "We are so happy to have you at the Haven. As our inner circle, we want you to feel completely at home."
+                </p>
                 
-                <div class="mt-12 group">
-                    <div class="relative rounded-lg overflow-hidden shadow-2xl border-[12px] border-white transition-transform duration-500 hover:scale-[1.01]">
-                        <img src="/guests/charles.png" alt="Personal Welcome Sign" class="w-full h-auto">
-                        <div class="absolute inset-0 shadow-[inset_0_0_60px_rgba(0,0,0,0.1)] pointer-events-none"></div>
+                <div class="mt-12 relative inline-block">
+                    <div class="absolute inset-0 bg-stone-200 rotate-2 -z-10 translate-x-2 translate-y-2"></div>
+                    <img src="/guests/charles.png" alt="Personal Welcome Sign" class="relative w-full max-w-lg h-auto border-[12px] border-white shadow-md">
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-12 lg:gap-20">
+                <div class="space-y-10">
+                    <h3 class="font-bold uppercase tracking-[0.3em] text-[10px] text-amber-800">Our Host Favorites</h3>
+                    
+                    <div class="space-y-10">
+                        <div class="flex gap-6">
+                            <span class="text-3xl grayscale opacity-70">??</span>
+                            <div>
+                                <h4 class="font-bold text-stone-800 text-xs uppercase tracking-widest mb-2">The Wine Cellar</h4>
+                                <p class="text-stone-600 text-sm leading-relaxed">Please, enjoy a bottle from the second row. <span class="italic block mt-1 opacity-60 text-xs">(Full disclosure: It’s just a rack, but the wine is real!)</span></p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-6">
+                            <span class="text-3xl grayscale opacity-70">??</span>
+                            <div>
+                                <h4 class="font-bold text-stone-800 text-xs uppercase tracking-widest mb-2">Linger Longer</h4>
+                                <p class="text-stone-600 text-sm leading-relaxed">Don’t rush your final morning. Enjoy the cabin until 2:00 or 3:00 PM today.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-6">
+                            <span class="text-3xl grayscale opacity-70">?</span>
+                            <div>
+                                <h4 class="font-bold text-stone-800 text-xs uppercase tracking-widest mb-2">Our Kitchen is Yours</h4>
+                                <p class="text-stone-600 text-sm leading-relaxed">Help yourselves to anything in the pantry or baths. We just ask that you replenish what you finish for the next guests.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col justify-center">
+                    <div class="bg-stone-100/50 p-8 md:p-12 border border-stone-200 text-center relative">
+                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-stone-800 text-white text-[9px] px-4 py-1 uppercase tracking-[0.3em]">Entry Code</div>
+                        <p class="text-5xl tracking-[0.2em] font-light text-stone-800 my-4">22246#</p>
+                        <p class="serif text-stone-400 italic text-sm">Valid for Charles Reeves & Family</p>
+                    </div>
+                    
+                    <div class="mt-12 text-center md:text-left">
+                        <p class="serif text-stone-500 italic mb-4">Need anything at all?</p>
+                        <div class="flex flex-col space-y-1">
+                            <span class="text-green-900 font-bold serif text-xl italic">Heather & Lance</span>
+                            <span class="text-[10px] text-stone-400 uppercase tracking-widest">Your Hosts</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-16">
-                <div class="space-y-10">
-                    <h3 class="font-bold uppercase tracking-[0.3em] text-[10px] text-stone-400 border-b border-stone-200 pb-3">Special Touches</h3>
-                    
-                    <div class="space-y-8">
-                        <div class="flex gap-5">
-                            <span class="text-2xl mt-1">??</span>
-                            <div>
-                                <h4 class="font-bold text-green-900 text-sm uppercase tracking-wider">The "Wine Cellar"</h4>
-                                <p class="text-stone-600 text-sm mt-1 leading-relaxed">Feel free to help yourselves to a bottle from the second row. <span class="italic block mt-1 opacity-70">(Hint: There is no wine cellar, but the rack is all yours!)</span></p>
-                            </div>
-                        </div>
-
-                        <div class="flex gap-5">
-                            <span class="text-2xl mt-1">?</span>
-                            <div>
-                                <h4 class="font-bold text-green-900 text-sm uppercase tracking-wider">Linger Longer</h4>
-                                <p class="text-stone-600 text-sm mt-1 leading-relaxed">Don't rush off on our account. Take your time and enjoy a late check-out; we're happy for you to stay until 2:00 or 3:00 PM.</p>
-                            </div>
-                        </div>
-
-                        <div class="flex gap-5">
-                            <span class="text-2xl mt-1">??</span>
-                            <div>
-                                <h4 class="font-bold text-green-900 text-sm uppercase tracking-wider">Make Yourselves at Home</h4>
-                                <p class="text-stone-600 text-sm mt-1 leading-relaxed">Please use whatever you need from the kitchen and baths. If you happen to use the last of something, a quick replenishment is always appreciated.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="space-y-10">
-                    <h3 class="font-bold uppercase tracking-[0.3em] text-[10px] text-stone-400 border-b border-stone-200 pb-3">Arrival Details</h3>
-                    <div class="bg-white/60 p-10 rounded-lg border border-stone-200 shadow-sm text-center">
-                        <p class="text-[10px] uppercase font-bold text-stone-400 mb-4 tracking-widest">Private Entrance Code</p>
-                        <p class="text-5xl tracking-[0.3em] font-light text-green-900">22246<span class="text-amber-700">#</span></p>
-                        <p class="text-[10px] text-stone-400 mt-6 italic">Valid for the duration of your stay</p>
-                    </div>
-                    
-                    <div class="pt-4">
-                        <p class="text-xs text-stone-400 leading-relaxed italic border-l-2 border-stone-200 pl-4">
-                            Need anything during your stay? <br>
-                            Reach out to **Lance** or **Heather** directly!
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-20 pt-10 border-t border-stone-200 text-center">
-                <a href="important-info.html?access=granted" class="inline-block border border-stone-800 text-stone-800 px-10 py-4 rounded-full font-bold uppercase tracking-[0.2em] text-[10px] hover:bg-stone-800 hover:text-white transition-all duration-300">
-                    View Standard Guest Guide
+            <div class="mt-20 text-center">
+                <a href="important-info.html?access=granted" class="inline-block border-b border-stone-800 pb-1 text-stone-800 font-bold uppercase tracking-[0.3em] text-[10px] hover:text-amber-800 hover:border-amber-800 transition-all">
+                    Explore the Guest Guide ?
                 </a>
             </div>
         </div>
     </main>
 
-    <footer class="py-12 text-center">
-        <p class="text-[10px] text-stone-400 uppercase tracking-[0.4em]">© 2026 Heather & Lance | Blue Ridge, Georgia</p>
+    <footer class="py-12 text-center opacity-40">
+        <p class="text-[9px] uppercase tracking-[0.5em]">Weeks Creek Haven • Blue Ridge, GA</p>
     </footer>
 
 </body>
