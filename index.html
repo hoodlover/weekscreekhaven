@@ -21,14 +21,12 @@
         body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
         h1, h2, h3, h4 { font-family: 'Crimson Text', serif; }
         
-        /* Brightened overlay from 0.45 to 0.25 */
-        .hero-overlay { background: rgba(0, 0, 0, 0.2); }
+        /* Brightened overlay */
+        .hero-overlay { background: rgba(0, 0, 0, 0.25); }
         
-        .shadow-outline {
-            color: white;
-            font-size: 48px;
-            font-family: sans-serif;
-            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        /* The "Really Big" Shadow for Titles */
+        .heavy-shadow {
+            text-shadow: 4px 4px 15px rgba(0, 0, 0, 0.9), 0px 0px 30px rgba(0, 0, 0, 0.5);
         }
 
         .bg-wood { 
@@ -77,17 +75,14 @@
         </div>
     </nav>
 
-    <header class="relative h-screen flex items-center justify-center text-white">
+    <header class="relative h-[50vh] md:h-screen flex items-center justify-center text-white">
         <img src="Cabin_Front_1.jpg" alt="Weeks Creek Haven" class="absolute inset-0 w-full h-full object-cover">
         <div class="absolute inset-0 hero-overlay"></div>
         <div class="relative z-10 text-center px-4 mt-16">
-            <h1 class="text-shadow: 3px 5px 3px rgba(0,0,0,.6) text-6xl md:text-8xl mb-4 tracking-tight font-serif drop-shadow-lg" style="font-variant: small-caps;">Weeks Creek Haven</h1>
-            <p class="text-xl md:text-4xl italic mb-10 text-stone-200 font-serif drop-shadow-md" style="font-variant: small-caps;">"Your Cabin Away From Home"</p>
+            <h1 class="text-5xl md:text-8xl mb-4 tracking-tight font-serif heavy-shadow" style="font-variant: small-caps;">Weeks Creek Haven</h1>
+            <p class="text-lg md:text-4xl italic mb-10 text-stone-200 font-serif heavy-shadow" style="font-variant: small-caps;">"Your Cabin Away From Home"</p>
             <div class="flex flex-col md:flex-row gap-5 justify-center">
-                <a href="#book" class="border-2 border-white text-black bg-white px-10 py-4 rounded-full font-bold hover:bg-stone-800/5 hover:text-white transition uppercase tracking-widest text-sm text-center">Check A Date To Borrow The Cabin</a>
-            </div><br>
-            <div class="flex flex-col md:flex-row gap-5 justify-center">
-                <a href="gallery.html" class="border-2 border-white text-white px-10 py-4 rounded-full font-bold hover:bg-white hover:text-stone-800 transition uppercase tracking-widest text-sm text-center">View the Gallery</a>
+                <a href="#book" class="border-2 border-white text-black bg-white px-10 py-4 rounded-full font-bold hover:bg-stone-800/5 hover:text-white transition uppercase tracking-widest text-xs md:text-sm text-center">Check Availability</a>
             </div>
         </div>
     </header>
@@ -95,9 +90,9 @@
     <section id="about" class="py-24 px-6 max-w-6xl mx-auto">
         <div class="grid md:grid-cols-2 gap-16 items-center">
             <div class="space-y-6">
-                <h2 class="text-4xl text-center mb-16 text-stone-200 font-bold" style="font-variant: small-caps;">Rustic Charm meets <br>Mountain Comfort</h2>
+                <h2 class="text-4xl text-center mb-16 text-stone-800 font-bold" style="font-variant: small-caps;">Rustic Charm meets <br>Mountain Comfort</h2>
                 <p class="p-6 border border-stone-700 rounded-lg shadow-xl parchment text-stone-800">
-                    Weeks Creek Haven (<strong>421 Weeks Creek Rd</strong>) is a unique <strong>chinking styled log cabin</strong> nestled in the Aska Adventure Area of Blue Ridge, GA. We blend the authentic feel of a traditional log home with high-speed Gigabit Fiber Internet, streamside peace, and a massive 98" screen.
+                    Weeks Creek Haven (<strong>421 Weeks Creek Rd</strong>) is a unique <strong>chinking styled log cabin</strong> nestled in the Aska Adventure Area of Blue Ridge, GA.
                 </p>
                 <div class="grid grid-cols-2 gap-x-8 gap-y-6 pt-6 border-t border-stone-200 text-center">
                     <div><p class="p-6 border border-stone-700 rounded-lg shadow-xl parchment text-stone-800 bg-stone-300/60"><span class="block text-3xl font-bold accent-green">11</span><span class="text-xs text-stone-900 uppercase tracking-wider font-bold">Guests</span></p></div>
@@ -118,12 +113,6 @@
                 <a href="https://www.google.com/maps/dir/?api=1&destination=421+Weeks+Creek+Rd+Blue+Ridge+GA+30513" target="_blank" class="text-sm font-bold uppercase tracking-widest text-green-800 hover:underline">
                     Open in Google Maps →
                 </a>
-                <div class="bg-amber-100/80 border-l-4 border-amber-500 p-5 mt-8 mb-6 rounded-r-md">
-                    <p class="text-amber-950 font-bold mb-1.5">⚠️ IMPORTANT Mapping Note:</p>
-                    <p class="text-amber-800 text-sm">
-                        Cell phone reception in the mountains is very poor. **Please start your GPS directions while you still have service**.
-                    </p>
-                </div>
             </div>
             <div class="shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white p-2">
                 <img src="01_Welcome.jpg" alt="Map graphic and cabin welcome info" class="w-full h-auto object-cover rounded">
