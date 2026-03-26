@@ -1,74 +1,84 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Charles Reeves & Family | Weeks Creek Haven VIP</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Montserrat', sans-serif; background-color: #fcfaf7; }
-        h1, h2, h3 { font-family: 'Crimson Text', serif; }
-        .parchment { background-color: #f4eee0; border: 1px solid #dcd3bd; }
-        .accent-green { color: #4a5d4e; }
-    </style>
-</head>
-<body class="bg-stone-50">
+<body class="bg-stone-50 text-stone-900">
 
-    <nav class="w-full bg-white/95 py-4 px-6 flex justify-between items-center border-b border-stone-100">
-        <a href="index.html" class="font-bold text-stone-800 tracking-widest uppercase text-sm">Weeks Creek Haven</a>
+    <nav class="w-full bg-white/95 py-6 px-10 flex justify-between items-center border-b border-stone-200 sticky top-0 z-50">
+        <a href="index.html" class="font-bold text-stone-800 tracking-[0.4em] uppercase text-xs">Weeks Creek Haven</a>
+        <span class="text-[10px] text-amber-700 font-bold uppercase tracking-widest">Guest Portal</span>
     </nav>
 
-    <main class="max-w-5xl mx-auto py-20 px-6">
-        <div class="parchment p-8 md:p-14 rounded-lg shadow-2xl">
+    <main class="max-w-5xl mx-auto py-16 px-6">
+        <div class="parchment p-10 md:p-20 rounded-xl shadow-2xl border border-stone-300/50">
             
-            <div class="text-center border-b border-stone-300 pb-6 mb-10">
-                <span class="text-xs font-bold uppercase tracking-[0.3em] text-amber-700">Exclusive Access</span>
-                <h1 class="text-5xl mt-2 text-green-900 italic">Welcome, Charles Reeves & Family</h1>
-                <p class="text-stone-600 mt-4 italic mb-8">We can't wait for you to visit the Haven! As our closest friends, we’ve prepared these extra details for your stay.</p>
+            <div class="text-center border-b border-stone-200 pb-12 mb-12">
+                <span class="text-[11px] font-bold uppercase tracking-[0.5em] text-amber-800/80 mb-4 block">A Private Retreat for Our Dearest Friends</span>
+                <h1 class="text-6xl text-green-900 italic leading-tight">Welcome, Charles Reeves & Family</h1>
+                <p class="text-stone-500 mt-6 text-lg max-w-2xl mx-auto font-serif italic">"We are so happy to have you at the Haven. As our inner circle, we want you to feel completely at home. Please enjoy these extra touches during your stay."</p>
                 
-                <div class="mt-8 mb-4 max-w-4xl mx-auto rounded-lg overflow-hidden shadow-lg border-2 border-green-800/30">
-                    <img src="/guests/charles.png" alt="Weeks Creek Haven Welcome Sign for Charles Reeves & Family" class="w-full h-auto">
-                </div>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-12">
-                <div class="space-y-6">
-                    <h3 class="font-bold uppercase tracking-widest text-xs text-stone-400 border-b border-stone-200 pb-2">Special Touches</h3>
-                    <ul class="space-y-4 text-stone-800">
-                        <li class="flex items-start gap-3">
-                            <span class="text-green-800 font-bold">?</span>
-                            <span><strong>The Wine Cellar:</strong> Feel free to help yourselves to a bottle from the second row.<br>(Hint:  There is no winde cellar, sorry.</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-green-800 font-bold">?</span>
-                            <span><strong>Late Check-Out:</strong> Don't rush; take your time and head out by 2:00 or 3:00 PM.</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-green-800 font-bold">?</span>
-                            <span><strong>Use Any Stuff:</strong> Feel free to use our stuff from the kitchen, bath's.  If you do have a chance to replenish some of those things, that would be great.</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="space-y-6">
-                    <h3 class="font-bold uppercase tracking-widest text-xs text-stone-400 border-b border-stone-200 pb-2">Priority Access</h3>
-                    <div class="bg-white p-6 rounded border border-stone-200 shadow-inner">
-                        <p class="text-xs uppercase font-bold text-stone-400 mb-2">Private Entrance Code</p>
-                        <p class="text-4xl tracking-[0.4em] font-mono text-stone-800">22246#</p>
+                <div class="mt-12 group">
+                    <div class="relative rounded-lg overflow-hidden shadow-2xl border-[12px] border-white transition-transform duration-500 hover:scale-[1.01]">
+                        <img src="/guests/charles.png" alt="Personal Welcome Sign" class="w-full h-auto">
+                        <div class="absolute inset-0 shadow-[inset_0_0_60px_rgba(0,0,0,0.1)] pointer-events-none"></div>
                     </div>
                 </div>
             </div>
 
-            <div class="mt-12 pt-10 border-t border-stone-200 text-center">
-                <a href="important-info.html?access=granted" class="bg-stone-800 text-white px-8 py-3 rounded font-bold uppercase tracking-widest text-xs hover:bg-black transition">View Standard Guest Info</a>
+            <div class="grid md:grid-cols-2 gap-16">
+                <div class="space-y-10">
+                    <h3 class="font-bold uppercase tracking-[0.3em] text-[10px] text-stone-400 border-b border-stone-200 pb-3">Special Touches</h3>
+                    
+                    <div class="space-y-8">
+                        <div class="flex gap-5">
+                            <span class="text-2xl mt-1">??</span>
+                            <div>
+                                <h4 class="font-bold text-green-900 text-sm uppercase tracking-wider">The "Wine Cellar"</h4>
+                                <p class="text-stone-600 text-sm mt-1 leading-relaxed">Feel free to help yourselves to a bottle from the second row. <span class="italic block mt-1 opacity-70">(Hint: There is no wine cellar, but the rack is all yours!)</span></p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-5">
+                            <span class="text-2xl mt-1">?</span>
+                            <div>
+                                <h4 class="font-bold text-green-900 text-sm uppercase tracking-wider">Linger Longer</h4>
+                                <p class="text-stone-600 text-sm mt-1 leading-relaxed">Don't rush off on our account. Take your time and enjoy a late check-out; we're happy for you to stay until 2:00 or 3:00 PM.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-5">
+                            <span class="text-2xl mt-1">??</span>
+                            <div>
+                                <h4 class="font-bold text-green-900 text-sm uppercase tracking-wider">Make Yourselves at Home</h4>
+                                <p class="text-stone-600 text-sm mt-1 leading-relaxed">Please use whatever you need from the kitchen and baths. If you happen to use the last of something, a quick replenishment is always appreciated.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-10">
+                    <h3 class="font-bold uppercase tracking-[0.3em] text-[10px] text-stone-400 border-b border-stone-200 pb-3">Arrival Details</h3>
+                    <div class="bg-white/60 p-10 rounded-lg border border-stone-200 shadow-sm text-center">
+                        <p class="text-[10px] uppercase font-bold text-stone-400 mb-4 tracking-widest">Private Entrance Code</p>
+                        <p class="text-5xl tracking-[0.3em] font-light text-green-900">22246<span class="text-amber-700">#</span></p>
+                        <p class="text-[10px] text-stone-400 mt-6 italic">Valid for the duration of your stay</p>
+                    </div>
+                    
+                    <div class="pt-4">
+                        <p class="text-xs text-stone-400 leading-relaxed italic border-l-2 border-stone-200 pl-4">
+                            Need anything during your stay? <br>
+                            Reach out to **Lance** or **Heather** directly!
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-20 pt-10 border-t border-stone-200 text-center">
+                <a href="important-info.html?access=granted" class="inline-block border border-stone-800 text-stone-800 px-10 py-4 rounded-full font-bold uppercase tracking-[0.2em] text-[10px] hover:bg-stone-800 hover:text-white transition-all duration-300">
+                    View Standard Guest Guide
+                </a>
             </div>
         </div>
     </main>
 
-    <footer class="py-10 text-center text-xs text-stone-500 uppercase tracking-widest">
-        © 2026 Heather & Lance | Blue Ridge, Georgia
+    <footer class="py-12 text-center">
+        <p class="text-[10px] text-stone-400 uppercase tracking-[0.4em]">© 2026 Heather & Lance | Blue Ridge, Georgia</p>
     </footer>
 
 </body>
-</html>
