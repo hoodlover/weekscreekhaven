@@ -152,6 +152,55 @@
             <img src="/gallery/Inside_2.jpeg" alt="Log cabin interior" class="rounded-lg shadow-2xl border-4 border-white">
         </div>
     </section>
+	
+	    <section id="rules" class="py-24 px-6 bg-stone-texture shadow-inner">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl text-center mb-16 text-stone-200 font-bold" style="font-variant: small-caps;">House Rules & Important Info</h2>
+            <div class="space-y-4">
+                <div class="accordion-item bg-white/95 border border-stone-200 rounded-lg shadow-lg overflow-hidden">
+                    <button onclick="toggleAccordion(this)" class="w-full text-left p-6 font-bold flex justify-between items-center hover:bg-stone-50 transition accent-green">
+                        Occupancy & Safety
+                        <span class="text-xl">+</span>
+                    </button>
+                    <div class="accordion-content px-6 text-gray-700 text-sm">
+                        Maximum 11 guests. No pets allowed. No smoking on premises. No parties or events. Ensure children are attended around fireplaces/hot tub.
+                    </div>
+                </div>
+                <div class="accordion-item bg-white/95 border border-stone-200 rounded-lg shadow-lg overflow-hidden">
+                    <button onclick="toggleAccordion(this)" class="w-full text-left p-6 font-bold flex justify-between items-center hover:bg-stone-50 transition accent-green">
+                        Checkout & Cleanliness
+                        <span class="text-xl">+</span>
+                    </button>
+                    <div class="accordion-content px-6 text-gray-700 text-sm">
+                        Excess mess left at checkout will result in a $250+ fine. Please notify us immediately if anything breaks!
+                    </div>
+                </div>
+                <div class="accordion-item bg-white/95 border border-stone-200 rounded-lg shadow-lg overflow-hidden">
+                    <button onclick="toggleAccordion(this)" class="w-full text-left p-6 font-bold flex justify-between items-center hover:bg-stone-50 transition accent-green">
+                        Wi-Fi, GPS & BBQ
+                        <span class="text-xl">+</span>
+                    </button>
+                    <div class="accordion-content px-6 text-gray-700 text-sm">
+                        Gig Fiber Wi-Fi (Password: creeklife). Start GPS *before* leaving the driveway. Charcoal BBQ provided—bring charcoal and replace cover once cooled.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="book" class="py-24 bg-wood px-6 border-t border-stone-200">
+        <div class="max-w-3xl mx-auto bg-white p-8 md:p-14 shadow-2xl rounded-lg border-t-8 border-green-800 parchment">
+            <h2 class="text-4xl text-center mb-10 accent-green italic">Inquire About Your Stay</h2>
+            <form action="https://formspree.io/f/mzdjnprj" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <input type="text" name="name" placeholder="Full Name" required class="border-b-2 border-stone-200 p-2 focus:border-green-800 outline-none parchment">
+                <input type="email" name="email" placeholder="Email Address" required class="border-b-2 border-stone-200 p-2 focus:border-green-800 outline-none parchment">
+                <input type="text" name="arrival" placeholder="Arrival Date" onfocus="(this.type='date')" class="border-b-2 border-stone-200 p-2 focus:border-green-800 outline-none parchment">
+                <input type="text" name="departure" placeholder="Departure Date" onfocus="(this.type='date')" class="border-b-2 border-stone-200 p-2 focus:border-green-800 outline-none parchment">
+                <textarea name="message" placeholder="Message or Number of guests..." rows="3" class="md:col-span-2 border-b-2 border-stone-200 p-2 focus:border-green-800 outline-none parchment"></textarea>
+                <button type="submit" class="md:col-span-2 bg-green-800 text-white font-bold py-4 rounded hover:bg-green-900 transition shadow-lg text-sm uppercase tracking-widest mt-6">Send Inquiry</button>
+            </form>
+        </div>
+    </section>
 
     <footer class="bg-stone-900 text-stone-500 py-16 px-6 text-center">
         <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-8">
