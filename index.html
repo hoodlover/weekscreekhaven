@@ -21,7 +21,8 @@
         body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
         h1, h2, h3, h4 { font-family: 'Crimson Text', serif; }
         
-        .hero-overlay { background: rgba(0, 0, 0, 0.45); }
+        /* Brightened overlay from 0.45 to 0.25 */
+        .hero-overlay { background: rgba(0, 0, 0, 0.2); }
         
         .shadow-outline {
             color: white;
@@ -80,8 +81,8 @@
         <img src="Cabin_Front_1.jpg" alt="Weeks Creek Haven" class="absolute inset-0 w-full h-full object-cover">
         <div class="absolute inset-0 hero-overlay"></div>
         <div class="relative z-10 text-center px-4 mt-16">
-            <h1 class="text-6xl md:text-8xl mb-4 tracking-tight font-serif">Weeks Creek Haven</h1>
-            <p class="text-xl md:text-4xl italic mb-10 text-stone-200 font-serif">"Your Cabin Away From Home"</p>
+            <h1 class="text-6xl md:text-8xl mb-4 tracking-tight font-serif drop-shadow-lg" style="font-variant: small-caps;">Weeks Creek Haven</h1>
+            <p class="text-xl md:text-4xl italic mb-10 text-stone-200 font-serif drop-shadow-md" style="font-variant: small-caps;">"Your Cabin Away From Home"</p>
             <div class="flex flex-col md:flex-row gap-5 justify-center">
                 <a href="#book" class="border-2 border-white text-black bg-white px-10 py-4 rounded-full font-bold hover:bg-stone-800/5 hover:text-white transition uppercase tracking-widest text-sm text-center">Check A Date To Borrow The Cabin</a>
             </div><br>
@@ -109,30 +110,6 @@
         </div>
     </section>
 
-    <section class="bg-stone-texture text-rustic-light py-24 px-6 shadow-inner">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-4xl text-center mb-16 text-stone-200 font-bold" style="font-variant: small-caps;">The Cabin Highlights</h2>
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12 text-center">
-                <div class="p-6 border border-stone-700 rounded-lg shadow-xl parchment text-stone-800">
-                    <h4 class="font-bold text-lg mb-1 accent-green">Streamside Relaxing</h4>
-                    <p class="text-sm text-stone-600">Pure relaxation and gentle sounds.</p>
-                </div>
-                <div class="p-6 border border-stone-700 rounded-lg shadow-inner bg-stone-900/50">
-                    <h4 class="font-bold text-lg mb-1 text-white">Large Hot Tub</h4>
-                    <p class="text-sm text-stone-300">Unwind under the stars (Towel Warmer provided!)</p>
-                </div>
-                <div class="p-6 border border-stone-700 rounded-lg shadow-inner bg-stone-900/50">
-                    <h4 class="font-bold text-lg mb-1 text-white">98" Big Screen TV</h4>
-                    <p class="text-sm text-stone-300">Enjoy movie nights or catch the game.</p>
-                </div>
-                <div class="p-6 border border-stone-700 rounded-lg shadow-xl parchment text-stone-800">
-                    <h4 class="font-bold text-lg mb-1 accent-green">Gas Fireplace</h4>
-                    <p class="text-sm text-stone-600">Cozy living room comfort.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <section id="location" class="py-24 px-6 bg-wood border-t border-stone-200">
         <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
             <div class="shadow-xl rounded-lg border-t-8 border-green-800 parchment p-12 space-y-4">
@@ -151,44 +128,6 @@
             <div class="shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white p-2">
                 <img src="01_Welcome.jpg" alt="Map graphic and cabin welcome info" class="w-full h-auto object-cover rounded">
             </div>
-        </div>
-    </section>
-
-    <section id="rules" class="py-24 px-6 bg-stone-texture shadow-inner">
-        <div class="max-w-4xl mx-auto">
-            <h2 class="text-4xl text-center mb-16 text-stone-200 font-bold" style="font-variant: small-caps;">House Rules & Important Info</h2>
-            <div class="space-y-4">
-                <div class="accordion-item bg-white/95 border border-stone-200 rounded-lg shadow-lg overflow-hidden">
-                    <button onclick="toggleAccordion(this)" class="w-full text-left p-6 font-bold flex justify-between items-center hover:bg-stone-50 transition accent-green">
-                        Occupancy & Safety <span class="text-xl">+</span>
-                    </button>
-                    <div class="accordion-content px-6 text-gray-700 text-sm">
-                        Maximum 11 guests. No pets allowed. No smoking on premises.
-                    </div>
-                </div>
-                <div class="accordion-item bg-white/95 border border-stone-200 rounded-lg shadow-lg overflow-hidden">
-                    <button onclick="toggleAccordion(this)" class="w-full text-left p-6 font-bold flex justify-between items-center hover:bg-stone-50 transition accent-green">
-                        Checkout & Cleanliness <span class="text-xl">+</span>
-                    </button>
-                    <div class="accordion-content px-6 text-gray-700 text-sm">
-                        Excess mess at checkout results in a $250+ fine.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="book" class="py-24 bg-wood px-6 border-t border-stone-200">
-        <div class="max-w-3xl mx-auto bg-white p-8 md:p-14 shadow-2xl rounded-lg border-t-8 border-green-800 parchment">
-            <h2 class="text-4xl text-center mb-10 accent-green italic">Inquire About Your Stay</h2>
-            <form action="https://formspree.io/f/mzdjnprj" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <input type="text" name="name" placeholder="Full Name" required class="border-b-2 border-stone-200 p-2 focus:border-green-800 outline-none parchment">
-                <input type="email" name="email" placeholder="Email Address" required class="border-b-2 border-stone-200 p-2 focus:border-green-800 outline-none parchment">
-                <input type="text" name="arrival" placeholder="Arrival Date" onfocus="(this.type='date')" class="border-b-2 border-stone-200 p-2 focus:border-green-800 outline-none parchment">
-                <input type="text" name="departure" placeholder="Departure Date" onfocus="(this.type='date')" class="border-b-2 border-stone-200 p-2 focus:border-green-800 outline-none parchment">
-                <textarea name="message" placeholder="Message or Number of guests..." rows="3" class="md:col-span-2 border-b-2 border-stone-200 p-2 focus:border-green-800 outline-none parchment"></textarea>
-                <button type="submit" class="md:col-span-2 bg-green-800 text-white font-bold py-4 rounded hover:bg-green-900 transition shadow-lg text-sm uppercase tracking-widest mt-6">Send Inquiry</button>
-            </form>
         </div>
     </section>
 
@@ -221,14 +160,6 @@
     </button>
 
     <script>
-        // Accordion Logic
-        function toggleAccordion(button) {
-            const item = button.parentElement;
-            item.classList.toggle('active');
-            const icon = button.querySelector('span');
-            icon.innerText = item.classList.contains('active') ? '−' : '+';
-        }
-
         // Mobile Menu Toggle
         const menuBtn = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
