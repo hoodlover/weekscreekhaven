@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weeks Creek Haven | Digital Guest Guide</title>
+    <title>Weeks Creek Haven | Guest Guide</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
@@ -27,9 +27,20 @@
             background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
             background-size: auto 100%;
             border-bottom: 4px solid #2c241e;
+            box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
         }
 
-        .wood-btn { transition: transform 0.2s ease; height: 50px; display: block; }
+        .wood-btn {
+            transition: transform 0.2s ease;
+            height: 60px; /* Increased nav button size */
+            width: auto;
+            display: block;
+        }
+
+        @media (min-width: 1536px) {
+            .wood-btn { height: 90px; }
+        }
+
         .nav-link-group a .hover-img { display: none; }
         .nav-link-group a:hover .normal-img { display: none; }
         .nav-link-group a:hover .hover-img { display: block; }
@@ -40,104 +51,133 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.3);
         }
 
-        /* Modal Styles */
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); }
-        .modal-content { margin: auto; display: block; width: 80%; max-width: 700px; padding-top: 50px; }
+        .modal-content { margin: auto; display: block; width: 80%; max-width: 800px; padding-top: 50px; }
         .close { position: absolute; top: 15px; right: 35px; color: #f1f1f1; font-size: 40px; cursor: pointer; }
 
         .zoom-card { cursor: pointer; transition: 0.3s; border: 4px solid white; }
         .zoom-card:hover { transform: scale(1.02); box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
+
+        .rule-card {
+            border-left: 6px solid #4a5d4e;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 0.5rem;
+        }
     </style>
 </head>
 <body class="bg-wood">
 
-    <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 flex justify-between items-center">
+    <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
         <a href="index.html" class="flex-shrink-0">
-            <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14">
+            <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
         </a>
-        <div class="hidden md:flex space-x-1 nav-link-group items-center">
-            <a href="index.html"><img src="/buttons/find-cabin.jpg" alt="Home" class="wood-btn normal-img"></a>
-            <a href="important-info.html"><img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img"></a>
+        
+        <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
+            <a href="things-to-do.html">
+                <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
+                <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
+            </a>
+            <a href="need-to-know.html">
+                <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
+                <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
+            </a>
+            <a href="find-us.html">
+                <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
+                <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
+            </a>
+            <a href="gallery.html">
+                <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
+                <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
+            </a>
+            <a href="important-info.html">
+                <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
+                <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
+            </a>
         </div>
     </nav>
 
-    <header class="relative h-[60vh] flex flex-col items-center justify-center text-white overflow-hidden">
-        <img src="/gallery/Cabin_Front_1.jpg" alt="Weeks Creek Haven" class="absolute inset-0 w-full h-full object-cover">
-        <div class="relative z-10 text-center px-4">
-            <h1 class="text-6xl md:text-8xl mb-2 tracking-tight font-serif heavy-shadow" style="font-variant: small-caps;">Weeks Creek Haven</h1>
-            <p class="text-2xl italic mb-8 text-stone-200 font-serif heavy-shadow">Everything You Need to Know</p>
+    <header class="relative h-screen flex flex-col items-center justify-center text-white overflow-hidden">
+        <img src="/webpic/toknow.jpg" alt="Weeks Creek Haven Streamside" class="absolute inset-0 w-full h-full object-cover">
+        
+        <div class="relative z-10 text-center px-4 pt-20">
+            <h1 class="text-6xl md:text-9xl mb-2 tracking-tight font-serif heavy-shadow" style="font-variant: small-caps;">Weeks Creek Haven</h1>
+            <p class="text-2xl md:text-4xl italic mb-12 text-stone-200 font-serif heavy-shadow">Everything You Need to Know</p>
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto py-12 px-6 space-y-16">
+    <main class="max-w-6xl mx-auto py-16 px-6 space-y-20">
 
         <section class="grid md:grid-cols-2 gap-12 items-center">
             <div class="order-2 md:order-1">
                 <img src="HotTub.jpg" alt="Hot Tub Rules" class="rounded-lg zoom-card shadow-2xl" onclick="openModal(this.src)">
-                <p class="text-center text-xs mt-2 italic">Click to expand Hot Tub rules</p>
+                <p class="text-center text-xs mt-2 italic">Click to expand Hot Tub & Cover Lifter Guide [cite: 1, 2]</p>
             </div>
-            <div class="parchment p-8 rounded-xl order-1 md:order-2">
-                <h2 class="text-3xl font-bold text-green-900 mb-4 font-serif">💦 The Hot Tub Experience</h2>
-                <ul class="space-y-3">
-                    <li>• <strong>Towels:</strong> Use the dedicated hot tub towels by the entertainment room door.</li>
-                    <li>• <strong>Visual Guide:</strong> Check the cover lifter guide on the left to avoid damage.</li>
-                    <li>• <strong>Safety:</strong> Limit soaks to 15 minutes and please shower before use.</li>
-                </ul>
+            <div class="parchment p-8 rounded-xl order-1 md:order-2 border-l-8 border-green-900/30">
+                <h2 class="text-4xl font-bold text-green-900 mb-6 font-serif">💦 Hot Tub & Spa</h2>
+                <div class="space-y-4 text-lg">
+                    <p>• <strong>Max Soak:</strong> 15 minutes per soak[cite: 1].</p>
+                    <p>• <strong>Towels:</strong> Use dedicated hot tub towels located in the entertainment room[cite: 2].</p>
+                    <p>• <strong>Visual Guide:</strong> Follow the 4-step cover lifter guide to avoid equipment damage[cite: 1].</p>
+                    <p>• <strong>Spa Tub:</strong> Note that lower level spa tub jets are out of order, but it's perfect for a bubble bath[cite: 3]!</p>
+                </div>
             </div>
         </section>
 
-        <section class="parchment p-8 md:p-12 rounded-xl">
-            <h2 class="text-4xl text-center font-serif text-green-900 mb-10">🎸 The Cool Stuff</h2>
-            <div class="grid md:grid-cols-3 gap-8">
+        <section class="parchment p-8 md:p-16 rounded-xl relative overflow-hidden">
+            <h2 class="text-5xl text-center font-serif text-green-900 mb-12 uppercase tracking-tight">🎸 The Cool Stuff</h2>
+            <div class="grid md:grid-cols-3 gap-10">
                 <div class="text-center">
-                    <img src="04_Cool_Stuff.jpg" class="h-40 mx-auto mb-4 rounded shadow-lg zoom-card" onclick="openModal(this.src)">
-                    <h4 class="font-bold">98" Epic TV</h4>
-                    <p class="text-sm">Log in with your credentials and enjoy the theater experience.</p>
+                    <img src="04_Cool_Stuff.jpg" class="h-48 mx-auto mb-6 rounded shadow-lg zoom-card" onclick="openModal(this.src)">
+                    <h4 class="text-xl font-bold font-serif mb-2">98" Theater TV</h4>
+                    <p class="text-stone-700">Log in with your own credentials and enjoy the massive screen[cite: 2].</p>
                 </div>
                 <div class="text-center">
-                    <img src="04_Cool_Stuff.jpg" class="h-40 mx-auto mb-4 rounded shadow-lg zoom-card" onclick="openModal(this.src)">
-                    <h4 class="font-bold">Coffee Station</h4>
-                    <p class="text-sm">Keurig for quick cups or the Espresso machine for the enthusiasts.</p>
+                    <img src="04_Cool_Stuff.jpg" class="h-48 mx-auto mb-6 rounded shadow-lg zoom-card" onclick="openModal(this.src)">
+                    <h4 class="text-xl font-bold font-serif mb-2">Coffee & Espresso</h4>
+                    <p class="text-stone-700">Keurig starter pods provided. Pro espresso machine available for those with the skills[cite: 2]!</p>
                 </div>
                 <div class="text-center">
-                    <img src="09 Gas Log Tips.jpg" class="h-40 mx-auto mb-4 rounded shadow-lg zoom-card" onclick="openModal(this.src)">
-                    <h4 class="font-bold">Cozy Fireplace</h4>
-                    <p class="text-sm">Always return the knob to "Pilot" when leaving the cabin[cite: 15].</p>
+                    <img src="09 Gas Log Tips.jpg" class="h-48 mx-auto mb-6 rounded shadow-lg zoom-card" onclick="openModal(this.src)">
+                    <h4 class="text-xl font-bold font-serif mb-2">Gas Log Fireplace</h4>
+                    <p class="text-stone-700">Keep flames at half or below—it's propane hungry! Always return to 'Pilot'[cite: 4].</p>
                 </div>
             </div>
         </section>
 
         <section class="grid md:grid-cols-2 gap-12 items-center">
-            <div class="parchment p-8 rounded-xl">
-                <h2 class="text-3xl font-bold text-green-900 mb-4 font-serif">🐻 Bear Country Safety</h2>
-                <p class="mb-4">We love our wildlife, but let's keep them at a distance:</p>
-                <ul class="space-y-2 text-sm">
-                    <li>• <strong>Garbage:</strong> Use the bear-proof 60-gallon bin on the front porch.</li>
-                    <li>• <strong>Wildlife:</strong> Never leave loose garbage outside or in your car.</li>
-                    <li>• <strong>Firepit:</strong> Ensure the fire is completely out before heading in.</li>
-                </ul>
+            <div class="parchment p-8 rounded-xl border-l-8 border-green-900/30">
+                <h2 class="text-4xl font-bold text-green-900 mb-6 font-serif">🐻 Mountain Safety</h2>
+                <div class="space-y-4 text-lg">
+                    <p>• <strong>Bear Safety:</strong> Use the 60-gallon bear-proof bin on the front porch for all bagged trash[cite: 3].</p>
+                    <p>• <strong>Firepit:</strong> Streamside relaxation awaits. Please ensure fire is out before heading in[cite: 3].</p>
+                    <p>• <strong>Connectivity:</strong> Gig Fiber is here! Cell service is poor, so connect to Wi-Fi immediately[cite: 5].</p>
+                </div>
             </div>
             <div>
                 <img src="05 Safety.jpg" alt="Safety Guide" class="rounded-lg shadow-2xl zoom-card" onclick="openModal(this.src)">
-                <p class="text-center text-xs mt-2 italic">Click to expand Safety info</p>
+                <p class="text-center text-xs mt-2 italic">Click to expand Garbage & Wildlife Safety [cite: 3]</p>
             </div>
         </section>
 
-        <section class="parchment p-8 md:p-12 rounded-xl border-l-8 border-green-900">
-            <div class="flex flex-col md:flex-row gap-8 items-center">
+        <section class="parchment p-8 md:p-16 rounded-xl border-t-8 border-green-900">
+            <div class="flex flex-col md:flex-row gap-12 items-center">
                 <div class="flex-1">
-                    <h2 class="text-3xl font-serif mb-6">👋 Leaving Weeks Creek Haven</h2>
-                    <div class="grid grid-cols-2 gap-4 text-sm">
-                        <p>✅ Strip used sheets[cite: 11].</p>
-                        <p>✅ Start the dishwasher[cite: 11].</p>
-                        <p>✅ Wash & dry towels[cite: 11].</p>
-                        <p>✅ Fireplace to 'Pilot'[cite: 15].</p>
-                        <p>✅ Trash to bear bin.</p>
-                        <p>✅ Say "Alexa, Going Home"[cite: 11].</p>
+                    <h2 class="text-4xl font-serif mb-8 uppercase text-green-900">👋 Departure Checklist</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-lg">
+                        <p>✅ Strip sheets from used beds[cite: 6].</p>
+                        <p>✅ Start dishwasher & wash dishes[cite: 6].</p>
+                        <p>✅ Wash/Dry towels[cite: 6].</p>
+                        <p>✅ Fireplace turned to 'Pilot'[cite: 6].</p>
+                        <p>✅ Trash to bear-proof bins[cite: 6].</p>
+                        <p>✅ Say "Alexa, Going Home"[cite: 6].</p>
                     </div>
+                    <p class="mt-10 italic text-stone-600 text-center md:text-left">
+                        Check-out is at 11:00 AM. Please leave it as you found it for the next folks[cite: 6, 7].
+                    </p>
                 </div>
                 <div class="w-full md:w-1/3">
-                    <img src="29 F&F 2.jpg" class="rounded shadow-xl zoom-card" onclick="openModal(this.src)">
+                    <img src="29 F&F 2.jpg" class="rounded shadow-2xl zoom-card" onclick="openModal(this.src)">
                 </div>
             </div>
         </section>
@@ -149,10 +189,15 @@
         <img class="modal-content" id="img01">
     </div>
 
-    <footer class="bg-stone-900 text-stone-500 py-16 px-6 text-center">
-        <p class="text-white text-2xl font-serif italic mb-2">Weeks Creek Haven</p>
-        <p class="mb-8">Lance: 770.549.9358 | Heather: 678.993.3617 [cite: 11]</p>
-        <p class="text-xs uppercase tracking-widest">"Don't let the door hit ya where the Good Lord split ya" [cite: 11]</p>
+    <footer class="bg-stone-900 text-stone-500 py-20 px-6 text-center">
+        <div class="max-w-4xl mx-auto">
+            <p class="text-white text-3xl font-serif italic mb-4">Weeks Creek Haven</p>
+            <p class="mb-2 text-lg">Lance: 770.549.9358 | Heather: 678.993.3617 [cite: 7]</p>
+            <p class="mb-10 text-stone-600 uppercase tracking-widest text-sm">421 Weeks Creek Rd | Blue Ridge, GA 30513 [cite: 7]</p>
+            <p class="text-xs uppercase tracking-widest border-t border-stone-800 pt-8">
+                "Don't let the door hit ya where the Good Lord split ya" [cite: 6]
+            </p>
+        </div>
     </footer>
 
     <script>
