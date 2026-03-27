@@ -58,14 +58,16 @@
 
             <p class="text-stone-800 font-bold mb-10 text-lg">Safe travels home, and we hope to see you again soon!!</p>
             
-            <div class="flex justify-center">
-                <a href="index.html" class="inline-block transition-transform hover:scale-105">
-                    <img src="/buttons/friends-info.jpg" alt="Return to Main Site" class="h-16 w-auto shadow-xl rounded-lg">
-                </a>
-            </div>
-            
-            <p class="text-xs text-stone-500 mt-3 italic">Click to return to the main site.</p>
-        </div>
+            <div class="flex flex-col items-center justify-center">
+    <a href="index.html" class="group relative inline-block w-64 h-24 overflow-hidden rounded-lg shadow-xl transition-transform duration-300 hover:scale-105">
+        <img src="buttons/home.jpg" alt="Return to Home" 
+             class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0">
+        
+        <img src="buttons/home-hover.jpg" alt="Return to Home Hover" 
+             class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+    </a>
+    <p class="text-xs text-stone-500 mt-4 italic">Click the sign to return to the main site.</p>
+</div>
     </main>
 
     <footer class="py-8 text-center text-stone-400 text-xs uppercase tracking-[0.3em]">

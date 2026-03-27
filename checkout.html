@@ -173,7 +173,7 @@
 
             <form action="https://formspree.io/f/mzdjnprj" method="POST" class="space-y-8">
     
-    <input type="hidden" name="_next" value="thanks.html">
+    <input type="hidden" name="_next" value="https://www.weekscreekhaven.com/thanks.html">
     
     <input type="hidden" name="_subject" value="New Cabin Checkout & Guest Book Entry">
 
@@ -217,11 +217,17 @@
     </div>
 
     <div class="text-center pt-6">
-        <button type="submit" class="hover:scale-105 transition-transform border-0 bg-transparent p-0 cursor-pointer">
-            <img src="/buttons/friends-info.jpg" alt="Submit Update & Sign Book" class="h-16 w-auto shadow-xl rounded-lg">
-        </button>
-        <p class="mt-4 text-[10px] text-stone-500 uppercase tracking-widest">Click the button above to finish checkout</p>
-    </div>
+    <button type="submit" class="group relative mx-auto block focus:outline-none transition-transform hover:scale-105">
+        <img src="buttons/submit.jpg" 
+             alt="Submit Update" 
+             class="h-20 w-auto shadow-xl rounded-lg group-hover:hidden">
+        
+        <img src="/buttons/submit_hover.jpg" 
+             alt="Submit Update" 
+             class="h-20 w-auto shadow-xl rounded-lg hidden group-hover:block">
+    </button>
+    <p class="mt-4 text-[10px] text-stone-500 uppercase tracking-widest">Click the wooden sign to finish checkout</p>
+</div>
 </form>
         </div>
 
