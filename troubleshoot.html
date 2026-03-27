@@ -15,29 +15,25 @@
         
         .bg-wood { 
             background-color: #fcfaf7;
-            background-image: url('/webpic/vintage-wooden-board-textured-background.jpg');
+            background-image: linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.4)), url('/webpic/vintage-wooden-board-textured-background.jpg');
+            background-attachment: fixed;
+            background-size: cover;
         }
         
         .railroad-tie-nav {
-            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/webpic/railroad-tie-texture.jpg');
             background-size: auto 100%;
             background-repeat: repeat-x;
             border-bottom: 4px solid #2c241e;
+            box-shadow: inset 0px -10px 20px rgba(0,0,0,0.6);
         }
 
- .wood-btn {
-    transition: transform 0.2s ease;
-    height: 50px;
-    width: auto;
-    display: block;
-}
+        .wood-btn { transition: transform 0.2s ease; height: 50px; display: block; }
+        .wood-btn:hover { transform: scale(1.05); }
 
-/* Scaling for Large Monitors */
-@media (min-width: 1536px) {
-    .wood-btn {
-        height: 80px; 
-    }
-}
+        .nav-link-group a .hover-img { display: none; }
+        .nav-link-group a:hover .normal-img { display: none; }
+        .nav-link-group a:hover .hover-img { display: block; }
 
         .parchment { background-color: rgba(244, 238, 224, 0.95); border: 1px solid #dcd3bd; }
         
@@ -52,60 +48,46 @@
             border: 2px solid #dc2626;
             color: #991b1b;
         }
+
+        @media (min-width: 1536px) { .wood-btn { height: 80px; } }
     </style>
 </head>
 <body class="bg-wood">
 
-    <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 flex justify-between items-center">
+    <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
         <a href="index.html" class="flex-shrink-0">
             <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16">
         </a>
-        <a href="important-info.html" class="text-white text-xs uppercase tracking-widest hover:text-green-400">Back to Portal</a>
-		
-		class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
-    <a href="index.html" class="flex-shrink-0">
-        <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
-    </a>
-    
-    <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
-        <a href="things-to-do.html">
-            <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
-            <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
-        </a>
-        <a href="need-to-know.html">
-            <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
-            <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
-        </a>
-        <a href="find-us.html">
-            <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
-            <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
-        </a>
-        <a href="gallery.html">
-            <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
-            <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
-        </a>
-        <a href="important-info.html">
-            <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
-            <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
-        </a>
-    </div>
+        
+        <div class="hidden md:flex space-x-2 nav-link-group items-center">
+            <a href="things-to-do.html">
+                <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
+                <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
+            </a>
+            <a href="need-to-know.html">
+                <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
+                <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
+            </a>
+            <a href="find-us.html">
+                <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
+                <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
+            </a>
+            <a href="gallery.html">
+                <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
+                <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
+            </a>
+            <a href="important-info.html">
+                <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
+                <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
+            </a>
+        </div>
 
-    <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-    </button>
-
-    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800">
-        <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
-        <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
-        <a href="find-us.html"><img src="/buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
-        <a href="gallery.html"><img src="/buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
-        <a href="important-info.html"><img src="/buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
-    </div>
+        <button id="mobile-menu-button" class="md:hidden text-white">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
     </nav>
 
-    <header class="relative h-[30vh] flex items-center justify-center text-white overflow-hidden">
+    <header class="relative h-[35vh] flex items-center justify-center text-white overflow-hidden">
         <div class="absolute inset-0 bg-stone-900/60 z-10"></div>
         <div class="relative z-20 text-center px-4 mt-12">
             <h1 class="text-5xl md:text-6xl mb-2 tracking-tight font-serif uppercase">Cabin Troubleshooting</h1>
@@ -117,10 +99,10 @@
 
         <section class="parchment p-8 rounded-xl shadow-xl">
             <h2 class="text-3xl font-serif font-bold text-green-900 mb-6 flex items-center">
-                <span class="mr-3">ðŸ”¥</span> Fireplace & Gas Logs
+                <span class="mr-3">??</span> Fireplace & Gas Logs
             </h2>
             <div class="warning-box p-4 rounded-lg mb-6 text-sm font-bold">
-                STOP! If you smell gas, get everyone out and call us immediately!
+                STOP! If you smell gas, get everyone out and call Lance immediately!
             </div>
             <div class="grid md:grid-cols-2 gap-8">
                 <div class="space-y-4">
@@ -133,67 +115,69 @@
                         <p class="text-sm">Turn knob to 'PILOT' and push in. Insert lit match near back right prongs and hold for 30-60 seconds.</p>
                     </div>
                 </div>
-                <img src="/09 Gas Log Tips.jpg" alt="Fireplace Guide" class="rounded-lg shadow-md border-2 border-stone-300">
+                <img src="/09 Gas Log Tips.jpg" alt="Fireplace Guide" class="rounded-lg shadow-md border-2 border-stone-300 object-cover h-full">
             </div>
         </section>
 
         <div class="grid md:grid-cols-2 gap-8">
             <section class="parchment p-8 rounded-xl shadow-xl">
-                <h3 class="text-2xl font-serif font-bold text-stone-900 mb-4">ðŸš¿ Main Floor Shower</h3>
-                <p class="text-sm mb-4">It's a low-flow head and looks different than home.</p>
-                <ol class="space-y-3 text-sm">
-                    <li>1. Turn on the water.</li>
+                <h3 class="text-2xl font-serif font-bold text-stone-900 mb-4">?? Main Floor Shower</h3>
+                <p class="text-sm mb-4">It's a low-flow head and works differently than standard fixtures.</p>
+                <ol class="space-y-3 text-sm text-stone-700">
+                    <li>1. Turn on the water handles.</li>
                     <li>2. Adjust to your desired temperature.</li>
-                    <li>3. <strong>Pull down the spout ring</strong> located right under the shower spout.</li>
+                    <li>3. <strong>Pull down the spout ring</strong> located right under the shower spout to engage the showerhead.</li>
                 </ol>
-                <img src="/06 Amenities.jpg" class="mt-6 rounded shadow-inner" style="clip-path: inset(65% 0 0 0);">
+                <div class="mt-6 overflow-hidden rounded shadow-inner border border-stone-200">
+                    <img src="/06 Amenities.jpg" class="w-full" style="clip-path: inset(50% 0 0 0); transform: translateY(-20%);">
+                </div>
             </section>
 
             <section class="parchment p-8 rounded-xl shadow-xl">
-                <h3 class="text-2xl font-serif font-bold text-stone-900 mb-4">ðŸ¿ Retrowave Microwave</h3>
+                <h3 class="text-2xl font-serif font-bold text-stone-900 mb-4">?? Retrowave Microwave</h3>
                 <div class="bg-red-50 p-3 rounded mb-4 border border-red-100 text-xs font-bold text-red-800">
                     CRITICAL: Double-Cancel Safety Feature!
                 </div>
                 <p class="text-sm mb-4">Pressing "PAUSE CANCEL" <strong>once</strong> only pauses the timer. You <strong>MUST</strong> press it a <strong>second time</strong> to clear the time and unlock the door!</p>
-                <img src="/14 Microwave.jpg" class="rounded shadow-md border border-stone-200">
+                <img src="/14 Microwave.jpg" class="rounded shadow-md border border-stone-200 w-full object-cover">
             </section>
         </div>
 
-        <section class="parchment p-8 rounded-xl shadow-xl border-l-8 border-brown-900">
-            <h2 class="text-3xl font-serif font-bold text-stone-900 mb-6">ðŸš½ Carefree Commode Care</h2>
+        <section class="parchment p-8 rounded-xl shadow-xl border-l-8 border-stone-800">
+            <h2 class="text-3xl font-serif font-bold text-stone-900 mb-6">?? Carefree Commode Care</h2>
             <div class="grid md:grid-cols-2 gap-8 items-center">
-                <ul class="space-y-3 text-stone-700">
-                    <li class="flex items-center">âœ… Use ONLY septic-safe TP provided.</li>
-                    <li class="flex items-center">âŒ NO wipes, pads, or trash in the toilet.</li>
-                    <li class="flex items-center">ðŸ’ª Give the handle a firm, complete flush.</li>
-                    <li class="flex items-center">ðŸ§¼ Wipe the seat if you sprinkle!</li>
+                <ul class="space-y-4 text-stone-700">
+                    <li class="flex items-center"><span class="mr-2">?</span> Use ONLY septic-safe TP provided.</li>
+                    <li class="flex items-center"><span class="mr-2">?</span> NO wipes, pads, or trash in the toilet.</li>
+                    <li class="flex items-center"><span class="mr-2">??</span> Give the handle a firm, complete flush.</li>
+                    <li class="flex items-center"><span class="mr-2">??</span> Wipe the seat if you sprinkle!</li>
                 </ul>
                 <img src="/10 Commode.jpg" alt="Commode Rules" class="rounded-lg shadow-lg border-4 border-white">
             </div>
         </section>
 
-<section class="parchment p-8 rounded-xl shadow-xl border-l-8 border-orange-500">
-    <h2 class="text-3xl font-serif font-bold text-stone-900 mb-6 flex items-center">
-        <span class="mr-3">â˜€ï¸</span> Deck Infrared Heater
-    </h2>
-    <p class="text-sm mb-6 leading-relaxed">
-        Our deck is equipped with a **Briza Carbon Infrared Heater**. Unlike propane heaters, this uses sun-like rays to warm you directly, even in a mountain breeze!
-    </p>
-
-    <div class="grid md:grid-cols-2 gap-8">
-        <div class="space-y-4 text-sm text-stone-700">
-            <p><strong>To Start:</strong> Plug into the heavy-duty outlet on the deck and use the [Remote/Power Button] to turn on. You will feel heat within seconds.</p>
-            <p><strong>Built-in Timer:</strong> You can set a timer from 1â€“9 hours so you don't have to worry about forgetting to turn it off.</p>
-            <p><strong>Safety Features:</strong> The unit has a built-in "Tip-Over" sensor that automatically cuts power if it's knocked over.</p>
-        </div>
-        <div class="bg-orange-50 p-4 rounded-lg border border-orange-200">
-            <h4 class="font-bold text-orange-900 uppercase text-xs mb-2 italic">Pro-Tip:</h4>
-            <p class="text-xs text-orange-800">
-                The metal sheath is designed to stay safe to the touch, but please keep blankets, towels, and furniture at least 3 feet away from the front of the heater!
+        <section class="parchment p-8 rounded-xl shadow-xl border-l-8 border-orange-500">
+            <h2 class="text-3xl font-serif font-bold text-stone-900 mb-6 flex items-center">
+                <span class="mr-3">??</span> Deck Infrared Heater
+            </h2>
+            <p class="text-sm mb-6 leading-relaxed">
+                Our deck is equipped with a **Briza Carbon Infrared Heater**. It uses sun-like rays to warm you directly, even in a mountain breeze!
             </p>
-        </div>
-    </div>
-</section>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="space-y-4 text-sm text-stone-700">
+                    <p><strong>To Start:</strong> Plug into the heavy-duty outlet on the deck and use the Power Button to turn on. You will feel heat within seconds.</p>
+                    <p><strong>Built-in Timer:</strong> You can set a timer from 1–9 hours so you don't have to worry about forgetting to turn it off.</p>
+                    <p><strong>Safety:</strong> Unit automatically cuts power if it's knocked over.</p>
+                </div>
+                <div class="bg-orange-50 p-6 rounded-lg border border-orange-200">
+                    <h4 class="font-bold text-orange-900 uppercase text-xs mb-2 italic">Pro-Tip:</h4>
+                    <p class="text-xs text-orange-800 leading-relaxed">
+                        The metal sheath stays safe to the touch, but please keep blankets, towels, and furniture at least 3 feet away from the front of the heater!
+                    </p>
+                </div>
+            </div>
+        </section>
 
         <div class="text-center py-8">
             <p class="text-lg font-serif italic text-stone-600">"Embrace the occasional quirks of mountain living!"</p>
@@ -209,5 +193,10 @@
         <p class="text-xs uppercase tracking-widest">421 Weeks Creek Rd | Blue Ridge, GA</p>
     </footer>
 
+    <script>
+        const btn = document.getElementById('mobile-menu-button');
+        const menu = document.getElementById('mobile-menu');
+        if(btn) btn.onclick = () => menu?.classList.toggle('hidden');
+    </script>
 </body>
 </html>
