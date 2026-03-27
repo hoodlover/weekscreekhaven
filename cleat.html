@@ -8,14 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="/webpic/Weeks_Creek_Haven_Favicon.png">
 
-    <meta name="description" content="Welcome to Weeks Creek Haven (421 Weeks Creek Rd), your rustic streamside log cabin in Blue Ridge, GA. Located in the Aska Adventure Area with Hot Tub, Fast Fiber Internet, and epic 98-inch TV. Book your escape!">
-    
-    <meta property="og:title" content="Weeks Creek Haven | Blue Ridge, GA Log Cabin">
-    <meta property="og:description" content="A unique chinking log cabin escape! Fast Fiber, large Hot Tub, Streamside relaxation, and room for 11 guests. Check our availability!">
-    <meta property="og:image" content="/webpic/Weeks_Creek_Haven_Social_Preview.png">
-    <meta property="og:url" content="https://weekscreekhaven.com/">
-    <meta property="og:type" content="website">
-
     <style>
         body { 
             font-family: 'Montserrat', sans-serif; 
@@ -29,10 +21,13 @@
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); 
         }
         
+        /* Wood background texture */
         .bg-wood { 
             background-color: #1a1512; 
             background-image: url('/webpic/vintage-wooden-board-textured-background.jpg');
-            background-blend-mode: multiply; 
+            background-blend-mode: multiply;
+            background-attachment: fixed;
+            background-size: cover;
         }
         
         .railroad-tie-nav {
@@ -50,138 +45,47 @@
             display: block;
         }
 
-        @media (min-width: 1536px) {
-            .wood-btn { height: 80px; }
-        }
-
-        .wood-btn:hover { transform: scale(1.05); }
-
-        .nav-link-group a .hover-img { display: none; }
-        .nav-link-group a:hover .normal-img { display: none; }
-        .nav-link-group a:hover .hover-img { display: block; }
-
-        .accent-green { color: #a4c2a8; } 
-        
         .parchment { 
             background-color: rgba(244, 238, 224, 0.95); 
             border: 2px solid #dcd3bd; 
             color: #2c241e; 
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
         }
-        
-        #mobile-menu {
-            background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('/webpic/railroad-tie-texture.jpg');
-            background-size: cover;
-        }
+
+        .accent-green { color: #4a5d4e; }
     </style>
 </head>
-<body class="bg-wood pb-20">
 
-    <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
+<body class="bg-wood">
+
+    <nav class="fixed top-0 w-full z-50 railroad-tie-nav py-2 px-6 flex justify-between items-center">
         <a href="index.html" class="flex-shrink-0">
-            <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
+            <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16">
         </a>
         
-        <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
-            <a href="things-to-do.html">
-                <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
-                <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
-            </a>
-            <a href="need-to-know.html">
-                <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
-                <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
-            </a>
-            <a href="find-us.html">
-                <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
-                <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
-            </a>
-            <a href="gallery.html">
-                <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
-                <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
-            </a>
-            <a href="important-info.html">
-                <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
-                <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
-            </a>
-        </div>
-
-        <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-        </button>
-
-        <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800">
-            <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
-            <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
-            <a href="find-us.html"><img src="/buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
-            <a href="gallery.html"><img src="/buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
-            <a href="important-info.html"><img src="/buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
+        <div class="hidden md:flex space-x-2 items-center">
+            <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn"></a>
+            <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn"></a>
+            <a href="find-us.html"><img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn"></a>
         </div>
     </nav>
 
+    <div class="max-w-4xl mx-auto pt-24 md:pt-32 px-6">
+        <h1 class="text-5xl md:text-6xl mb-12 text-center italic">Cabin Essentials</h1>
 
-    <div class="max-w-4xl mx-auto pt-32 px-6">
-        <h1 class="text-5xl md:text-6xl mb-8 text-center italic">Cabin Essentials</h1>
-
-        <div class="parchment p-8 rounded-lg shadow-2xl space-y-8 mb-12">
+        <div class="parchment p-8 rounded-lg space-y-8 mb-12">
             <section>
                 <h2 class="text-3xl font-bold border-b border-stone-300 pb-2 mb-4 italic accent-green" style="text-shadow: none; color: #4a5d4e;">Key Cabin Stats</h2>
                 <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 text-base">
-                    <li><strong class="font-bold">Guests:</strong> 11 Max</li>
-                    <li><strong class="font-bold">Beds:</strong> 4 Bedrooms (Sleeps up to 11)</li>
-                    <li><strong class="font-bold">Internet:</strong> Gig Fiber Wi-Fi (Password: creeklife)</li>
-                    <li><strong class="font-bold">Check-in:</strong> Afternoon of your visit</li>
-                    <li><strong class="font-bold">Check-out:</strong> Typically around 3:00 PM</li>
-                    <li><strong class="font-bold">Must Have:</strong> Lots of Fun!</li>
+                    <li><strong>Guests:</strong> 11 Max</li>
+                    <li><strong>Beds:</strong> 4 Bedrooms (Sleeps up to 11)</li>
+                    <li><strong>Internet:</strong> Gig Fiber Wi-Fi (Password: creeklife)</li>
+                    <li><strong>Check-in:</strong> Afternoon of your visit</li>
+                    <li><strong>Check-out:</strong> Typically around 3:00 PM</li>
                 </ul>
             </section>
-
-            <section>
-                <h2 class="text-3xl font-bold border-b border-stone-300 pb-2 mb-4 italic accent-green" style="text-shadow: none; color: #4a5d4e;">Emergency Contacts</h2>
-                <div class="space-y-2 text-base">
-                    <p><strong>Fannin Regional Hospital:</strong> (706) 632-3711 (31 mins away)</p>
-                    <p><strong>Police Station:</strong> 301 Church St. (706) 632-3451</p>
-                    <p class="text-lg font-bold mt-4 text-red-800">FOR ALL EMERGENCIES CALL 911</p>
-                </div>
-            </section>
-        </div>
-
-        <div class="grid md:grid-cols-2 gap-8 mb-24">
-            <div class="rounded-md overflow-hidden border-4 border-white shadow-2xl">
-                <img src="/info/02_Need_to_Know.jpg" alt="Key Cabin Stats and Wi-Fi Info" class="w-full h-auto">
-            </div>
-            <div class="rounded-md overflow-hidden border-4 border-white shadow-2xl">
-                <img src="/info/04_Cool_Stuff.jpg" alt="Cabin Amenities Guide" class="w-full h-auto">
-            </div>
         </div>
     </div>
 
-    <footer class="bg-stone-900 text-stone-400 py-16 px-6 text-center border-t border-stone-800">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-8">
-            <div class="text-center md:text-left">
-                <p class="text-white text-2xl font-serif italic">Weeks Creek Haven</p>
-                <p>421 Weeks Creek Rd | Blue Ridge, GA 30513</p>
-            </div>
-            <div class="flex flex-wrap justify-center gap-6 text-xs font-bold uppercase tracking-widest text-green-400">
-                <a href="index.html" class="hover:text-white">Home</a>
-                <a href="things-to-do.html" class="hover:text-white">To Do & See</a>
-                <a href="find-us.html" class="hover:text-white">Find Us</a>
-                <a href="gallery.html" class="hover:text-white">Gallery</a>
-                <a href="important-info.html" class="hover:text-white">Friends Portal</a>
-            </div>
-        </div>
-        <div class="text-center mt-10 text-xs text-stone-600 pt-8 border-t border-stone-800 uppercase tracking-widest">
-            © 2026 Heather & Lance | Blue Ridge, Georgia
-        </div>
-    </footer>
-
-    <script>
-        const btn = document.getElementById('mobile-menu-button');
-        const menu = document.getElementById('mobile-menu');
-        btn.addEventListener('click', () => {
-            menu.classList.toggle('hidden');
-        });
-    </script>
 </body>
 </html>
