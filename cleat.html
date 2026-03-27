@@ -3,22 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cleaning Standards | Weeks Creek Haven</title>
-    
+    <title>Need to Know | Weeks Creek Haven</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="/webpic/Weeks_Creek_Haven_Favicon.png">
 
+    <meta name="description" content="Welcome to Weeks Creek Haven (421 Weeks Creek Rd), your rustic streamside log cabin in Blue Ridge, GA. Located in the Aska Adventure Area with Hot Tub, Fast Fiber Internet, and epic 98-inch TV. Book your escape!">
+    
+    <meta property="og:title" content="Weeks Creek Haven | Blue Ridge, GA Log Cabin">
+    <meta property="og:description" content="A unique chinking log cabin escape! Fast Fiber, large Hot Tub, Streamside relaxation, and room for 11 guests. Check our availability!">
+    <meta property="og:image" content="/webpic/Weeks_Creek_Haven_Social_Preview.png">
+    <meta property="og:url" content="https://weekscreekhaven.com/">
+    <meta property="og:type" content="website">
+
     <style>
-        body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; background-color: #f4f1ea; }
-        h1, h2, h3 { font-family: 'Crimson Text', serif; }
-        
-        .bg-wood { 
-            background-color: #fcfaf7;
-            background-image: url('/webpic/vintage-wooden-board-textured-background.jpg');
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            color: #f3f0ec; 
+            scroll-behavior: smooth; 
+            font-weight: 500; 
+        }
+        h1, h2, h3, h4 { 
+            font-family: 'Crimson Text', serif; 
+            color: #ffffff; 
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); 
         }
         
-        /* Railroad Tie Navigation Bar */
+        .bg-wood { 
+            background-color: #1a1512; 
+            background-image: url('/webpic/vintage-wooden-board-textured-background.jpg');
+            background-blend-mode: multiply; 
+        }
+        
         .railroad-tie-nav {
             background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
             background-size: auto 100%;
@@ -27,7 +43,6 @@
             box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
         }
 
-        /* Wood Button Transitions */
         .wood-btn {
             transition: transform 0.2s ease;
             height: 50px;
@@ -35,32 +50,34 @@
             display: block;
         }
 
+        @media (min-width: 1536px) {
+            .wood-btn { height: 80px; }
+        }
+
         .wood-btn:hover { transform: scale(1.05); }
 
-        /* Hover Swap Logic */
         .nav-link-group a .hover-img { display: none; }
         .nav-link-group a:hover .normal-img { display: none; }
         .nav-link-group a:hover .hover-img { display: block; }
 
-        /* Checklist Styling */
-        .checklist-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid #d1cebd; }
-        input[type="checkbox"] { width: 20px; height: 20px; accent-color: #14532d; margin-top: 2px; }
+        .accent-green { color: #a4c2a8; } 
         
-        .parchment { background-color: rgba(244, 238, 224, 0.95); border: 1px solid #dcd3bd; padding: 2rem; border-radius: 0.5rem; }
-
-        /* Mobile Menu Background */
+        .parchment { 
+            background-color: rgba(244, 238, 224, 0.95); 
+            border: 2px solid #dcd3bd; 
+            color: #2c241e; 
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+        
         #mobile-menu {
             background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('/webpic/railroad-tie-texture.jpg');
             background-size: cover;
         }
-
-        @media (min-width: 1536px) { .wood-btn { height: 80px; } }
     </style>
 </head>
-
 <body class="bg-wood pb-20">
 
-    <nav class="fixed w-full top-0 z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
+    <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
         <a href="index.html" class="flex-shrink-0">
             <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
         </a>
@@ -87,55 +104,84 @@
                 <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
             </a>
         </div>
+
+        <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+
+        <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800">
+            <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
+            <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
+            <a href="find-us.html"><img src="/buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
+            <a href="gallery.html"><img src="/buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
+            <a href="important-info.html"><img src="/buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
+        </div>
     </nav>
 
-    <main class="pt-32 px-6">
 
-  <header class="relative h-auto flex items-center justify-center text-white overflow-hidden">
-        <div class="relative z-auto text-center px-4 mt-6">
-            <h1 class="text-5xl md:text-7xl mb-2 tracking-tight font-serif uppercase heavy-shadow">Weeks Creek Haven</h1>
-            <p class="text-xl md:text-3xl italic text-stone-200 font-serif heavy-shadow">Your Cabin Away From Home</p>
+    <div class="max-w-4xl mx-auto pt-32 px-6">
+        <h1 class="text-5xl md:text-6xl mb-8 text-center italic">Cabin Essentials</h1>
+
+        <div class="parchment p-8 rounded-lg shadow-2xl space-y-8 mb-12">
+            <section>
+                <h2 class="text-3xl font-bold border-b border-stone-300 pb-2 mb-4 italic accent-green" style="text-shadow: none; color: #4a5d4e;">Key Cabin Stats</h2>
+                <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 text-base">
+                    <li><strong class="font-bold">Guests:</strong> 11 Max</li>
+                    <li><strong class="font-bold">Beds:</strong> 4 Bedrooms (Sleeps up to 11)</li>
+                    <li><strong class="font-bold">Internet:</strong> Gig Fiber Wi-Fi (Password: creeklife)</li>
+                    <li><strong class="font-bold">Check-in:</strong> Afternoon of your visit</li>
+                    <li><strong class="font-bold">Check-out:</strong> Typically around 3:00 PM</li>
+                    <li><strong class="font-bold">Must Have:</strong> Lots of Fun!</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2 class="text-3xl font-bold border-b border-stone-300 pb-2 mb-4 italic accent-green" style="text-shadow: none; color: #4a5d4e;">Emergency Contacts</h2>
+                <div class="space-y-2 text-base">
+                    <p><strong>Fannin Regional Hospital:</strong> (706) 632-3711 (31 mins away)</p>
+                    <p><strong>Police Station:</strong> 301 Church St. (706) 632-3451</p>
+                    <p class="text-lg font-bold mt-4 text-red-800">FOR ALL EMERGENCIES CALL 911</p>
+                </div>
+            </section>
         </div>
-    </header>
 
-        <div class="max-w-2xl mx-auto parchment shadow-xl">
-            <h1 class="text-2xl text-center font-bold mb-8 border-b border-stone-300 pb-4">Cleaning Standards</h1>
-
-            <div class="space-y-8">
-                <section>
-                    <h2 class="font-bold text-green-900 border-b-2 border-green-800 pb-1 mb-2">🛋️ MAIN AREAS</h2>
-                    <div class="checklist-item"><input type="checkbox"> <span>Wipe 98" TV & organize remotes</span></div>
-                    <div class="checklist-item"><input type="checkbox"> <span>Fireplace knob back to 'PILOT'</span></div>
-                    <div class="checklist-item"><input type="checkbox"> <span>Sweep/Vacuum around boot brush</span></div>
-                </section>
-
-                <section>
-                    <h2 class="font-bold text-green-900 border-b-2 border-green-800 pb-1 mb-2">🍳 KITCHEN</h2>
-                    <div class="checklist-item"><input type="checkbox"> <span>Refill Breville water tank & wipe wand</span></div>
-                    <div class="checklist-item"><input type="checkbox"> <span>Double-press Microwave CANCEL</span></div>
-                    <div class="checklist-item"><input type="checkbox"> <span>Discard all fridge leftovers</span></div>
-                </section>
-
-                <section>
-                    <h2 class="font-bold text-green-900 border-b-2 border-green-800 pb-1 mb-2">🌲 OUTDOORS</h2>
-                    <div class="checklist-item"><input type="checkbox"> <span>Empty ash from metal fire pit</span></div>
-                    <div class="checklist-item"><input type="checkbox"> <span>Confirm deck heater is OFF</span></div>
-                    <div class="checklist-item"><input type="checkbox"> <span>Check Hot Tub chemical levels & cover</span></div>
-                    <div class="checklist-item"><input type="checkbox"> <span>Secure Bear Bins with bungees</span></div>
-                </section>
+        <div class="grid md:grid-cols-2 gap-8 mb-24">
+            <div class="rounded-md overflow-hidden border-4 border-white shadow-2xl">
+                <img src="/info/02_Need_to_Know.jpg" alt="Key Cabin Stats and Wi-Fi Info" class="w-full h-auto">
+            </div>
+            <div class="rounded-md overflow-hidden border-4 border-white shadow-2xl">
+                <img src="/info/04_Cool_Stuff.jpg" alt="Cabin Amenities Guide" class="w-full h-auto">
             </div>
         </div>
-    </main>
+    </div>
+
+    <footer class="bg-stone-900 text-stone-400 py-16 px-6 text-center border-t border-stone-800">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-8">
+            <div class="text-center md:text-left">
+                <p class="text-white text-2xl font-serif italic">Weeks Creek Haven</p>
+                <p>421 Weeks Creek Rd | Blue Ridge, GA 30513</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-6 text-xs font-bold uppercase tracking-widest text-green-400">
+                <a href="index.html" class="hover:text-white">Home</a>
+                <a href="things-to-do.html" class="hover:text-white">To Do & See</a>
+                <a href="find-us.html" class="hover:text-white">Find Us</a>
+                <a href="gallery.html" class="hover:text-white">Gallery</a>
+                <a href="important-info.html" class="hover:text-white">Friends Portal</a>
+            </div>
+        </div>
+        <div class="text-center mt-10 text-xs text-stone-600 pt-8 border-t border-stone-800 uppercase tracking-widest">
+            © 2026 Heather & Lance | Blue Ridge, Georgia
+        </div>
+    </footer>
 
     <script>
-        // Mobile Menu Toggle Logic
         const btn = document.getElementById('mobile-menu-button');
         const menu = document.getElementById('mobile-menu');
-        if(btn) {
-            btn.addEventListener('click', () => {
-                menu.classList.toggle('hidden');
-            });
-        }
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
     </script>
 </body>
 </html>
