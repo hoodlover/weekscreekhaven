@@ -4,18 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Friends & Family Portal | Weeks Creek Haven</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  
+<script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="/webpic/Weeks_Creek_Haven_Favicon.png">
-    <style>
-        body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
-        h1, h2, h3, h4 { font-family: 'Crimson Text', serif; }
-        
-        /* The "Really Big" Shadow for Titles */
-        .heavy-shadow {
-            text-shadow: 4px 4px 15px rgba(0, 0, 0, 0.9), 0px 0px 30px rgba(0, 0, 0, 0.5);
-        }
 
+    <style>
+        body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; background-color: #f4f1ea; }
+        h1, h2, h3 { font-family: 'Crimson Text', serif; }
+        
         .bg-wood { 
             background-color: #fcfaf7;
             background-image: url('/webpic/vintage-wooden-board-textured-background.jpg');
@@ -30,54 +27,45 @@
             box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
         }
 
-.wood-btn {
-    transition: transform 0.2s ease;
-    height: 50px;
-    width: auto;
-    display: block;
-}
-
-/* Scaling for Large Monitors */
-@media (min-width: 1536px) {
-    .wood-btn {
-        height: 80px; 
-    }
-}
-
-        .wood-btn:hover {
-            transform: scale(1.05);
-        }
-
-        /* Hero Button specific sizing */
-        .hero-btn {
-            height: 140px;
+        /* Wood Button Transitions */
+        .wood-btn {
+            transition: transform 0.2s ease;
+            height: 50px;
             width: auto;
-            margin: 0 auto;
+            display: block;
         }
 
-        /* Hover Swap Logic for Navigation and Hero */
+        .wood-btn:hover { transform: scale(1.05); }
+
+        /* Hover Swap Logic */
         .nav-link-group a .hover-img { display: none; }
         .nav-link-group a:hover .normal-img { display: none; }
         .nav-link-group a:hover .hover-img { display: block; }
 
-        .accent-green { color: #4a5d4e; }
-        .parchment { background-color: rgba(244, 238, 224, 0.9); border: 1px solid #dcd3bd; }
+        /* Checklist Styling */
+        .checklist-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid #d1cebd; }
+        input[type="checkbox"] { width: 20px; height: 20px; accent-color: #14532d; margin-top: 2px; }
         
+        .parchment { background-color: rgba(244, 238, 224, 0.95); border: 1px solid #dcd3bd; padding: 2rem; border-radius: 0.5rem; }
+
         /* Mobile Menu Background */
         #mobile-menu {
             background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('/webpic/railroad-tie-texture.jpg');
             background-size: cover;
         }
+
+        @media (min-width: 1536px) { .wood-btn { height: 80px; } }
     </style>
 </head>
-<body class="bg-stone-50">
 
-<nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 flex justify-between items-center">
+<body class="bg-wood pb-20">
+
+    <nav class="fixed w-full top-0 z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
         <a href="index.html" class="flex-shrink-0">
-            <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16">
+            <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
         </a>
         
-        <div class="hidden md:flex space-x-1 nav-link-group items-center">
+        <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
             <a href="things-to-do.html">
                 <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
                 <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
@@ -99,30 +87,20 @@
                 <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
             </a>
         </div>
-
-        <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-        </button>
-
-        <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800">
-            <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
-            <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
-            <a href="find-us.html"><img src="/buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
-            <a href="gallery.html"><img src="/buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
-            <a href="important-info.html"><img src="/buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
-        </div>
     </nav>
 
-    <main class="flex flex-col items-center justify-center min-h-screen pt-32 pb-20 px-6">
-        
-         <div id="privateContent" class="max-w-5xl w-full">
-            <div class="parchment p-8 md:p-14 rounded-lg shadow-2xl space-y-12">
-                
+    <main class="pt-32 px-6">
+
+  <header class="relative h-auto flex items-center justify-center text-white overflow-hidden">
+        <div class="relative z-auto text-center px-4 mt-6">
+            <h1 class="text-5xl md:text-7xl mb-2 tracking-tight font-serif uppercase heavy-shadow">Friends & Family Portal</h1>
+            <p class="text-xl md:text-3xl italic text-stone-200 font-serif heavy-shadow">Everything you need for a perfect stay at the Haven. Please keep these codes private.</p>
+        </div>
+    </header>
+
                 <div class="text-center border-b border-stone-300 pb-10">
-                    <h1 class="text-5xl mb-4 text-green-900 italic">Friends & Family Portal</h1>
-                    <p class="text-stone-600 max-w-2xl mx-auto italic">Everything you need for a perfect stay at the Haven. Please keep these codes private.</p>
+                    <h1 class="text-5xl mb-4 text-green-900 italic"></h1>
+                    <p class="text-stone-600 max-w-2xl mx-auto italic"></p>
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-12">
@@ -137,7 +115,7 @@
 
                         <a href="check-out.html" class="flex items-center justify-between bg-stone-800 text-white p-6 rounded-lg hover:bg-black transition shadow">
                             <span class="font-bold uppercase tracking-widest text-sm">Check-Out Checklist</span>
-                            <span class="text-xl">?</span>
+                            <span class="text-xl">→</span>
                         </a>
                     </div>
 
@@ -192,7 +170,7 @@
                 </div>
 
                 <div class="text-center pt-10 border-t border-stone-200">
-                    <a href="index.html" class="text-xs font-bold text-stone-400 uppercase tracking-widest hover:text-green-800 transition">? Return to Public Site</a>
+                    <a href="index.html" class="text-xs font-bold text-stone-400 uppercase tracking-widest hover:text-green-800 transition">← Return to Public Site</a>
                 </div>
             </div>
         </div>
