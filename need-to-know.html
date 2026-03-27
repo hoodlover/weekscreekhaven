@@ -5,167 +5,171 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Need to Know | Weeks Creek Haven</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         body { 
             font-family: 'Montserrat', sans-serif; 
-            color: #f4eee0; 
+            color: #2c241e; 
             scroll-behavior: smooth; 
-            /* Using a high-quality dark barnwood texture */
-            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1502126324834-38f8e02d7160?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+            /* Using your uploaded lightwood.jpg as the primary background */
+            background-image: linear-gradient(rgba(44, 36, 30, 0.7), rgba(44, 36, 30, 0.7)), url('/webpic/lightwood.jpg');
             background-attachment: fixed;
             background-size: cover;
         }
 
         h1, h2, h3 { 
-            font-family: 'Crimson Text', serif; 
+            font-family: 'Arvo', serif; 
             color: #ffffff; 
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9); 
+            text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.4); 
         }
+
+        /* The "Carved Plank" look for your cards */
+        .wood-plank-card { 
+            background-image: url('lightwood.jpg');
+            background-size: cover;
+            border-radius: 4px;
+            border-left: 8px solid #3d2b1f;
+            border-right: 2px solid #3d2b1f;
+            border-top: 2px solid #3d2b1f;
+            border-bottom: 6px solid #1a1512;
+            color: #1a1512; 
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Overlay to make text pop against the wood background of the card */
+        .wood-plank-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.85);
+            z-index: 0;
+        }
+
+        .card-content { position: relative; z-index: 10; }
 
         .railroad-tie-nav {
-            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
-            background-size: auto 100%;
-            background-repeat: repeat-x;
-            border-bottom: 4px solid #2c241e;
-            box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
+            background-color: #1a1512;
+            border-bottom: 5px solid #3d2b1f;
+            box-shadow: 0 10px 15px rgba(0,0,0,0.4);
         }
 
-        .wood-btn { transition: transform 0.2s ease; height: 50px; }
-        .wood-btn:hover { transform: scale(1.05); }
+        .typewriter-font { font-family: 'Special Elite', cursive; }
+        
+        .wood-btn { transition: transform 0.2s ease; height: 50px; filter: sepia(20%) contrast(110%); }
+        .wood-btn:hover { transform: scale(1.05) rotate(-1deg); }
 
-        .parchment-card { 
-            background-image: url('https://www.transparenttextures.com/patterns/papyrus-dark.png');
-            background-color: rgba(244, 238, 224, 0.98); 
-            border: 1px solid #dcd3bd; 
-            color: #1a1512; 
-            box-shadow: 10px 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .accent-wood { color: #4a3728; border-color: #a89f91; }
-        .rule-icon { color: #8b0000; margin-right: 10px; }
+        .accent-border { border-color: #4a3728; }
+        .stamp-red { color: #8b0000; font-family: 'Special Elite', cursive; }
     </style>
 </head>
 <body>
 
-    <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
+    <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 flex justify-between items-center">
         <a href="index.html" class="flex-shrink-0">
-            <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
+            <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16">
         </a>
-        <div class="hidden md:flex space-x-2 2xl:space-x-4 items-center">
+        <div class="hidden md:flex space-x-2 items-center">
             <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn"></a>
             <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn"></a>
             <a href="find-us.html"><img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn"></a>
-            <a href="gallery.html"><img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn"></a>
             <a href="important-info.html"><img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn"></a>
         </div>
     </nav>
 
-    <div class="max-w-5xl mx-auto pt-40 pb-20 px-6">
-        <h1 class="text-5xl md:text-7xl mb-12 text-center italic font-bold">Cabin Knowledge</h1>
+    <div class="max-w-6xl mx-auto pt-40 pb-20 px-6">
+        <h1 class="text-5xl md:text-8xl mb-4 text-center font-bold uppercase tracking-tighter">Cabin Intel</h1>
+        <p class="text-center text-white/80 typewriter-font text-lg mb-16 italic">Everything you need to survive & thrive at Weeks Creek</p>
 
-        <div class="grid lg:grid-cols-3 gap-8">
+        <div class="grid lg:grid-cols-3 gap-10">
             
-            <div class="lg:col-span-2 space-y-8">
+            <div class="lg:col-span-2 space-y-10">
                 
-                <div class="parchment-card p-8 rounded-sm">
-                    <h2 class="text-3xl font-bold italic mb-4 accent-wood border-b">Connectivity & Entry</h2>
-                    <div class="grid md:grid-cols-2 gap-6 mt-4">
-                        <div>
-                            <p class="font-bold text-sm uppercase text-stone-500">Wi-Fi Network</p>
-                            <p class="text-xl font-mono">WeeksCreekHaven</p>
-                            <p class="font-bold text-sm uppercase text-stone-500 mt-2">Password</p>
-                            <p class="text-xl font-mono italic">creeklife</p>
-                            <p class="text-xs mt-2 text-stone-600">Note: Cell service is poor until you hit Wi-Fi!</p>
-                        </div>
-                        <div class="bg-white/50 p-4 rounded border border-stone-300">
-                            <p class="font-bold text-sm uppercase text-stone-500">Cabin Door Code</p>
-                            <p class="text-3xl font-bold tracking-widest text-center py-2">22246</p>
-                            <p class="text-xs text-center">Press the checkmark after entering.</p>
+                <div class="wood-plank-card p-8">
+                    <div class="card-content">
+                        <h2 class="text-3xl font-bold uppercase mb-6 border-b-2 accent-border pb-2">Digital Provisions</h2>
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div class="space-y-4">
+                                <div>
+                                    <p class="font-bold text-xs uppercase tracking-widest text-stone-500">The Network</p>
+                                    <p class="text-2xl typewriter-font font-bold">WeeksCreekHaven</p>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-xs uppercase tracking-widest text-stone-500">The Key</p>
+                                    <p class="text-2xl typewriter-font italic font-bold">creeklife</p>
+                                </div>
+                            </div>
+                            <div class="bg-black/5 p-6 border-2 border-dashed border-stone-400 text-center">
+                                <p class="font-bold text-xs uppercase text-stone-500">Main Door Code</p>
+                                <p class="text-5xl font-bold typewriter-font my-2">22246</p>
+                                <p class="text-[10px] uppercase font-bold text-stone-500">Hit the checkmark to enter</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="parchment-card p-8 rounded-sm">
-                    <h2 class="text-3xl font-bold italic mb-4 accent-wood border-b">Smart Cabin Voice</h2>
-                    <p class="italic text-sm mb-4">"Alexa, [Command] ..."</p>
-                    <ul class="grid md:grid-cols-2 gap-2 font-medium">
-                        <li>• <strong>"Cabin on"</strong> - Main lights</li>
-                        <li>• <strong>"Cabin fireside to 30%"</strong> - Ambience</li>
-                        <li>• <strong>"Turn on cabin deck lights"</strong></li>
-                        <li>• <strong>"Lock cabin front door"</strong></li>
-                        <li>• <strong>"Going out"</strong> - Full lockdown</li>
-                        <li><span class="text-red-700 font-bold italic">Don't say: "Burn it down"</span></li>
-                    </ul>
+                <div class="wood-plank-card p-8">
+                    <div class="card-content">
+                        <h2 class="text-3xl font-bold uppercase mb-4 border-b-2 accent-border pb-2">The Invisible Host</h2>
+                        <p class="typewriter-font mb-6 bg-amber-900/10 p-2 inline-block italic">"Alexa, [Command] ..."</p>
+                        <ul class="grid md:grid-cols-2 gap-4 text-lg font-bold typewriter-font">
+                            <li class="flex items-center">▶ Cabin on</li>
+                            <li class="flex items-center">▶ Cabin fireside to 30%</li>
+                            <li class="flex items-center">▶ Turn on deck lights</li>
+                            <li class="flex items-center">▶ Lock front door</li>
+                            <li class="flex items-center">▶ Going out</li>
+                            <li class="stamp-red border border-red-800 p-1 text-center rotate-1">DO NOT SAY: "Burn it down"</li>
+                        </ul>
+                    </div>
                 </div>
 
-                <div class="parchment-card p-8 rounded-sm">
-                    <h2 class="text-3xl font-bold italic mb-4 accent-wood border-b">The Fine Print</h2>
-                    <div class="grid md:grid-cols-2 gap-6 text-sm">
-                        <ul class="space-y-2">
-                            <li>🚫 <strong>No Smoking</strong> anywhere on premises.</li>
-                            <li>🚫 <strong>No Pets</strong> allowed.</li>
-                            <li>🚫 <strong>No Glassware</strong> near the hot tub.</li>
-                            <li>🐻 <strong>Garbage:</strong> Must be bagged and secured in bear-proof bins with bungee cords.</li>
-                        </ul>
-                        <ul class="space-y-2">
-                            <li>🔥 <strong>Fire Pit:</strong> Bring your own wood; ensure it is fully out before bed.</li>
-                            <li>🚽 <strong>Commode:</strong> Septic-safe TP only! No wipes or feminine products.</li>
-                            <li>🛀 <strong>Lower Spa:</strong> Jets are OOO; enjoy as a bubble bath!</li>
-                        </ul>
+                <div class="wood-plank-card p-8">
+                    <div class="card-content">
+                        <h2 class="text-3xl font-bold uppercase mb-6 border-b-2 accent-border pb-2">Mountain Law</h2>
+                        <div class="grid md:grid-cols-2 gap-8 typewriter-font text-sm">
+                            <ul class="space-y-3">
+                                <li class="flex items-start"><span class="mr-2">🚫</span> <strong>NO SMOKING:</strong> Keep it outside and away from the eaves.</li>
+                                <li class="flex items-start"><span class="mr-2">🚫</span> <strong>NO PETS:</strong> Local wildlife only, please.</li>
+                                <li class="flex items-start"><span class="mr-2">🚫</span> <strong>GLASS:</strong> Strictly forbidden near the hot tub.</li>
+                            </ul>
+                            <ul class="space-y-3">
+                                <li class="flex items-start"><span class="mr-2">🐻</span> <strong>TRASH:</strong> Bungee those bins! Bears love snacks.</li>
+                                <li class="flex items-start"><span class="mr-2">🔥</span> <strong>FIRE PIT:</strong> Douse it completely before turning in.</li>
+                                <li class="flex items-start"><span class="mr-2">🚽</span> <strong>SEPTIC:</strong> If it's not TP, don't flush it. Period.</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="space-y-8">
-                <div class="bg-black/40 backdrop-blur-md p-6 border border-white/20 rounded-lg text-white">
-                    <h3 class="text-2xl italic mb-4 text-center">Vital Stats</h3>
-                    <div class="space-y-4">
-                        <div class="flex justify-between border-b border-white/10 pb-1">
-                            <span>Max Guests</span><span class="font-bold">11</span>
-                        </div>
-                        <div class="flex justify-between border-b border-white/10 pb-1">
-                            <span>Bedrooms</span><span class="font-bold">4</span>
-                        </div>
-                        <div class="flex justify-between border-b border-white/10 pb-1">
-                            <span>Bathrooms</span><span class="font-bold">2.5</span>
-                        </div>
-                        <div class="flex justify-between border-b border-white/10 pb-1">
-                            <span>Check-In</span><span class="font-bold">3:00 PM</span>
-                        </div>
-                        <div class="flex justify-between border-b border-white/10 pb-1">
-                            <span>Check-Out</span><span class="font-bold">11:00 AM</span>
-                        </div>
+            <div class="space-y-10">
+                <div class="wood-plank-card p-6 border-l-red-800">
+                    <div class="card-content">
+                        <h2 class="text-2xl font-bold uppercase mb-4 stamp-red text-center">Departure Checklist</h2>
+                        <ul class="space-y-4 text-xs font-bold typewriter-font uppercase border-t border-stone-300 pt-4">
+                            <li class="flex items-center border-b border-stone-200 pb-1">□ Strip used bed sheets</li>
+                            <li class="flex items-center border-b border-stone-200 pb-1">□ Start a load of laundry</li>
+                            <li class="flex items-center border-b border-stone-200 pb-1">□ Start the dishwasher</li>
+                            <li class="flex items-center border-b border-stone-200 pb-1">□ Take all trash to bins</li>
+                            <li class="flex items-center border-b border-stone-200 pb-1">□ Fireplace to 'Pilot'</li>
+                            <li class="flex items-center">□ Turn off lights & lock up</li>
+                        </ul>
                     </div>
                 </div>
 
-                <div class="parchment-card p-6 rounded-sm shadow-xl">
-                    <h2 class="text-2xl font-bold italic mb-4 text-red-900 border-b border-red-200">Before You Go</h2>
-                    <ul class="space-y-3 text-xs font-bold uppercase tracking-tight">
-                        <li class="flex items-start">✅ Strip used bed sheets</li>
-                        <li class="flex items-start">✅ Start a load of towels/sheets</li>
-                        <li class="flex items-start">✅ Start the dishwasher</li>
-                        <li class="flex items-start">✅ Bag & take out all trash</li>
-                        <li class="flex items-start">✅ Fireplace turned to 'Pilot'</li>
-                        <li class="flex items-start">✅ Turn off lights & lock doors</li>
-                    </ul>
-                    <p class="mt-4 text-[10px] italic text-stone-500 text-center border-t pt-2">
-                        Don't let the door hit ya where the good Lord split ya!
-                    </p>
+                <div class="bg-red-900/90 backdrop-blur-sm p-8 border-4 border-double border-red-200 rounded-sm text-white text-center shadow-2xl">
+                    <h3 class="text-2xl font-bold uppercase mb-2">Emergency</h3>
+                    <p class="text-xs typewriter-font opacity-80 mb-4">Fannin Regional: (706) 632-3711</p>
+                    <div class="text-5xl font-black typewriter-font border-2 border-white p-2">911</div>
                 </div>
             </div>
-        </div>
-
-        <div class="mt-12 parchment-card p-6 rounded-sm text-center">
-            <h2 class="text-xl font-bold text-red-700 uppercase mb-2">Emergency Contacts</h2>
-            <p class="text-sm">Fannin Regional Hospital: (706) 632-3711 | Police: (706) 632-3451</p>
-            <p class="text-2xl font-black mt-2">FOR ALL EMERGENCIES CALL 911</p>
         </div>
     </div>
 
-    <footer class="bg-black/90 text-stone-400 py-12 text-center">
-        <p class="text-white font-serif italic text-2xl">Weeks Creek Haven</p>
-        <p class="text-xs mt-2 uppercase tracking-widest">© 2026 Heather & Lance</p>
+    <footer class="bg-[#1a1512] text-stone-400 py-16 text-center border-t-8 border-[#3d2b1f]">
+        <p class="text-white font-serif italic text-3xl">Weeks Creek Haven</p>
+        <p class="text-[10px] mt-4 uppercase tracking-[0.3em]">Built for the wild by Heather & Lance</p>
     </footer>
 
 </body>
