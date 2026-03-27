@@ -21,6 +21,7 @@
             background-color: #fcfaf7;
             background-image: url('/webpic/vintage-wooden-board-textured-background.jpg');
             background-size: cover;
+            background-position: center;
         }
         
         .railroad-tie-nav {
@@ -31,9 +32,10 @@
             box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
         }
 
+        /* Forced Large Button Sizes */
         .wood-btn {
             transition: transform 0.2s ease;
-            height: 60px; /* Increased base height for nav buttons */
+            height: 80px !important; /* Making these much larger as requested */
             width: auto;
             display: block;
         }
@@ -45,26 +47,25 @@
         .nav-link-group a:hover .hover-img { display: block; }
 
         .accent-green { color: #4a5d4e; }
-        .parchment-label { background-color: rgba(244, 238, 224, 0.9); }
+        .parchment-label { background-color: rgba(244, 238, 224, 0.9); border-top: 1px solid #dcd3bd; }
 
         /* Lightbox Styles */
-        #lightbox { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; }
-        #lightbox img { max-width: 85%; max-height: 75vh; border: 8px solid white; box-shadow: 0 0 50px rgba(0,0,0,0.8); transition: opacity 0.3s ease; }
-        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); color: white; font-size: 4rem; cursor: pointer; padding: 30px; user-select: none; transition: color 0.2s, scale 0.2s; z-index: 1010; }
-        .nav-btn:hover { color: #4ade80; scale: 1.1; }
-        #prev { left: 5%; }
-        #next { right: 5%; }
-        #close { position: absolute; top: 30px; right: 40px; color: white; font-size: 3rem; cursor: pointer; z-index: 1010; }
-        #caption { position: absolute; bottom: 5vh; color: #f4eee0; font-family: 'Crimson Text', serif; font-style: italic; font-size: 1.75rem; text-align: center; width: 80%; text-shadow: 2px 2px 4px black; }
+        #lightbox { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); justify-content: center; align-items: center; }
+        #lightbox img { max-width: 90%; max-height: 80vh; border: 4px solid white; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); color: white; font-size: 4rem; cursor: pointer; padding: 20px; user-select: none; transition: color 0.2s; }
+        .nav-btn:hover { color: #4ade80; }
+        #prev { left: 20px; }
+        #next { right: 20px; }
+        #close { position: absolute; top: 20px; right: 30px; color: white; font-size: 3rem; cursor: pointer; }
+        #caption { position: absolute; bottom: 40px; color: #f4eee0; font-family: 'Crimson Text', serif; font-style: italic; font-size: 1.5rem; text-align: center; width: 80%; }
         
-        .gallery-item { cursor: pointer; transition: transform 0.3s ease; }
-        .gallery-item:hover { transform: translateY(-5px); }
+        .gallery-item { cursor: pointer; break-inside: avoid; margin-bottom: 2rem; }
     </style>
 </head>
 
 <body class="bg-stone-50 min-h-screen">
 
-    <nav class="fixed w-full z-50 railroad-tie-nav py-8 px-6 flex justify-between items-center">
+    <nav class="fixed w-full z-50 railroad-tie-nav py-6 px-6 flex justify-between items-center">
         <a href="index.html" class="flex-shrink-0">
             <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-20 md:h-24">
         </a>
@@ -93,73 +94,175 @@
         </div>
     </nav>
 
-    <header class="bg-wood pt-48 pb-20 px-6 mb-12 shadow-lg border-b-8 border-stone-900/10">
-        <h1 class="text-5xl md:text-7xl text-white text-center heavy-shadow uppercase tracking-widest">
+    <header class="bg-wood pt-56 pb-24 px-6 mb-12 shadow-lg text-center">
+        <h1 class="text-5xl md:text-7xl text-white heavy-shadow uppercase tracking-widest">
             Weeks Creek Haven Gallery
         </h1>
-        <p class="text-white text-center italic mt-4 text-xl heavy-shadow">A Visual Tour of Our Blue Ridge Escape</p>
     </header>
 
     <main class="max-w-7xl mx-auto px-6 pb-24">
-        <div class="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
+        <div class="columns-1 md:columns-2 lg:columns-3 gap-8">
             
             <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
                 <img src="/gallery/Sun sets over the creekside cabin.jpg" alt="Weeks Creek Haven at Sunset" class="w-full">
-                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold uppercase tracking-wider">Sunset Over the Haven</div>
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Sunset Over the Haven</div>
             </div>
 
             <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
                 <img src="/gallery/POrch1.jpeg" alt="Front Porch" class="w-full">
-                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold uppercase tracking-wider">Welcome to the Porch</div>
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Welcome to the Porch</div>
             </div>
 
             <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
-                <img src="/gallery/Watch your favorite classic DVDs with your family.jpg" alt="TV and Media Room" class="w-full">
-                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold uppercase tracking-wider">Family Movie Night Ready</div>
+                <img src="/gallery/Watch your favorite classic DVDs with your family.jpg" alt="TV Room" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Family Movie Night Ready</div>
             </div>
 
             <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
-                <img src="/gallery/TV Room.jpeg" alt="Media room with seating" class="w-full">
-                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold uppercase tracking-wider">Cozy Media Room Seating</div>
+                <img src="/gallery/TV Room.jpeg" alt="Media room" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Cozy Media Room Seating</div>
             </div>
 
             <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
-                <img src="/gallery/Queen bed in loft. Best views of the woods. Almost like you_re in a treehouse.jpg" alt="Loft Queen Bed" class="w-full">
-                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold uppercase tracking-wider">The Treehouse Loft Suite</div>
+                <img src="/gallery/Queen bed in loft. Best views of the woods. Almost like you_re in a treehouse.jpg" alt="Loft Bed" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">The Treehouse Loft Suite</div>
             </div>
 
             <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
-                <img src="/gallery/Queen bed main floor. Lovely wooded view.jpg" alt="Main floor queen bed" class="w-full">
-                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold uppercase tracking-wider">Main Floor Serenity</div>
+                <img src="/gallery/Queen bed main floor. Lovely wooded view.jpg" alt="Main floor bed" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Main Floor Serenity</div>
             </div>
 
             <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
-                <img src="/gallery/Queen bed main floor. Open the window to hear the stream.jpg" alt="Bedroom window view" class="w-full">
-                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold uppercase tracking-wider">Fall Asleep to the Stream</div>
+                <img src="/gallery/Queen bed main floor. Open the window to hear the stream.jpg" alt="Bedroom window" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Fall Asleep to the Stream</div>
+            </div>
+
+            <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
+                <img src="/gallery/Queen bed ground level. Crib. Quiet. Desk to write, quiet to think. Extra pack n play if needed.jpg" alt="Ground level bed" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Quiet Ground Level Workspace & Nursery</div>
+            </div>
+
+            <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
+                <img src="/gallery/Washer & Dryer.jpg" alt="Laundry" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">In-Cabin Laundry Convenience</div>
+            </div>
+
+            <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
+                <img src="/gallery/Steps from the front door. The sound of the stream will flood your ears right away.jpg" alt="Stream" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Weeks Creek: Just Steps Away</div>
             </div>
 
             <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
                 <img src="/gallery/Hot tub on the ground-level deck. Rested mind and rested body.jpg" alt="Hot tub" class="w-full">
-                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold uppercase tracking-wider">Rested Mind, Rested Body</div>
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Rested Mind, Rested Body</div>
+            </div>
+
+            <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
+                <img src="/gallery/One of the easier driveways in the mountain-cabin world.jpg" alt="Driveway" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Easy Access Mountain Drive</div>
+            </div>
+
+            <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
+                <img src="/gallery/Layout of the main living space from the loft.jpg" alt="Main floor layout" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Open Concept Living from Above</div>
             </div>
 
             <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
                 <img src="/gallery/Living room inviting conversation.jpg" alt="Living Room" class="w-full">
-                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold uppercase tracking-wider">Space for Conversations</div>
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Space for Conversations</div>
             </div>
 
             <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
-                <img src="/gallery/Inside_2.jpeg" alt="Cabin Interior Living Room" class="w-full">
-                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold uppercase tracking-wider">Cozy Fireplace & Vaulted Ceilings</div>
+                <img src="/gallery/Inside 3.jpeg" alt="Interior" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Warmth and High Ceilings</div>
             </div>
 
             <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
-                <img src="/gallery/Creek1.jpeg" alt="The creek" class="w-full">
-                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold uppercase tracking-wider">The Sounds of Weeks Creek</div>
+                <img src="/gallery/Everything you for good meals with great people.jpg" alt="Kitchen" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Fully Equipped Kitchen</div>
+            </div>
+
+            <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
+                <img src="/gallery/Full mattress in loft cove.jpg" alt="Loft cove" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Cozy Loft Sleeping Cove</div>
+            </div>
+
+            <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
+                <img src="/gallery/Main level bathroom with tub shower.jpg" alt="Main bath" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Main Level Bath & Tub</div>
+            </div>
+
+            <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
+                <img src="/gallery/Loft bathroom with shower.jpg" alt="Loft bath" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Private Loft Bathroom</div>
+            </div>
+
+            <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
+                <img src="/gallery/A swing to listen to the stream. Voted best place to listen to the rain by my family.jpg" alt="Swing" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Best Place to Listen to the Rain</div>
+            </div>
+
+            <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
+                <img src="/gallery/Games, toys, bean bag chairs.jpg" alt="Game corner" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Games & Fun for Everyone</div>
+            </div>
+
+            <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
+                <img src="/gallery/Beautiful view of the cabin in daylight.jpg" alt="Daylight exterior" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Sunlight Through the Trees</div>
+            </div>
+
+            <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
+                <img src="/gallery/Inside_2.jpeg" alt="Interior 2" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Cozy Fireplace & Vaulted Ceilings</div>
+            </div>
+
+            <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
+                <img src="/gallery/Epic high ceilings and just the right amount of modern decor.jpg" alt="Ceilings" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Modern Comfort in Rustic Setting</div>
+            </div>
+
+            <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
+                <img src="/gallery/Dining room table and view of the coffee and tea station.jpg" alt="Dining" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Dining Area & Coffee Station</div>
+            </div>
+
+            <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
+                <img src="/gallery/Bedroom 1.jpeg" alt="Bedroom 1" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Restful Mountain Nights</div>
+            </div>
+
+            <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
+                <img src="/gallery/A lovely place to stand and listen to the stream.jpg" alt="Stream bridge" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Serene Bridge Over the Stream</div>
+            </div>
+
+            <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
+                <img src="/gallery/Cabin_Front_1.jpg" alt="Cabin front" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Exterior Glow at Dusk</div>
+            </div>
+
+            <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
+                <img src="/gallery/Another lovely evening view.jpg" alt="Night view" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Evening Lights on the Deck</div>
+            </div>
+
+            <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-white bg-white">
+                <img src="/gallery/Creek1.jpeg" alt="Creek" class="w-full">
+                <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">The Sounds of Weeks Creek</div>
             </div>
 
         </div>
     </main>
+
+    <div class="flex flex-col items-center py-16 bg-stone-100 border-t border-stone-200">
+        <a href="/index.html/#book" class="nav-link-group">
+            <img src="/buttons/borrow-the-cabin-normal.png" alt="Borrow The Cabin?" class="wood-btn normal-img h-32 md:h-40">
+            <img src="/buttons/borrow-the-cabin-hover.png" alt="Borrow The Cabin?" class="wood-btn hover-img h-32 md:h-40">
+        </a>
+        <p class="mt-4 parchment-label px-6 py-2 text-sm italic accent-green font-bold">Request A Weekend Just For Our Friends & Family</p>
+    </div>
 
     <footer class="bg-stone-900 text-stone-500 py-16 px-6 text-center">
         <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-8">
@@ -167,7 +270,16 @@
                 <p class="text-white text-xl font-serif italic">Weeks Creek Haven</p>
                 <p>421 Weeks Creek Rd | Blue Ridge, GA 30513</p>
             </div>
-            <p class="uppercase tracking-widest text-xs">© 2026 Heather & Lance</p>
+            <div class="flex flex-wrap justify-center gap-6 text-xs font-bold uppercase tracking-widest text-green-400">
+                <a href="index.html" class="hover:text-white">Home</a>
+                <a href="need-to-know.html" class="hover:text-white">Need to Know</a>
+                <a href="find-us.html" class="hover:text-white">Find Us</a>
+                <a href="gallery.html" class="hover:text-white">Gallery</a>
+                <a href="important-info.html" class="hover:text-white">Friends Portal</a>
+            </div>
+        </div>
+        <div class="text-center mt-10 text-xs text-stone-600 pt-8 border-t border-stone-800 uppercase tracking-widest">
+            © 2026 Heather & Lance
         </div>
     </footer>
 
@@ -196,12 +308,8 @@
             const img = item.querySelector('img');
             const label = item.querySelector('.parchment-label');
             
-            lightboxImg.style.opacity = '0';
-            setTimeout(() => {
-                lightboxImg.src = img.src;
-                caption.innerText = label.innerText;
-                lightboxImg.style.opacity = '1';
-            }, 150);
+            lightboxImg.src = img.src;
+            caption.innerText = label.innerText;
         };
 
         galleryItems.forEach((item, index) => {
