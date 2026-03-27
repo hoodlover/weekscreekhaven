@@ -10,13 +10,25 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
-        h1, h2, h3, h4 { font-family: 'Crimson Text', serif; }
-        
-        .heavy-shadow {
-            text-shadow: 4px 4px 15px rgba(0, 0, 0, 0.9), 0px 0px 30px rgba(0, 0, 0, 0.5);
-        }
+	
+	/* 1. Hide the hover image by default */
+.hover-img {
+    display: none;
+}
 
+/* 2. When hovering over the parent link, hide the normal image */
+.nav-link-group a:hover .normal-img {
+    display: none;
+}
+
+/* 3. When hovering over the parent link, show the hover image */
+.nav-link-group a:hover .hover-img {
+    display: block;
+}
+
+        body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
+        h1, h2, h3 { font-family: 'Crimson Text', serif; }
+        
         .bg-wood { 
             background-color: #fcfaf7;
             background-image: url('/webpic/vintage-wooden-board-textured-background.jpg');
@@ -27,14 +39,38 @@
             background-size: auto 100%;
             background-repeat: repeat-x;
             border-bottom: 4px solid #2c241e;
-            box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
         }
 
-        .wood-btn {
+/* Railroad Tie Navigation Bar */
+.railroad-tie-nav {
+    background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
+    background-size: auto 100%;
+    background-repeat: repeat-x;
+    border-bottom: 4px solid #2c241e;
+    box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
+}
+
+/* Wood Button Transitions */
+.wood-btn {
     transition: transform 0.2s ease;
     height: 50px;
     width: auto;
     display: block;
+}
+
+.wood-btn:hover {
+    transform: scale(1.05);
+}
+
+/* Hover Swap Logic */
+.nav-link-group a .hover-img { display: none; }
+.nav-link-group a:hover .normal-img { display: none; }
+.nav-link-group a:hover .hover-img { display: block; }
+
+/* Mobile Menu Background */
+#mobile-menu {
+    background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('/webpic/railroad-tie-texture.jpg');
+    background-size: cover;
 }
 
 /* Scaling for Large Monitors */
@@ -43,36 +79,55 @@
         height: 80px; 
     }
 }
-
-        .wood-btn:hover { transform: scale(1.05); }
-
-        .parchment { background-color: rgba(244, 238, 224, 0.9); border: 1px solid #dcd3bd; }
-        
-        .checkout-step {
-            border-left: 6px solid #7c2d12;
-            padding-left: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .done-stamp {
-            transform: rotate(-10deg);
-            border: 4px solid #14532d;
-            color: #14532d;
-            font-weight: bold;
-            padding: 0.5rem 1rem;
-            display: inline-block;
-            margin-top: 1rem;
-        }
+        .parchment { background-color: rgba(244, 238, 224, 0.95); border: 1px solid #dcd3bd; }
+        54`5
+        .accent-green { color: #14532d; }
     </style>
 </head>
 <body class="bg-wood">
 
-    <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 flex justify-between items-center">
-        <a href="index.html" class="flex-shrink-0">
-            <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16">
+<nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
+    <a href="index.html" class="flex-shrink-0">
+        <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
+    </a>
+    
+    <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
+        <a href="things-to-do.html">
+            <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
+            <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
         </a>
-    </nav>
+        <a href="need-to-know.html">
+            <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
+            <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
+        </a>
+        <a href="find-us.html">
+            <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
+            <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
+        </a>
+        <a href="gallery.html">
+            <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
+            <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
+        </a>
+        <a href="important-info.html">
+            <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
+            <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
+        </a>
+    </div>
 
+    <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800">
+        <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
+        <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
+        <a href="find-us.html"><img src="/buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
+        <a href="gallery.html"><img src="/buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
+        <a href="important-info.html"><img src="/buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
+    </div>
+</nav>
     <header class="relative h-[40vh] flex items-center justify-center text-white overflow-hidden">
         <img src="/gallery/Cabin_Front_1.jpg" alt="Cabin View" class="absolute inset-0 w-full h-full object-cover">
         <div class="absolute inset-0 bg-black/50"></div>
@@ -92,22 +147,22 @@
 
             <div class="space-y-6">
                 <div class="checkout-step">
-                    <h3 class="font-bold text-xl text-stone-900">ðŸ›ï¸ Linens & Laundry</h3>
+                    <h3 class="font-bold text-xl text-stone-900">🛏️ Linens & Laundry</h3>
                     <p>Strip the sheets from the beds you used. Wash sheets, pillowcases, and towels, allowing enough time to start them in the dryer.</p>
                 </div>
 
                 <div class="checkout-step">
-                    <h3 class="font-bold text-xl text-stone-900">ðŸ½ï¸ Kitchen & Food</h3>
+                    <h3 class="font-bold text-xl text-stone-900">🍽️ Kitchen & Food</h3>
                     <p>Hand wash dishes or start the dishwasher. Please clean out your fridge items and ensure sinks are wiped down.</p>
                 </div>
 
                 <div class="checkout-step">
-                    <h3 class="font-bold text-xl text-stone-900">ðŸ—‘ï¸ Trash Removal</h3>
+                    <h3 class="font-bold text-xl text-stone-900">🗑️ Trash Removal</h3>
                     <p>Bag and take out the trash. Place food trash in the <strong>bear trash can</strong> and non-food trash in the porch box.</p>
                 </div>
 
                 <div class="checkout-step">
-                    <h3 class="font-bold text-xl text-stone-900">ðŸ”¥ Safety Check</h3>
+                    <h3 class="font-bold text-xl text-stone-900">🔥 Safety Check</h3>
                     <p>Ensure the fireplace is turned to 'Pilot'. Turn off all lights and lock all three smart doors.</p>
                 </div>
             </div>
