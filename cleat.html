@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cleaning Standards | Weeks Creek Haven</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/webpic/Weeks_Creek_Haven_Favicon.png">
+
+    <style>
+        body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; background-color: #f4f1ea; }
+        h1, h2, h3 { font-family: 'Crimson Text', serif; }
+        
+        .bg-wood { 
+            background-color: #fcfaf7;
+            background-image: url('/webpic/vintage-wooden-board-textured-background.jpg');
+        }
+        
+        /* Railroad Tie Navigation Bar */
+        .railroad-tie-nav {
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
+            background-size: auto 100%;
+            background-repeat: repeat-x;
+            border-bottom: 4px solid #2c241e;
+            box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
+        }
+
+        /* Wood Button Transitions */
+        .wood-btn {
+            transition: transform 0.2s ease;
+            height: 50px;
+            width: auto;
+            display: block;
+        }
+
+        .wood-btn:hover { transform: scale(1.05); }
+
+        /* Hover Swap Logic */
+        .nav-link-group a .hover-img { display: none; }
+        .nav-link-group a:hover .normal-img { display: none; }
+        .nav-link-group a:hover .hover-img { display: block; }
+
+        /* Checklist Styling */
+        .checklist-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid #d1cebd; }
+        input[type="checkbox"] { width: 20px; height: 20px; accent-color: #14532d; margin-top: 2px; }
+        
+        .parchment { background-color: rgba(244, 238, 224, 0.95); border: 1px solid #dcd3bd; padding: 2rem; border-radius: 0.5rem; }
+
+        /* Mobile Menu Background */
+        #mobile-menu {
+            background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('/webpic/railroad-tie-texture.jpg');
+            background-size: cover;
+        }
+
+        @media (min-width: 1536px) { .wood-btn { height: 80px; } }
+    </style>
+</head>
+
+<body class="bg-wood pb-20">
+
+    <nav class="fixed w-full top-0 z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
+        <a href="index.html" class="flex-shrink-0">
+            <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
+        </a>
+        
+        <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
+            <a href="things-to-do.html">
+                <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
+                <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
+            </a>
+            <a href="need-to-know.html">
+                <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
+                <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
+            </a>
+            <a href="find-us.html">
+                <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
+                <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
+            </a>
+            <a href="gallery.html">
+                <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
+                <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
+            </a>
+            <a href="important-info.html">
+                <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
+                <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
+            </a>
+        </div>
+    </nav>
+
+    <main class="pt-32 px-6">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold uppercase tracking-widest text-stone-800">Weeks Creek Haven</h1>
+            <p class="text-lg italic text-stone-600">"Your Cabin Away From Home"</p>
+        </header>
+
+        <div class="max-w-2xl mx-auto parchment shadow-xl">
+            <h1 class="text-2xl text-center font-bold mb-8 border-b border-stone-300 pb-4">Cleaning Standards</h1>
+
+            <div class="space-y-8">
+                <section>
+                    <h2 class="font-bold text-green-900 border-b-2 border-green-800 pb-1 mb-2">🛋️ MAIN AREAS</h2>
+                    <div class="checklist-item"><input type="checkbox"> <span>Wipe 98" TV & organize remotes</span></div>
+                    <div class="checklist-item"><input type="checkbox"> <span>Fireplace knob back to 'PILOT'</span></div>
+                    <div class="checklist-item"><input type="checkbox"> <span>Sweep/Vacuum around boot brush</span></div>
+                </section>
+
+                <section>
+                    <h2 class="font-bold text-green-900 border-b-2 border-green-800 pb-1 mb-2">🍳 KITCHEN</h2>
+                    <div class="checklist-item"><input type="checkbox"> <span>Refill Breville water tank & wipe wand</span></div>
+                    <div class="checklist-item"><input type="checkbox"> <span>Double-press Microwave CANCEL</span></div>
+                    <div class="checklist-item"><input type="checkbox"> <span>Discard all fridge leftovers</span></div>
+                </section>
+
+                <section>
+                    <h2 class="font-bold text-green-900 border-b-2 border-green-800 pb-1 mb-2">🌲 OUTDOORS</h2>
+                    <div class="checklist-item"><input type="checkbox"> <span>Empty ash from metal fire pit</span></div>
+                    <div class="checklist-item"><input type="checkbox"> <span>Confirm deck heater is OFF</span></div>
+                    <div class="checklist-item"><input type="checkbox"> <span>Check Hot Tub chemical levels & cover</span></div>
+                    <div class="checklist-item"><input type="checkbox"> <span>Secure Bear Bins with bungees</span></div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Mobile Menu Toggle Logic
+        const btn = document.getElementById('mobile-menu-button');
+        const menu = document.getElementById('mobile-menu');
+        if(btn) {
+            btn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+            });
+        }
+    </script>
+</body>
+</html>
