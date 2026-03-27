@@ -3,199 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Until Next Time | Weeks Creek Haven Checkout</title>
+    <title>Departure Hub | Weeks Creek Haven</title>
     
     <link rel="icon" type="image/png" href="/webpic/Weeks_Creek_Haven_Favicon.png">
-
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
     <style>
-	
-	/* 1. Hide the hover image by default */
-.hover-img {
-    display: none;
-}
-
-/* 2. When hovering over the parent link, hide the normal image */
-.nav-link-group a:hover .normal-img {
-    display: none;
-}
-
-/* 3. When hovering over the parent link, show the hover image */
-.nav-link-group a:hover .hover-img {
-    display: block;
-}
-
         body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
-        h1, h2, h3 { font-family: 'Crimson Text', serif; }
+        h1, h2, h3, h4 { font-family: 'Crimson Text', serif; }
         
+        /* Unified Background */
         .bg-wood { 
-            background-color: #fcfaf7;
-            background-image: url('/webpic/vintage-wooden-board-textured-background.jpg');
+            background-color: #1a1512;
+            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('/webpic/vintage-wooden-board-textured-background.jpg');
+            background-attachment: fixed;
+            background-size: cover;
         }
         
+        /* Railroad Tie Navigation Bar */
         .railroad-tie-nav {
             background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
             background-size: auto 100%;
             background-repeat: repeat-x;
             border-bottom: 4px solid #2c241e;
+            box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
         }
 
-/* Railroad Tie Navigation Bar */
-.railroad-tie-nav {
-    background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
-    background-size: auto 100%;
-    background-repeat: repeat-x;
-    border-bottom: 4px solid #2c241e;
-    box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
-}
+        /* Wood Button Transitions */
+        .wood-btn {
+            transition: transform 0.2s ease;
+            height: 50px;
+            width: auto;
+            display: block;
+        }
 
-/* Wood Button Transitions */
-.wood-btn {
-    transition: transform 0.2s ease;
-    height: 50px;
-    width: auto;
-    display: block;
-}
+        .wood-btn:hover { transform: scale(1.05); }
 
-.wood-btn:hover {
-    transform: scale(1.05);
-}
+        /* Hover Swap Logic */
+        .nav-link-group a .hover-img { display: none; }
+        .nav-link-group a:hover .normal-img { display: none; }
+        .nav-link-group a:hover .hover-img { display: block; }
 
-/* Hover Swap Logic */
-.nav-link-group a .hover-img { display: none; }
-.nav-link-group a:hover .normal-img { display: none; }
-.nav-link-group a:hover .hover-img { display: block; }
+        /* Mobile Menu Background */
+        #mobile-menu {
+            background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('/webpic/railroad-tie-texture.jpg');
+            background-size: cover;
+        }
 
-/* Mobile Menu Background */
-#mobile-menu {
-    background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('/webpic/railroad-tie-texture.jpg');
-    background-size: cover;
-}
+        /* Styling for Large Monitors */
+        @media (min-width: 1536px) { .wood-btn { height: 80px; } }
 
-/* Scaling for Large Monitors */
-@media (min-width: 1536px) {
-    .wood-btn {
-        height: 80px; 
-    }
-}
-        .parchment { background-color: rgba(244, 238, 224, 0.95); border: 1px solid #dcd3bd; }
-        54`5
-        .accent-green { color: #14532d; }
+        .parchment { background-color: rgba(244, 238, 224, 0.98); border: 1px solid #dcd3bd; }
+        .heavy-shadow { text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6); }
+
+        .input-style {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid #d1cebd;
+            border-radius: 6px;
+            outline: none;
+        }
+        .input-style:focus { border-color: #14532d; }
     </style>
 </head>
+
 <body class="bg-wood">
 
-<nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
-    <a href="index.html" class="flex-shrink-0">
-        <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
-    </a>
-    
-    <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
-        <a href="things-to-do.html">
-            <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
-            <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
+    <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
+        <a href="index.html" class="flex-shrink-0">
+            <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
         </a>
-        <a href="need-to-know.html">
-            <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
-            <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
-        </a>
-        <a href="find-us.html">
-            <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
-            <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
-        </a>
-        <a href="gallery.html">
-            <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
-            <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
-        </a>
-        <a href="important-info.html">
-            <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
-            <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
-        </a>
-    </div>
+        
+        <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
+            <a href="things-to-do.html">
+                <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
+                <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
+            </a>
+            <a href="need-to-know.html">
+                <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
+                <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
+            </a>
+            <a href="find-us.html">
+                <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
+                <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
+            </a>
+            <a href="gallery.html">
+                <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
+                <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
+            </a>
+            <a href="important-info.html">
+                <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
+                <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
+            </a>
+        </div>
 
-    <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-    </button>
+        <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
 
-    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800">
-        <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
-        <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
-        <a href="find-us.html"><img src="/buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
-        <a href="gallery.html"><img src="/buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
-        <a href="important-info.html"><img src="/buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
-    </div>
-</nav>
-    <header class="relative h-[40vh] flex items-center justify-center text-white overflow-hidden">
+        <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800">
+            <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
+            <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
+            <a href="find-us.html"><img src="/buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
+            <a href="gallery.html"><img src="/buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
+            <a href="important-info.html"><img src="/buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
+        </div>
+    </nav>
+
+    <header class="relative h-[45vh] flex items-center justify-center text-white overflow-hidden">
         <img src="/gallery/Cabin_Front_1.jpg" alt="Cabin View" class="absolute inset-0 w-full h-full object-cover">
         <div class="absolute inset-0 bg-black/50"></div>
         <div class="relative z-10 text-center px-4 mt-12">
-            <h1 class="text-5xl md:text-7xl mb-2 tracking-tight font-serif heavy-shadow uppercase">Safe Travels Home</h1>
+            <h1 class="text-5xl md:text-7xl mb-2 tracking-tight font-serif uppercase heavy-shadow">Safe Travels Home</h1>
             <p class="text-xl md:text-3xl italic text-stone-200 font-serif heavy-shadow">"Don't let the door hit ya where the Good Lord split ya"</p>
         </div>
     </header>
 
-    <main class="max-w-4xl mx-auto py-12 px-6">
+    <main class="max-w-4xl mx-auto py-12 px-6 space-y-12">
         
-        <div class="parchment p-8 md:p-12 rounded-xl shadow-2xl mb-12 border-l-8 border-orange-900/30">
-            <h2 class="text-3xl font-serif italic mb-6 text-stone-900">Before You Head Out...</h2>
-            <p class="mb-8 text-stone-700 leading-relaxed">
-                We hope you had a great stay! To help us get the cabin ready for the next guests, please follow this quick checklist.
-            </p>
-
-            <div class="space-y-6">
-                <div class="checkout-step">
-                    <h3 class="font-bold text-xl text-stone-900">Linens & Laundry</h3>
-                    <p>Strip the sheets from the beds you used. Wash sheets, pillowcases, and towels, allowing enough time to start them in the dryer.</p>
+        <div class="parchment p-8 md:p-12 rounded-xl shadow-2xl border-l-8 border-green-900">
+            <h2 class="text-4xl font-serif italic mb-6 text-stone-900">Before You Head Out...</h2>
+            <div class="grid md:grid-cols-2 gap-8 text-sm text-stone-700 leading-relaxed">
+                <div class="space-y-4">
+                    <p><strong>Linens & Laundry:</strong> Strip used beds and place in laundry area. Please start at least one load.</p>
+                    <p><strong>Kitchen:</strong> Load and start the dishwasher. Clean out fridge items and wipe down sinks.</p>
+                    <p><strong>Trash:</strong> Place food trash in the <strong>Bear Proof Bin</strong> and non-food trash in the porch box.</p>
                 </div>
-
-                <div class="checkout-step">
-                    <h3 class="font-bold text-xl text-stone-900">Kitchen & Food</h3>
-                    <p>Hand wash dishes or start the dishwasher. Please clean out your fridge items and ensure sinks are wiped down.</p>
-                </div>
-
-                <div class="checkout-step">
-                    <h3 class="font-bold text-xl text-stone-900">Trash Removal</h3>
-                    <p>Bag and take out the trash. Place food trash in the <strong>bear trash can</strong> and non-food trash in the porch box.</p>
-                </div>
-
-                <div class="checkout-step">
-                    <h3 class="font-bold text-xl text-stone-900">Safety Check</h3>
-                    <p>Ensure the fireplace is turned to 'Pilot'. Turn off all lights and lock all three smart doors.</p>
+                <div class="space-y-4">
+                    <p><strong>Fireplace:</strong> Ensure gas logs are OFF (leaving the pilot on). Close the screens.</p>
+                    <p><strong>Hot Tub:</strong> Secure the cover and lower temp to 80°F.</p>
+                    <p><strong>Lock Up:</strong> Close all windows and ensure all three smart doors are locked.</p>
                 </div>
             </div>
 
             <div class="mt-10 bg-stone-800 text-white p-6 rounded-lg text-center shadow-inner">
                 <h4 class="text-xl font-serif italic mb-2">The Easiest Exit:</h4>
                 <p class="text-2xl font-bold text-green-400 uppercase tracking-widest">"Alexa, Going Home"</p>
-                <p class="text-sm mt-2 opacity-80">Locks doors and turns off lights automatically.</p>
+                <p class="text-sm mt-2 opacity-80">Automatically locks doors and turns off lights.</p>
             </div>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-8 mb-16">
-            <div class="parchment p-8 rounded-xl shadow-xl border-l-8 border-green-800/30">
-                <h3 class="text-xl font-serif font-bold text-green-900 uppercase mb-4">Leave a Note</h3>
-                <p class="text-stone-700 italic">"Share your favorite adventure, a laugh, or your darkest secret in the guest book before you go!"</p>
-            </div>
-            <div class="parchment p-8 rounded-xl shadow-xl border-l-8 border-blue-800/30">
-                <h3 class="text-xl font-serif font-bold text-blue-900 uppercase mb-4">Cleaning Fee</h3>
-                <p class="text-stone-700">If you don't have time or don't want to clean, no worries! We just ask that you cover the $200 cleaning fee charged to us.</p>
-            </div>
+        <div class="parchment p-8 md:p-12 rounded-xl shadow-2xl border-t-8 border-orange-900/30">
+            <h2 class="text-4xl font-serif italic mb-2 text-green-900">The Haven Guest Book</h2>
+            <p class="mb-8 text-stone-500 italic">Share your adventures and help us keep the cabin perfect.</p>
+
+            <form action="https://formspree.io/f/mzdjnprj" method="POST" enctype="multipart/form-data" class="space-y-8">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-2">Guest Name(s)</label>
+                        <input type="text" name="guest_names" required class="w-full p-4 input-style" placeholder="The Smith Family">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-2">Dates of Stay</label>
+                        <input type="text" name="stay_dates" class="w-full p-4 input-style" placeholder="Oct 12-15, 2026">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-stone-800 mb-2 font-serif">What was your favorite mountain adventure?</label>
+                    <textarea name="favorite_adventure" rows="3" required class="w-full p-4 input-style" placeholder="Hiking the Toccoa Swinging Bridge..."></textarea>
+                </div>
+
+                <div class="bg-stone-100/50 p-6 rounded-lg border border-stone-200">
+                    <h3 class="text-xl font-serif font-bold text-stone-800 mb-4 uppercase tracking-widest text-xs">Haven Upkeep</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                        <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="Coffee"> <span>Coffee Beans</span></label>
+                        <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="TP"> <span>Toilet Paper</span></label>
+                        <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="PaperTowels"> <span>Paper Towels</span></label>
+                        <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="Soap"> <span>Hand Soap</span></label>
+                        <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="DishTabs"> <span>Dish Tabs</span></label>
+                        <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="Propane"> <span>Propane</span></label>
+                    </div>
+                    <label class="block text-sm font-bold text-stone-800 mb-2">Anything acting up?</label>
+                    <textarea name="maintenance_issue" rows="2" placeholder="Broken bulbs, leaky faucets..." class="w-full p-3 input-style text-sm"></textarea>
+                </div>
+
+                <div class="bg-white/40 p-6 rounded-lg border-2 border-dashed border-stone-300 text-center">
+                    <label class="block text-sm font-serif font-bold text-stone-800 mb-2">Upload a memory ??</label>
+                    <input type="file" name="upload" accept="image/*" class="text-xs text-stone-500">
+                </div>
+
+                <button type="submit" class="w-full bg-green-900 text-white font-bold py-5 rounded-full hover:bg-black transition-all shadow-xl uppercase tracking-widest">
+                    Submit & Sign the Book
+                </button>
+            </form>
         </div>
 
-        <div class="text-center">
-            <p class="text-lg font-serif italic text-stone-600 mb-6">Please text us when you leave so we can notify our cleaning team!</p>
-            <div class="done-stamp uppercase tracking-widest">See You Soon!</div>
+        <div class="text-center pt-8">
+            <p class="text-lg font-serif italic text-stone-200 heavy-shadow mb-2">Please text us when you leave so we can notify our cleaning team!</p>
+            <p class="text-stone-400 text-sm uppercase tracking-widest">Lance: 770.549.9358 | Heather: 678.993.3617</p>
         </div>
-
     </main>
 
-    <footer class="bg-stone-900 text-stone-500 py-12 px-6 text-center mt-20">
+    <footer class="bg-stone-900 text-stone-500 py-16 px-6 text-center">
         <p class="text-white text-xl font-serif italic mb-2">Weeks Creek Haven</p>
-        <p>Lance: 770.549.9358 | Heather: 678.993.3617</p>
+        <p class="text-xs mb-8">421 Weeks Creek Rd | Blue Ridge, GA 30513</p>
+        <div class="text-center text-xs text-stone-600 pt-8 border-t border-stone-800 uppercase tracking-widest">
+            © 2026 Heather & Lance | Blue Ridge, Georgia
+        </div>
     </footer>
 
+    <script>
+        // Mobile Menu Toggle logic from checkout.html
+        const btn = document.getElementById('mobile-menu-button');
+        const menu = document.getElementById('mobile-menu');
+        if(btn && menu) {
+            btn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+            });
+        }
+    </script>
 </body>
 </html>
