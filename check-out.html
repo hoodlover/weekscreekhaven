@@ -3,171 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Check-Out Checklist | Weeks Creek Haven</title>
+    <title>Departure Hub | Weeks Creek Haven</title>
     
     <link rel="icon" type="image/png" href="/webpic/Weeks_Creek_Haven_Favicon.png">
-
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
     <style>
         body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
         h1, h2, h3, h4 { font-family: 'Crimson Text', serif; }
         
         .bg-wood { 
-            background-color: #fcfaf7;
-            background-image: linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.4)), url('/webpic/vintage-wooden-board-textured-background.jpg');
+            background-color: #1a1512;
+            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('/webpic/vintage-wooden-board-textured-background.jpg');
             background-attachment: fixed;
             background-size: cover;
         }
         
         .railroad-tie-nav {
-            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/webpic/railroad-tie-texture.jpg');
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
             background-size: auto 100%;
             background-repeat: repeat-x;
             border-bottom: 4px solid #2c241e;
-            box-shadow: inset 0px -10px 20px rgba(0,0,0,0.6);
+            box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
         }
 
-        .wood-btn { transition: transform 0.2s ease; height: 50px; display: block; }
+        .wood-btn { transition: transform 0.2s ease; height: 50px; width: auto; display: block; }
         .wood-btn:hover { transform: scale(1.05); }
 
         .nav-link-group a .hover-img { display: none; }
         .nav-link-group a:hover .normal-img { display: none; }
         .nav-link-group a:hover .hover-img { display: block; }
 
-        .parchment { background-color: rgba(244, 238, 224, 0.95); border: 1px solid #dcd3bd; }
-        
-        .step-card {
-            border-left: 6px solid #14532d;
-            transition: transform 0.2s ease;
-        }
-        .step-card:hover { transform: translateX(5px); }
-
-        .warning-box {
-            background-color: #fef2f2;
-            border: 2px solid #dc2626;
-            color: #991b1b;
+        #mobile-menu {
+            background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('/webpic/railroad-tie-texture.jpg');
+            background-size: cover;
         }
 
         @media (min-width: 1536px) { .wood-btn { height: 80px; } }
+
+        .parchment { background-color: rgba(244, 238, 224, 0.98); border: 1px solid #dcd3bd; }
+        .heavy-shadow { text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6); }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .checklist-item:last-child { border-bottom: none; }
+        
+        input[type="checkbox"] { 
+            width: 1.25rem; 
+            height: 1.25rem; 
+            margin-top: 0.25rem;
+            accent-color: #14532d;
+            cursor: pointer;
+        }
+
+        .input-style {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid #d1cebd;
+            border-radius: 6px;
+            outline: none;
+        }
+        .input-style:focus { border-color: #14532d; }
     </style>
 </head>
+
 <body class="bg-wood">
 
     <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
         <a href="index.html" class="flex-shrink-0">
-            <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16">
+            <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
         </a>
-        
-        <div class="hidden md:flex space-x-2 nav-link-group items-center">
-            <a href="things-to-do.html">
-                <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
-                <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
-            </a>
-            <a href="need-to-know.html">
-                <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
-                <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
-            </a>
-            <a href="find-us.html">
-                <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
-                <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
-            </a>
-            <a href="gallery.html">
-                <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
-                <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
-            </a>
-            <a href="important-info.html">
-                <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
-                <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
-            </a>
+        <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
+            <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" class="wood-btn normal-img"><img src="/buttons/to-do-see-hover.jpg" class="wood-btn hover-img"></a>
+            <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" class="wood-btn normal-img"><img src="/buttons/need-to-know-hover.jpg" class="wood-btn hover-img"></a>
+            <a href="find-us.html"><img src="/buttons/find-cabin.jpg" class="wood-btn normal-img"><img src="/buttons/find-cabin-hover.jpg" class="wood-btn hover-img"></a>
+            <a href="gallery.html"><img src="/buttons/cabin-gallery.jpg" class="wood-btn normal-img"><img src="/buttons/cabin-gallery-hover.jpg" class="wood-btn hover-img"></a>
+            <a href="important-info.html"><img src="/buttons/friends-info.jpg" class="wood-btn normal-img"><img src="/buttons/friends-info-hover.jpg" class="wood-btn hover-img"></a>
         </div>
-
-        <button id="mobile-menu-button" class="md:hidden text-white">
+        <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
     </nav>
 
-    <main class="max-w-2xl mx-auto">
-        <div class="text-center mb-10">
-            <a href="index.html" class="text-xs font-bold uppercase tracking-widest text-green-800">? Back Home</a>
-            <h1 class="text-5xl italic accent-green mt-6">Safe Travels!</h1>
-            <p class="text-gray-600 mt-2 italic text-sm">Thank you for staying at Weeks Creek Haven. <br>Before you head out, please help us with these final steps by 2:00-3:00PM - Just text us.</p>
+    <header class="relative h-[40vh] flex items-center justify-center text-white overflow-hidden">
+        <img src="/gallery/Cabin_Front_1.jpg" alt="Cabin View" class="absolute inset-0 w-full h-full object-cover">
+        <div class="absolute inset-0 bg-black/50"></div>
+        <div class="relative z-10 text-center px-4 mt-12">
+            <h1 class="text-5xl md:text-7xl mb-2 tracking-tight font-serif uppercase heavy-shadow">Safe Travels Home</h1>
+            <p class="text-xl md:text-3xl italic text-stone-200 font-serif heavy-shadow">"Don't let the door hit ya where the Good Lord split ya"</p>
         </div>
+    </header>
 
-
-        <div class="parchment p-8 shadow-xl">
-            <h2 class="text-2xl font-bold mb-4 border-b border-stone-300 pb-2">Departure Checklist</h2>
+    <main class="max-w-4xl mx-auto py-12 px-6 space-y-12">
+        
+        <div class="parchment p-8 md:p-12 rounded-xl shadow-2xl border-l-8 border-green-900">
+            <h2 class="text-3xl font-serif font-bold mb-6 text-stone-900 border-b border-stone-300 pb-2">Departure Checklist</h2>
             
-            <div class="checklist-item">
-                <input type="checkbox" id="trash">
-                <label for="trash" class="text-sm"><strong>Trash:</strong> Place all bagged trash in the outside deck bin.  <BR> Ensure all food trash get put into the bear proof tall garbage can. (to keep wildlife out!).</label>
+            <div class="space-y-1">
+                <div class="checklist-item">
+                    <input type="checkbox" id="trash">
+                    <label for="trash" class="text-sm"><strong>Trash:</strong> Place all bagged trash in the outside deck bin. Ensure all food trash gets put into the bear proof tall garbage can.</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="dishes">
+                    <label for="dishes" class="text-sm"><strong>Dishes:</strong> Load the dishwasher and start the cycle. Please do not leave dirty dishes in the sink.</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="bathrooms">
+                    <label for="bathrooms" class="text-sm"><strong>Bathrooms:</strong> Clean the bathrooms you used. Just want them to be ready for the next adventures.</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="fireplace">
+                    <label for="fireplace" class="text-sm"><strong>Fireplace:</strong> Ensure the gas log fireplace is fully off. Leave the pilot light turned on. Close the screens.</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="linens">
+                    <label for="linens" class="text-sm"><strong>Linens:</strong> Please strip the bed and place in laundry area. Leave enough time to do at least one load of laundry from start to finish.</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="hottub">
+                    <label for="hottub" class="text-sm"><strong>Hot Tub:</strong> Place used towels in laundry area. Ensure cover is closed and temperature is lowered to 80.</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="lights">
+                    <label for="lights" class="text-sm"><strong>Lights & Air:</strong> Turn off all lights. Set the thermostat to 75&deg;F (Summer) or 60&deg;F (Winter).</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="lockup">
+                    <label for="lockup" class="text-sm"><strong>Lock Up:</strong> Ensure all windows are closed and smart doors are locked. (Say 'Alexa, going out.')</label>
+                </div>
             </div>
 
-            <div class="checklist-item">
-                <input type="checkbox" id="dishes">
-                <label for="dishes" class="text-sm"><strong>Dishes:</strong> Load the dishwasher and start the cycle. <BR>Please do not leave dirty dishes in the sink.</label>
-            </div>
-
-           <div class="checklist-item">
-                <input type="checkbox" id="bathes">
-                <label for="bathes" class="text-sm"><strong>Bathrooms:</strong> Clean the bathrooms you used.<BR> Just want them to be ready for the next adventures.</label>
-            </div>
-
-           <div class="checklist-item">
-                <input type="checkbox" id="fireplace">
-                <label for="fireplace" class="text-sm"><strong>Fireplace:</strong> Ensure the gas log fireplace is fully off.<BR>Leave the pilot light turned on.  Close the screens.</label>
-            </div>
-
- <div class="checklist-item">
-                <input type="checkbox" id="bedding">
-                <label for="bedding" class="text-sm"><strong>Linens:</strong> Please strip the bed and place in the laundry area. <BR>Please leave enough time to do at least one load of laundry from start to finish.  <BR>Don't leave wet laundry in the wash.  The more the easier for us when we enjoy the cabin next.</label>
-            </div>
-
-           <div class="checklist-item">
-                <input type="checkbox" id="hottub">
-                <label for="hottub" class="text-sm"><strong>Hot Tub:</strong> Please place used hot tub & shower towels in the laundry area. <BR>Ensure the cover is closed and the temperature is lowered to 80.</label>
-            </div>
-
-             <div class="checklist-item">
-                <input type="checkbox" id="lights">
-                <label for="lights" class="text-sm"><strong>Lights & Air:</strong> Turn off all lights. Set the thermostat to 75°F (Summer) or 60°F (Winter).</label>
-            </div>
-
-             <div class="checklist-item">
-                <input type="checkbox" id="lock">
-                <label for="lock" class="text-sm"><strong>Lock Up:</strong> Ensure all windows are closed and the smart doors are locked. <BR>(Say 'Alexa, going out.')</label>
-            </div>
-
-              <div class="checklist-item">
-                <input type="checkbox" id="same">
-                <label for="same" class="text-sm"><strong>Leave No Trace:</strong> This is not an AIRBnB.  <BR>Let's try to leave it great for the next friends and family to visit.</label>
-            </div>
-
-           <div class="mt-10 bg-white/50 p-4 rounded text-center">
-                <p class="text-xs text-stone-500 mb-4">We hope you had an amazing mountain getaway! <BR>Please sign the guest book and let us know what you loved about Blue Ridge.</p>
-                <p class="font-serif italic text-lg accent-green">— Heather & Lance</p>
+            <div class="mt-8 bg-stone-800 text-white p-6 rounded-lg text-center shadow-inner">
+                <h4 class="text-xl font-serif italic mb-1">The Easiest Exit:</h4>
+                <p class="text-2xl font-bold text-green-400 uppercase tracking-widest">"Alexa, Going Home"</p>
+                <p class="text-sm mt-2 opacity-80">Locks doors and turns off lights automatically.</p>
             </div>
         </div>
 
-        <p class="text-center mt-8 text-xs text-stone-400">Checkout Time is 3:00 PM for friends and family unless otherwise arranged.</p>
+        <div class="parchment p-8 md:p-12 rounded-xl shadow-2xl border-t-8 border-orange-900/30">
+            <h2 class="text-4xl font-serif italic mb-2 text-green-900">The Haven Guest Book</h2>
+            <p class="mb-8 text-stone-500 italic">Share a memory and let us know if we can improve the cabin for your next stay.</p>
+
+            <form action="https://formspree.io/f/mzdjnprj" method="POST" enctype="multipart/form-data" class="space-y-8">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-2">Guest Name(s)</label>
+                        <input type="text" name="guest_names" required class="w-full p-4 input-style" placeholder="The Smith Family">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-2">Dates of Stay</label>
+                        <input type="text" name="stay_dates" class="w-full p-4 input-style" placeholder="Oct 12-15, 2026">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-stone-800 mb-2 font-serif">What was your favorite mountain adventure? ???</label>
+                    <textarea name="favorite_adventure" rows="3" required class="w-full p-4 input-style" placeholder="Hiking the Toccoa Swinging Bridge..."></textarea>
+                </div>
+
+                <div class="bg-stone-100/50 p-6 rounded-lg border border-stone-200">
+                    <h3 class="text-lg font-serif font-bold text-stone-800 mb-4 border-b border-stone-300 pb-1 uppercase tracking-widest">Haven Upkeep</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                        <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="Coffee"> <span>Coffee Beans</span></label>
+                        <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="TP"> <span>Toilet Paper</span></label>
+                        <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="PaperTowels"> <span>Paper Towels</span></label>
+                        <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="Soap"> <span>Hand Soap</span></label>
+                        <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="DishTabs"> <span>Dish Tabs</span></label>
+                        <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="Propane"> <span>Propane/Charcoal</span></label>
+                    </div>
+                    
+                    <label class="block text-sm font-bold text-stone-800 mb-2 font-serif">Maintenance Notes (Broken bulbs, leaky faucets, etc.)</label>
+                    <textarea name="maintenance_issue" rows="2" class="w-full p-3 input-style text-sm" placeholder="Anything acting up?"></textarea>
+                    <p class="text-[10px] text-stone-500 italic mt-2">"If it's urgent, please text Lance immediately at 770.549.9358!"</p>
+                </div>
+
+                <div class="bg-green-900/5 p-4 rounded border border-green-900/20">
+                    <label class="flex items-start space-x-3 cursor-pointer">
+                        <input type="checkbox" name="cleanliness_confirm" required>
+                        <span class="text-xs text-stone-700 font-bold">We've stripped the sheets, washed the towels, and taken out the trash.</span>
+                    </label>
+                </div>
+
+                <div class="bg-white/40 p-6 rounded-lg border-2 border-dashed border-stone-300 text-center">
+                    <label class="block text-sm font-serif font-bold text-stone-800 mb-2">Upload a memory ??</label>
+                    <input type="file" name="upload" accept="image/*" class="text-xs text-stone-500">
+                </div>
+
+                <button type="submit" class="w-full bg-green-900 text-white font-bold py-5 rounded-full hover:bg-black transition-all shadow-xl uppercase tracking-widest">
+                    Submit Update & Sign Book
+                </button>
+            </form>
+        </div>
+
+        <div class="text-center pt-8">
+            <p class="text-lg font-serif italic text-stone-200 heavy-shadow mb-2">Safe Travels! Thank you for staying at Weeks Creek Haven.</p>
+            <p class="text-stone-400 text-xs uppercase tracking-widest">— Heather & Lance</p>
+        </div>
     </main>
-<footer class="bg-stone-900 text-stone-500 py-16 px-6 text-center">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-8">
-            <div class="text-center md:text-left">
-                <p class="text-white text-xl font-serif italic">Weeks Creek Haven</p>
-                <p>421 Weeks Creek Rd | Blue Ridge, GA 30513</p>
-            </div>
-            <div class="flex flex-wrap justify-center gap-6 text-xs font-bold uppercase tracking-widest text-green-400">
-                <a href="index.html" class="hover:text-white">Home</a>
-                <a href="need-to-know.html" class="hover:text-white">Need to Know</a>
-                <a href="find-us.html" class="hover:text-white">Find Us</a>
-                <a href="gallery.html" class="hover:text-white">Gallery</a>
-                <a href="important-info.html" class="hover:text-white">Friends Portal</a>
-            </div>
-        </div>
-        <div class="text-center mt-10 text-xs text-stone-600 pt-8 border-t border-stone-800 uppercase tracking-widest">
-            © 2026 Heather & Lance | Blue Ridge, Georgia
-        </div>
+
+    <footer class="bg-stone-900 text-stone-500 py-16 px-6 text-center">
+        <p class="text-white text-xl font-serif italic mb-2">Weeks Creek Haven</p>
+        <p class="text-xs">421 Weeks Creek Rd | Blue Ridge, GA 30513</p>
     </footer>
+
+    <script>
+        const btn = document.getElementById('mobile-menu-button');
+        const menu = document.getElementById('mobile-menu');
+        if(btn && menu) {
+            btn.addEventListener('click', () => menu.classList.toggle('hidden'));
+        }
+    </script>
 </body>
 </html>
