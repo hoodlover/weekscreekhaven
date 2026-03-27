@@ -5,14 +5,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cleaning Standards | Weeks Creek Haven</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/webpic/Weeks_Creek_Haven_Favicon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
 	
-	.wood-btn {
+	/* 1. Hide the hover image by default */
+.hover-img {
+    display: none;
+}
+
+/* 2. When hovering over the parent link, hide the normal image */
+.nav-link-group a:hover .normal-img {
+    display: none;
+}
+
+/* 3. When hovering over the parent link, show the hover image */
+.nav-link-group a:hover .hover-img {
+    display: block;
+}
+
+        body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
+        h1, h2, h3 { font-family: 'Crimson Text', serif; }
+        
+        .bg-wood { 
+            background-color: #fcfaf7;
+            background-image: url('/webpic/vintage-wooden-board-textured-background.jpg');
+        }
+        
+        .railroad-tie-nav {
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
+            background-size: auto 100%;
+            background-repeat: repeat-x;
+            border-bottom: 4px solid #2c241e;
+        }
+
+/* Railroad Tie Navigation Bar */
+.railroad-tie-nav {
+    background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
+    background-size: auto 100%;
+    background-repeat: repeat-x;
+    border-bottom: 4px solid #2c241e;
+    box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
+}
+
+/* Wood Button Transitions */
+.wood-btn {
     transition: transform 0.2s ease;
     height: 50px;
     width: auto;
     display: block;
+}
+
+.wood-btn:hover {
+    transform: scale(1.05);
+}
+
+/* Hover Swap Logic */
+.nav-link-group a .hover-img { display: none; }
+.nav-link-group a:hover .normal-img { display: none; }
+.nav-link-group a:hover .hover-img { display: block; }
+
+/* Mobile Menu Background */
+#mobile-menu {
+    background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('/webpic/railroad-tie-texture.jpg');
+    background-size: cover;
 }
 
 /* Scaling for Large Monitors */
@@ -21,16 +79,15 @@
         height: 80px; 
     }
 }
-        body { font-family: 'Montserrat', sans-serif; background-color: #f4f1ea; color: #2c241e; }
-        .checklist-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid #d1cebd; }
-        input[type="checkbox"] { width: 20px; height: 20px; accent-color: #14532d; margin-top: 2px; }
+        .parchment { background-color: rgba(244, 238, 224, 0.95); border: 1px solid #dcd3bd; }
+        54`5
+        .accent-green { color: #14532d; }
     </style>
+
 </head>
-<body class="p-6">
-    <header class="text-center mb-8">
-        <h1 class="text-2xl font-bold uppercase tracking-widest text-green-900">Weeks Creek Haven</h1>
-        <p class="text-sm italic">"Your Cabin Away From Home"</p>
-    </header>
+<body class="bg-wood">
+   
+
 <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
     <a href="index.html" class="flex-shrink-0">
         <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
@@ -73,23 +130,31 @@
         <a href="important-info.html"><img src="/buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
     </div>
 </nav>
+
+</head>
+<body class="p-6">
+    <header class="text-center mb-8">
+        <h1 class="text-2xl font-bold uppercase tracking-widest text-green-900">Weeks Creek Haven</h1>
+        <p class="text-sm italic">"Your Cabin Away From Home"</p>
+    </header>
+
     <div class="max-w-md mx-auto space-y-8">
         <section>
-            <h2 class="font-bold border-b-2 border-green-800 pb-1 mb-2">ðŸ›‹ï¸ MAIN AREAS</h2>
+            <h2 class="font-bold border-b-2 border-green-800 pb-1 mb-2">🛋️ MAIN AREAS</h2>
             <div class="checklist-item"><input type="checkbox"> <span>Wipe 98" TV & organize remotes</span></div>
             <div class="checklist-item"><input type="checkbox"> <span>Fireplace knob back to 'PILOT'</span></div>
             <div class="checklist-item"><input type="checkbox"> <span>Sweep/Vacuum around boot brush</span></div>
         </section>
 
         <section>
-            <h2 class="font-bold border-b-2 border-green-800 pb-1 mb-2">ðŸ³ KITCHEN</h2>
+            <h2 class="font-bold border-b-2 border-green-800 pb-1 mb-2">🍳 KITCHEN</h2>
             <div class="checklist-item"><input type="checkbox"> <span>Refill Breville water tank & wipe wand</span></div>
             <div class="checklist-item"><input type="checkbox"> <span>Double-press Microwave CANCEL</span></div>
             <div class="checklist-item"><input type="checkbox"> <span>Discard all fridge leftovers</span></div>
         </section>
 
         <section>
-            <h2 class="font-bold border-b-2 border-green-800 pb-1 mb-2">ðŸŒ² OUTDOORS</h2>
+            <h2 class="font-bold border-b-2 border-green-800 pb-1 mb-2">🌲 OUTDOORS</h2>
             <div class="checklist-item"><input type="checkbox"> <span>Empty ash from metal fire pit</span></div>
             <div class="checklist-item"><input type="checkbox"> <span>Confirm deck heater is OFF</span></div>
             <div class="checklist-item"><input type="checkbox"> <span>Check Hot Tub chemical levels & cover</span></div>
