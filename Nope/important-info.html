@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Haven Upkeep | Weeks Creek Haven</title>
+    <title>VIP Gateway | Weeks Creek Haven</title>
     
         <link rel="icon" type="image/png" href="/webpic/Weeks_Creek_Haven_Favicon.png">
 
@@ -120,77 +120,82 @@
         </div>
     </nav>
 
-    <div class="min-h-screen pt-32 pb-12 px-6 flex flex-col items-center">
-        
-        <div class="parchment p-8 md:p-14 rounded-2xl shadow-2xl max-w-2xl w-full border-t-8 border-green-900">
-            <h1 class="text-4xl text-green-900 mb-2 italic">Haven Upkeep</h1>
-            <p class="mb-8 text-stone-600">Help Lance & Heather keep the cabin perfect for the next guest.</p>
+    <div id="main-container" class="min-h-screen flex items-center justify-center px-6">
 
-            <form action="https://formspree.io/f/mzdjnprj" method="POST" class="space-y-8">
-                
-                <section>
-                    <h3 class="text-xl font-bold uppercase tracking-widest text-stone-800 border-b border-stone-300 mb-4 pb-1">Restock Needed</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <label class="flex items-center space-x-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer">
-                            <input type="checkbox" name="restock[]" value="Coffee Beans" class="w-5 h-5 accent-green-800"> <span class="text-stone-800">Coffee Beans</span>
-                        </label>
-                        <label class="flex items-center space-x-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer">
-                            <input type="checkbox" name="restock[]" value="Toilet Paper" class="w-5 h-5 accent-green-800"> <span class="text-stone-800">Toilet Paper</span>
-                        </label>
-                        <label class="flex items-center space-x-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer">
-                            <input type="checkbox" name="restock[]" value="Paper Towels" class="w-5 h-5 accent-green-800"> <span class="text-stone-800">Paper Towels</span>
-                        </label>
-                        <label class="flex items-center space-x-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer">
-                            <input type="checkbox" name="restock[]" value="Hand Soap" class="w-5 h-5 accent-green-800"> <span class="text-stone-800">Hand Soap</span>
-                        </label>
-                        <label class="flex items-center space-x-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer">
-                            <input type="checkbox" name="restock[]" value="Dish Tabs" class="w-5 h-5 accent-green-800"> <span class="text-stone-800">Dishwasher Tabs</span>
-                        </label>
-                        <label class="flex items-center space-x-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer">
-                            <input type="checkbox" name="restock[]" value="Propane" class="w-5 h-5 accent-green-800"> <span class="text-stone-800">Propane/Charcoal</span>
-                        </label>
-                    </div>
-                </section>
+        <div id="gate" class="parchment p-8 md:p-14 rounded-2xl shadow-2xl text-center max-w-md w-full border-t-8 border-green-900">
+            <h1 class="text-5xl mb-6 font-serif italic text-green-900 heavy-shadow">The Haven Vault</h1>
+            <p class="mb-8 text-stone-600 italic">"Enter your secret word to unlock the cabin guide."</p>
+            
+            <input type="password" id="passInput" placeholder="Password" 
+                   onkeydown="if(event.key === 'Enter') { event.preventDefault(); checkPass(); }"
+                   class="w-full p-4 border-2 border-stone-300 rounded-lg mb-4 focus:border-green-800 outline-none text-center text-xl tracking-widest">
+            
+            <button type="button" onclick="checkPass()" class="w-full bg-green-900 text-white font-bold py-4 rounded-lg hover:bg-black transition shadow-lg uppercase tracking-widest">
+                Unlock Haven
+            </button>
+            
+            <p id="error" class="text-red-600 mt-6 font-bold hidden">? Access Denied. Try again!</p>
+            
+            <div class="mt-8 pt-6 border-t border-stone-200">
+                <a href="index.html" class="text-[10px] uppercase tracking-[0.2em] text-stone-400 hover:text-green-900 transition">Back to Main Site</a>
+            </div>
+        </div>
 
-                <section>
-                    <h3 class="text-xl font-bold uppercase tracking-widest text-stone-800 border-b border-stone-300 mb-4 pb-1">Maintenance Notes</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-bold mb-1 text-stone-800">Anything acting up?</label>
-                            <textarea name="maintenance_issue" rows="3" placeholder="Broken lightbulbs, leaky faucets, Alexa being moody..." class="w-full p-3 border border-stone-300 rounded focus:border-green-800 outline-none bg-white text-stone-800"></textarea>
-                        </div>
-                        <p class="text-xs text-stone-500 italic">"If it's urgent, please text Lance immediately at 770.549.9358!"</p>
-                    </div>
-                </section>
-
-                <section class="bg-green-900/5 p-6 rounded-lg border border-green-900/20">
-                    <h3 class="text-lg font-bold text-green-900 mb-2">Cleanliness Check</h3>
-                    <label class="flex items-start space-x-3 cursor-pointer">
-                        <input type="checkbox" name="cleaning_done" class="mt-1 w-5 h-5 accent-green-800" required>
-                        <span class="text-sm text-stone-700">We've stripped the sheets, washed the towels, and taken out the trash.</span>
-                    </label>
-                </section>
-
-                <button type="submit" class="w-full bg-green-900 text-white font-bold py-4 rounded hover:bg-black transition shadow-lg uppercase tracking-widest">
-                    Submit Update
-                </button>
-            </form>
-
-            <footer class="mt-12 text-center text-xs text-stone-500 uppercase tracking-widest border-t border-stone-200 pt-6">
-                Weeks Creek Haven | 421 Weeks Creek Rd
-            </footer>
+        <div id="portalContent" style="display:none;" class="parchment p-10 max-w-4xl mx-auto rounded-xl shadow-xl mt-24 mb-12">
+            <h2 class="text-4xl text-green-900 mb-4">Welcome, Family & Mates!</h2>
+            <p class="text-lg">You've unlocked the inner circle guide for Weeks Creek Haven.</p>
+            <hr class="my-6 border-stone-300">
+            <ul class="list-disc list-inside space-y-2">
+                <li>Wifi Password: [Your Wifi Here]</li>
+                <li>Back Door Code: [Your Code Here]</li>
+            </ul>
+            <button onclick="location.reload()" class="mt-8 text-sm text-stone-500 underline">Lock Vault</button>
         </div>
     </div>
 
-    <script>
-        // Mobile Menu Toggle
-        const btn = document.getElementById('mobile-menu-button');
-        const menu = document.getElementById('mobile-menu');
-        if(btn && menu) {
-            btn.addEventListener('click', () => {
-                menu.classList.toggle('hidden');
-            });
+<script>
+    function checkPass() {
+        const passInput = document.getElementById('passInput');
+        const pass = passInput.value.trim().toLowerCase();
+        const errorMsg = document.getElementById('error');
+        const gate = document.getElementById('gate');
+        const portalContent = document.getElementById('portalContent');
+        const container = document.getElementById('main-container');
+
+        const passwordMap = {
+            "creeklife": "reveal",           
+            "family": "reveal",              
+            "havenvip": "welcomefam.html",      
+            "creek": "welcome.html",         
+            "admin421": "maintenance.html",  
+            "reeves": "cr-vip.html",         
+            "clean": "cleaningchecklist.html",
+            "team": "cleaningchecklist.html",
+            "cl": "family-portal.html"
+        };
+
+        if (passwordMap[pass]) {
+            if (passwordMap[pass] === "reveal") {
+                gate.style.display = 'none';
+                portalContent.style.display = 'block';
+                // Remove centering from the container so the list can scroll
+                container.classList.remove('flex', 'items-center', 'justify-center');
+            } else {
+                window.location.href = passwordMap[pass];
+            }
+        } else {
+            errorMsg.classList.remove('hidden');
+            passInput.value = '';
+            passInput.focus();
         }
-    </script>
+    }
+
+    // Mobile Menu Toggle
+    const btn = document.getElementById('mobile-menu-button');
+    const menu = document.getElementById('mobile-menu');
+    btn.addEventListener('click', () => {
+        menu.classList.toggle('hidden');
+    });
+</script>
 </body>
 </html>

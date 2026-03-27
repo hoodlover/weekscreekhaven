@@ -178,7 +178,7 @@
             if (passwordMap[pass] === "reveal") {
                 gate.style.display = 'none';
                 portalContent.style.display = 'block';
-                // Remove centering from the container so the list can scroll
+                // Removes centering from the container so long content can scroll naturally
                 container.classList.remove('flex', 'items-center', 'justify-center');
             } else {
                 window.location.href = passwordMap[pass];
@@ -190,12 +190,14 @@
         }
     }
 
-    // Mobile Menu Toggle
-    const btn = document.getElementById('mobile-menu-button');
-    const menu = document.getElementById('mobile-menu');
-    btn.addEventListener('click', () => {
-        menu.classList.toggle('hidden');
-    });
+    // Basic toggle for mobile navigation
+    const menuBtn = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if(menuBtn && mobileMenu) {
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
 </script>
 </body>
 </html>
