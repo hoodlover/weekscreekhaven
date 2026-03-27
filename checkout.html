@@ -171,57 +171,58 @@
             <h2 class="text-4xl font-serif italic mb-2 text-green-900">The Haven Guest Book</h2>
             <p class="mb-8 text-stone-500 italic">Share a note, a laugh, and let us know if we need to restock anything.</p>
 
-            <form action="https://formspree.io/f/mzdjnprj" method="POST" enctype="multipart/form-data" class="space-y-8">
-    <input type="hidden" name="_next" value="https://weekscreekhaven.com/thanks.html">
-			
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-2">Guest Name(s)</label>
-                        <input type="text" name="guest_names" required class="w-full p-4 input-style" placeholder="The Smith Family">
-                    </div>
-                    <div>
-                        <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-2">Dates of Stay</label>
-                        <input type="text" name="stay_dates" class="w-full p-4 input-style" placeholder="Oct 12-15, 2026">
-                    </div>
-                </div>
+            <form action="https://formspree.io/f/mzdjnprj" method="POST" class="space-y-8">
+    
+    <input type="hidden" name="_next" value="thanks.html">
+    
+    <input type="hidden" name="_subject" value="New Cabin Checkout & Guest Book Entry">
 
-                <div>
-                    <label class="block text-sm font-bold text-stone-800 mb-2 font-serif">What was your favorite mountain adventure?</label>
-                    <textarea name="favorite_adventure" rows="3" required class="w-full p-4 input-style" placeholder="Hiking the Toccoa Swinging Bridge..."></textarea>
-                </div>
+    <div class="grid md:grid-cols-2 gap-6">
+        <div>
+            <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-2">Guest Name(s)</label>
+            <input type="text" name="guest_names" required class="w-full p-4 input-style" placeholder="The Smith Family">
+        </div>
+        <div>
+            <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-2">Dates of Stay</label>
+            <input type="text" name="stay_dates" class="w-full p-4 input-style" placeholder="Oct 12-15, 2026">
+        </div>
+    </div>
 
-                <div class="bg-stone-100/50 p-6 rounded-lg border border-stone-200">
-                    <h3 class="text-lg font-serif font-bold text-stone-800 mb-4 border-b border-stone-300 pb-1 uppercase tracking-widest">Haven Upkeep</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                        <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="Coffee"> <span>Coffee Beans</span></label>
-                        <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="TP"> <span>Toilet Paper</span></label>
-                        <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="PaperTowels"> <span>Paper Towels</span></label>
-                        <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="Soap"> <span>Hand Soap</span></label>
-                        <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="DishTabs"> <span>Dish Tabs</span></label>
-                        <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="Propane"> <span>Propane</span></label>
-                    </div>
-                    
-                    <label class="block text-sm font-bold text-stone-800 mb-2 font-serif">Maintenance Notes (Broken bulbs, leaky faucets, etc.)</label>
-                    <textarea name="maintenance_issue" rows="2" class="w-full p-3 input-style text-sm" placeholder="Alexa being moody..."></textarea>
-                    <p class="text-[10px] text-stone-500 italic mt-2">"If it's urgent, please text Lance immediately at 770.549.9358!"</p>
-                </div>
+    <div>
+        <label class="block text-sm font-bold text-stone-800 mb-2 font-serif">What was your favorite mountain adventure?</label>
+        <textarea name="favorite_adventure" rows="3" required class="w-full p-4 input-style" placeholder="Hiking the Toccoa Swinging Bridge..."></textarea>
+    </div>
 
-                <div class="bg-green-900/5 p-4 rounded border border-green-900/20">
-                    <label class="flex items-start space-x-3 cursor-pointer">
-                        <input type="checkbox" name="cleanliness_confirm" required>
-                        <span class="text-xs text-stone-700">We've stripped the sheets, washed the towels, and taken out the trash.</span>
-                    </label>
-                </div>
+    <div class="bg-stone-100/50 p-6 rounded-lg border border-stone-200">
+        <h3 class="text-lg font-serif font-bold text-stone-800 mb-4 border-b border-stone-300 pb-1 uppercase tracking-widest">Haven Upkeep</h3>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+            <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="Coffee"> <span>Coffee Beans</span></label>
+            <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="TP"> <span>Toilet Paper</span></label>
+            <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="PaperTowels"> <span>Paper Towels</span></label>
+            <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="Soap"> <span>Hand Soap</span></label>
+            <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="DishTabs"> <span>Dish Tabs</span></label>
+            <label class="flex items-center space-x-2 text-xs"><input type="checkbox" name="restock[]" value="Propane"> <span>Propane/Charcoal</span></label>
+        </div>
+        
+        <label class="block text-sm font-bold text-stone-800 mb-2 font-serif">Maintenance Notes</label>
+        <textarea name="maintenance_issue" rows="2" class="w-full p-3 input-style text-sm" placeholder="Broken bulbs, leaky faucets, etc..."></textarea>
+        <p class="text-[10px] text-stone-500 italic mt-2">"If it's urgent, please text Lance immediately at 770.549.9358!"</p>
+    </div>
 
-                <div class="bg-white/40 p-6 rounded-lg border-2 border-dashed border-stone-300 text-center">
-                    <label class="block text-sm font-serif font-bold text-stone-800 mb-2">Upload a memory ??</label>
-                    <input type="file" name="upload" accept="image/*" class="text-xs text-stone-500">
-                </div>
+    <div class="bg-green-900/5 p-4 rounded border border-green-900/20">
+        <label class="flex items-start space-x-3 cursor-pointer">
+            <input type="checkbox" name="cleanliness_confirm" required>
+            <span class="text-xs text-stone-700 font-bold">We've stripped the sheets, washed the towels, and taken out the trash.</span>
+        </label>
+    </div>
 
-                <button type="submit" class="w-full bg-green-900 text-white font-bold py-5 rounded-full hover:bg-black transition-all shadow-xl uppercase tracking-widest">
-                    Submit & Sign the Book
-                </button>
-            </form>
+    <div class="text-center pt-6">
+        <button type="submit" class="hover:scale-105 transition-transform border-0 bg-transparent p-0 cursor-pointer">
+            <img src="/buttons/friends-info.jpg" alt="Submit Update & Sign Book" class="h-16 w-auto shadow-xl rounded-lg">
+        </button>
+        <p class="mt-4 text-[10px] text-stone-500 uppercase tracking-widest">Click the button above to finish checkout</p>
+    </div>
+</form>
         </div>
 
         <div class="text-center pt-8">
