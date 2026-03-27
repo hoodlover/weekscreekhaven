@@ -7,87 +7,72 @@
     <link rel="icon" type="image/png" href="/webpic/Weeks_Creek_Haven_Favicon.png">
     <meta name="description" content="Explore the best things to do in Blue Ridge, GA, near Weeks Creek Haven.">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
  
-   <link rel="icon" type="image/png" href="/webpic/Weeks_Creek_Haven_Favicon.png">
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
-        h1, h2, h3, h4 { font-family: 'Crimson Text', serif; }
-        
-        details summary::-webkit-details-marker { display: none; }
-        details summary { list-style: none; }
-        summary { display: flex !important; }
-
-        .heavy-shadow {
-            text-shadow: 4px 4px 15px rgba(0, 0, 0, 0.9), 0px 0px 30px rgba(0, 0, 0, 0.5);
+        /* Updated Body with barn.jpg background */
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            color: #f4eee0; /* Light parchment color for general text */
+            scroll-behavior: smooth; 
+            background-image: url('barn.jpg');
+            background-attachment: fixed;
+            background-size: cover;
         }
 
-        .bg-wood { 
-            background-color: #fcfaf7;
-            background-image: url('/webpic/vintage-wooden-board-textured-background.jpg');
-        }
+        h1, h2, h3, h4 { font-family: 'Crimson Text', serif; font-weight: 700; }
         
+        /* High contrast headers */
+        .header-title { color: #ffffff; text-shadow: 2px 2px 8px rgba(0,0,0,0.8); }
+        .header-sub { color: #e5e7eb; text-shadow: 1px 1px 4px rgba(0,0,0,0.8); }
+
+        /* Card Adjustments for readability */
+        .adventure-card { 
+            background-color: rgba(255, 255, 255, 0.05); 
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .adventure-card:hover { transform: translateY(-5px); background-color: rgba(255, 255, 255, 0.1); }
+        
+        /* Making descriptions bold and light */
+        .card-desc { color: #f3f4f6; font-weight: 600; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+        .accent-green-light { color: #94a3b8; font-weight: 800; } /* Lightened accent for dark BG */
+        
+        /* Section Dividers */
+        .section-heading { 
+            color: #fef3c7; /* Warm gold */
+            border-bottom: 2px solid #fef3c7;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Navigation Styles */
         .railroad-tie-nav {
-            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/webpic/railroad-tie-texture.jpg');
             background-size: auto 100%;
             background-repeat: repeat-x;
-            border-bottom: 4px solid #2c241e;
-            box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
+            border-bottom: 4px solid #1a1512;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
         }
 
-        .wood-btn {
-            transition: transform 0.2s ease;
-            height: 50px;
-            width: auto;
-            display: block;
-        }
-
-        @media (min-width: 1536px) {
-            .wood-btn {
-                height: 80px; 
-            }
-        }
-
-        .wood-btn:hover {
-            transform: scale(1.05);
-        }
-
-        /* Fixed Hero Button sizing for mobile and desktop */
-        .hero-btn {
-            height: auto;
-            width: 180px; /* Controlled width for mobile */
-            margin: 0 auto;
-        }
-
-        @media (min-width: 768px) {
-            .hero-btn {
-                width: 240px;
-            }
-        }
-
-        @media (min-width: 1536px) {
-            .hero-btn {
-                width: 300px;
-            }
-        }
+        .wood-btn { transition: transform 0.2s ease; height: 50px; width: auto; display: block; }
+        @media (min-width: 1536px) { .wood-btn { height: 80px; } }
+        .wood-btn:hover { transform: scale(1.05); }
 
         .nav-link-group a .hover-img { display: none; }
         .nav-link-group a:hover .normal-img { display: none; }
         .nav-link-group a:hover .hover-img { display: block; }
 
-        .accent-green { color: #4a5d4e; }
-        .parchment { background-color: rgba(244, 238, 224, 0.9); border: 1px solid #dcd3bd; }
-        
-        #mobile-menu {
-            background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('/webpic/railroad-tie-texture.jpg');
-            background-size: cover;
+        /* Lightbox */
+        #lightbox {
+            display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.9); justify-content: center; align-items: center;
         }
+        #lightbox-img { max-width: 90%; max-height: 90%; border: 3px solid white; }
+        .close-btn { position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; cursor: pointer; }
     </style>
 </head>
-<body class="bg-wood">
+<body>
 
     <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
         <a href="index.html" class="flex-shrink-0">
@@ -116,161 +101,146 @@
                 <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
             </a>
         </div>
-
-        <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-        </button>
-
-        <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800">
-            <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
-            <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
-            <a href="find-us.html"><img src="/buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
-            <a href="gallery.html"><img src="/buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
-            <a href="important-info.html"><img src="/buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
-        </div>
     </nav>
 
-	
-    <header class="pt-32 pb-12 text-center px-6">
-        <h1 class="text-5xl md:text-6xl italic text-gray-800 mb-2">Explore Your Adventure</h1>
-        <p class="text-lg text-gray-600 max-w-xl mx-auto font-light italic">Click any image to view full size maps and details.</p>
+    <header class="pt-40 pb-12 text-center px-6">
+        <h1 class="text-5xl md:text-7xl header-title mb-4">Explore Your Adventure</h1>
+        <p class="text-xl header-sub max-w-xl mx-auto font-light italic">Click any image to view full size maps and details.</p>
     </header>
 
 <main class="max-w-6xl mx-auto px-6 pb-24 space-y-20">
     
     <section id="hiking">
-        <div class="flex items-center gap-4 mb-8 pb-3 border-b border-stone-200">
-            <h2 class="text-4xl accent-green">Hiking & Waterfalls</h2>
+        <div class="mb-8 pb-3 section-heading">
+            <h2 class="text-4xl">Hiking & Waterfalls</h2>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col border-t-4 border-t-green-700">
-                <img src="/info/24_Hiking_Trails.jpg" onclick="openLightbox(this.src)" class="img-thumbnail rounded-lg mb-4">
-                <h4 class="font-bold accent-green uppercase tracking-wider text-xs mb-2">Aska Trail System</h4>
-                <p class="text-xs text-stone-600 leading-relaxed">17 miles of multi-use trails for all skill levels.</p>
+            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-green-600">
+                <img src="/info/24_Hiking_Trails.jpg" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer hover:opacity-90">
+                <h4 class="accent-green-light uppercase tracking-wider text-sm mb-2">Aska Trail System</h4>
+                <p class="text-sm card-desc leading-relaxed">17 miles of multi-use trails for all skill levels.</p>
             </div>
 
-            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col border-t-4 border-t-green-700">
-                <img src="/info/fall_branch_falls.jpg" onclick="openLightbox(this.src)" class="img-thumbnail rounded-lg mb-4">
-                <h4 class="font-bold accent-green uppercase tracking-wider text-xs mb-2">Fall Branch Falls</h4>
-                <p class="text-xs text-stone-600 leading-relaxed">A moderate 1-mile round trip hike to a 75-ft double cascade.</p>
+            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-green-600">
+                <img src="/info/fall_branch_falls.jpg" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer">
+                <h4 class="accent-green-light uppercase tracking-wider text-sm mb-2">Fall Branch Falls</h4>
+                <p class="text-sm card-desc leading-relaxed">A moderate 1-mile round trip hike to a 75-ft double cascade.</p>
             </div>
 
-            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col border-t-4 border-t-green-700">
-                <img src="/info/Swinging_Bridge.jpg" onclick="openLightbox(this.src)" class="img-thumbnail rounded-lg mb-4">
-                <h4 class="font-bold accent-green uppercase tracking-wider text-xs mb-2">Swinging Bridge</h4>
-                <p class="text-xs text-stone-600 leading-relaxed">Longest swinging bridge east of the Mississippi at 270 ft.</p>
+            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-green-600">
+                <img src="/info/Swinging_Bridge.jpg" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer">
+                <h4 class="accent-green-light uppercase tracking-wider text-sm mb-2">Swinging Bridge</h4>
+                <p class="text-sm card-desc leading-relaxed">Longest swinging bridge east of the Mississippi at 270 ft.</p>
+            </div>
+            
+            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-green-600">
+                <img src="/info/Benton.jpg" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer">
+                <h4 class="accent-green-light uppercase tracking-wider text-sm mb-2">Benton MacKaye Trail</h4>
+                <p class="text-sm card-desc leading-relaxed">A long-distance trail marked by white diamonds passing through the area.</p>
             </div>
 
-            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col border-t-4 border-t-green-700">
-                <img src="/info/Benton.jpg" onclick="openLightbox(this.src)" class="img-thumbnail rounded-lg mb-4">
-                <h4 class="font-bold accent-green uppercase tracking-wider text-xs mb-2">Benton MacKaye Trail</h4>
-                <p class="text-xs text-stone-600 leading-relaxed">A long-distance trail marked by white diamonds passing through the area.</p>
-            </div>
-
-            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col border-t-4 border-t-green-700">
-                <img src="/info/Long_Branch.jpg" onclick="openLightbox(this.src)" class="img-thumbnail rounded-lg mb-4">
-                <h4 class="font-bold accent-green uppercase tracking-wider text-xs mb-2">Long Branch Loop</h4>
-                <p class="text-xs text-stone-600 leading-relaxed">A 2.3-mile moderate loop featuring a historic chimney.</p>
+            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-green-600">
+                <img src="/info/Long_Branch.jpg" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer">
+                <h4 class="accent-green-light uppercase tracking-wider text-sm mb-2">Long Branch Loop</h4>
+                <p class="text-sm card-desc leading-relaxed">A 2.3-mile moderate loop featuring a historic chimney.</p>
             </div>
         </div>
     </section>
 
     <section id="family">
-        <div class="flex items-center gap-4 mb-8 pb-3 border-b border-stone-200">
-            <h2 class="text-4xl accent-green">Family Fun & River Adventures</h2>
+        <div class="mb-8 pb-3 section-heading">
+            <h2 class="text-4xl">Family Fun & River Adventures</h2>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col border-t-4 border-t-blue-700">
-                <img src="/info/br_rail_wm.jpg" onclick="openLightbox(this.src)" class="img-thumbnail rounded-lg mb-4">
-                <h4 class="font-bold accent-green uppercase tracking-wider text-xs mb-2">Blue Ridge Scenic Railway</h4>
-                <p class="text-xs text-stone-600 leading-relaxed">Scenic rides along the Toccoa River with a layover in McCaysville.</p>
+            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-blue-500">
+                <img src="/info/br_rail_wm.jpg" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer">
+                <h4 class="accent-green-light uppercase tracking-wider text-sm mb-2">Blue Ridge Scenic Railway</h4>
+                <p class="text-sm card-desc leading-relaxed">Scenic rides along the Toccoa River with a layover in McCaysville.</p>
             </div>
 
-            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col border-t-4 border-t-blue-700">
-                <img src="/info/18_Fun_Things_in_Blue_Ridge.jpg" onclick="openLightbox(this.src)" class="img-thumbnail rounded-lg mb-4">
-                <h4 class="font-bold accent-green uppercase tracking-wider text-xs mb-2">Fun Around Blue Ridge</h4>
-                <p class="text-xs text-stone-600 leading-relaxed">Highlights include Aska Gem Mining, The Lilly Pad Village, and local shops.</p>
+            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-blue-500">
+                <img src="/info/18_Fun_Things_in_Blue_Ridge.jpg" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer">
+                <h4 class="accent-green-light uppercase tracking-wider text-sm mb-2">Fun Around Blue Ridge</h4>
+                <p class="text-sm card-desc leading-relaxed">Highlights include Aska Gem Mining, The Lilly Pad Village, and local shops.</p>
             </div>
 
-            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col border-t-4 border-t-blue-700">
-                <img src="/info/mercier_orchards.jpg" onclick="openLightbox(this.src)" class="img-thumbnail rounded-lg mb-4">
-                <h4 class="font-bold accent-green uppercase tracking-wider text-xs mb-2">Mercier Orchards</h4>
-                <p class="text-xs text-stone-600 leading-relaxed">Famous for fried pies, cider tasting, and U-pick fruit.</p>
+            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-blue-500">
+                <img src="/info/mercier_orchards.jpg" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer">
+                <h4 class="accent-green-light uppercase tracking-wider text-sm mb-2">Mercier Orchards</h4>
+                <p class="text-sm card-desc leading-relaxed">Famous for fried pies, cider tasting, and U-pick fruit.</p>
             </div>
 
-            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col border-t-4 border-t-blue-700">
-                <img src="/info/bj_reece.jpg" onclick="openLightbox(this.src)" class="img-thumbnail rounded-lg mb-4">
-                <h4 class="font-bold accent-green uppercase tracking-wider text-xs mb-2">BJ Reece Orchards</h4>
-                <p class="text-xs text-stone-600 leading-relaxed">Located in Ellijay; features corn mazes, petting farms, and apple picking.</p>
+            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-blue-500">
+                <img src="/info/bj_reece.jpg" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer">
+                <h4 class="accent-green-light uppercase tracking-wider text-sm mb-2">BJ Reece Orchards</h4>
+                <p class="text-sm card-desc leading-relaxed">Located in Ellijay; features corn mazes, petting farms, and apple picking.</p>
             </div>
 
-            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col border-t-4 border-t-blue-700">
-                <img src="/info/21_Recreation_Areas.jpg" onclick="openLightbox(this.src)" class="img-thumbnail rounded-lg mb-4">
-                <h4 class="font-bold accent-green uppercase tracking-wider text-xs mb-2">Lake & Recreation</h4>
-                <p class="text-xs text-stone-600 leading-relaxed">Swimming at Morganton Point and boat rentals at Blue Ridge Pier.</p>
+            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-blue-500">
+                <img src="/info/21_Recreation_Areas.jpg" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer">
+                <h4 class="accent-green-light uppercase tracking-wider text-sm mb-2">Lake & Recreation</h4>
+                <p class="text-sm card-desc leading-relaxed">Swimming at Morganton Point and boat rentals at Blue Ridge Pier.</p>
             </div>
 
-            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col border-t-4 border-t-blue-700">
-                <img src="/info/Toccoa_River.jpg" onclick="openLightbox(this.src)" class="img-thumbnail rounded-lg mb-4">
-                <h4 class="font-bold accent-green uppercase tracking-wider text-xs mb-2">Toccoa River Canoe Trail</h4>
-                <p class="text-xs text-stone-600 leading-relaxed">A 13.8-mile trail through trout streams and rapids.</p>
+            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-blue-500">
+                <img src="/info/Toccoa_River.jpg" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer">
+                <h4 class="accent-green-light uppercase tracking-wider text-sm mb-2">Toccoa River Canoe Trail</h4>
+                <p class="text-sm card-desc leading-relaxed">A 13.8-mile trail through trout streams and rapids.</p>
             </div>
         </div>
     </section>
 
     <section id="local">
-        <div class="flex items-center gap-4 mb-8 pb-3 border-b border-stone-200">
-            <h2 class="text-4xl accent-green">Local Dining & Wineries</h2>
+        <div class="mb-8 pb-3 section-heading">
+            <h2 class="text-4xl">Local Dining & Wineries</h2>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col border-t-4 border-t-amber-700">
-                <img src="/info/wineries.jpg" onclick="openLightbox(this.src)" class="img-thumbnail rounded-lg mb-4">
-                <h4 class="font-bold accent-green uppercase tracking-wider text-xs mb-2">Rustic Vineyards</h4>
-                <p class="text-xs text-stone-600 leading-relaxed">Visit Bear Claw, Living Water, and other local mountain wineries.</p>
+            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-orange-400">
+                <img src="/info/wineries.jpg" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer">
+                <h4 class="accent-green-light uppercase tracking-wider text-sm mb-2">Rustic Vineyards</h4>
+                <p class="text-sm card-desc leading-relaxed">Visit Bear Claw, Living Water, and other local mountain wineries.</p>
             </div>
 
-            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col border-t-4 border-t-amber-700">
-                <img src="/info/20_Local_Eats.jpg" onclick="openLightbox(this.src)" class="img-thumbnail rounded-lg mb-4">
-                <h4 class="font-bold accent-green uppercase tracking-wider text-xs mb-2">Riverside & General Stores</h4>
-                <p class="text-xs text-stone-600 leading-relaxed">Toccoa Riverside for trout or Iron Bridge Cafe for breakfast and gear.</p>
+            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-orange-400">
+                <img src="/info/20_Local_Eats.jpg" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer">
+                <h4 class="accent-green-light uppercase tracking-wider text-sm mb-2">Riverside & General Stores</h4>
+                <p class="text-sm card-desc leading-relaxed">Toccoa Riverside for trout or Iron Bridge Cafe for breakfast and gear.</p>
             </div>
 
-            <div class="adventure-card p-4 rounded-xl shadow-sm flex flex-col border-t-4 border-t-amber-700">
-                <img src="/info/BR_Food.jpg" onclick="openLightbox(this.src)" class="img-thumbnail rounded-lg mb-4">
-                <h4 class="font-bold accent-green uppercase tracking-wider text-xs mb-2">Local Breweries</h4>
-                <p class="text-xs text-stone-600 leading-relaxed">Enjoy craft beer at Grumpy Old Men Brewing or local wineries.</p>
+            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-orange-400">
+                <img src="/info/BR_Food.jpg" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer">
+                <h4 class="accent-green-light uppercase tracking-wider text-sm mb-2">Local Breweries</h4>
+                <p class="text-sm card-desc leading-relaxed">Enjoy craft beer at Grumpy Old Men Brewing or local wineries.</p>
             </div>
         </div>
     </section>
 
 </main>
 
-    <footer class="bg-stone-900 text-stone-500 py-16 px-6 text-center">
-        <p class="text-white text-xl font-serif italic mb-2">Weeks Creek Haven</p>
-        <p class="text-xs uppercase tracking-widest">© 2026 Heather & Lance | Blue Ridge, Georgia</p>
+    <footer class="bg-black/80 text-stone-400 py-16 px-6 text-center border-t border-stone-800">
+        <p class="text-white text-2xl font-serif italic mb-2">Weeks Creek Haven</p>
+        <p class="text-xs uppercase tracking-widest font-bold">© 2026 Heather & Lance | Blue Ridge, Georgia</p>
     </footer>
 
     <script>
         function openLightbox(src) {
             document.getElementById('lightbox-img').src = src;
             document.getElementById('lightbox').style.display = 'flex';
-            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            document.body.style.overflow = 'hidden';
         }
         function closeLightbox() {
             document.getElementById('lightbox').style.display = 'none';
-            document.body.style.overflow = 'auto'; // Re-enable scrolling
+            document.body.style.overflow = 'auto';
         }
     </script>
 	
-<div id="lightbox" onclick="closeLightbox()">
-    <span class="close-btn">&times;</span>
-    <img id="lightbox-img" src="" alt="Enlarged view">
-</div>
+    <div id="lightbox" onclick="closeLightbox()">
+        <span class="close-btn">&times;</span>
+        <img id="lightbox-img" src="" alt="Enlarged view">
+    </div>
 
 </body>
 </html>
