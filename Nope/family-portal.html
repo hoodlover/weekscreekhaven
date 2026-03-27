@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP Gateway | Weeks Creek Haven</title>
+    
+    <link rel="icon" type="image/png" href="/webpic/Weeks_Creek_Haven_Favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+	
+	.wood-btn {
+    transition: transform 0.2s ease;
+    height: 50px;
+    width: auto;
+    display: block;
+}
+
+/* Scaling for Large Monitors */
+@media (min-width: 1536px) {
+    .wood-btn {
+        height: 80px; 
+    }
+}
+        body { font-family: 'Montserrat', sans-serif; color: #3d3128; }
+        h1, h2 { font-family: 'Crimson Text', serif; }
+        .bg-wood { background-image: url('/webpic/vintage-wooden-board-textured-background.jpg'); background-color: #fcfaf7; }
+        .parchment { background-color: rgba(244, 238, 224, 0.95); border: 1px solid #dcd3bd; }
+        .heavy-shadow { text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body class="bg-wood min-h-screen flex items-center justify-center px-6">
+
+<nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
+    <a href="index.html" class="flex-shrink-0">
+        <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
+    </a>
+    
+    <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
+        <a href="things-to-do.html">
+            <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
+            <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
+        </a>
+        <a href="need-to-know.html">
+            <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
+            <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
+        </a>
+        <a href="find-us.html">
+            <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
+            <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
+        </a>
+        <a href="gallery.html">
+            <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
+            <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
+        </a>
+        <a href="important-info.html">
+            <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
+            <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
+        </a>
+    </div>
+
+    <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800">
+        <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
+        <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
+        <a href="find-us.html"><img src="/buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
+        <a href="gallery.html"><img src="/buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
+        <a href="important-info.html"><img src="/buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
+    </div>
+</nav>
+
+    <div class="parchment p-8 md:p-14 rounded-2xl shadow-2xl text-center max-w-md w-full border-t-8 border-green-900">
+        <h1 class="text-5xl mb-6 font-serif italic text-green-900 heavy-shadow">The Haven Vault</h1>
+        <p class="mb-8 text-stone-600 italic">"Enter your secret word to unlock the cabin guide."</p>
+        
+        <input type="password" id="passInput" placeholder="Password" 
+               onkeydown="if(event.key === 'Enter') checkPass()"
+               class="w-full p-4 border-2 border-stone-300 rounded-lg mb-4 focus:border-green-800 outline-none text-center text-xl tracking-widest">
+        
+        <button onclick="checkPass()" class="w-full bg-green-900 text-white font-bold py-4 rounded-lg hover:bg-black transition shadow-lg uppercase tracking-widest">
+            Unlock Haven
+        </button>
+        
+        <p id="error" class="text-red-600 mt-6 font-bold hidden">? Access Denied. Try again!</p>
+        
+        <div class="mt-8 pt-6 border-t border-stone-200">
+            <a href="index.html" class="text-[10px] uppercase tracking-[0.2em] text-stone-400 hover:text-green-900 transition">Back to Main Site</a>
+        </div>
+    </div>
+
+    <script>
+        function checkPass() {
+            const pass = document.getElementById('passInput').value.trim().toLowerCase();
+            const errorMsg = document.getElementById('error');
+            
+            // --- VIP CONSOLE ROUTING LOGIC ---
+            
+            // 1. Personalized Guest Pages
+            if (pass === 'smith') {
+                window.location.href = 'welcome-smith.html'; 
+            } 
+            else if (pass === 'jones') {
+                window.location.href = 'welcome-jones.html';
+            }
+            
+            // 2. Standard VIP Guest Console
+            else if (pass === 'guest' || pass === 'creek') {
+                window.location.href = 'welcome.html';
+            } 
+            
+            // 3. Friends & Family Portal (The 'Mates' Page)
+            else if (pass === 'cl' || pass === 'family') {
+                window.location.href = 'portal-family.html';
+            } 
+            
+            // 4. Cleaning & Maintenance Team
+            else if (pass === 'clean' || pass === 'team') {
+                window.location.href = 'cleaningchecklist.html';
+            }
+
+            // 5. Error Handling
+            else {
+                errorMsg.classList.remove('hidden');
+                document.getElementById('passInput').value = '';
+            }
+        }
+    </script>
+</body>
+</html>
