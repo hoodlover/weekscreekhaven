@@ -16,30 +16,30 @@
     <meta property="og:type" content="website">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
-        h1, h2, h3, h4 { font-family: 'Crimson Text', serif; }
+        /* Lightened base color and increased default weight */
+        body { font-family: 'Montserrat', sans-serif; color: #fdfaf6; scroll-behavior: smooth; }
+        h1, h2, h3, h4 { font-family: 'Crimson Text', serif; font-weight: 700; }
         
-        details summary::-webkit-details-marker { display: none; }
-        details summary { list-style: none; }
-        summary { display: flex !important; }
-
-        .heavy-shadow {
-            text-shadow: 4px 4px 15px rgba(0, 0, 0, 0.9), 0px 0px 30px rgba(0, 0, 0, 0.5);
+        /* Soft shadow to separate light text from textured backgrounds */
+        .text-readable {
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
         }
 
         .bg-wood { 
-            background-color: #fcfaf7;
-            background-image: url('/webpic/vintage-wooden-board-textured-background.jpg');
+            background-color: #1a1512;
+            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('/webpic/vintage-wooden-board-textured-background.jpg');
+            background-attachment: fixed;
+            background-size: cover;
         }
         
         .railroad-tie-nav {
-            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/webpic/railroad-tie-texture.jpg');
             background-size: auto 100%;
             background-repeat: repeat-x;
             border-bottom: 4px solid #2c241e;
-            box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
+            box-shadow: inset 0px -10px 20px rgba(0,0,0,0.6), 0 4px 6px -1px rgba(0,0,0,0.5);
         }
 
         .wood-btn {
@@ -49,25 +49,20 @@
             display: block;
         }
 
-        @media (min-width: 1536px) {
-            .wood-btn {
-                height: 80px; 
-            }
-        }
+        @media (min-width: 1536px) { .wood-btn { height: 80px; } }
 
-        .wood-btn:hover {
-            transform: scale(1.05);
-        }
+        .wood-btn:hover { transform: scale(1.05); }
 
         .nav-link-group a .hover-img { display: none; }
         .nav-link-group a:hover .normal-img { display: none; }
         .nav-link-group a:hover .hover-img { display: block; }
 
-        .accent-green { color: #4a5d4e; }
-        .parchment { background-color: rgba(244, 238, 224, 0.9); border: 1px solid #dcd3bd; }
+        /* Brighter accent colors for dark mode */
+        .accent-green { color: #a3b899; }
+        .parchment { background-color: rgba(244, 238, 224, 0.95); border: 1px solid #dcd3bd; color: #3d3128; }
         
         #mobile-menu {
-            background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('/webpic/railroad-tie-texture.jpg');
+            background-image: linear-gradient(rgba(0,0,0,0.95), rgba(0,0,0,0.95)), url('/webpic/railroad-tie-texture.jpg');
             background-size: cover;
         }
 
@@ -128,74 +123,74 @@
             
             <section class="grid md:grid-cols-2 gap-12 mb-20 items-start">
                 <div class="space-y-6">
-                    <h2 class="text-5xl italic accent-green">Your Way to the Haven</h2>
-                    <p class="text-lg leading-relaxed text-gray-700">
-                        We are located at <strong>421 Weeks Creek Rd</strong>. Please note that while the drive is beautiful, mountain roads can be tricky for GPS.
+                    <h2 class="text-6xl italic accent-green text-readable">Your Way to the Haven</h2>
+                    <p class="text-xl font-semibold leading-relaxed text-readable">
+                        We are located at <strong class="text-white">421 Weeks Creek Rd</strong>. While the drive is beautiful, mountain roads can be tricky for GPS.
                     </p>
                     
-                    <div class="bg-amber-100 border-l-4 border-amber-500 p-6 rounded-r-lg shadow-sm">
-                        <h4 class="font-bold text-amber-900 mb-2 uppercase tracking-tight text-sm">⚠️ The "No Service" Pro-Tip</h4>
-                        <p class="text-amber-800 text-sm leading-relaxed">
-                            Cell service drops significantly as you enter the Aska Adventure Area. **Load your GPS directions while you are still in downtown Blue Ridge or at home.** Once you arrive, our High-Speed Fiber Wi-Fi will get you back online instantly!
+                    <div class="bg-amber-50 border-l-8 border-amber-500 p-6 rounded-r-lg shadow-xl">
+                        <h4 class="font-extrabold text-amber-900 mb-2 uppercase tracking-tight text-base">⚠️ The "No Service" Pro-Tip</h4>
+                        <p class="text-amber-950 text-sm font-bold leading-relaxed">
+                            Cell service drops significantly as you enter the Aska Adventure Area. Load your GPS directions while you are still in downtown Blue Ridge or at home. Once you arrive, our High-Speed Fiber Wi-Fi will get you back online instantly!
                         </p>
                     </div>
 
                     <div class="pt-4">
-                        <a href="https://www.google.com/maps/dir/?api=1&destination=421+Weeks+Creek+Rd+Blue+Ridge+GA+30513" target="_blank" class="inline-block bg-green-800 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-green-900 transition">Open in Google Maps</a>
+                        <a href="https://www.google.com/maps/dir/?api=1&destination=421+Weeks+Creek+Rd+Blue+Ridge+GA+30513" target="_blank" class="inline-block bg-green-700 text-white px-10 py-4 rounded-full font-extrabold text-lg shadow-2xl hover:bg-green-600 hover:scale-105 transition transform">Open in Google Maps</a>
                     </div>
                 </div>
 
                 <div class="space-y-4">
-                    <div class="map-container border-4 border-white shadow-2xl">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3293.456789!2d-84.321!3d34.865!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x885f8f8b8a8b8a8b%3A0x8b8b8b8b8b8b8b8b!2s421+Weeks+Creek+Rd%2C+Blue+Ridge%2C+GA+30513!5e0!3m2!1sen!2sus!4v1234567890" allowfullscreen="" loading="lazy"></iframe>
+                    <div class="map-container border-8 border-white shadow-2xl rounded-lg overflow-hidden">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3301.782163989182!2d-84.2847!3d34.8142!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x885f90f23f000001%3A0x0!2zNDIxIFdlZWtzIENyZWVrIFJkLCBCbHVlIFJpZGdlLCBHQSAzMDUxMw!5e0!3m2!1sen!2sus!4v1710000000000!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
                     </div>
-                    <p class="text-xs text-gray-500 text-center italic">Tip: Look for the 'Welcome Friends' cedar sign at the driveway just after the road splits. Stay left.</p>
+                    <p class="text-sm text-stone-300 font-bold text-center italic text-readable">Tip: Look for the 'Welcome Friends' cedar sign at the driveway just after the road splits. Stay left.</p>
                 </div>
             </section>
 
-            <section class="parchment p-8 md:p-12 rounded-2xl shadow-xl">
-                <h2 class="text-4xl text-center mb-12 italic border-b border-stone-300 pb-4">Nearby Recreation Areas</h2>
+            <section class="parchment p-8 md:p-12 rounded-2xl shadow-2xl">
+                <h2 class="text-5xl text-center mb-12 italic border-b-2 border-stone-400 pb-6 font-bold">Nearby Recreation Areas</h2>
                 <div class="grid md:grid-cols-3 gap-10">
                     
                     <div class="space-y-3">
-                        <h3 class="text-2xl font-bold text-green-900">Sandy Bottoms</h3>
-                        <p class="text-sm text-gray-700">Perfect for **river access** and shallow water wading. A great spot to launch a tube or just sit by the Toccoa River.</p>
+                        <h3 class="text-3xl font-extrabold text-green-900">Sandy Bottoms</h3>
+                        <p class="text-base font-bold text-stone-800">Perfect for **river access** and shallow water wading. A great spot to launch a tube or just sit by the Toccoa River.</p>
                     </div>
 
                     <div class="space-y-3">
-                        <h3 class="text-2xl font-bold text-green-900">Deep Hole</h3>
-                        <p class="text-sm text-gray-700">A popular **fishing and camping** area. Known for its deeper waters, it's a favorite starting point for many kayaking trips.</p>
+                        <h3 class="text-3xl font-extrabold text-green-900">Deep Hole</h3>
+                        <p class="text-base font-bold text-stone-800">A popular **fishing and camping** area. Known for its deeper waters, it's a favorite starting point for many kayaking trips.</p>
                     </div>
 
                     <div class="space-y-3">
-                        <h3 class="text-2xl font-bold text-green-900">Lake Blue Ridge</h3>
-                        <p class="text-sm text-gray-700">Only 20 minutes away. Visit the **Morganton Point Recreation Area** for swimming, boat rentals, and lakeside picnics.</p>
+                        <h3 class="text-3xl font-extrabold text-green-900">Lake Blue Ridge</h3>
+                        <p class="text-base font-bold text-stone-800">Only 20 minutes away. Visit the **Morganton Point Recreation Area** for swimming, boat rentals, and lakeside picnics.</p>
                     </div>
 
                 </div>
 
                 <div class="mt-12 text-center">
-                    <img src="21_Recreation_Areas.jpg" alt="Detailed Recreation Guide" class="max-w-md mx-auto rounded shadow-lg border-4 border-white">
+                    <img src="21_Recreation_Areas.jpg" alt="Detailed Recreation Guide" class="max-w-md mx-auto rounded shadow-2xl border-8 border-white">
                 </div>
             </section>
         </section>
     </main>
 
-    <footer class="bg-stone-900 text-stone-500 py-16 px-6 text-center">
+    <footer class="bg-stone-950 text-stone-400 py-16 px-6 text-center">
         <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-8">
             <div class="text-center md:text-left">
-                <p class="text-white text-xl font-serif italic">Weeks Creek Haven</p>
-                <p>421 Weeks Creek Rd | Blue Ridge, GA 30513</p>
+                <p class="text-white text-2xl font-serif italic mb-2">Weeks Creek Haven</p>
+                <p class="font-bold">421 Weeks Creek Rd | Blue Ridge, GA 30513</p>
             </div>
-            <div class="flex flex-wrap justify-center gap-6 text-xs font-bold uppercase tracking-widest text-green-400">
+            <div class="flex flex-wrap justify-center gap-6 text-xs font-black uppercase tracking-widest text-green-500">
                 <a href="index.html" class="hover:text-white">Home</a>
                 <a href="need-to-know.html" class="hover:text-white">Need to Know</a>
-                <a href="find-us.html" class="hover:text-white">Find Us</a>
+                <a href="find-us.html" class="hover:text-white text-white underline">Find Us</a>
                 <a href="gallery.html" class="hover:text-white">Gallery</a>
                 <a href="important-info.html" class="hover:text-white">Friends Portal</a>
             </div>
         </div>
-        <div class="text-center mt-10 text-xs text-stone-600 pt-8 border-t border-stone-800 uppercase tracking-widest">
+        <div class="text-center mt-10 text-xs text-stone-600 pt-8 border-t border-stone-800 uppercase tracking-widest font-bold">
             © 2026 Heather & Lance | Blue Ridge, Georgia
         </div>
     </footer>
