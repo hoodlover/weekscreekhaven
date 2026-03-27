@@ -31,11 +31,18 @@
         }
 
         .wood-btn {
-            transition: transform 0.2s ease;
-            height: 50px;
-            width: auto;
-            display: block;
-        }
+    transition: transform 0.2s ease;
+    height: 50px;
+    width: auto;
+    display: block;
+}
+
+/* Scaling for Large Monitors */
+@media (min-width: 1536px) {
+    .wood-btn {
+        height: 80px; 
+    }
+}
 
         .wood-btn:hover { transform: scale(1.05); }
 
@@ -85,22 +92,22 @@
 
             <div class="space-y-6">
                 <div class="checkout-step">
-                    <h3 class="font-bold text-xl text-stone-900">🛏️ Linens & Laundry</h3>
+                    <h3 class="font-bold text-xl text-stone-900">ðŸ›ï¸ Linens & Laundry</h3>
                     <p>Strip the sheets from the beds you used. Wash sheets, pillowcases, and towels, allowing enough time to start them in the dryer.</p>
                 </div>
 
                 <div class="checkout-step">
-                    <h3 class="font-bold text-xl text-stone-900">🍽️ Kitchen & Food</h3>
+                    <h3 class="font-bold text-xl text-stone-900">ðŸ½ï¸ Kitchen & Food</h3>
                     <p>Hand wash dishes or start the dishwasher. Please clean out your fridge items and ensure sinks are wiped down.</p>
                 </div>
 
                 <div class="checkout-step">
-                    <h3 class="font-bold text-xl text-stone-900">🗑️ Trash Removal</h3>
+                    <h3 class="font-bold text-xl text-stone-900">ðŸ—‘ï¸ Trash Removal</h3>
                     <p>Bag and take out the trash. Place food trash in the <strong>bear trash can</strong> and non-food trash in the porch box.</p>
                 </div>
 
                 <div class="checkout-step">
-                    <h3 class="font-bold text-xl text-stone-900">🔥 Safety Check</h3>
+                    <h3 class="font-bold text-xl text-stone-900">ðŸ”¥ Safety Check</h3>
                     <p>Ensure the fireplace is turned to 'Pilot'. Turn off all lights and lock all three smart doors.</p>
                 </div>
             </div>

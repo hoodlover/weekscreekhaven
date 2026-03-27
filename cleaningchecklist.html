@@ -7,6 +7,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
+	
+	.wood-btn {
+    transition: transform 0.2s ease;
+    height: 50px;
+    width: auto;
+    display: block;
+}
+
+/* Scaling for Large Monitors */
+@media (min-width: 1536px) {
+    .wood-btn {
+        height: 80px; 
+    }
+}
         body { font-family: 'Montserrat', sans-serif; background-color: #f4f1ea; color: #2c241e; }
         .checklist-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid #d1cebd; }
         input[type="checkbox"] { width: 20px; height: 20px; accent-color: #14532d; margin-top: 2px; }
@@ -17,24 +31,65 @@
         <h1 class="text-2xl font-bold uppercase tracking-widest text-green-900">Weeks Creek Haven</h1>
         <p class="text-sm italic">"Your Cabin Away From Home"</p>
     </header>
+<nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
+    <a href="index.html" class="flex-shrink-0">
+        <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
+    </a>
+    
+    <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
+        <a href="things-to-do.html">
+            <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
+            <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
+        </a>
+        <a href="need-to-know.html">
+            <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
+            <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
+        </a>
+        <a href="find-us.html">
+            <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
+            <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
+        </a>
+        <a href="gallery.html">
+            <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
+            <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
+        </a>
+        <a href="important-info.html">
+            <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
+            <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
+        </a>
+    </div>
 
+    <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800">
+        <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
+        <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
+        <a href="find-us.html"><img src="/buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
+        <a href="gallery.html"><img src="/buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
+        <a href="important-info.html"><img src="/buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
+    </div>
+</nav>
     <div class="max-w-md mx-auto space-y-8">
         <section>
-            <h2 class="font-bold border-b-2 border-green-800 pb-1 mb-2">🛋️ MAIN AREAS</h2>
+            <h2 class="font-bold border-b-2 border-green-800 pb-1 mb-2">ðŸ›‹ï¸ MAIN AREAS</h2>
             <div class="checklist-item"><input type="checkbox"> <span>Wipe 98" TV & organize remotes</span></div>
             <div class="checklist-item"><input type="checkbox"> <span>Fireplace knob back to 'PILOT'</span></div>
             <div class="checklist-item"><input type="checkbox"> <span>Sweep/Vacuum around boot brush</span></div>
         </section>
 
         <section>
-            <h2 class="font-bold border-b-2 border-green-800 pb-1 mb-2">🍳 KITCHEN</h2>
+            <h2 class="font-bold border-b-2 border-green-800 pb-1 mb-2">ðŸ³ KITCHEN</h2>
             <div class="checklist-item"><input type="checkbox"> <span>Refill Breville water tank & wipe wand</span></div>
             <div class="checklist-item"><input type="checkbox"> <span>Double-press Microwave CANCEL</span></div>
             <div class="checklist-item"><input type="checkbox"> <span>Discard all fridge leftovers</span></div>
         </section>
 
         <section>
-            <h2 class="font-bold border-b-2 border-green-800 pb-1 mb-2">🌲 OUTDOORS</h2>
+            <h2 class="font-bold border-b-2 border-green-800 pb-1 mb-2">ðŸŒ² OUTDOORS</h2>
             <div class="checklist-item"><input type="checkbox"> <span>Empty ash from metal fire pit</span></div>
             <div class="checklist-item"><input type="checkbox"> <span>Confirm deck heater is OFF</span></div>
             <div class="checklist-item"><input type="checkbox"> <span>Check Hot Tub chemical levels & cover</span></div>

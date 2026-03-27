@@ -23,6 +23,20 @@
         .heavy-shadow {
             text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
         }
+		
+		.wood-btn {
+    transition: transform 0.2s ease;
+    height: 50px;
+    width: auto;
+    display: block;
+}
+
+/* Scaling for Large Monitors */
+@media (min-width: 1536px) {
+    .wood-btn {
+        height: 80px; 
+    }
+}
 
         .input-style {
             background: rgba(255, 255, 255, 0.5);
@@ -46,6 +60,49 @@
             <p class="text-lg text-stone-600 font-serif italic">"Share a favorite adventure, a laugh, or your darkest secret."</p>
         </header>
 
+		<nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
+    <a href="index.html" class="flex-shrink-0">
+        <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
+    </a>
+    
+    <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
+        <a href="things-to-do.html">
+            <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
+            <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
+        </a>
+        <a href="need-to-know.html">
+            <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
+            <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
+        </a>
+        <a href="find-us.html">
+            <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
+            <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
+        </a>
+        <a href="gallery.html">
+            <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
+            <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
+        </a>
+        <a href="important-info.html">
+            <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
+            <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
+        </a>
+    </div>
+
+    <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800">
+        <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
+        <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
+        <a href="find-us.html"><img src="/buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
+        <a href="gallery.html"><img src="/buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
+        <a href="important-info.html"><img src="/buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
+    </div>
+</nav>
+
         <form action="https://formspree.io/f/mzdjnprj" method="POST" enctype="multipart/form-data" class="space-y-8">
             
             <div class="grid md:grid-cols-2 gap-6">
@@ -61,18 +118,18 @@
 
             <div class="space-y-6">
                 <div>
-                    <label class="block text-sm font-serif font-bold text-stone-800 mb-2">What was your favorite mountain adventure? 🌲</label>
+                    <label class="block text-sm font-serif font-bold text-stone-800 mb-2">What was your favorite mountain adventure? ðŸŒ²</label>
                     <textarea name="favorite_adventure" rows="3" required class="w-full p-3 input-style" placeholder="Hiking the Toccoa Swinging Bridge..."></textarea>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-serif font-bold text-stone-800 mb-2">Got a laugh or a "Darkest Secret" for us? 🤫</label>
+                    <label class="block text-sm font-serif font-bold text-stone-800 mb-2">Got a laugh or a "Darkest Secret" for us? ðŸ¤«</label>
                     <textarea name="darkest_secret" rows="3" class="w-full p-3 input-style" placeholder="Keep it interesting..."></textarea>
                 </div>
             </div>
 
             <div class="bg-white/40 p-6 rounded-lg border-2 border-dashed border-stone-300">
-                <label class="block text-sm font-serif font-bold text-stone-800 mb-2">Upload a memory 📸</label>
+                <label class="block text-sm font-serif font-bold text-stone-800 mb-2">Upload a memory ðŸ“¸</label>
                 <input type="file" name="upload" accept="image/*" class="text-sm text-stone-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-100 file:text-green-700 hover:file:bg-green-200">
                 <p class="text-[10px] text-stone-400 mt-2 uppercase tracking-tighter">Snap a photo of the creek or the crew!</p>
             </div>

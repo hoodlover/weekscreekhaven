@@ -7,6 +7,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
+	
+	.wood-btn {
+    transition: transform 0.2s ease;
+    height: 50px;
+    width: auto;
+    display: block;
+}
+
+/* Scaling for Large Monitors */
+@media (min-width: 1536px) {
+    .wood-btn {
+        height: 80px; 
+    }
+}
         body { font-family: 'Montserrat', sans-serif; background-color: #fcfaf7; }
         h1, h2, h3 { font-family: 'Crimson Text', serif; }
         .parchment { background-color: #f4eee0; border: 1px solid #dcd3bd; }
@@ -15,9 +29,49 @@
 </head>
 <body class="bg-stone-50">
 
-    <nav class="w-full bg-white/95 py-4 px-6 flex justify-between items-center border-b border-stone-100">
-        <a href="index.html" class="font-bold text-stone-800 tracking-widest uppercase text-sm">Weeks Creek Haven</a>
-    </nav>
+
+<nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
+    <a href="index.html" class="flex-shrink-0">
+        <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
+    </a>
+    
+    <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
+        <a href="things-to-do.html">
+            <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
+            <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
+        </a>
+        <a href="need-to-know.html">
+            <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
+            <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
+        </a>
+        <a href="find-us.html">
+            <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
+            <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
+        </a>
+        <a href="gallery.html">
+            <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
+            <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
+        </a>
+        <a href="important-info.html">
+            <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
+            <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
+        </a>
+    </div>
+
+    <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800">
+        <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
+        <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
+        <a href="find-us.html"><img src="/buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
+        <a href="gallery.html"><img src="/buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
+        <a href="important-info.html"><img src="/buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
+    </div>
+</nav>
 
     <main class="max-w-5xl mx-auto py-20 px-6">
         <div class="parchment p-8 md:p-14 rounded-lg shadow-2xl">
@@ -33,15 +87,15 @@
                     <h3 class="font-bold uppercase tracking-widest text-xs text-stone-400 border-b border-stone-200 pb-2">Special Touches</h3>
                     <ul class="space-y-4 text-stone-800">
                         <li class="flex items-start gap-3">
-                            <span class="text-green-800 font-bold">✓</span>
+                            <span class="text-green-800 font-bold">?</span>
                             <span><strong>The Wine Cellar:</strong> Feel free to help yourselves to a bottle from the second row.</span>
                         </li>
                         <li class="flex items-start gap-3">
-                            <span class="text-green-800 font-bold">✓</span>
+                            <span class="text-green-800 font-bold">?</span>
                             <span><strong>Late Check-Out:</strong> Don't rush; take your time and head out by 2:00 PM.</span>
                         </li>
                         <li class="flex items-start gap-3">
-                            <span class="text-green-800 font-bold">✓</span>
+                            <span class="text-green-800 font-bold">?</span>
                             <span><strong>Owners' Pantry:</strong> Key is in the top kitchen drawer for extra supplies.</span>
                         </li>
                     </ul>

@@ -8,6 +8,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
+	
+	.wood-btn {
+    transition: transform 0.2s ease;
+    height: 50px;
+    width: auto;
+    display: block;
+}
+
+/* Scaling for Large Monitors */
+@media (min-width: 1536px) {
+    .wood-btn {
+        height: 80px; 
+    }
+}
         @media print {
             .no-print { display: none; }
             body { background: white !important; padding: 0; }
@@ -38,7 +52,50 @@
         }
     </style>
 </head>
+
 <body>
+<nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
+    <a href="index.html" class="flex-shrink-0">
+        <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
+    </a>
+    
+    <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
+        <a href="things-to-do.html">
+            <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
+            <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
+        </a>
+        <a href="need-to-know.html">
+            <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
+            <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
+        </a>
+        <a href="find-us.html">
+            <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
+            <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
+        </a>
+        <a href="gallery.html">
+            <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
+            <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
+        </a>
+        <a href="important-info.html">
+            <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
+            <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
+        </a>
+    </div>
+
+    <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800">
+        <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
+        <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
+        <a href="find-us.html"><img src="/buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
+        <a href="gallery.html"><img src="/buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
+        <a href="important-info.html"><img src="/buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
+    </div>
+</nav>
 
     <div class="no-print max-w-xl mx-auto mb-8 bg-blue-50 p-4 rounded-lg border border-blue-200 text-sm text-blue-800">
         <strong>Host Note:</strong> Use a tool like <em>QR Code Generator</em> to create codes for your URLs (e.g., your-site.com/troubleshoot), then print this page.
@@ -46,8 +103,8 @@
 
     <div class="print-container max-w-2xl mx-auto parchment p-12 shadow-2xl rounded-sm border-t-[12px] border-green-900 relative">
         
-        <div class="absolute top-4 left-4 opacity-20 text-4xl">🌲</div>
-        <div class="absolute top-4 right-4 opacity-20 text-4xl">🌲</div>
+        <div class="absolute top-4 left-4 opacity-20 text-4xl">ðŸŒ²</div>
+        <div class="absolute top-4 right-4 opacity-20 text-4xl">ðŸŒ²</div>
 
         <header class="text-center mb-10">
             <h1 class="text-5xl font-serif italic text-green-900 mb-2">Weeks Creek Haven</h1>

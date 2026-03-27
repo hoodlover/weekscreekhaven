@@ -25,12 +25,19 @@
             border-bottom: 4px solid #2c241e;
         }
 
-        .wood-btn {
-            transition: transform 0.2s ease;
-            height: 50px;
-            width: auto;
-            display: block;
-        }
+ .wood-btn {
+    transition: transform 0.2s ease;
+    height: 50px;
+    width: auto;
+    display: block;
+}
+
+/* Scaling for Large Monitors */
+@media (min-width: 1536px) {
+    .wood-btn {
+        height: 80px; 
+    }
+}
 
         .parchment { background-color: rgba(244, 238, 224, 0.95); border: 1px solid #dcd3bd; }
         
@@ -54,6 +61,48 @@
             <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16">
         </a>
         <a href="important-info.html" class="text-white text-xs uppercase tracking-widest hover:text-green-400">Back to Portal</a>
+		
+		class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
+    <a href="index.html" class="flex-shrink-0">
+        <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
+    </a>
+    
+    <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
+        <a href="things-to-do.html">
+            <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
+            <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
+        </a>
+        <a href="need-to-know.html">
+            <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
+            <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
+        </a>
+        <a href="find-us.html">
+            <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
+            <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
+        </a>
+        <a href="gallery.html">
+            <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
+            <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
+        </a>
+        <a href="important-info.html">
+            <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
+            <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
+        </a>
+    </div>
+
+    <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800">
+        <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
+        <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
+        <a href="find-us.html"><img src="/buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
+        <a href="gallery.html"><img src="/buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
+        <a href="important-info.html"><img src="/buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
+    </div>
     </nav>
 
     <header class="relative h-[30vh] flex items-center justify-center text-white overflow-hidden">
@@ -68,7 +117,7 @@
 
         <section class="parchment p-8 rounded-xl shadow-xl">
             <h2 class="text-3xl font-serif font-bold text-green-900 mb-6 flex items-center">
-                <span class="mr-3">🔥</span> Fireplace & Gas Logs
+                <span class="mr-3">ðŸ”¥</span> Fireplace & Gas Logs
             </h2>
             <div class="warning-box p-4 rounded-lg mb-6 text-sm font-bold">
                 STOP! If you smell gas, get everyone out and call us immediately!
@@ -90,7 +139,7 @@
 
         <div class="grid md:grid-cols-2 gap-8">
             <section class="parchment p-8 rounded-xl shadow-xl">
-                <h3 class="text-2xl font-serif font-bold text-stone-900 mb-4">🚿 Main Floor Shower</h3>
+                <h3 class="text-2xl font-serif font-bold text-stone-900 mb-4">ðŸš¿ Main Floor Shower</h3>
                 <p class="text-sm mb-4">It's a low-flow head and looks different than home.</p>
                 <ol class="space-y-3 text-sm">
                     <li>1. Turn on the water.</li>
@@ -101,7 +150,7 @@
             </section>
 
             <section class="parchment p-8 rounded-xl shadow-xl">
-                <h3 class="text-2xl font-serif font-bold text-stone-900 mb-4">🍿 Retrowave Microwave</h3>
+                <h3 class="text-2xl font-serif font-bold text-stone-900 mb-4">ðŸ¿ Retrowave Microwave</h3>
                 <div class="bg-red-50 p-3 rounded mb-4 border border-red-100 text-xs font-bold text-red-800">
                     CRITICAL: Double-Cancel Safety Feature!
                 </div>
@@ -111,13 +160,13 @@
         </div>
 
         <section class="parchment p-8 rounded-xl shadow-xl border-l-8 border-brown-900">
-            <h2 class="text-3xl font-serif font-bold text-stone-900 mb-6">🚽 Carefree Commode Care</h2>
+            <h2 class="text-3xl font-serif font-bold text-stone-900 mb-6">ðŸš½ Carefree Commode Care</h2>
             <div class="grid md:grid-cols-2 gap-8 items-center">
                 <ul class="space-y-3 text-stone-700">
-                    <li class="flex items-center">✅ Use ONLY septic-safe TP provided.</li>
-                    <li class="flex items-center">❌ NO wipes, pads, or trash in the toilet.</li>
-                    <li class="flex items-center">💪 Give the handle a firm, complete flush.</li>
-                    <li class="flex items-center">🧼 Wipe the seat if you sprinkle!</li>
+                    <li class="flex items-center">âœ… Use ONLY septic-safe TP provided.</li>
+                    <li class="flex items-center">âŒ NO wipes, pads, or trash in the toilet.</li>
+                    <li class="flex items-center">ðŸ’ª Give the handle a firm, complete flush.</li>
+                    <li class="flex items-center">ðŸ§¼ Wipe the seat if you sprinkle!</li>
                 </ul>
                 <img src="/10 Commode.jpg" alt="Commode Rules" class="rounded-lg shadow-lg border-4 border-white">
             </div>
@@ -125,7 +174,7 @@
 
 <section class="parchment p-8 rounded-xl shadow-xl border-l-8 border-orange-500">
     <h2 class="text-3xl font-serif font-bold text-stone-900 mb-6 flex items-center">
-        <span class="mr-3">☀️</span> Deck Infrared Heater
+        <span class="mr-3">â˜€ï¸</span> Deck Infrared Heater
     </h2>
     <p class="text-sm mb-6 leading-relaxed">
         Our deck is equipped with a **Briza Carbon Infrared Heater**. Unlike propane heaters, this uses sun-like rays to warm you directly, even in a mountain breeze!
@@ -134,7 +183,7 @@
     <div class="grid md:grid-cols-2 gap-8">
         <div class="space-y-4 text-sm text-stone-700">
             <p><strong>To Start:</strong> Plug into the heavy-duty outlet on the deck and use the [Remote/Power Button] to turn on. You will feel heat within seconds.</p>
-            <p><strong>Built-in Timer:</strong> You can set a timer from 1–9 hours so you don't have to worry about forgetting to turn it off.</p>
+            <p><strong>Built-in Timer:</strong> You can set a timer from 1â€“9 hours so you don't have to worry about forgetting to turn it off.</p>
             <p><strong>Safety Features:</strong> The unit has a built-in "Tip-Over" sensor that automatically cuts power if it's knocked over.</p>
         </div>
         <div class="bg-orange-50 p-4 rounded-lg border border-orange-200">

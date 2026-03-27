@@ -25,13 +25,19 @@
             border-bottom: 4px solid #2c241e;
         }
 
-        .wood-btn {
-            transition: transform 0.2s ease;
-            height: 50px;
-            width: auto;
-            display: block;
-        }
+ .wood-btn {
+    transition: transform 0.2s ease;
+    height: 50px;
+    width: auto;
+    display: block;
+}
 
+/* Scaling for Large Monitors */
+@media (min-width: 1536px) {
+    .wood-btn {
+        height: 80px; 
+    }
+}
         .parchment { background-color: rgba(244, 238, 224, 0.95); border: 1px solid #dcd3bd; }
         
         .accent-green { color: #14532d; }
@@ -39,11 +45,48 @@
 </head>
 <body class="bg-wood">
 
-    <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 flex justify-between items-center">
-        <a href="index.html" class="flex-shrink-0">
-            <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16">
+   <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
+    <a href="index.html" class="flex-shrink-0">
+        <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
+    </a>
+    
+    <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
+        <a href="things-to-do.html">
+            <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
+            <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
         </a>
-    </nav>
+        <a href="need-to-know.html">
+            <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
+            <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
+        </a>
+        <a href="find-us.html">
+            <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
+            <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
+        </a>
+        <a href="gallery.html">
+            <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
+            <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
+        </a>
+        <a href="important-info.html">
+            <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
+            <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
+        </a>
+    </div>
+
+    <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800">
+        <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
+        <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
+        <a href="find-us.html"><img src="/buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
+        <a href="gallery.html"><img src="/buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
+        <a href="important-info.html"><img src="/buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
+    </div>
+</nav>
 
     <header class="relative h-[40vh] flex items-center justify-center text-white overflow-hidden">
         <img src="/gallery/Cabin_Front_1.jpg" alt="Cabin Exterior" class="absolute inset-0 w-full h-full object-cover">
@@ -60,7 +103,7 @@
             
             <section class="parchment p-8 rounded-xl shadow-xl border-l-8 border-orange-900/40">
                 <h2 class="text-3xl font-serif font-bold text-stone-900 mb-4 flex items-center">
-                    <span class="mr-3">🔥</span> Firewood & BBQ
+                    <span class="mr-3">ðŸ”¥</span> Firewood & BBQ
                 </h2>
                 <p class="text-sm mb-6 leading-relaxed">
                     We provide the firepit and charcoal BBQ, but guests are responsible for bringing their own fuel. **Please use local firewood only** to protect our forests!
@@ -79,7 +122,7 @@
 
             <section class="parchment p-8 rounded-xl shadow-xl border-l-8 border-green-900/40">
                 <h2 class="text-3xl font-serif font-bold text-stone-900 mb-4 flex items-center">
-                    <span class="mr-3">🛒</span> Groceries & Supplies
+                    <span class="mr-3">ðŸ›’</span> Groceries & Supplies
                 </h2>
                 <p class="text-sm mb-6 leading-relaxed">
                     Blue Ridge has several options for stocking the fully equipped kitchen. Remember to grab extra beans for the **Breville Espresso machine**!
@@ -113,7 +156,7 @@
 
     <footer class="bg-stone-900 text-stone-500 py-12 px-6 text-center">
         <p class="text-white text-xl font-serif italic mb-2">Weeks Creek Haven</p>
-        <p class="text-xs uppercase tracking-widest">© 2026 Heather & Lance | Blue Ridge, Georgia</p>
+        <p class="text-xs uppercase tracking-widest">Â© 2026 Heather & Lance | Blue Ridge, Georgia</p>
     </footer>
 
 </body>
