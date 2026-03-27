@@ -6,12 +6,36 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
-	
-	.wood-btn {
+	/* Railroad Tie Navigation Bar */
+.railroad-tie-nav {
+    background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
+    background-size: auto 100%;
+    background-repeat: repeat-x;
+    border-bottom: 4px solid #2c241e;
+    box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
+}
+
+/* Wood Button Transitions */
+.wood-btn {
     transition: transform 0.2s ease;
     height: 50px;
     width: auto;
     display: block;
+}
+
+.wood-btn:hover {
+    transform: scale(1.05);
+}
+
+/* Hover Swap Logic */
+.nav-link-group a .hover-img { display: none; }
+.nav-link-group a:hover .normal-img { display: none; }
+.nav-link-group a:hover .hover-img { display: block; }
+
+/* Mobile Menu Background */
+#mobile-menu {
+    background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('/webpic/railroad-tie-texture.jpg');
+    background-size: cover;
 }
 
 /* Scaling for Large Monitors */
@@ -20,11 +44,6 @@
         height: 80px; 
     }
 }
-        @media print { .no-print { display: none; } body { padding: 0; } }
-        body { font-family: 'Montserrat', sans-serif; background-color: #e5e7eb; padding: 40px; }
-        .page { width: 8.5in; height: 11in; background: #fdfbf7; padding: 0.75in; border: 1px solid #dcd3bd; position: relative; }
-        h1, h2 { font-family: 'Crimson Text', serif; }
-        .border-sep { border-top: 1px dashed #d1cebd; margin: 15px 0; }
     </style>
 </head>
 <body class="flex flex-col items-center">
