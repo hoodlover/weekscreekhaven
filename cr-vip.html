@@ -12,18 +12,15 @@
         body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
         h1, h2, h3, h4 { font-family: 'Crimson Text', serif; }
         
-        /* Glorious Heavy Shadow Typography */
         .heavy-shadow {
             text-shadow: 4px 4px 15px rgba(0, 0, 0, 0.9), 0px 0px 30px rgba(0, 0, 0, 0.5);
         }
 
-        /* Vintage Wood Background */
         .bg-wood { 
             background-color: #fcfaf7;
             background-image: url('/webpic/vintage-wooden-board-textured-background.jpg');
         }
         
-        /* Railroad Tie Navigation Bar */
         .railroad-tie-nav {
             background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
             background-size: auto 100%;
@@ -32,7 +29,6 @@
             box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
         }
 
-        /* Animated Wood Button */
         .wood-btn {
             transition: transform 0.2s ease;
             height: 50px;
@@ -41,13 +37,16 @@
         }
         .wood-btn:hover { transform: scale(1.05); }
 
-        /* Classic Parchment Block */
         .parchment { background-color: rgba(244, 238, 224, 0.9); border: 1px solid #dcd3bd; }
         
-        /* Standard VIP Side Border */
         .vip-card {
             border-left: 8px solid #14532d;
             transition: all 0.3s ease;
+        }
+
+        /* Modal Logic for Image Enlarge */
+        #full-image:target {
+            display: flex;
         }
     </style>
 </head>
@@ -107,10 +106,21 @@
                 </div>
             </section>
 
-            <section class="space-y-8">
-                <div class="rounded-2xl shadow-2xl border-4 border-white overflow-hidden relative group">
-                    <img src="/guests/charles.png" alt="Personal Welcome" class="w-full h-auto">
-                    <div class="absolute inset-0 bg-black/15 group-hover:bg-transparent transition-all"></div>
+            <section class="space-y-4">
+                <div class="relative group rounded-2xl shadow-2xl border-4 border-white overflow-hidden">
+                    <a href="#full-image">
+                        <img src="/guests/charles.png" alt="Personal Welcome" class="w-full h-auto cursor-zoom-in group-hover:opacity-95 transition-opacity">
+                    </a>
+                    <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-all pointer-events-none"></div>
+                </div>
+
+                <div class="flex justify-center">
+                    <a href="/guests/charles.png" download="Welcome-to-Weeks-Creek.png" class="flex items-center gap-2 text-stone-600 hover:text-green-900 transition-colors font-serif italic text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Save your welcome photo
+                    </a>
                 </div>
                 
                 <div class="parchment p-8 rounded-xl shadow-xl vip-card">
@@ -130,6 +140,16 @@
         </div>
 
     </main>
+
+    <div id="full-image" class="fixed inset-0 z-[100] hidden bg-black/90 items-center justify-center p-4">
+        <a href="#" class="absolute inset-0 cursor-default"></a> <div class="relative max-w-4xl max-h-full flex flex-col items-center">
+            <img src="/guests/charles.png" class="rounded-lg shadow-2xl max-h-[85vh] w-auto">
+            <div class="mt-4 flex gap-8 text-white font-serif text-lg">
+                <a href="#" class="hover:text-stone-300">✕ Close</a>
+                <a href="/guests/charles.png" download="Welcome-to-Weeks-Creek.png" class="hover:text-green-400">💾 Download Original</a>
+            </div>
+        </div>
+    </div>
 
     <footer class="bg-stone-900 text-stone-500 py-16 px-6 text-center mt-20">
         <p class="text-white text-xl font-serif italic mb-4">Weeks Creek Haven VIP Portal</p>
