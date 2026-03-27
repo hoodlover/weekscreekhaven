@@ -5,36 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Need to Know | Weeks Creek Haven</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="/webpic/Weeks_Creek_Haven_Favicon.png">
-
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
-
-	 /* Updated Body with barn.jpg background */
         body { 
             font-family: 'Montserrat', sans-serif; 
-            color: #f4eee0; /* Light parchment color for general text */
+            color: #f4eee0; 
             scroll-behavior: smooth; 
-            background-image: url('/webpic/barn.jpg');
+            /* Using a high-quality dark barnwood texture */
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1502126324834-38f8e02d7160?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
             background-attachment: fixed;
             background-size: cover;
         }
 
-        body { 
-            font-family: 'Montserrat', sans-serif; 
-            color: #f3f0ec; /* Lightened for dark wood background */
-            scroll-behavior: smooth; 
-            font-weight: 500; /* Bolder weight for readability */
-        }
-        h1, h2, h3, h4 { 
+        h1, h2, h3 { 
             font-family: 'Crimson Text', serif; 
-            color: #ffffff; /* Bright white headlines */
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Strong shadow to pop off wood */
+            color: #ffffff; 
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9); 
         }
-        
 
-      
-        
         .railroad-tie-nav {
             background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
             background-size: auto 100%;
@@ -43,36 +31,27 @@
             box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
         }
 
-        .wood-btn {
-            transition: transform 0.2s ease;
-            height: 50px;
-            width: auto;
-        }
-
-        @media (min-width: 1536px) {
-            .wood-btn { height: 80px; }
-        }
-
+        .wood-btn { transition: transform 0.2s ease; height: 50px; }
         .wood-btn:hover { transform: scale(1.05); }
 
-        /* High contrast Parchment for the stats section */
-        .parchment { 
-            background-color: rgba(244, 238, 224, 0.95); 
-            border: 2px solid #dcd3bd; 
-            color: #1a1512; /* Dark text on light background */
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+        .parchment-card { 
+            background-image: url('https://www.transparenttextures.com/patterns/papyrus-dark.png');
+            background-color: rgba(244, 238, 224, 0.98); 
+            border: 1px solid #dcd3bd; 
+            color: #1a1512; 
+            box-shadow: 10px 10px 30px rgba(0,0,0,0.5);
         }
 
-        .accent-green-dark { color: #2d4a31; }
+        .accent-wood { color: #4a3728; border-color: #a89f91; }
+        .rule-icon { color: #8b0000; margin-right: 10px; }
     </style>
 </head>
-<body class="bg-wood">
+<body>
 
     <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
         <a href="index.html" class="flex-shrink-0">
             <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
         </a>
-        
         <div class="hidden md:flex space-x-2 2xl:space-x-4 items-center">
             <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn"></a>
             <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn"></a>
@@ -82,58 +61,111 @@
         </div>
     </nav>
 
-    <div class="max-w-4xl mx-auto pt-40 pb-20 px-6">
-        <h1 class="text-5xl md:text-7xl mb-12 text-center italic font-bold">Cabin Essentials</h1>
+    <div class="max-w-5xl mx-auto pt-40 pb-20 px-6">
+        <h1 class="text-5xl md:text-7xl mb-12 text-center italic font-bold">Cabin Knowledge</h1>
 
-        <div class="parchment p-10 rounded-lg space-y-10 mb-16">
-            <section>
-                <h2 class="text-3xl font-bold border-b-2 border-stone-400 pb-3 mb-6 italic accent-green-dark">Key Cabin Stats</h2>
-                <ul class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8 text-lg">
-                    <li><strong class="font-bold uppercase text-sm tracking-wide">Guests:</strong> 11 Max</li>
-                    <li><strong class="font-bold uppercase text-sm tracking-wide">Beds:</strong> 4 Bedrooms</li>
-                    <li><strong class="font-bold uppercase text-sm tracking-wide">Internet:</strong> Gig Fiber (creeklife)</li>
-                    <li><strong class="font-bold uppercase text-sm tracking-wide">Check-in:</strong> Afternoon</li>
-                    <li><strong class="font-bold uppercase text-sm tracking-wide">Check-out:</strong> 3:00 PM</li>
-                    <li><strong class="font-bold uppercase text-sm tracking-wide">Must Have:</strong> Lots of Fun!</li>
-                </ul>
-            </section>
-
-            <section>
-                <h2 class="text-3xl font-bold border-b-2 border-stone-400 pb-3 mb-6 italic accent-green-dark">Emergency Contacts</h2>
-                <div class="space-y-3 text-lg">
-                    <p><strong>Fannin Regional Hospital:</strong> (706) 632-3711</p>
-                    <p><strong>Police Station:</strong> (706) 632-3451</p>
-                    <p class="text-2xl font-bold mt-6 text-red-700 uppercase tracking-tighter">For all emergencies call 911</p>
+        <div class="grid lg:grid-cols-3 gap-8">
+            
+            <div class="lg:col-span-2 space-y-8">
+                
+                <div class="parchment-card p-8 rounded-sm">
+                    <h2 class="text-3xl font-bold italic mb-4 accent-wood border-b">Connectivity & Entry</h2>
+                    <div class="grid md:grid-cols-2 gap-6 mt-4">
+                        <div>
+                            <p class="font-bold text-sm uppercase text-stone-500">Wi-Fi Network</p>
+                            <p class="text-xl font-mono">WeeksCreekHaven</p>
+                            <p class="font-bold text-sm uppercase text-stone-500 mt-2">Password</p>
+                            <p class="text-xl font-mono italic">creeklife</p>
+                            <p class="text-xs mt-2 text-stone-600">Note: Cell service is poor until you hit Wi-Fi!</p>
+                        </div>
+                        <div class="bg-white/50 p-4 rounded border border-stone-300">
+                            <p class="font-bold text-sm uppercase text-stone-500">Cabin Door Code</p>
+                            <p class="text-3xl font-bold tracking-widest text-center py-2">22246</p>
+                            <p class="text-xs text-center">Press the checkmark after entering.</p>
+                        </div>
+                    </div>
                 </div>
-            </section>
+
+                <div class="parchment-card p-8 rounded-sm">
+                    <h2 class="text-3xl font-bold italic mb-4 accent-wood border-b">Smart Cabin Voice</h2>
+                    <p class="italic text-sm mb-4">"Alexa, [Command] ..."</p>
+                    <ul class="grid md:grid-cols-2 gap-2 font-medium">
+                        <li>• <strong>"Cabin on"</strong> - Main lights</li>
+                        <li>• <strong>"Cabin fireside to 30%"</strong> - Ambience</li>
+                        <li>• <strong>"Turn on cabin deck lights"</strong></li>
+                        <li>• <strong>"Lock cabin front door"</strong></li>
+                        <li>• <strong>"Going out"</strong> - Full lockdown</li>
+                        <li><span class="text-red-700 font-bold italic">Don't say: "Burn it down"</span></li>
+                    </ul>
+                </div>
+
+                <div class="parchment-card p-8 rounded-sm">
+                    <h2 class="text-3xl font-bold italic mb-4 accent-wood border-b">The Fine Print</h2>
+                    <div class="grid md:grid-cols-2 gap-6 text-sm">
+                        <ul class="space-y-2">
+                            <li>🚫 <strong>No Smoking</strong> anywhere on premises.</li>
+                            <li>🚫 <strong>No Pets</strong> allowed.</li>
+                            <li>🚫 <strong>No Glassware</strong> near the hot tub.</li>
+                            <li>🐻 <strong>Garbage:</strong> Must be bagged and secured in bear-proof bins with bungee cords.</li>
+                        </ul>
+                        <ul class="space-y-2">
+                            <li>🔥 <strong>Fire Pit:</strong> Bring your own wood; ensure it is fully out before bed.</li>
+                            <li>🚽 <strong>Commode:</strong> Septic-safe TP only! No wipes or feminine products.</li>
+                            <li>🛀 <strong>Lower Spa:</strong> Jets are OOO; enjoy as a bubble bath!</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-8">
+                <div class="bg-black/40 backdrop-blur-md p-6 border border-white/20 rounded-lg text-white">
+                    <h3 class="text-2xl italic mb-4 text-center">Vital Stats</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between border-b border-white/10 pb-1">
+                            <span>Max Guests</span><span class="font-bold">11</span>
+                        </div>
+                        <div class="flex justify-between border-b border-white/10 pb-1">
+                            <span>Bedrooms</span><span class="font-bold">4</span>
+                        </div>
+                        <div class="flex justify-between border-b border-white/10 pb-1">
+                            <span>Bathrooms</span><span class="font-bold">2.5</span>
+                        </div>
+                        <div class="flex justify-between border-b border-white/10 pb-1">
+                            <span>Check-In</span><span class="font-bold">3:00 PM</span>
+                        </div>
+                        <div class="flex justify-between border-b border-white/10 pb-1">
+                            <span>Check-Out</span><span class="font-bold">11:00 AM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="parchment-card p-6 rounded-sm shadow-xl">
+                    <h2 class="text-2xl font-bold italic mb-4 text-red-900 border-b border-red-200">Before You Go</h2>
+                    <ul class="space-y-3 text-xs font-bold uppercase tracking-tight">
+                        <li class="flex items-start">✅ Strip used bed sheets</li>
+                        <li class="flex items-start">✅ Start a load of towels/sheets</li>
+                        <li class="flex items-start">✅ Start the dishwasher</li>
+                        <li class="flex items-start">✅ Bag & take out all trash</li>
+                        <li class="flex items-start">✅ Fireplace turned to 'Pilot'</li>
+                        <li class="flex items-start">✅ Turn off lights & lock doors</li>
+                    </ul>
+                    <p class="mt-4 text-[10px] italic text-stone-500 text-center border-t pt-2">
+                        Don't let the door hit ya where the good Lord split ya!
+                    </p>
+                </div>
+            </div>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-10 mb-12">
-            <div class="rounded-md overflow-hidden border-4 border-white/20 shadow-2xl transition hover:border-white/50">
-                <img src="/info/02_Need_to_Know.jpg" alt="Cabin Stats" class="w-full h-auto">
-            </div>
-            <div class="rounded-md overflow-hidden border-4 border-white/20 shadow-2xl transition hover:border-white/50">
-                <img src="/info/04_Cool_Stuff.jpg" alt="Amenities" class="w-full h-auto">
-            </div>
+        <div class="mt-12 parchment-card p-6 rounded-sm text-center">
+            <h2 class="text-xl font-bold text-red-700 uppercase mb-2">Emergency Contacts</h2>
+            <p class="text-sm">Fannin Regional Hospital: (706) 632-3711 | Police: (706) 632-3451</p>
+            <p class="text-2xl font-black mt-2">FOR ALL EMERGENCIES CALL 911</p>
         </div>
     </div>
 
-    <footer class="bg-black/80 backdrop-blur-sm text-stone-400 py-16 px-6 text-center border-t border-white/10">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-            <div class="text-center md:text-left">
-                <p class="text-white text-3xl font-serif italic mb-2">Weeks Creek Haven</p>
-                <p class="tracking-wide">421 Weeks Creek Rd | Blue Ridge, GA 30513</p>
-            </div>
-            <div class="flex flex-wrap justify-center gap-6 text-xs font-bold uppercase tracking-[0.2em] text-white/60">
-                <a href="index.html" class="hover:text-white transition">Home</a>
-                <a href="things-to-do.html" class="hover:text-white transition">To Do</a>
-                <a href="find-us.html" class="hover:text-white transition">Find Us</a>
-                <a href="gallery.html" class="hover:text-white transition">Gallery</a>
-            </div>
-        </div>
-        <div class="mt-12 text-[10px] text-stone-600 border-t border-white/5 pt-8 uppercase tracking-[0.3em]">
-            © 2026 Heather & Lance | Weeks Creek Haven
-        </div>
+    <footer class="bg-black/90 text-stone-400 py-12 text-center">
+        <p class="text-white font-serif italic text-2xl">Weeks Creek Haven</p>
+        <p class="text-xs mt-2 uppercase tracking-widest">© 2026 Heather & Lance</p>
     </footer>
 
 </body>
