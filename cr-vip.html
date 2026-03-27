@@ -9,26 +9,90 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
-        h1, h2, h3, h4 { font-family: 'Crimson Text', serif; }
-        
-     
+   /* Railroad Tie Navigation Bar */
+.railroad-tie-nav {
+    background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
+    background-size: auto 100%;
+    background-repeat: repeat-x;
+    border-bottom: 4px solid #2c241e;
+    box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
+}
+
+/* Wood Button Transitions */
+.wood-btn {
+    transition: transform 0.2s ease;
+    height: 50px;
+    width: auto;
+    display: block;
+}
+
+.wood-btn:hover {
+    transform: scale(1.05);
+}
+
+/* Hover Swap Logic */
+.nav-link-group a .hover-img { display: none; }
+.nav-link-group a:hover .normal-img { display: none; }
+.nav-link-group a:hover .hover-img { display: block; }
+
+/* Mobile Menu Background */
+#mobile-menu {
+    background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('/webpic/railroad-tie-texture.jpg');
+    background-size: cover;
+}
+
+/* Scaling for Large Monitors */
+@media (min-width: 1536px) {
+    .wood-btn {
+        height: 80px; 
+    }
+}
     </style>
 </head>
 <body class="bg-wood">
 
     <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 flex justify-between items-center">
-        <a href="index.html" class="flex-shrink-0">
-            <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16">
+    <a href="index.html" class="flex-shrink-0">
+        <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16">
+    </a>
+    
+    <div class="hidden md:flex space-x-1 nav-link-group items-center">
+        <a href="things-to-do.html">
+            <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
+            <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
         </a>
-        <div class="hidden md:flex space-x-4 items-center text-white text-[10px] font-bold uppercase tracking-widest">
-            <a href="welcome.html" class="hover:text-green-400 border-b-2 border-green-700">VIP Home</a>
-            <a href="adventure.html" class="hover:text-green-400">Area Guide</a>
-            <a href="troubleshoot.html" class="hover:text-green-400">Tech Help</a>
-            <a href="onlineguestbook.html" class="hover:text-green-400">Guest Book</a>
-            <a href="checkout.html" class="hover:text-green-400">Checkout</a>
-        </div>
-    </nav>
+        <a href="need-to-know.html">
+            <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
+            <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
+        </a>
+        <a href="find-us.html">
+            <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
+            <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
+        </a>
+        <a href="gallery.html">
+            <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
+            <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
+        </a>
+        <a href="important-info.html">
+            <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
+            <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
+        </a>
+    </div>
+
+    <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800">
+        <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
+        <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
+        <a href="find-us.html"><img src="/buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
+        <a href="gallery.html"><img src="/buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
+        <a href="important-info.html"><img src="/buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
+    </div>
+</nav>
 
     <header class="relative h-[55vh] flex items-center justify-center text-white overflow-hidden">
         <img src="/00_Intro_Page.jpg" alt="Mountain View" class="absolute inset-0 w-full h-full object-cover">
@@ -52,7 +116,7 @@
             
             <section class="space-y-8">
                 <div class="parchment p-8 rounded-xl shadow-xl vip-card">
-                    <h3 class="text-2xl font-serif font-bold text-green-900 uppercase tracking-wider mb-6 pb-2 border-b border-stone-300">ðŸ”‘ Access Essentials</h3>
+                    <h3 class="text-2xl font-serif font-bold text-green-900 uppercase tracking-wider mb-6 pb-2 border-b border-stone-300">Access Essentials</h3>
                     <ul class="space-y-4 text-xl">
                         <li><span class="font-bold text-stone-500 uppercase text-xs block">Cabin Address</span> 421 Weeks Creek Rd</li>
                         <li><span class="font-bold text-red-800 uppercase text-xs block">Smart Door Code</span> 22246#</li>
@@ -62,11 +126,11 @@
                 </div>
 
                 <div class="parchment p-8 rounded-xl shadow-xl vip-card border-l-amber-800">
-                    <h3 class="text-2xl font-serif font-bold text-amber-800 uppercase tracking-wider mb-6 pb-2 border-b border-stone-300">ðŸ· Host Favorites</h3>
+                    <h3 class="text-2xl font-serif font-bold text-amber-800 uppercase tracking-wider mb-6 pb-2 border-b border-stone-300"> Our Favorites</h3>
                     <ul class="space-y-4 text-base text-stone-700 italic font-serif">
-                        <li><strong class="text-amber-900 font-bold not-italic">â€¢ The Wine Cellar:</strong> Please, help yourself to a bottle from the second row!</li>
-                        <li><strong class="text-amber-900 font-bold not-italic">â€¢ Kitchen is Yours:</strong> We've stocked extra provisions just for you.</li>
-                        <li><strong class="text-amber-900 font-bold not-italic">â€¢ Streamside Access:</strong> Fishing gear is in the closet; help yourself.</li>
+                        <li><strong class="text-amber-900 font-bold not-italic"> The Wine Cellar:</strong> Please, help yourself to a bottle from the second row!</li>
+                        <li><strong class="text-amber-900 font-bold not-italic"> Kitchen is Yours:</strong> We've stocked extra provisions just for you.</li>
+                        <li><strong class="text-amber-900 font-bold not-italic"> Streamside Access:</strong> Fishing gear is in the closet; help yourself.</li>
                     </ul>
                 </div>
             </section>
@@ -89,7 +153,7 @@
                 </div>
                 
                 <div class="parchment p-8 rounded-xl shadow-xl vip-card">
-                    <h3 class="text-2xl font-serif font-bold text-green-900 uppercase tracking-wider mb-4">ðŸ“ž Host Contact</h3>
+                    <h3 class="text-2xl font-serif font-bold text-green-900 uppercase tracking-wider mb-4"> Our Contact</h3>
                     <div class="flex flex-col gap-4 text-stone-800 font-bold italic text-xl">
                         <p>Heather: 678.993.3617</p>
                         <p>Lance: 770.549.9358</p>
@@ -100,7 +164,7 @@
 
         <div class="mt-20 py-12 border-t border-stone-300 text-center">
              <a href="adventure.html" class="parchment px-10 py-5 rounded-2xl shadow-xl hover:scale-105 transition-transform text-2xl font-serif italic text-green-900">
-                Explore the Main Guide â†’
+                Explore the Main Guide
             </a>
         </div>
 
