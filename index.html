@@ -21,12 +21,10 @@
         body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
         h1, h2, h3, h4 { font-family: 'Crimson Text', serif; }
         
-        /* Force hide the default details arrow on all browsers */
         details summary::-webkit-details-marker { display: none; }
         details summary { list-style: none; }
         summary { display: flex !important; }
 
-        /* The "Really Big" Shadow for Titles */
         .heavy-shadow {
             text-shadow: 4px 4px 15px rgba(0, 0, 0, 0.9), 0px 0px 30px rgba(0, 0, 0, 0.5);
         }
@@ -36,7 +34,6 @@
             background-image: url('/webpic/vintage-wooden-board-textured-background.jpg');
         }
         
-        /* Railroad Tie Navigation Bar */
         .railroad-tie-nav {
             background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
             background-size: auto 100%;
@@ -45,7 +42,6 @@
             box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
         }
 
-        /* Wood Button Transition and Responsive Sizing */
         .wood-btn {
             transition: transform 0.2s ease;
             height: 50px;
@@ -53,7 +49,6 @@
             display: block;
         }
 
-        /* Scaling for Large Monitors */
         @media (min-width: 1536px) {
             .wood-btn {
                 height: 80px; 
@@ -64,21 +59,25 @@
             transform: scale(1.05);
         }
 
-        /* Hero Button specific sizing */
+        /* Fixed Hero Button sizing for mobile and desktop */
         .hero-btn {
-            height: 140px;
-            width: auto;
+            height: auto;
+            width: 180px; /* Controlled width for mobile */
             margin: 0 auto;
         }
 
-        /* Large Screen Hero Button scaling */
-        @media (min-width: 1536px) {
+        @media (min-width: 768px) {
             .hero-btn {
-                height: 180px;
+                width: 240px;
             }
         }
 
-        /* Hover Swap Logic for Navigation and Hero */
+        @media (min-width: 1536px) {
+            .hero-btn {
+                width: 300px;
+            }
+        }
+
         .nav-link-group a .hover-img { display: none; }
         .nav-link-group a:hover .normal-img { display: none; }
         .nav-link-group a:hover .hover-img { display: block; }
@@ -86,15 +85,10 @@
         .accent-green { color: #4a5d4e; }
         .parchment { background-color: rgba(244, 238, 224, 0.9); border: 1px solid #dcd3bd; }
         
-        /* Mobile Menu Background */
         #mobile-menu {
             background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('/webpic/railroad-tie-texture.jpg');
             background-size: cover;
         }
-
-        /* Hide the default marker for <details> across browsers */
-        summary::-webkit-details-marker { display: none; }
-        summary { list-style: none; }
     </style>
 </head>
 <body class="bg-wood">
@@ -142,18 +136,18 @@
         </div>
     </nav>
 
-    <header class="relative h-[70vh] md:h-screen flex items-center justify-center text-white">
+    <header class="relative h-screen flex flex-col items-center justify-center text-white overflow-hidden">
         <img src="/gallery/Cabin_Front_1.jpg" alt="Weeks Creek Haven" class="absolute inset-0 w-full h-full object-cover">
         
-        <div class="relative z-10 text-center px-4 mt-20">
-            <h1 class="text-5xl md:text-8xl mb-4 tracking-tight font-serif heavy-shadow" style="font-variant: small-caps;">Weeks Creek Haven</h1>
-            <p class="text-lg md:text-4xl italic mb-12 text-stone-200 font-serif heavy-shadow" style="font-variant: small-caps;">"Your Cabin Away From Home"</p>
+        <div class="relative z-10 text-center px-4 pt-20">
+            <h1 class="text-5xl md:text-8xl mb-2 md:mb-4 tracking-tight font-serif heavy-shadow" style="font-variant: small-caps;">Weeks Creek Haven</h1>
+            <p class="text-xl md:text-4xl italic mb-8 md:mb-12 text-stone-200 font-serif heavy-shadow" style="font-variant: small-caps;">"Your Cabin Away From Home"</p>
         </div>
 
-        <div class="flex justify-center md:absolute md:bottom-8 md:right-8 z-20 nav-link-group mt-8 md:mt-0">
+        <div class="relative z-20 nav-link-group md:absolute md:bottom-8 md:right-8">
             <a href="#book">
-                <img src="/buttons/borrow-the-cabin-normal.png" alt="Borrow The Cabin?" class="wood-btn normal-img hero-btn">
-                <img src="/buttons/borrow-the-cabin-hover.png" alt="Borrow The Cabin?" class="wood-btn hover-img hero-btn">
+                <img src="/buttons/borrow-the-cabin-normal.png" alt="Borrow The Cabin?" class="normal-img hero-btn">
+                <img src="/buttons/borrow-the-cabin-hover.png" alt="Borrow The Cabin?" class="hover-img hero-btn">
             </a>
         </div>
     </header>
