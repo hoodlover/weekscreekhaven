@@ -21,10 +21,10 @@
         body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
         h1, h2, h3, h4 { font-family: 'Crimson Text', serif; }
         
-		/* Force hide the default details arrow on all browsers */
-details summary::-webkit-details-marker { display: none; }
-details summary { list-style: none; }
-summary { display: flex !important; }
+        /* Force hide the default details arrow on all browsers */
+        details summary::-webkit-details-marker { display: none; }
+        details summary { list-style: none; }
+        summary { display: flex !important; }
 
         /* The "Really Big" Shadow for Titles */
         .heavy-shadow {
@@ -45,12 +45,19 @@ summary { display: flex !important; }
             box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
         }
 
-        /* Wood Button Transition */
+        /* Wood Button Transition and Responsive Sizing */
         .wood-btn {
             transition: transform 0.2s ease;
             height: 50px;
             width: auto;
             display: block;
+        }
+
+        /* Scaling for Large Monitors */
+        @media (min-width: 1536px) {
+            .wood-btn {
+                height: 80px; 
+            }
         }
 
         .wood-btn:hover {
@@ -62,6 +69,13 @@ summary { display: flex !important; }
             height: 140px;
             width: auto;
             margin: 0 auto;
+        }
+
+        /* Large Screen Hero Button scaling */
+        @media (min-width: 1536px) {
+            .hero-btn {
+                height: 180px;
+            }
         }
 
         /* Hover Swap Logic for Navigation and Hero */
@@ -85,12 +99,12 @@ summary { display: flex !important; }
 </head>
 <body class="bg-wood">
 
-    <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 flex justify-between items-center">
+    <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
         <a href="index.html" class="flex-shrink-0">
-            <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16">
+            <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
         </a>
         
-        <div class="hidden md:flex space-x-1 nav-link-group items-center">
+        <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
             <a href="things-to-do.html">
                 <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
                 <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
