@@ -22,19 +22,13 @@
 
         h1, h2, h3, h4 { font-family: 'Crimson Text', serif; font-weight: 700; }
         
-		/* Unified Dark Shadow for High Legibility */
-.extra-heavy-shadow {
-    text-shadow: 
-        3px 3px 6px rgba(0, 0, 0, 1),    /* Primary offset shadow */
-        0px 0px 25px rgba(0, 0, 0, 1),   /* Deep outer glow */
-        0px 0px 10px rgba(0, 0, 0, 0.8); /* Mid-range sharpness */
-}
-
-/* Forces all main headers to use the dark style by default */
-h1, h2, h3, h4 {
-    font-family: 'Crimson Text', serif;
-    text-shadow: 3px 3px 6px rgba(0, 0, 0, 1), 0px 0px 25px rgba(0, 0, 0, 1), 0px 0px 10px rgba(0, 0, 0, 0.8);
-}
+        /* Wood Button Transition and Responsive Sizing */
+        .wood-btn {
+            transition: transform 0.2s ease;
+            height: 50px;
+            width: auto;
+            display: block;
+        }
 
         /* High contrast headers */
         .header-title { color: #ffffff; text-shadow: 2px 2px 8px rgba(0,0,0,0.8); }
@@ -118,7 +112,7 @@ h1, h2, h3, h4 {
     </nav>
 
     <header class="pt-40 pb-12 text-center px-6">
-        <h1 class="text-5xl md:text-7xl header-title mb-4">Explore Your Adventure</h1>
+        <h1 class="text-5xl md:text-7xl header-title mb-4 extra-heavy-shadow">Explore Your Adventure</h1>
         <p class="text-xl header-sub max-w-xl mx-auto font-light italic">Click any image to view full size maps and details.</p>
     </header>
 
