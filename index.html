@@ -29,9 +29,27 @@
             text-shadow: 4px 4px 15px rgba(0, 0, 0, 0.9), 0px 0px 30px rgba(0, 0, 0, 0.5);
         }
 
-        .bg-wood { 
-            background-color: #fcfaf7;
-            background-image: url('/webpic/rusticboards.jpg');
+        /* EXTRA DARK SHADOW for headers over wood grains */
+        .extra-heavy-shadow {
+            text-shadow: 3px 3px 6px rgba(0,0,0,1), 0px 0px 25px rgba(0,0,0,1), 0px 0px 10px rgba(0,0,0,0.8);
+        }
+
+        /* Wood Background Classes */
+        .bg-about-wood { 
+            background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('heap-various-size-wood-log_1150-38093.jpg'); 
+            background-size: cover; background-position: center;
+        }
+        .bg-rules-wood { 
+            background-image: url('lightbardwood..jpg'); 
+            background-size: cover; background-position: center;
+        }
+        .bg-book-wood { 
+            background-image: url('rusticboards.jpg'); 
+            background-size: cover; background-position: center;
+        }
+        .bg-footer-wood { 
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('barn.jpg'); 
+            background-size: cover; background-position: center;
         }
         
         .railroad-tie-nav {
@@ -42,41 +60,13 @@
             box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
         }
 
-        .wood-btn {
-            transition: transform 0.2s ease;
-            height: 50px;
-            width: auto;
-            display: block;
-        }
+        .wood-btn { transition: transform 0.2s ease; height: 50px; width: auto; display: block; }
+        @media (min-width: 1536px) { .wood-btn { height: 80px; } }
+        .wood-btn:hover { transform: scale(1.05); }
 
-        @media (min-width: 1536px) {
-            .wood-btn {
-                height: 80px; 
-            }
-        }
-
-        .wood-btn:hover {
-            transform: scale(1.05);
-        }
-
-        /* Fixed Hero Button sizing for mobile and desktop */
-        .hero-btn {
-            height: auto;
-            width: 180px; /* Controlled width for mobile */
-            margin: 0 auto;
-        }
-
-        @media (min-width: 768px) {
-            .hero-btn {
-                width: 240px;
-            }
-        }
-
-        @media (min-width: 1536px) {
-            .hero-btn {
-                width: 300px;
-            }
-        }
+        .hero-btn { height: auto; width: 180px; margin: 0 auto; }
+        @media (min-width: 768px) { .hero-btn { width: 240px; } }
+        @media (min-width: 1536px) { .hero-btn { width: 300px; } }
 
         .nav-link-group a .hover-img { display: none; }
         .nav-link-group a:hover .normal-img { display: none; }
@@ -91,7 +81,7 @@
         }
     </style>
 </head>
-<body class="bg-wood">
+<body>
 
     <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
         <a href="index.html" class="flex-shrink-0">
@@ -152,15 +142,15 @@
         </div>
     </header>
 
-<section id="about" class="py-12 md:py-24 px-4 md:px-6 max-w-7xl mx-auto">
-    <div class="grid lg:grid-cols-2 gap-8 md:gap-20 items-start">
+<section id="about" class="py-12 md:py-24 px-4 md:px-6 bg-about-wood">
+    <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 md:gap-20 items-start">
         
         <div class="flex flex-col h-full order-1">
             <div class="mb-6 md:mb-10 text-center lg:text-left">
-                <h2 class="text-4xl md:text-6xl mb-2 text-white tracking-tight font-serif heavy-shadow font-bold uppercase">
+                <h2 class="text-4xl md:text-6xl mb-2 text-white tracking-tight font-serif extra-heavy-shadow font-bold uppercase">
                     Rustic Charm
                 </h2>
-                <h3 class="text-2xl md:text-4xl text-stone-300 italic font-serif heavy-shadow">
+                <h3 class="text-2xl md:text-4xl text-stone-300 italic font-serif extra-heavy-shadow">
                     Meets Mountain Comfort
                 </h3>
             </div>
@@ -217,11 +207,11 @@
     </div>
 </section>
 	
-<section id="rules" class="py-16 md:py-24 px-4 md:px-6 relative overflow-hidden">
+<section id="rules" class="py-16 md:py-24 px-4 md:px-6 relative overflow-hidden bg-rules-wood">
     <div class="absolute inset-0 bg-stone-900/40 z-0"></div>
 
     <div class="max-w-4xl mx-auto relative z-10">
-        <h2 class="text-4xl md:text-6xl text-center mb-12 md:mb-16 text-white tracking-tight font-serif heavy-shadow font-bold uppercase">
+        <h2 class="text-4xl md:text-6xl text-center mb-12 md:mb-16 text-white tracking-tight font-serif extra-heavy-shadow font-bold uppercase">
             House Rules & Info
         </h2>
         
@@ -281,7 +271,7 @@
     </div>
 </section>
 
-    <section id="book" class="py-24 bg-wood px-6 border-t border-stone-200">
+    <section id="book" class="py-24 px-6 border-t border-stone-200 bg-book-wood">
         <div class="max-w-6xl mx-auto flex flex-col gap-20 items-center">
             
             <div class="w-full max-w-3xl bg-white p-8 md:p-14 shadow-2xl rounded-lg border-t-8 border-green-800 parchment">
@@ -297,13 +287,13 @@
             </div>
 
             <div class="text-center flex flex-col items-center pt-12 border-t border-stone-300/30 w-full">
-                <h2 class="text-3xl md:text-5xl mb-10 tracking-tight font-serif heavy-shadow text-white uppercase" style="font-variant: small-caps;">
+                <h2 class="text-3xl md:text-5xl mb-10 tracking-tight font-serif extra-heavy-shadow text-white uppercase" style="font-variant: small-caps;">
                     Everything there is to know about checkin' out.
                 </h2>
 
                 <div class="nav-link-group inline-block">
                     <a href="https://www.weekscreekhaven.com/checkout.html" class="block">
-                        <img src="/buttons/chekout.jpg" alt="Checkout" 
+                        <img src="/buttons/checkout.jpg" alt="Checkout" 
                              class="normal-img h-14 md:h-20 w-auto shadow-xl rounded-lg transition-transform duration-200 hover:scale-105">
                         <img src="/buttons/checkout_hover.jpg" alt="Checkout" 
                              class="hover-img h-14 md:h-20 w-auto shadow-xl rounded-lg transition-transform duration-200 hover:scale-105">
@@ -314,11 +304,11 @@
         </div>
     </section>
 
-   <footer class="bg-stone-900 text-stone-500 py-16 px-6 text-center">
+   <footer class="py-16 px-6 text-center bg-footer-wood">
         <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-8">
             <div class="text-center md:text-left">
-                <p class="text-white text-xl font-serif italic">Weeks Creek Haven</p>
-                <p>421 Weeks Creek Rd | Blue Ridge, GA 30513</p>
+                <p class="text-white text-xl font-serif italic extra-heavy-shadow">Weeks Creek Haven</p>
+                <p class="text-stone-200 extra-heavy-shadow">421 Weeks Creek Rd | Blue Ridge, GA 30513</p>
             </div>
             <div class="flex flex-wrap justify-center gap-6 text-xs font-bold uppercase tracking-widest text-green-400">
                 <a href="index.html" class="hover:text-white">Home</a>
@@ -329,7 +319,7 @@
             </div>
         </div>
         
-        <div class="mt-10 text-xs text-stone-600 pt-8 border-t border-stone-800 uppercase tracking-widest flex flex-col items-center">
+        <div class="mt-10 text-xs text-stone-400 pt-8 border-t border-stone-800 uppercase tracking-widest flex flex-col items-center">
             <p>© 2026 Heather & Lance | Blue Ridge, Georgia</p>
             <img src="/webpic/Weeks_Creek_Haven_Social_Preview.png" 
                  alt="Cabin Away From Home!" 
