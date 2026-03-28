@@ -60,13 +60,17 @@
             box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
         }
 
-     /* Find this in your <style> tag and update it */
+/* Replace your existing .wood-btn block with this */
 .wood-btn { 
     transition: transform 0.2s ease; 
-    height: 65px; /* Increased from 50px */
+    height: 70px; /* Increased from 50px */
     width: auto; 
     display: block; 
 }
+@media (min-width: 1536px) { 
+    .wood-btn { height: 100px; } /* Increased from 80px */
+}
+.wood-btn:hover { transform: scale(1.05); }
 
         .hero-btn { height: auto; width: 180px; margin: 0 auto; }
         @media (min-width: 768px) { .hero-btn { width: 240px; } }
