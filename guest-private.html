@@ -9,19 +9,20 @@
     <link rel="icon" type="image/png" href="/webpic/Weeks_Creek_Haven_Favicon.png">
 
     <style>
-        body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; background-color: #000; }
+        body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; background-color: #0d1117; }
         h1, h2, h3 { font-family: 'Crimson Text', serif; }
         .typewriter { font-family: 'Special Elite', typewriter, serif; }
         
-        /* Realistic Spy Background: Map, Compass, and Dark Tones */
+        /* Gritty Surveillance Room Background (High-Res Map & Retro Gear) */
         .bg-vault { 
             background-image: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), 
-                              url('https://images.unsplash.com/photo-1510511459019-5dee9954889c?auto=format&fit=crop&q=80&w=2000');
+                              url('https://images.unsplash.com/photo-1546198632-9ef6368bef12?auto=format&fit=crop&q=80&w=2000');
             background-attachment: fixed;
             background-size: cover;
             background-position: center;
         }
         
+        /* Navigation (Kept As Is) */
         .railroad-tie-nav {
             background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
             background-size: auto 100%;
@@ -35,11 +36,28 @@
 
         /* The Dossier Paper */
         .parchment { 
-            background-color: #e5e7eb;
-            background-image: url('https://www.transparenttextures.com/patterns/pinstripe.png');
+            background-color: #f3f4f6;
+            background-image: url('https://www.transparenttextures.com/patterns/dark-matter.png'), linear-gradient(to bottom, #f3f4f6, #e5e7eb);
             border: 1px solid #9ca3af;
             position: relative;
-            box-shadow: 0 0 50px rgba(0,0,0,1);
+            box-shadow: 0 0 70px rgba(0,0,0,0.9);
+            overflow: hidden; /* Contains the stamp and confetti */
+        }
+
+        /* CUSTOM TOP SECRET STAMP (Weeks Creek Haven) */
+        .haven-stamp {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 150px;
+            height: 150px;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSIjOTkxYjFiIiBmaWxsLW9wYWNpdHk9IjAuNyI+PHBhdGggZD0iTTUwLDE1QTM1LDM1LDAsMSwwLDUwLDg1QTM1LDM1LDAsMSwwLDUwLDE1Wk01MCw3NUEyNSwyNSwwLDEsMSw1MCwyNUEyNSwyNSwwLDEsMSw1MCw3NVoiLz48dGV4dCB4PSI1MCUiIHk9IjMwJSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IidTcGVjaWFsIEVsaXRlJywgdHlwZXdyaXRlcixzZXJpZiIgZm9udC1zaXplPSIxMiIgZm9udC13ZWlnaHQ9ImJvbGQiPlRPUCBTRUNSRVQ8L3RleHQ+PHRleHQgeD0iNTAlIiB5PSI1MCUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSInU3BlY2lhbBFsaXRlJyx0eXBld3JpdGVyLHNlcmlmIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSJib2xkIj5XRUNLUyBDUkVFSzwvdGV4dD48dGV4dCB4PSI1MCUiIHk9IjU3JSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IidTcGVjaWFsIEVsaXRlJyx0eXBld3JpdGVyLHNlcmlmIiBmb250LXNpemU9IjYiIGZvbnQtd2VpZ2h0PSJib2xkIj5IQVZFTjwvdGV4dD48dGV4dCB4PSI1MCUiIHk9IjgwJSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IidTcGVjaWFsIEVsaXRlJyx0eXBld3JpdGVyLHNlcmlmIiBmb250LXNpemU9IjgiIGZvbnQtd2VpZ2h0PSJib2xkIj5IQVZFTjwvdGV4dD48L2c+PC9zdmc+');
+            background-size: contain;
+            background-repeat: no-repeat;
+            transform: rotate(25deg);
+            opacity: 0.8;
+            pointer-events: none;
+            filter: grayscale(1) contrast(1.5); /* Makes it look integrated */
         }
 
         /* Bullet Hole Graphics */
@@ -62,35 +80,18 @@
             filter: drop-shadow(0px 2px 2px rgba(0,0,0,0.5));
         }
 
-        /* Top Secret Stamp */
-        .stamp {
-            position: absolute;
-            top: 40px;
-            right: 40px;
-            border: 4px solid #991b1b;
-            color: #991b1b;
-            font-family: 'Special Elite', cursive;
-            padding: 10px 20px;
-            transform: rotate(12deg);
-            text-transform: uppercase;
-            font-weight: bold;
-            font-size: 1.5rem;
-            opacity: 0.7;
-            pointer-events: none;
-        }
-
-        /* Manila Folder Style */
+        /* Manila Folder Style for PDF */
         .folder-link {
-            background-image: url('https://img.freepik.com/premium-photo/old-paper-folder-isolated-white_127657-16147.jpg');
+            background-image: url('https://img.freepik.com/premium-photo/old-paper-folder-texture_127657-16212.jpg');
             background-size: cover;
             background-position: center;
-            height: 180px;
+            height: 200px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 4px;
             transition: transform 0.3s;
-            box-shadow: 0 10px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 15px 20px rgba(0,0,0,0.4);
             text-decoration: none;
         }
         .folder-link:hover { transform: translateY(-5px) rotate(-1deg); }
@@ -117,39 +118,42 @@
         </div>
     </nav>
 
-    <main class="flex flex-col items-center justify-center min-h-screen pt-40 pb-20 px-6">
+    <main class="flex flex-col items-center justify-center min-h-screen pt-44 pb-20 px-6">
         <div class="max-w-5xl w-full">
             <div class="parchment p-8 md:p-16 rounded shadow-2xl relative">
-                <div class="stamp">Top Secret</div>
                 
-                <div class="border-b-2 border-stone-400 pb-10 mb-10">
+                <div class="haven-stamp"></div>
+                
+                <div class="border-b-2 border-stone-400 pb-10 mb-10 relative z-10">
                     <h1 class="text-4xl md:text-6xl font-black uppercase tracking-tighter typewriter text-stone-900">Case File: The Haven</h1>
-                    <p class="mt-4 text-stone-600 font-bold typewriter uppercase text-sm">
-                        Subject: <span class="text-red-700">Friends & Family Infiltration</span><br>
-                        Auth: <span class="redacted">Heather & Lance</span> | Status: <span class="text-green-700">Active</span>
+                    <p class="mt-4 text-stone-600 font-bold typewriter uppercase text-sm leading-relaxed">
+                        Subject: <span class="text-red-800">Operational Infiltration Dossier</span><br>
+                        Auth: <span class="redacted">HEATHER OR LANCE</span> | Status: <span class="text-green-700">ACTIVE</span>
                     </p>
                 </div>
 
-                <div class="grid md:grid-cols-2 gap-12">
+                <div class="grid md:grid-cols-2 gap-12 relative z-10">
                     <div class="space-y-8">
                         <div>
-                            <h3 class="text-xs font-bold uppercase tracking-[0.2em] text-stone-500 mb-4 typewriter">Classified Documents</h3>
-                            <a href="welcome_guide.pdf" target="_blank" class="folder-link relative group">
-                                <div class="bg-red-800 text-white px-3 py-1 text-[10px] font-bold uppercase typewriter absolute top-12 left-1/2 -translate-x-1/2 -rotate-12">Welcome_Guide.pdf</div>
-                                <span class="bg-black/80 text-white px-4 py-2 text-[10px] font-bold uppercase rounded opacity-0 group-hover:opacity-100 transition">View Intel</span>
+                            <h3 class="text-xs font-bold uppercase tracking-[0.2em] text-stone-500 mb-4 typewriter">Operational Downloads</h3>
+                            <a href="welcome_guide.pdf" target="_blank" class="folder-link group relative overflow-hidden">
+                                <div class="bg-red-800 text-white px-3 py-1 text-[10px] font-bold uppercase typewriter absolute top-16 left-1/2 -translate-x-1/2 -rotate-2 shadow-md border-b-2 border-red-950">
+                                    WELCOME_GUIDE.PDF
+                                </div>
+                                <span class="bg-black/80 text-white px-4 py-2 text-[10px] font-bold uppercase rounded opacity-0 group-hover:opacity-100 transition shadow-lg z-20">Analyze Intel</span>
                             </a>
                         </div>
 
                         <div class="grid grid-cols-1 gap-3">
-                            <a href="provisions.html" class="p-4 bg-white border border-stone-300 hover:bg-stone-50 transition flex justify-between items-center">
-                                <span class="typewriter text-xs font-bold uppercase">Resupply Locations (Groceries)</span>
+                            <a href="provisions.html" class="p-4 bg-white border border-stone-300 hover:bg-stone-50 transition flex justify-between items-center shadow-inner">
+                                <span class="typewriter text-xs font-bold uppercase">Field Resupply Locations</span>
                                 <span>?</span>
                             </a>
-                            <a href="cleaningchecklist.html" class="p-4 bg-red-50 border border-red-200 hover:bg-red-100 transition flex justify-between items-center group">
-                                <span class="typewriter text-xs font-bold uppercase text-red-900 italic">Destroy Evidence (Cleaning Checklist)</span>
-                                <span class="text-red-900 font-bold">$200 Fine</span>
+                            <a href="cleaningchecklist.html" class="p-4 bg-red-100 border border-red-200 hover:bg-red-200 transition flex justify-between items-center group shadow-md">
+                                <span class="typewriter text-xs font-bold uppercase text-red-900 italic">Evidence Destruction Protocol</span>
+                                <span class="text-red-900 font-bold text-[10px] bg-red-200 px-2 py-1 rounded">$200 Legacy Fee</span>
                             </a>
-                            <a href="onlineguestbook.html" class="p-4 bg-white border border-stone-300 hover:bg-stone-50 transition flex justify-between items-center">
+                            <a href="onlineguestbook.html" class="p-4 bg-white border border-stone-300 hover:bg-stone-50 transition flex justify-between items-center shadow-inner">
                                 <span class="typewriter text-xs font-bold uppercase">Mission Debrief (Guestbook)</span>
                                 <span>?</span>
                             </a>
@@ -157,50 +161,51 @@
                     </div>
 
                     <div class="space-y-6">
-                        <h3 class="text-xs font-bold uppercase tracking-[0.2em] text-stone-500 mb-4 typewriter">Access Clearances</h3>
+                        <h3 class="text-xs font-bold uppercase tracking-[0.2em] text-stone-500 mb-4 typewriter">Vault Access Clearances</h3>
                         
-                        <div class="bg-black p-6 rounded shadow-inner text-center">
-                            <p class="text-[9px] text-green-500 font-bold uppercase typewriter mb-2 tracking-widest">Main Entry Encryption</p>
-                            <p class="text-4xl text-white font-mono tracking-[0.5em] font-bold">22246#</p>
+                        <div class="bg-black p-6 rounded shadow-inner text-center relative overflow-hidden">
+                            <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]"></div>
+                            <p class="text-[9px] text-green-500 font-bold uppercase typewriter mb-2 tracking-widest relative z-10">Main Entrance Cipher</p>
+                            <p class="text-4xl text-white font-mono tracking-[0.5em] font-bold relative z-10" style="text-shadow: 0 0 10px #4ade80;">22246#</p>
                         </div>
 
-                        <div class="bg-stone-300 p-6 rounded border border-stone-400">
-                            <p class="text-[9px] text-stone-600 font-bold uppercase typewriter mb-2">Comms (Wi-Fi)</p>
-                            <p class="text-sm font-bold typewriter text-stone-800">NET: WeeksCreekHaven</p>
+                        <div class="bg-stone-300 p-6 rounded border border-stone-400 shadow-inner">
+                            <p class="text-[9px] text-stone-600 font-bold uppercase typewriter mb-2">Primary Comms Link (Wi-Fi)</p>
+                            <p class="text-sm font-bold typewriter text-stone-800">SSID: WeeksCreekHaven</p>
                             <p class="text-sm font-bold typewriter text-stone-800">KEY: creeklife</p>
                         </div>
 
                         <div>
-                            <h3 class="text-xs font-bold uppercase tracking-[0.2em] text-stone-500 mb-4 typewriter mt-8">Standing Orders</h3>
+                            <h3 class="text-xs font-bold uppercase tracking-[0.2em] text-stone-500 mb-4 typewriter mt-8">Standing Orders (Do Not Deviate)</h3>
                             <ul class="bullet-list text-xs font-bold text-stone-700 uppercase typewriter">
-                                <li>Observe bear protocol: All trash goes in the metal bins.</li>
-                                <li>Noise Discipline: Keep the deck volume low after 10 PM.</li>
-                                <li>Identify as "Heather & Lance's relatives" if intercepted.</li>
+                                <li>Observe Strict Bear Protocol: Secure all provisions inside metal bins.</li>
+                                <li>Noise Discipline: Assume the valley is listening after 10 PM.</li>
+                                <li>Identify as "Heather & Lance's relatives" if intercepted. Do not elaborate.</li>
                             </ul>
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-16 pt-10 border-t border-stone-400">
+                <div class="mt-16 pt-10 border-t border-stone-400 relative z-10">
                     <h3 class="text-xs font-bold uppercase tracking-[0.2em] text-stone-500 mb-6 typewriter text-center">Local Intelligence (The Neighbors)</h3>
                     <div class="grid md:grid-cols-3 gap-4">
-                        <div class="bg-stone-900 text-stone-400 p-4 rounded text-[10px] typewriter uppercase leading-relaxed">
-                            <span class="text-green-500">Intel:</span> Most neighbors are friendly. A friendly wave prevents unwanted interrogation.
+                        <div class="bg-stone-900 text-stone-400 p-5 rounded text-[10px] typewriter uppercase leading-relaxed shadow-xl border-l-4 border-green-800">
+                            <span class="text-green-500">Intel:</span> Intercepted traffic indicates they are friendly. A neutral wave is acceptable and recommended.
                         </div>
-                        <div class="bg-stone-900 text-stone-400 p-4 rounded text-[10px] typewriter uppercase leading-relaxed">
-                            <span class="text-amber-500">Warning:</span> The creek carries audio better than a satellite dish. Be mindful of late-night debate.
+                        <div class="bg-stone-900 text-stone-400 p-5 rounded text-[10px] typewriter uppercase leading-relaxed shadow-xl border-l-4 border-amber-800">
+                            <span class="text-amber-500">Warning:</span> Acoustic analysis confirms the creek carries audio. Be mindful of late-night debate.
                         </div>
-                        <div class="bg-stone-900 text-stone-400 p-4 rounded text-[10px] typewriter uppercase leading-relaxed">
-                            <span class="text-red-500">Emergency:</span> If door code fails, exfiltrate to the lockbox on the side deck.
+                        <div class="bg-stone-900 text-stone-400 p-5 rounded text-[10px] typewriter uppercase leading-relaxed shadow-xl border-l-4 border-red-800">
+                            <span class="text-red-500">Red Alert:</span> Do not use force on the lock. If primary door cipher fails, exfiltrate to the lockbox on the side deck. Call base for code.
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-12 bg-white/50 p-8 rounded border-2 border-dashed border-stone-400">
+                <div class="mt-12 bg-stone-900/10 p-8 rounded border-2 border-dashed border-stone-400 relative z-10">
                     <h3 class="text-sm font-bold uppercase typewriter mb-4">Request Remote Intel Drop</h3>
                     <form action="https://formspree.io/f/mzdjnprj" method="POST" class="flex flex-wrap gap-4">
-                        <input type="email" name="guest_email" placeholder="AGENT_EMAIL@SERVER.COM" class="flex-grow bg-transparent border-b-2 border-stone-900 p-2 text-xs typewriter outline-none">
-                        <button type="submit" class="bg-stone-900 text-white px-8 py-2 text-xs font-bold uppercase typewriter hover:bg-red-800 transition">Transmit</button>
+                        <input type="email" name="guest_email" placeholder="AGENT_EMAIL@SERVER.COM" class="flex-grow bg-transparent border-b-2 border-stone-900 p-2 text-xs typewriter outline-none focus:border-red-800 transition">
+                        <button type="submit" class="bg-stone-900 text-white px-8 py-3 text-xs font-bold uppercase typewriter hover:bg-red-800 transition shadow-lg">Transmit Intel Kit</button>
                     </form>
                 </div>
 
@@ -208,9 +213,9 @@
         </div>
     </main>
 
-    <footer class="bg-stone-950 text-stone-600 py-12 text-center text-[10px] typewriter uppercase tracking-widest border-t border-stone-900">
-        <p class="text-stone-400 mb-2">Weeks Creek Haven | Sector: Blue Ridge, GA</p>
-        <p>© 2026 Operations: Heather & Lance | <span class="redacted">No record of this visit exists</span></p>
+    <footer class="bg-stone-950 text-stone-600 py-16 text-center text-[10px] typewriter uppercase tracking-widest border-t border-stone-900 relative">
+        <p class="text-stone-400 mb-2">Weeks Creek Haven | Sector: Blue Ridge, GA | Zone 3</p>
+        <p>© 2026 Operations Heather & Lance | <span class="redacted">Zero footprint policy in effect</span></p>
     </footer>
 
 </body>
