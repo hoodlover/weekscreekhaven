@@ -175,13 +175,14 @@
                 </div>
             </section>
 
-            <section class="space-y-4">
-                <div class="relative group rounded-2xl shadow-2xl border-4 border-white overflow-hidden">
-                    <a href="#full-image">
-                        <img src="/guests/charles.png" alt="Personal Welcome" class="w-full h-auto cursor-zoom-in group-hover:opacity-95 transition-opacity">
-                    </a>
-                    <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-all pointer-events-none"></div>
-                </div>
+<section class="space-y-4">
+    <div class="relative group rounded-2xl shadow-2xl border-4 border-white overflow-hidden">
+        <img src="/guests/charles.png" 
+             alt="Personal Welcome" 
+             onclick="openVipLightbox()" 
+             class="w-full h-auto cursor-zoom-in group-hover:opacity-95 transition-opacity">
+        <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-all pointer-events-none"></div>
+    </div>
 
                 <div class="flex justify-center">
                     <a href="/guests/charles.png" download="Welcome-to-Weeks-Creek.png" class="flex items-center gap-2 text-stone-100 hover:text-green-900 transition-colors font-serif italic text-sm">
@@ -224,6 +225,25 @@
         <p class="text-white text-xl font-serif italic mb-4">Weeks Creek Haven VIP Portal</p>
         <p class="text-[9px] uppercase tracking-widest">2026 Heather & Lance | Blue Ridge, Georgia</p>
     </footer>
+<script>
+    const vipLightbox = document.getElementById('full-image');
 
+    function openVipLightbox() {
+        vipLightbox.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // Prevents background scrolling
+    }
+
+    function closeVipLightbox() {
+        vipLightbox.style.display = 'none';
+        document.body.style.overflow = 'auto'; // Re-enables scrolling
+    }
+
+    // Closes the lightbox if you click the background anchor or the "Close" link
+    vipLightbox.addEventListener('click', function(e) {
+        if (e.target === vipLightbox || e.target.innerText === 'Close') {
+            closeVipLightbox();
+        }
+    });
+</script>
 </body>
 </html>
