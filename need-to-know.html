@@ -30,11 +30,17 @@
             box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
         }
 
-        .wood-btn {
-            transition: transform 0.2s ease;
-            height: 60px;
-            width: auto;
-            display: block;
+/* Replace your existing .wood-btn block with this */
+.wood-btn { 
+    transition: transform 0.2s ease; 
+    height: 70px; /* Increased from 50px */
+    width: auto; 
+    display: block; 
+}
+@media (min-width: 1536px) { 
+    .wood-btn { height: 100px; } /* Increased from 80px */
+}
+.wood-btn:hover { transform: scale(1.05); }
         }
 
         @media (min-width: 1536px) {
@@ -68,34 +74,48 @@
 </head>
 <body class="bg-wood">
 
-    <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
-        <a href="index.html" class="flex-shrink-0">
-            <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
+<nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
+    <a href="index.html" class="flex-shrink-0">
+        <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-16 md:h-20 2xl:h-28">
+    </a>
+    
+    <div class="hidden md:flex space-x-4 2xl:space-x-8 nav-link-group items-center">
+        <a href="things-to-do.html">
+            <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
+            <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
         </a>
-        
-        <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
-            <a href="things-to-do.html">
-                <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
-                <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
-            </a>
-            <a href="need-to-know.html">
-                <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
-                <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
-            </a>
-            <a href="find-us.html">
-                <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
-                <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
-            </a>
-            <a href="gallery.html">
-                <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
-                <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
-            </a>
-            <a href="important-info.html">
-                <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
-                <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
-            </a>
-        </div>
-    </nav>
+        <a href="need-to-know.html">
+            <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
+            <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
+        </a>
+        <a href="find-us.html">
+            <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
+            <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
+        </a>
+        <a href="gallery.html">
+            <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
+            <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
+        </a>
+        <a href="important-info.html">
+            <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
+            <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
+        </a>
+    </div>
+
+    <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800">
+        <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
+        <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
+        <a href="find-us.html"><img src="/buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
+        <a href="gallery.html"><img src="/buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
+        <a href="important-info.html"><img src="/buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
+    </div>
+</nav>
 
     <header class="relative h-screen flex flex-col items-center justify-center text-white overflow-hidden">
         <img src="/webpic/toknow.jpg" alt="Weeks Creek Haven Streamside" class="absolute inset-0 w-full h-full object-cover">
@@ -114,18 +134,18 @@
                 <p class="text-center text-xs mt-2 italic">Click to expand Hot Tub & Cover Lifter Guide</p>
             </div>
             <div class="parchment p-8 rounded-xl order-1 md:order-2 border-l-8 border-green-900/30">
-                <h2 class="text-4xl font-bold text-green-900 mb-6 font-serif">💦 Hot Tub & Spa</h2>
+                <h2 class="text-4xl font-bold text-green-900 mb-6 font-serif">ðŸ’¦ Hot Tub & Spa</h2>
                 <div class="space-y-4 text-lg">
-                    <p>• <strong>Max Soak:</strong> 15 minutes max per soak.</p>
-                    <p>• <strong>Towels:</strong> Use dedicated large hot tub towels located in the entertainment room by the door.</p>
-                    <p>• <strong>Visual Guide:</strong> Follow the 4-step cover lifter guide carefully to enjoy the tub securely.</p>
-                    <p>• <strong>Spa Tub:</strong> Note that lower level bathroom spa tub jets are out of order, but it's perfect for a bubble bath!</p>
+                    <p>â€¢ <strong>Max Soak:</strong> 15 minutes max per soak.</p>
+                    <p>â€¢ <strong>Towels:</strong> Use dedicated large hot tub towels located in the entertainment room by the door.</p>
+                    <p>â€¢ <strong>Visual Guide:</strong> Follow the 4-step cover lifter guide carefully to enjoy the tub securely.</p>
+                    <p>â€¢ <strong>Spa Tub:</strong> Note that lower level bathroom spa tub jets are out of order, but it's perfect for a bubble bath!</p>
                 </div>
             </div>
         </section>
 
         <section class="parchment p-8 md:p-16 rounded-xl relative overflow-hidden">
-            <h2 class="text-5xl text-center font-serif text-green-900 mb-12 uppercase tracking-tight">🎸 The Cool Stuff</h2>
+            <h2 class="text-5xl text-center font-serif text-green-900 mb-12 uppercase tracking-tight">ðŸŽ¸ The Cool Stuff</h2>
             <div class="grid md:grid-cols-3 gap-10">
                 <div class="text-center">
                     <img src="/webpic/tvroom.jpg" class="h-48 w-full object-cover mx-auto mb-6 rounded shadow-lg zoom-card" onclick="openModal(this.src)">
@@ -140,18 +160,18 @@
                 <div class="text-center">
                     <img src="/info/09_Gas_Log_Tips.png" class="h-48 w-full object-cover mx-auto mb-6 rounded shadow-lg zoom-card" onclick="openModal(this.src)">
                     <h4 class="text-xl font-bold font-serif mb-2">Gas Log Fireplace</h4>
-                    <p class="text-stone-700">Keep flames at half or below—it's propane hungry! Always return the knob to 'Pilot' when leaving or sleeping.</p>
+                    <p class="text-stone-700">Keep flames at half or belowâ€”it's propane hungry! Always return the knob to 'Pilot' when leaving or sleeping.</p>
                 </div>
             </div>
         </section>
 
         <section class="grid md:grid-cols-2 gap-12 items-center">
             <div class="parchment p-8 rounded-xl border-l-8 border-green-900/30">
-                <h2 class="text-4xl font-bold text-green-900 mb-6 font-serif">🐻 Mountain Safety</h2>
+                <h2 class="text-4xl font-bold text-green-900 mb-6 font-serif">ðŸ» Mountain Safety</h2>
                 <div class="space-y-4 text-lg">
-                    <p>• <strong>Garbage Safety:</strong> Use the 60-gallon bear-proof bins on the front porch. Keep bungee cords fastened securely.</p>
-                    <p>• <strong>Firepit:</strong> Located near the creek. Please ensure the fire is completely out before heading in for the night.</p>
-                    <p>• <strong>Wildlife:</strong> Don't feed the wildlife or leave loose garbage outside. There are black bears, coyotes, and deer in the area.</p>
+                    <p>â€¢ <strong>Garbage Safety:</strong> Use the 60-gallon bear-proof bins on the front porch. Keep bungee cords fastened securely.</p>
+                    <p>â€¢ <strong>Firepit:</strong> Located near the creek. Please ensure the fire is completely out before heading in for the night.</p>
+                    <p>â€¢ <strong>Wildlife:</strong> Don't feed the wildlife or leave loose garbage outside. There are black bears, coyotes, and deer in the area.</p>
                 </div>
             </div>
             <div>
@@ -163,14 +183,14 @@
         <section class="parchment p-8 md:p-16 rounded-xl border-t-8 border-green-900">
             <div class="flex flex-col md:flex-row gap-12 items-center">
                 <div class="flex-1">
-                    <h2 class="text-4xl font-serif mb-8 uppercase text-green-900">👋 Departure Checklist</h2>
+                    <h2 class="text-4xl font-serif mb-8 uppercase text-green-900">ðŸ‘‹ Departure Checklist</h2>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-lg">
-                        <p>✅ Strip sheets from used beds.</p>
-                        <p>✅ Start dishwasher & wash dishes.</p>
-                        <p>✅ Wash towels & start dryer.</p>
-                        <p>✅ Fireplace turned to 'Pilot'.</p>
-                        <p>✅ Trash to bear-proof bins.</p>
-                        <p>✅ Say "Alexa, Going Home".</p>
+                        <p>âœ… Strip sheets from used beds.</p>
+                        <p>âœ… Start dishwasher & wash dishes.</p>
+                        <p>âœ… Wash towels & start dryer.</p>
+                        <p>âœ… Fireplace turned to 'Pilot'.</p>
+                        <p>âœ… Trash to bear-proof bins.</p>
+                        <p>âœ… Say "Alexa, Going Home".</p>
                     </div>
                     <p class="mt-10 italic text-stone-600 text-center md:text-left">
                         Check-out is at 11:00 AM. Basically, just leave it as you found it for the next folks.
