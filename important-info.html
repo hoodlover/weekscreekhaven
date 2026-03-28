@@ -56,17 +56,13 @@ h1, h2, h3, h4, p {
             box-shadow: inset 0px -10px 20px rgba(0,0,0,0.6), 0 4px 6px -1px rgba(0,0,0,0.5);
         }
 
-/* Replace your existing .wood-btn block with this */
-.wood-btn { 
-    transition: transform 0.2s ease; 
-    height: 70px; /* Increased from 50px */
-    width: auto; 
-    display: block; 
-}
-@media (min-width: 1536px) { 
-    .wood-btn { height: 100px; } /* Increased from 80px */
-}
-.wood-btn:hover { transform: scale(1.05); }
+        /* Wood Button Transition and Responsive Sizing */
+        .wood-btn {
+            transition: transform 0.2s ease;
+            height: 50px;
+            width: auto;
+            display: block;
+        }
 
         @media (min-width: 1536px) { .wood-btn { height: 80px; } }
 
