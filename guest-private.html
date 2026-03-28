@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Friends & Family Portal | Weeks Creek Haven</title>
-<script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>CLASSIFIED | Weeks Creek Haven Vault</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&family=Special+Elite&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="/webpic/Weeks_Creek_Haven_Favicon.png">
 
     <style>
-        body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; background-color: #f4f1ea; }
+        body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; background-color: #1a1a1a; }
         h1, h2, h3 { font-family: 'Crimson Text', serif; }
+        .typewriter { font-family: 'Special Elite', typewriter, serif; }
         
         .bg-wood { 
-            background-color: #fcfaf7;
-            background-image: url('/webpic/vintage-wooden-board-textured-background.jpg');
+            background-color: #1a1a1a;
+            background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1546484475-7f7bd55792da?auto=format&fit=crop&q=80&w=2000');
+            background-attachment: fixed;
+            background-size: cover;
         }
         
-        /* Railroad Tie Navigation Bar */
         .railroad-tie-nav {
             background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
             background-size: auto 100%;
@@ -26,31 +28,31 @@
             box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
         }
 
-        /* Wood Button Transitions */
-        .wood-btn {
-            transition: transform 0.2s ease;
-            height: 50px;
-            width: auto;
-            display: block;
-        }
-
+        .wood-btn { transition: transform 0.2s ease; height: 50px; width: auto; display: block; }
         .wood-btn:hover { transform: scale(1.05); }
 
-        /* Hover Swap Logic */
-        .nav-link-group a .hover-img { display: none; }
-        .nav-link-group a:hover .normal-img { display: none; }
-        .nav-link-group a:hover .hover-img { display: block; }
+        .parchment { 
+            background-image: url('https://www.transparenttextures.com/patterns/dark-matter.png'), linear-gradient(to bottom, #f4eee0, #eaddca);
+            border: 2px solid #3d3128;
+            position: relative;
+            overflow: hidden;
+        }
 
-        /* Checklist Styling */
-        .checklist-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid #d1cebd; }
-        input[type="checkbox"] { width: 20px; height: 20px; accent-color: #14532d; margin-top: 2px; }
-        
-        .parchment { background-color: rgba(244, 238, 224, 0.95); border: 1px solid #dcd3bd; padding: 2rem; border-radius: 0.5rem; }
+        .redacted { background: #000; color: #000; padding: 0 2px; }
+        .redacted:hover { color: #fff; transition: 0.3s; }
 
-        /* Mobile Menu Background */
-        #mobile-menu {
-            background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('/webpic/railroad-tie-texture.jpg');
-            background-size: cover;
+        .top-secret-stamp {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            border: 4px double #991b1b;
+            color: #991b1b;
+            font-family: 'Special Elite', cursive;
+            padding: 5px 15px;
+            transform: rotate(15deg);
+            opacity: 0.8;
+            text-transform: uppercase;
+            font-weight: bold;
         }
 
         @media (min-width: 1536px) { .wood-btn { height: 80px; } }
@@ -63,131 +65,150 @@
         <a href="index.html" class="flex-shrink-0">
             <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-14 md:h-16 2xl:h-24">
         </a>
-        
         <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
             <a href="things-to-do.html">
                 <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
-                <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
             </a>
             <a href="need-to-know.html">
                 <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
-                <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
             </a>
             <a href="find-us.html">
                 <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
-                <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
             </a>
             <a href="gallery.html">
                 <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
-                <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
             </a>
             <a href="important-info.html">
                 <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
-                <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
             </a>
         </div>
     </nav>
 
- 
-
-
     <main class="flex flex-col items-center justify-center min-h-screen pt-32 pb-20 px-6">
-        
-         <div id="privateContent" class="max-w-5xl w-full">
+        <div id="privateContent" class="max-w-5xl w-full">
             <div class="parchment p-8 md:p-14 rounded-lg shadow-2xl space-y-12">
+                <div class="top-secret-stamp text-2xl md:text-4xl">Classified</div>
                 
-                <div class="text-center border-b border-stone-300 pb-10">
-                    <h1 class="text-5xl mb-4 text-green-900 italic">Friends & Family Portal</h1>
-                    <p class="text-stone-600 max-w-2xl mx-auto italic">Everything you need (well not everything) for a perfect stay at the Haven. <br>Please keep your codes private.<br><b>And if anyone asks, your weren't here.</b></p>
+                <div class="text-center border-b border-stone-400 pb-10">
+                    <h1 class="text-5xl mb-2 text-stone-900 font-bold uppercase tracking-tighter typewriter">The Haven Vault</h1>
+                    <p class="text-stone-700 max-w-2xl mx-auto typewriter text-sm">
+                        FOR AUTHORIZED EYES ONLY. IF YOU ARE NOT <span class="redacted">HEATHER OR LANCE</span>, LEAVE IMMEDIATELY. <br>
+                        <b>If neighbors ask: You are high-stakes birdwatchers on a silent retreat.</b>
+                    </p>
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-12">
-                    <div class="space-y-8">
-                        <div class="bg-green-800 text-white p-10 rounded-lg shadow-lg text-center border-b-4 border-green-950">
-                            <h3 class="text-3xl mb-4 italic">The Welcome Guide</h3>
-                            <p class="text-sm text-green-100 mb-8 leading-relaxed">
-                                Our brief guide including how to use Alexa, close up the cabin, and find hidden surprises.
-                            </p>
-                            <a href="welcome_guide.pdf" target="_blank" class="inline-block bg-white text-green-900 px-8 py-3 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-stone-100 transition shadow-md">Download PDF Guide</a>
-                        </div><br>
-						<a href="provisions.html" target="_blank" class="inline-block bg-white text-green-900 px-8 py-3 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-stone-100 transition shadow-md">Where to Stock Up</a>
-                        </div>
-						<a href="cleaningchecklist.html" target="_blank" class="inline-block bg-white text-green-900 px-8 py-3 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-stone-100 transition shadow-md">Clean the Checklist<br>or Pay for the little old lady to come for $200/a>
-                        </div>
-						<a href="onlineguestbook.html" target="_blank" class="inline-block bg-white text-green-900 px-8 py-3 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-stone-100 transition shadow-md">Online Guestbook</a>
+                    <div class="space-y-6">
+                        <div class="relative group overflow-hidden rounded-lg shadow-xl bg-stone-900 aspect-video">
+                            <img src="https://images.unsplash.com/photo-1449156001935-d2863fb72690?auto=format&fit=crop&q=80&w=800" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-110 transition duration-500" alt="Cabin Cabin">
+                            <div class="relative p-6 h-full flex flex-col justify-end bg-gradient-to-t from-black to-transparent">
+                                <h3 class="text-2xl text-white italic">The Field Manual</h3>
+                                <p class="text-xs text-stone-300 mb-4">How to summon Alexa without losing your soul.</p>
+                                <a href="welcome_guide.pdf" target="_blank" class="w-fit bg-white text-stone-900 px-6 py-2 rounded font-bold uppercase text-[10px] tracking-widest hover:bg-green-600 hover:text-white transition">Download PDF</a>
+                            </div>
                         </div>
 
-                        <a href="check-out.html" class="flex items-center justify-between bg-stone-800 text-white p-6 rounded-lg hover:bg-black transition shadow">
-                            <span class="font-bold uppercase tracking-widest text-sm">Check-Out Time : Info you probably won't read or do.</span>
-                            <span class="text-xl">?</span>
-                        </a>
+                        <div class="grid grid-cols-1 gap-4">
+                            <a href="provisions.html" class="flex items-center p-4 bg-stone-100 border-l-4 border-stone-800 hover:bg-stone-200 transition">
+                                <span class="text-2xl mr-4">??</span>
+                                <div>
+                                    <p class="font-bold text-xs uppercase tracking-widest">Resupply Points</p>
+                                    <p class="text-[10px] text-stone-500">Where to get beer and bread before the blizzard.</p>
+                                </div>
+                            </a>
+
+                            <a href="cleaningchecklist.html" class="flex items-center p-4 bg-stone-100 border-l-4 border-red-800 hover:bg-red-50 transition">
+                                <span class="text-2xl mr-4">??</span>
+                                <div>
+                                    <p class="font-bold text-xs uppercase tracking-widest">Evidence Disposal</p>
+                                    <p class="text-[10px] text-stone-500 text-red-800 italic">Do the chores OR pay the $200 'Legacy Fee'.</p>
+                                </div>
+                            </a>
+
+                            <a href="onlineguestbook.html" class="flex items-center p-4 bg-stone-100 border-l-4 border-green-800 hover:bg-green-50 transition">
+                                <span class="text-2xl mr-4">??</span>
+                                <div>
+                                    <p class="font-bold text-xs uppercase tracking-widest">Mission Debrief</p>
+                                    <p class="text-[10px] text-stone-500">Sign the guestbook so we know you survived.</p>
+                                </div>
+                            </a>
+                        </div>
                     </div>
 
                     <div class="space-y-6">
-                        <h2 class="font-bold uppercase tracking-widest text-xs text-stone-400 border-b border-stone-900 pb-2">Cabin Access</h2>
+                        <h2 class="font-bold uppercase tracking-widest text-xs text-stone-500 border-b border-stone-900 pb-2 typewriter">Vault Access Codes</h2>
                         
-                        <div class="bg-white p-6 rounded border border-stone-200 shadow-inner">
-                            <p class="text-xs uppercase font-bold text-stone-400 mb-2">Main Entrance Code</p>
-                            <p class="text-4xl tracking-[0.4em] font-mono text-stone-800">22246#</p>
+                        <div class="bg-black p-8 rounded shadow-2xl relative overflow-hidden">
+                            <div class="absolute top-0 right-0 p-2 opacity-20">
+                                <img src="https://www.transparenttextures.com/patterns/carbon-fibre.png" alt="">
+                            </div>
+                            <p class="text-[10px] uppercase font-bold text-green-500 mb-2 typewriter tracking-[3px]">Main Breach Code</p>
+                            <p class="text-5xl tracking-[0.3em] font-mono text-white glow">22246#</p>
                         </div>
 
-                        <div class="bg-white p-6 rounded border border-stone-200 shadow-inner">
-                            <p class="text-xs uppercase font-bold text-stone-400 mb-2">High-Speed Wi-Fi</p>
-                            <p class="text-sm text-stone-500 mb-1">Network: <span class="text-stone-800 font-bold">WeeksCreekHaven</span></p>
-                            <p class="text-sm text-stone-500">Password: <span class="text-stone-800 font-bold">creeklife</span></p>
+                        <div class="bg-white p-6 rounded border border-stone-300 shadow-inner">
+                            <p class="text-[10px] uppercase font-bold text-stone-400 mb-2 typewriter">Encrypted Wi-Fi</p>
+                            <p class="text-sm text-stone-500 mb-1">SSID: <span class="text-stone-800 font-bold font-mono">WeeksCreekHaven</span></p>
+                            <p class="text-sm text-stone-500">KEY: <span class="text-stone-800 font-bold font-mono">creeklife</span></p>
                         </div>
 
-                        <div class="p-4 bg-amber-50 border border-amber-200 rounded text-xs text-amber-800 italic leading-relaxed">
-                            Note: If you have trouble with the door code, text or call for the lockbox code on the other deck door.
+                        <div class="p-4 bg-amber-50 border-2 border-dashed border-amber-300 rounded text-[10px] text-amber-900 typewriter leading-relaxed uppercase">
+                            Emergency Protocol: If the primary lock fails, initiate contact for the secondary deck lockbox. Do not attempt to pick the lock. We will know.
                         </div>
+
+                        <a href="check-out.html" class="flex items-center justify-between bg-stone-900 text-white p-6 rounded-lg hover:bg-black transition border-b-4 border-stone-700">
+                            <div>
+                                <span class="block font-bold uppercase tracking-widest text-xs">Exfiltration Time</span>
+                                <span class="text-[10px] text-stone-400 italic">Check-out info you'll likely ignore.</span>
+                            </div>
+                            <span class="text-2xl">?</span>
+                        </a>
                     </div>
                 </div>
 
-                <div class="grid md:grid-cols-2 gap-8 pt-8">
-                    <div class="bg-white p-8 rounded-lg shadow-md border border-stone-200">
-                        <h3 class="text-xl mb-4 text-stone-800 italic">Send Us Some Welcome Kit Like Stuff</h3>
-                        <form action="https://formspree.io/f/mzdjnprj" method="POST" class="space-y-4">
-                            <input type="hidden" name="_subject" value="Weeks Creek Haven - Friends Info Kit">
-                            <div>
-                                <label class="block text-[10px] uppercase font-bold text-stone-400 mb-1">Recipient Email</label>
-                                <input type="email" name="guest_email" placeholder="your@email.com" required class="w-full border-b border-stone-300 p-2 text-sm text-stone-800 outline-none focus:border-green-800 bg-transparent">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] uppercase font-bold text-stone-400 mb-1">Select Email Type</label>
-                                <select name="email_type" class="w-full border-b border-stone-300 p-2 text-sm text-stone-800 outline-none bg-transparent">
-                                    <option value="Arrival Essentials">Arrival Essentials (Address & Door Code)</option>
-                                    <option value="Full Welcome Package (same as above)">Full Welcome (Wi-Fi, Rules, & PDF)</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="w-full bg-stone-800 text-white py-3 rounded font-bold uppercase tracking-widest text-[10px] hover:bg-black transition">Send Info Kit</button>
-                        </form>
-                    </div>
+                <div class="bg-stone-200/50 p-8 rounded-lg border border-stone-300 mt-12">
+                    <h3 class="text-xl mb-4 text-stone-800 italic typewriter">Send Intel to Your Team</h3>
+                    <form action="https://formspree.io/f/mzdjnprj" method="POST" class="grid md:grid-cols-3 gap-6">
+                        <input type="hidden" name="_subject" value="Weeks Creek Haven - Friends Info Kit">
+                        <div class="md:col-span-1">
+                            <label class="block text-[10px] uppercase font-bold text-stone-500 mb-1">Agent Email</label>
+                            <input type="email" name="guest_email" placeholder="agent@email.com" required class="w-full border-b-2 border-stone-400 p-2 text-sm text-stone-800 outline-none focus:border-stone-900 bg-transparent">
+                        </div>
+                        <div class="md:col-span-1">
+                            <label class="block text-[10px] uppercase font-bold text-stone-500 mb-1">Intel Level</label>
+                            <select name="email_type" class="w-full border-b-2 border-stone-400 p-2 text-sm text-stone-800 outline-none bg-transparent">
+                                <option value="Arrival Essentials">Arrival (Just the Codes)</option>
+                                <option value="Full Welcome Package (same as above)">The Full Dossier</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button type="submit" class="w-full bg-stone-900 text-white py-3 rounded font-bold uppercase tracking-widest text-[10px] hover:bg-green-900 transition shadow-lg">Transmit</button>
+                        </div>
+                    </form>
+                </div>
 
-               
-
-                <div class="text-center pt-10 border-t border-stone-200">
-                    <a href="index.html" class="text-xs font-bold text-stone-400 uppercase tracking-widest hover:text-green-800 transition">Home</a>
+                <div class="text-center pt-10 border-t border-stone-300">
+                    <a href="index.html" class="text-xs font-bold text-stone-500 uppercase tracking-widest hover:text-stone-900 transition">Return to Base (Home)</a>
                 </div>
             </div>
         </div>
     </main>
 
-    <footer class="bg-stone-900 text-stone-500 py-16 px-6 text-center border-t border-stone-800">
+    <footer class="bg-stone-950 text-stone-500 py-16 px-6 text-center border-t border-stone-800">
         <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-8">
             <div class="text-center md:text-left">
-                <p class="text-white text-xl font-serif italic">Weeks Creek Haven</p>
-                <p>421 Weeks Creek Rd | Blue Ridge, GA 30513</p>
+                <p class="text-white text-xl font-serif italic typewriter">Weeks Creek Haven</p>
+                <p class="text-xs tracking-widest">Coordinates: 421 Weeks Creek Rd | Blue Ridge, GA</p>
             </div>
-            <div class="flex flex-wrap justify-center gap-6 text-xs font-bold uppercase tracking-widest text-green-400">
+            <div class="flex flex-wrap justify-center gap-6 text-xs font-bold uppercase tracking-widest text-stone-400">
                 <a href="index.html" class="hover:text-white">Home</a>
-                <a href="things-to-do.html" class="hover:text-white">To Do & See</a>
-                <a href="need-to-know.html" class="hover:text-white">Need to Know</a>
-                <a href="find-us.html" class="hover:text-white">Find Us</a>
-                <a href="gallery.html" class="hover:text-white">Gallery</a>
+                <a href="things-to-do.html" class="hover:text-white">To-Do</a>
+                <a href="need-to-know.html" class="hover:text-white">Need-To-Know</a>
+                <a href="find-us.html" class="hover:text-white">Location</a>
             </div>
         </div>
-        <div class="text-center mt-10 text-xs text-stone-600 pt-8 border-t border-stone-800 uppercase tracking-widest">
-            © 2026 Heather & Lance | Blue Ridge, Georgia
+        <div class="text-center mt-10 text-[10px] text-stone-700 pt-8 border-t border-stone-900 uppercase tracking-widest">
+            Hand-crafted for agents Heather & Lance | Blue Ridge Sector
         </div>
     </footer>
 
