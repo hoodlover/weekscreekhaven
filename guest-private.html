@@ -13,7 +13,7 @@
         h1, h2, h3 { font-family: 'Crimson Text', serif; }
         .typewriter { font-family: 'Special Elite', typewriter, serif; }
         
-        /* Gritty Surveillance Room Background (High-Res Map & Retro Gear) */
+        /* Gritty Surveillance Room Background */
         .bg-vault { 
             background-image: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), 
                               url('https://www.weekscreekhaven.com/webpic/spy.png');
@@ -22,7 +22,7 @@
             background-position: center;
         }
         
-        /* Navigation (Kept As Is) */
+        /* Navigation */
         .railroad-tie-nav {
             background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
             background-size: auto 100%;
@@ -41,10 +41,10 @@
             border: 1px solid #9ca3af;
             position: relative;
             box-shadow: 0 0 70px rgba(0,0,0,0.9);
-            overflow: hidden; /* Contains the stamp and confetti */
+            overflow: hidden;
         }
 
-        /* CUSTOM TOP SECRET STAMP (Weeks Creek Haven) */
+        /* CUSTOM TOP SECRET STAMP */
         .haven-stamp {
             position: absolute;
             top: -20px;
@@ -57,7 +57,8 @@
             transform: rotate(25deg);
             opacity: 0.8;
             pointer-events: none;
-            filter: grayscale(1) contrast(1.5); /* Makes it look integrated */
+            filter: grayscale(1) contrast(1.5);
+            z-index: 5;
         }
 
         /* Bullet Hole Graphics */
@@ -96,7 +97,7 @@
         }
         .folder-link:hover { transform: translateY(-5px) rotate(-1deg); }
 
-        .redacted { background: #1a1a1a; color: #1a1a1a; cursor: help; }
+        .redacted { background: #1a1a1a; color: #1a1a1a; cursor: help; transition: all 0.2s ease; }
         .redacted:hover { color: #ef4444; background: #000; }
 
         @media (min-width: 1536px) { .wood-btn { height: 80px; } }
@@ -147,7 +148,7 @@
                         <div class="grid grid-cols-1 gap-3">
                             <a href="provisions.html" class="p-4 bg-white border border-stone-300 hover:bg-stone-50 transition flex justify-between items-center shadow-inner">
                                 <span class="typewriter text-xs font-bold uppercase">Field Resupply Locations</span>
-                                <span>?</span>
+                                <span class="text-[10px] text-stone-400 font-mono">SECURE_LOG</span>
                             </a>
                             <a href="cleaningchecklist.html" class="p-4 bg-red-100 border border-red-200 hover:bg-red-200 transition flex justify-between items-center group shadow-md">
                                 <span class="typewriter text-xs font-bold uppercase text-red-900 italic">Evidence Destruction Protocol</span>
@@ -155,7 +156,7 @@
                             </a>
                             <a href="onlineguestbook.html" class="p-4 bg-white border border-stone-300 hover:bg-stone-50 transition flex justify-between items-center shadow-inner">
                                 <span class="typewriter text-xs font-bold uppercase">Mission Debrief (Guestbook)</span>
-                                <span>?</span>
+                                <span class="text-[10px] text-stone-400 font-mono">INTEL_ENTRY</span>
                             </a>
                         </div>
                     </div>
