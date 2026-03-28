@@ -27,6 +27,20 @@
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
         }
 
+		/* Unified Dark Shadow for High Legibility */
+.extra-heavy-shadow {
+    text-shadow: 
+        3px 3px 6px rgba(0, 0, 0, 1),    /* Primary offset shadow */
+        0px 0px 25px rgba(0, 0, 0, 1),   /* Deep outer glow */
+        0px 0px 10px rgba(0, 0, 0, 0.8); /* Mid-range sharpness */
+}
+
+/* Forces all main headers to use the dark style by default */
+h1, h2, h3, h4 {
+    font-family: 'Crimson Text', serif;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 1), 0px 0px 25px rgba(0, 0, 0, 1), 0px 0px 10px rgba(0, 0, 0, 0.8);
+}
+
         .bg-wood { 
             background-color: #1a1512;
             background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('/webpic/vintage-wooden-board-textured-background.jpg');
