@@ -34,9 +34,15 @@
 }
 
 /* Forces all main headers to use the dark style by default */
-h1, h2, h3, h4, p {
+h1, h2, h3, h4 {
     font-family: 'Crimson Text', serif;
     text-shadow: 3px 3px 6px rgba(0, 0, 0, 1), 0px 0px 25px rgba(0, 0, 0, 1), 0px 0px 10px rgba(0, 0, 0, 0.8);
+}
+
+/* Define p separately without the shadow */
+p {
+    font-family: 'Crimson Text', serif;
+    text-shadow: none; 
 }
 
         /* EXTRA DARK SHADOW for headers over wood grains */
@@ -149,7 +155,7 @@ h1, h2, h3, h4, p {
         
         <div class="relative z-10 text-center px-4 pt-20">
             <h1 class="text-5xl md:text-8xl mb-2 md:mb-4 tracking-tight font-serif heavy-shadow" style="font-variant: small-caps;">Weeks Creek Haven</h1>
-            <p class="text-xl md:text-4xl italic mb-8 md:mb-12 text-stone-200 font-serif heavy-shadow" style="font-variant: small-caps;">"Your Cabin Away From Home"</p>
+            <h2 class="text-xl md:text-4xl italic mb-8 md:mb-12 text-stone-200 font-serif heavy-shadow" style="font-variant: small-caps;">"Your Cabin Away From Home"</h2>
         </div>
 
         <div class="relative z-20 nav-link-group md:absolute md:bottom-8 md:right-8">
