@@ -88,60 +88,78 @@
 </head>
 <body class="bg-wood">
 
-<nav class="fixed w-full z-50 railroad-tie-nav border-b-4 border-[#1a1512]">
-    <div class="max-w-6xl mx-auto flex justify-between items-center py-2 px-6 2xl:py-6">
-        
-        <a href="index.html" class="flex-shrink-0">
-            <img src="buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn">
+<nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
+    <a href="index.html" class="flex-shrink-0">
+        <img src="buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn">
+    </a>
+    
+    <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
+        <a href="things-to-do.html">
+            <img src="buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
+            <img src="buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
         </a>
-        
-        <div class="hidden md:flex flex-1 justify-end space-x-1 2xl:space-x-4 nav-link-group items-center">
-            <a href="things-to-do.html">
-                <img src="buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
-                <img src="buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
-            </a>
-            <a href="need-to-know.html">
-                <img src="buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
-                <img src="buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
-            </a>
-            <a href="find-us.html">
-                <img src="buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
-                <img src="buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
-            </a>
-            <a href="gallery.html">
-                <img src="buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
-                <img src="buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
-            </a>
-            <a href="important-info.html">
-                <img src="buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
-                <img src="buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
-            </a>
-        </div>
-
-        <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none p-2 bg-black/40 rounded-lg border border-white/20 shadow-lg ml-4">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-        </button>
+        <a href="need-to-know.html">
+            <img src="buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
+            <img src="buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
+        </a>
+        <a href="find-us.html">
+            <img src="buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
+            <img src="buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
+        </a>
+        <a href="gallery.html">
+            <img src="buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
+            <img src="buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
+        </a>
+        <a href="important-info.html">
+            <img src="buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
+            <img src="buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
+        </a>
     </div>
+
+    <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none p-2 bg-black/40 rounded-lg border border-white/20">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path id="menu-icon-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
 </nav>
-<div id="mobile-menu" class="hidden fixed inset-0 z-40 flex flex-col items-center justify-center space-y-2 nav-link-group">
-    <a href="things-to-do.html">
-        <img src="buttons/to-do-see.jpg" alt="To Do" class="wood-btn">
-    </a>
-    <a href="need-to-know.html">
-        <img src="buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn">
-    </a>
-    <a href="find-us.html">
-        <img src="buttons/find-cabin.jpg" alt="Find Us" class="wood-btn">
-    </a>
-    <a href="gallery.html">
-        <img src="buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn">
-    </a>
-    <a href="important-info.html">
-        <img src="buttons/friends-info.jpg" alt="Friends Info" class="wood-btn">
-    </a>
+
+<div id="mobile-menu" class="hidden fixed inset-0 z-[60] flex flex-col items-center justify-center space-y-4 bg-stone-900/95 backdrop-blur-sm">
+    <button id="close-mobile-menu" class="absolute top-6 right-8 text-white text-5xl font-light">&times;</button>
+    
+    <a href="things-to-do.html"><img src="buttons/to-do-see.jpg" alt="To Do" class="wood-btn"></a>
+    <a href="need-to-know.html"><img src="buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn"></a>
+    <a href="find-us.html"><img src="buttons/find-cabin.jpg" alt="Find Us" class="wood-btn"></a>
+    <a href="gallery.html"><img src="buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn"></a>
+    <a href="important-info.html"><img src="buttons/friends-info.jpg" alt="Friends Info" class="wood-btn"></a>
 </div>
+
+<script>
+    // Mobile Menu Toggle Logic
+    const menuBtn = document.getElementById('mobile-menu-button');
+    const closeBtnMobile = document.getElementById('close-mobile-menu');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    function toggleMenu() {
+        mobileMenu.classList.toggle('hidden');
+        // Prevent scrolling when menu is open
+        document.body.classList.toggle('overflow-hidden');
+    }
+
+    menuBtn.addEventListener('click', toggleMenu);
+    closeBtnMobile.addEventListener('click', toggleMenu);
+
+    // Close menu if a link is clicked
+    mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        });
+    });
+
+    /* --- Keep your existing Lightbox JS below this line --- */
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    // ... rest of your lightbox code
+</script>
 
     <main class="pt-32 px-6">
         <section class="max-w-6xl mx-auto pt-10 pb-24 px-6">
@@ -194,9 +212,19 @@
 
                 </div>
 
-                <div class="mt-12 text-center">
-                    <img src="info/21_Recreation_Areas.jpg" alt="Detailed Recreation Guide" class="max-w-md mx-auto rounded shadow-2xl border-8 border-white">
-                </div>
+               <div class="mt-12 text-center">
+    <img src="info/21_Recreation_Areas.jpg" 
+         alt="Detailed Recreation Guide" 
+         id="guide-thumb"
+         class="max-w-xs mx-auto rounded shadow-2xl border-4 border-white cursor-zoom-in hover:scale-105 transition-transform"
+         onclick="openModal()">
+    <p class="text-xs text-stone-500 mt-2 font-bold uppercase">Click to enlarge</p>
+</div>
+
+<div id="image-modal" class="hidden fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeModal()">
+    <span class="absolute top-5 right-5 text-white text-4xl cursor-pointer font-bold">&times;</span>
+    <img src="info/21_Recreation_Areas.jpg" class="max-w-full max-h-full rounded-lg shadow-2xl border-4 border-white">
+</div>
             </section>
         </section>
     </main>
