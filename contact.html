@@ -68,25 +68,30 @@ p {
             background-size: cover; background-position: center;
         }
         
-        .railroad-tie-nav {
-            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
-            background-size: auto 100%;
-            background-repeat: repeat-x;
-            border-bottom: 4px solid #2c241e;
-            box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
-        }
+    .railroad-tie-nav {
+        background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('webpic/railroad-tie-texture.jpg');
+        background-size: auto 100%;
+        background-repeat: repeat-x;
+        border-bottom: 4px solid #1a1512;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+    }
 
-/* Replace your existing .wood-btn block with this */
-.wood-btn { 
-    transition: transform 0.2s ease; 
-    height: 70px; /* Increased from 50px */
-    width: auto; 
-    display: block; 
-}
-@media (min-width: 1536px) { 
-    .wood-btn { height: 100px; } /* Increased from 80px */
-}
-.wood-btn:hover { transform: scale(1.05); }
+    .wood-btn {
+        transition: transform 0.2s ease;
+        height: 56px; 
+        width: auto;
+        display: block;
+    }
+
+    @media (min-width: 768px) {
+        .wood-btn { height: 64px; } 
+    }
+
+    @media (min-width: 1536px) {
+        .wood-btn { height: 96px; } 
+    }
+
+    .wood-btn:hover { transform: scale(1.05); }
 
         .hero-btn { height: auto; width: 180px; margin: 0 auto; }
         @media (min-width: 768px) { .hero-btn { width: 240px; } }
@@ -109,10 +114,10 @@ p {
 
 <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
     <a href="index.html" class="flex-shrink-0">
-        <img src="buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-16 md:h-20 2xl:h-28">
+        <img src="buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn">
     </a>
     
-    <div class="hidden md:flex space-x-4 2xl:space-x-8 nav-link-group items-center">
+    <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
         <a href="things-to-do.html">
             <img src="buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
             <img src="buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
@@ -134,21 +139,8 @@ p {
             <img src="buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
         </a>
     </div>
-
-    <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-    </button>
-
-    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800">
-        <a href="things-to-do.html"><img src="buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
-        <a href="need-to-know.html"><img src="buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
-        <a href="find-us.html"><img src="buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
-        <a href="gallery.html"><img src="buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
-        <a href="important-info.html"><img src="buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
-    </div>
 </nav>
+
 
     <header class="relative h-[60vh] flex flex-col items-center justify-center text-white overflow-hidden">
 <img src="webpic/heap-various-size-wood-log_1150-38093.jpg" 
