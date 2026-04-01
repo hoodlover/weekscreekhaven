@@ -48,7 +48,7 @@
         text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
 
-    .railroad-tie-nav {
+.railroad-tie-nav {
         background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('webpic/railroad-tie-texture.jpg');
         background-size: auto 100%;
         background-repeat: repeat-x;
@@ -67,9 +67,11 @@
         .wood-btn { height: 64px; } 
     }
 
-    .wood-btn:hover { transform: scale(1.05); }
+    @media (min-width: 1536px) {
+        .wood-btn { height: 96px; } 
+    }
 
-    .nav-link-group a .hover-img { display: none; }
+    .wood-btn:hover { transform: scale(1.05); }    .nav-link-group a .hover-img { display: none; }
     .nav-link-group a:hover .normal-img { display: none; }
     .nav-link-group a:hover .hover-img { display: block; }
 
@@ -111,8 +113,21 @@
             <img src="buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
         </a>
     </div>
-</nav>
 
+    <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800">
+        <a href="things-to-do.html"><img src="buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
+        <a href="need-to-know.html"><img src="buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
+        <a href="find-us.html"><img src="buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
+        <a href="gallery.html"><img src="buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
+        <a href="important-info.html"><img src="buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
+    </div>
+</nav>
 <header class="pt-40 pb-12 px-6 max-w-6xl mx-auto">
     <div class="flex flex-col md:flex-row justify-between items-stretch gap-8">
         
