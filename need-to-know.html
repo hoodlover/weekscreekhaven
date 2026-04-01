@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <link rel="icon" type="image/png" href="/webpic/Weeks_Creek_Haven_Favicon.png">
+ <link rel="icon" type="image/png" href="webpic/Weeks_Creek_Haven_Favicon.png">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,40 +20,35 @@
 
         .bg-wood { 
             background-color: #fcfaf7;
-            background-image: url('/webpic/lightwood.jpg'); 
+            background-image: url('webpic/lightwood.jpg'); 
             background-size: cover;
             background-attachment: fixed;
         }
         
-        .railroad-tie-nav {
-            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/webpic/railroad-tie-texture.jpg');
+.railroad-tie-nav {
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('webpic/railroad-tie-texture.jpg');
             background-size: auto 100%;
-            border-bottom: 4px solid #2c241e;
-            box-shadow: inset 0px -10px 20px rgba(0,0,0,0.5), 0 4px 6px -1px rgba(0,0,0,0.3);
+            background-repeat: repeat-x;
+            border-bottom: 4px solid #1a1512;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
         }
-		
-        /* Wood Button Transition and Responsive Sizing */
+
         .wood-btn {
             transition: transform 0.2s ease;
-            height: 50px;
+            height: 56px; 
             width: auto;
             display: block;
         }
 
-
-        /* Wood Button Transition and Responsive Sizing */
-        .wood-btn {
-            transition: transform 0.2s ease;
-            height: 50px;
-            width: auto;
-            display: block;
+        @media (min-width: 768px) {
+            .wood-btn { height: 64px; } 
         }
-        
 
         @media (min-width: 1536px) {
-            .wood-btn { height: 90px; }
+            .wood-btn { height: 96px; } 
         }
 
+        .wood-btn:hover { transform: scale(1.05); }
         .nav-link-group a .hover-img { display: none; }
         .nav-link-group a:hover .normal-img { display: none; }
         .nav-link-group a:hover .hover-img { display: block; }
@@ -83,29 +78,29 @@
 
 <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
     <a href="index.html" class="flex-shrink-0">
-        <img src="/buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn h-16 md:h-20 2xl:h-28">
+        <img src="buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn">
     </a>
     
-    <div class="hidden md:flex space-x-4 2xl:space-x-8 nav-link-group items-center">
+    <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
         <a href="things-to-do.html">
-            <img src="/buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
-            <img src="/buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
+            <img src="buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
+            <img src="buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
         </a>
         <a href="need-to-know.html">
-            <img src="/buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
-            <img src="/buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
+            <img src="buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
+            <img src="buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
         </a>
         <a href="find-us.html">
-            <img src="/buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
-            <img src="/buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
+            <img src="buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
+            <img src="buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
         </a>
         <a href="gallery.html">
-            <img src="/buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
-            <img src="/buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
+            <img src="buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
+            <img src="buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
         </a>
         <a href="important-info.html">
-            <img src="/buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
-            <img src="/buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
+            <img src="buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
+            <img src="buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
         </a>
     </div>
 
@@ -116,16 +111,16 @@
     </button>
 
     <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800">
-        <a href="things-to-do.html"><img src="/buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
-        <a href="need-to-know.html"><img src="/buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
-        <a href="find-us.html"><img src="/buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
-        <a href="gallery.html"><img src="/buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
-        <a href="important-info.html"><img src="/buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
+        <a href="things-to-do.html"><img src="buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
+        <a href="need-to-know.html"><img src="buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
+        <a href="find-us.html"><img src="buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
+        <a href="gallery.html"><img src="buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
+        <a href="important-info.html"><img src="buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
     </div>
 </nav>
 
     <header class="relative h-screen flex flex-col items-center justify-center text-white overflow-hidden">
-        <img src="/webpic/toknow.jpg" alt="Weeks Creek Haven Streamside" class="absolute inset-0 w-full h-full object-cover">
+        <img src="webpic/toknow.jpg" alt="Weeks Creek Haven Streamside" class="absolute inset-0 w-full h-full object-cover">
         
         <div class="relative z-10 text-center px-4 pt-20">
             <h1 class="text-6xl md:text-9xl mb-2 tracking-tight font-serif heavy-shadow" style="font-variant: small-caps;">Weeks Creek Haven</h1>
@@ -137,7 +132,7 @@
 
         <section class="grid md:grid-cols-2 gap-12 items-center">
             <div class="order-2 md:order-1">
-                <img src="/info/HotTub.jpg" alt="Hot Tub Rules" class="rounded-lg zoom-card shadow-2xl" onclick="openModal(this.src)">
+                <img src="info/HotTub.jpg" alt="Hot Tub Rules" class="rounded-lg zoom-card shadow-2xl" onclick="openModal(this.src)">
                 <p class="text-center text-xs mt-2 italic">Click to expand Hot Tub & Cover Lifter Guide</p>
             </div>
             <div class="parchment p-8 rounded-xl order-1 md:order-2 border-l-8 border-green-900/30">
@@ -160,12 +155,12 @@
                     <p class="text-stone-700">There are 2 Smart TVs in the cabin. Log in with your credentials and enjoy the massive screen experience.</p>
                 </div>
                 <div class="text-center">
-                    <img src="/info/04_Cool_Stuff.jpg" class="h-48 w-full object-cover mx-auto mb-6 rounded shadow-lg zoom-card" onclick="openModal(this.src)">
+                    <img src="info/04_Cool_Stuff.jpg" class="h-48 w-full object-cover mx-auto mb-6 rounded shadow-lg zoom-card" onclick="openModal(this.src)">
                     <h4 class="text-xl font-bold font-serif mb-2">Coffee & Espresso</h4>
                     <p class="text-stone-700">We offer a Keurig with starter pods. An espresso machine is available, but please use your barista skills carefully!</p>
                 </div>
                 <div class="text-center">
-                    <img src="/info/09_Gas_Log_Tips.jpg" class="h-48 w-full object-cover mx-auto mb-6 rounded shadow-lg zoom-card" onclick="openModal(this.src)">
+                    <img src="info/09_Gas_Log_Tips.jpg" class="h-48 w-full object-cover mx-auto mb-6 rounded shadow-lg zoom-card" onclick="openModal(this.src)">
                     <h4 class="text-xl font-bold font-serif mb-2">Gas Log Fireplace</h4>
                     <p class="text-stone-700">Keep flames at half or belowâ€”it's propane hungry! Always return the knob to 'Pilot' when leaving or sleeping.</p>
                 </div>
@@ -182,7 +177,7 @@
                 </div>
             </div>
             <div>
-                <img src="/info/05_Safety.jpg" alt="Safety Guide" class="rounded-lg shadow-2xl zoom-card" onclick="openModal(this.src)">
+                <img src="info/05_Safety.jpg" alt="Safety Guide" class="rounded-lg shadow-2xl zoom-card" onclick="openModal(this.src)">
                 <p class="text-center text-xs mt-2 italic">Click to expand Garbage & Wildlife Safety</p>
             </div>
         </section>

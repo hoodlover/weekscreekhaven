@@ -1,12 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fine Dining & The Shops | Weeks Creek Haven</title>
+    <title>Family Activities | Blue Ridge | Weeks Creek Haven</title>
     <link rel="icon" type="image/png" href="webpic/Weeks_Creek_Haven_Favicon.png">
-    <meta name="description" content="Explore the premier fine dining and unique shopping treasures in Downtown Blue Ridge and North Georgia.">
+    <meta name="description" content="Discover the best family activities in Blue Ridge, GA, from scenic railways to apple picking near Weeks Creek Haven.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
  
@@ -15,7 +14,7 @@
         font-family: 'Montserrat', sans-serif; 
         color: #f4eee0; 
         scroll-behavior: smooth; 
-        background-image: url('http::/www.weekscreekhaven.com/webpic/barn.jpg');
+        background-image: url('webpic/barn.jpg');
         background-attachment: fixed;
         background-size: cover;
     }
@@ -49,8 +48,9 @@
         text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
 
+    /* MATCHED NAVIGATION STYLING FROM THINGS-TO-DO.HTML */
     .railroad-tie-nav {
-        background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/webpic/railroad-tie-texture.jpg');
+        background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('webpic/railroad-tie-texture.jpg');
         background-size: auto 100%;
         background-repeat: repeat-x;
         border-bottom: 4px solid #1a1512;
@@ -116,42 +116,55 @@
             <img src="buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
         </a>
     </div>
+
+    <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex flex-col items-center p-8 space-y-4 md:hidden shadow-2xl border-t border-stone-800 bg-stone-900/95">
+        <a href="things-to-do.html"><img src="buttons/to-do-see.jpg" class="h-12" alt="To Do & See"></a>
+        <a href="need-to-know.html"><img src="buttons/need-to-know.jpg" class="h-12" alt="Need to Know"></a>
+        <a href="find-us.html"><img src="buttons/find-cabin.jpg" class="h-12" alt="Find Us"></a>
+        <a href="gallery.html"><img src="buttons/cabin-gallery.jpg" class="h-12" alt="Gallery"></a>
+        <a href="important-info.html"><img src="buttons/friends-info.jpg" class="h-12" alt="Friends Info"></a>
+    </div>
 </nav>
 
 <header class="pt-40 pb-12 px-6 max-w-6xl mx-auto">
     <div class="flex flex-col md:flex-row justify-between items-stretch gap-8">
+        
         <div class="text-left flex-grow">
-            <h1 class="text-2xl md:text-4xl header-title extra-heavy-shadow uppercase leading-tight font-bold md:whitespace-nowrap">
-                The Reason You Are In Blue Ridge
+            <h1 class="text-3xl md:text-4xl header-title extra-heavy-shadow uppercase leading-tight font-bold">
+                Explore Blue Ridge
             </h1>
             <h1 class="text-5xl md:text-7xl header-title extra-heavy-shadow uppercase leading-tight">
-                Fine Dining
+                Family Activities & Adventures
             </h1>
             <h1 class="text-5xl md:text-7xl header-title extra-heavy-shadow uppercase leading-tight">
-                & The BEST Shops
-            </h1>
-            <h1 class="text-4xl md:text-6xl header-title extra-heavy-shadow uppercase leading-tight">
-                In North Georgia
+                For Everyone
             </h1>
         </div>
-        <div class="relative flex-grow md:flex-initial md:w-2/5 min-h-[250px]">
+
+        <div class="relative flex-grow md:flex-initial md:w-1/3 min-h-[200px]">
             <div class="md:absolute md:inset-0 flex justify-end items-center">
-                <img src="info/foodshopping/shopping_page.png" 
-                     alt="Shopping in Downtown Blue Ridge" 
+                <img src="info/activities/Family_Activities.png" 
+                     alt="Family Activities Header" 
                      onclick="openLightbox(this.src)"
-                     class="h-full w-auto object-contain max-h-full cursor-pointer transition-transform duration-300 hover:scale-105 drop-shadow-2xl rounded-lg border-2 border-white/20">
+                     class="h-full w-auto object-contain max-h-full cursor-pointer transition-transform duration-300 hover:scale-105 drop-shadow-2xl rounded-lg">
             </div>
         </div>
     </div>
+    
     <p class="text-xl header-sub max-w-full mr-auto ml-0 mt-6 font-light italic text-left">
-        Whether you’re looking for the best trout dishes on the Toccoa River, a farm-to-table experience at Harvest on Main, or just a quiet afternoon hunting for antique treasures and gems, we’ve got you covered.<br><br>
-       Click any guide below to enlarge details.
+        Click any guide below to view full details and maps for your mountain adventure.
     </p>
 </header>
 
 <main class="max-w-6xl mx-auto px-6 pb-24 space-y-20">
     
-       <section id="family-fun">
+    <section id="family-fun">
         <div class="mb-8 pb-3 section-heading">
             <h2 class="text-4xl">Adventure Awaits</h2>
         </div>
@@ -213,29 +226,6 @@
         </div>
     </section>
 
-    <section id="shopping">
-        <div class="mb-8 pb-3 section-heading">
-            <h2 class="text-4xl">Unique Shops & Boutiques</h2>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-emerald-400">
-                <img src="info/foodshopping/05_top10stores.png" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer hover:opacity-90">
-                <h4 class="accent-gold uppercase tracking-wider text-sm mb-2">10 Most Liked Stores</h4>
-                <p class="text-sm card-desc">Antiques, Artisan oils, and cozy mountain decor.</p>
-            </div>
-            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-emerald-400">
-                <img src="info/foodshopping/06_otherstores.png" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer hover:opacity-90">
-                <h4 class="accent-gold uppercase tracking-wider text-sm mb-2">Honorable Mentions</h4>
-                <p class="text-sm card-desc">Sweets, Pottery, and unique local arts and crafts.</p>
-            </div>
-            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-emerald-400">
-                <img src="info/foodshopping/cafes_curioshops.png" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer hover:opacity-90">
-                <h4 class="accent-gold uppercase tracking-wider text-sm mb-2">Coffee & Curio Trail</h4>
-                <p class="text-sm card-desc">The best downtown spots for a latte and a unique find.</p>
-            </div>
-        </div>
-    </section>
-
 </main>
 
 <footer class="bg-black/80 text-stone-400 py-16 px-6 text-center border-t border-stone-800">
@@ -244,6 +234,18 @@
 </footer>
 
 <script>
+    // Mobile Menu Toggle Logic
+    const menuBtn = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuIcon = document.getElementById('menu-icon');
+
+    menuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+        const isOpen = !mobileMenu.classList.contains('hidden');
+        menuIcon.setAttribute('d', isOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16');
+    });
+
+    // Lightbox Logic
     function openLightbox(src) {
         document.getElementById('lightbox-img').src = src;
         document.getElementById('lightbox').style.display = 'flex';
