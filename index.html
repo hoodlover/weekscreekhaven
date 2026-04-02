@@ -25,25 +25,25 @@
         details summary { list-style: none; }
         summary { display: flex !important; }
 
-/* Unified Dark Shadow for High Legibility */
-.extra-heavy-shadow {
-    text-shadow: 
-        3px 3px 6px rgba(0, 0, 0, 1),    /* Primary offset shadow */
-        0px 0px 25px rgba(0, 0, 0, 1),   /* Deep outer glow */
-        0px 0px 10px rgba(0, 0, 0, 0.8); /* Mid-range sharpness */
-}
+        /* Unified Dark Shadow for High Legibility */
+        .extra-heavy-shadow {
+            text-shadow: 
+                3px 3px 6px rgba(0, 0, 0, 1),    /* Primary offset shadow */
+                0px 0px 25px rgba(0, 0, 0, 1),   /* Deep outer glow */
+                0px 0px 10px rgba(0, 0, 0, 0.8); /* Mid-range sharpness */
+        }
 
-/* Forces all main headers to use the dark style by default */
-h1, h2, h3, h4 {
-    font-family: 'Crimson Text', serif;
-    text-shadow: 3px 3px 6px rgba(0, 0, 0, 1), 0px 0px 25px rgba(0, 0, 0, 1), 0px 0px 10px rgba(0, 0, 0, 0.8);
-}
+        /* Forces all main headers to use the dark style by default */
+        h1, h2, h3, h4 {
+            font-family: 'Crimson Text', serif;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 1), 0px 0px 25px rgba(0, 0, 0, 1), 0px 0px 10px rgba(0, 0, 0, 0.8);
+        }
 
-/* Define p separately without the shadow */
-p {
-    font-family: 'Crimson Text', serif;
-    text-shadow: none; 
-}
+        /* Define p separately without the shadow */
+        p {
+            font-family: 'Crimson Text', serif;
+            text-shadow: none; 
+        }
 
         /* EXTRA DARK SHADOW for headers over wood grains */
         .extra-heavy-shadow {
@@ -68,7 +68,7 @@ p {
             background-size: cover; background-position: center;
         }
         
-.railroad-tie-nav {
+        .railroad-tie-nav {
             background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('webpic/railroad-tie-texture.jpg');
             background-size: auto 100%;
             background-repeat: repeat-x;
@@ -108,48 +108,43 @@ p {
             background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('webpic/railroad-tie-texture.jpg');
             background-size: cover;
         }
-/* This specifically stops the 5% growth on the logo images */
-.logo-link:hover .wood-btn { 
-    transform: scale(1.0) !important; 
-}
 
+        /* This specifically stops the 5% growth on the logo images */
+        .logo-link:hover .wood-btn { 
+            transform: scale(1.0) !important; 
+        }
 
-/* 1. Position the container */
-.logo-link {
-    position: relative;
-    display: inline-block;
-    background: transparent; /* Ensures no background bleed */
-}
+        /* 1. Position the container */
+        .logo-link {
+            position: relative;
+            display: inline-block;
+            background: transparent; 
+        }
 
-/* 2. The Bottom Image (Normal) */
-.logo-link .normal-img {
-    opacity: 1;
-    /* We remove the transition here so it stays solid */
-    transition: none; 
-}
+        /* 2. The Bottom Image (Normal) */
+        .logo-link .normal-img {
+            opacity: 1;
+            transition: none; 
+        }
 
-/* 3. The Top Image (Hover) */
-.logo-link .hover-img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    /* Only the top image fades in */
-    transition: opacity 0.8s ease-in-out;
-    z-index: 2;
-}
+        /* 3. The Top Image (Hover) */
+        .logo-link .hover-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            z-index: 2;
+        }
 
-/* 4. Hover State */
-.logo-link:hover .hover-img {
-    opacity: 1;
-}
+        /* 4. Hover State */
+        .logo-link:hover .hover-img {
+            opacity: 1;
+        }
 
-/* Optional: Hide the normal image ONLY after hover is complete 
-   or keep it visible underneath to prevent the 'gap' */
-.logo-link:hover .normal-img {
-    opacity: 1; /* Keeping this at 1 ensures there is always a solid image */
-}
-
+        .logo-link:hover .normal-img {
+            opacity: 1; 
+        }
     </style>
 </head>
 <body class="bg-wood">
@@ -188,6 +183,7 @@ p {
     </svg>
 </button>
 </nav>
+
 <div id="mobile-menu" class="hidden fixed inset-0 z-40 flex flex-col items-center justify-center space-y-2 nav-link-group">
     <a href="things-to-do.html">
         <img src="buttons/to-do-see.jpg" alt="To Do" class="wood-btn">
@@ -357,6 +353,10 @@ p {
             <div class="w-full max-w-3xl bg-white p-8 md:p-14 shadow-2xl rounded-lg border-t-8 border-green-800 parchment">
              <h2 class="text-4xl font-bold text-center mb-10 accent-green italic" style="text-shadow: none !important;">Inquire About Your Stay</h2>
 <form action="https://formspree.io/f/mzdjnprj" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    
+    <input type="hidden" name="_next" value="https://weekscreekhaven.com/thank-you.html">
+    <input type="hidden" name="_subject" value="New Cabin Inquiry: Weeks Creek Haven">
+
     <input type="text" name="name" placeholder="*Full Name" required 
         class="border-b-2 border-stone-800 p-2 text-stone-900 placeholder-stone-600 focus:border-green-800 outline-none parchment">
     
@@ -380,7 +380,7 @@ p {
                 <h2 class="text-1xl md:text-5xl mb-10 tracking-tight font-serif extra-heavy-shadow text-white uppercase" style="font-variant: small-caps;">
                     We wish you could stay longer...<br>But nah, you gotta go!
                 </h2>
- <h2 class="text-1xl md:text-3xl mb-10 tracking-tight font-serif extra-heavy-shadow text-white uppercase" style="font-variant: small-caps;">
+                <h2 class="text-1xl md:text-3xl mb-10 tracking-tight font-serif extra-heavy-shadow text-white uppercase" style="font-variant: small-caps;">
                    Here is what you need to know!
                 </h2>
 
@@ -422,7 +422,6 @@ p {
             </div>
         </div>
         
-       
     </footer>
 
     <script>
