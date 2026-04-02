@@ -29,40 +29,58 @@
             letter-spacing: 0.1em;
         }
 
-        /* Lightened Frosted Glass Style */
         .frosted-glass {
-            background: rgba(255, 255, 255, 0.12); /* Lightened for better transparency */
-            backdrop-filter: blur(8px); /* Reduced blur for a lighter feel */
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.25);
             border-radius: 12px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
         }
 
-    .railroad-tie-nav {
-        background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('webpic/railroad-tie-texture.jpg');
-        background-size: auto 100%;
-        background-repeat: repeat-x;
-        border-bottom: 4px solid #1a1512;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.8);
-    }
+        /* Updated Navigation Background based on image */
+        .railroad-tie-nav {
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('webpic/railroad-tie-texture.jpg');
+            background-size: cover;
+            border-bottom: 3px solid #1a1512;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
 
-    .wood-btn {
-        transition: transform 0.2s ease;
-        height: 80px; 
-        width: auto;
-        display: block;
-    }
+        /* Nav Image Swap Logic */
+        .nav-link-group a {
+            position: relative;
+            display: block;
+        }
 
-    @media (min-width: 768px) {
-        .wood-btn { height: 64px; } 
-    }
+        .hover-img {
+            display: none;
+        }
 
-    @media (min-width: 1536px) {
-        .wood-btn { height: 96px; } 
-    }
+        .nav-link-group a:hover .normal-img {
+            display: none;
+        }
 
-    .wood-btn:hover { transform: scale(1.05); }
+        .nav-link-group a:hover .hover-img {
+            display: block;
+        }
+
+        /* Adjusted button heights to match the railroad track proportions */
+        .wood-btn {
+            transition: transform 0.2s ease;
+            height: 45px; 
+            width: auto;
+            display: block;
+        }
+
+        @media (min-width: 768px) {
+            .wood-btn { height: 55px; } 
+        }
+
+        @media (min-width: 1280px) {
+            .wood-btn { height: 65px; } 
+        }
+
+        .wood-btn:hover { transform: scale(1.08); }
 
         .section-header-accent {
             background: rgba(20, 15, 10, 0.9);
@@ -74,17 +92,16 @@
         }
 
         .accent-border { border-left: 5px solid #d4a373; }
-        @media (min-width: 1536px) { .wood-btn { height: 80px; } }
     </style>
 </head>
 <body class="pb-20">
 
- <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
+<nav class="fixed w-full z-50 railroad-tie-nav py-2 px-4 md:px-8 flex justify-between items-center">
     <a href="index.html" class="flex-shrink-0">
         <img src="buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn">
     </a>
     
-    <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
+    <div class="hidden md:flex gap-2 lg:gap-4 nav-link-group items-center">
         <a href="things-to-do.html">
             <img src="buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
             <img src="buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
@@ -109,7 +126,7 @@
 
     <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none p-2 bg-black/40 rounded-lg border border-white/20">
         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path id="menu-icon-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
     </button>
 </nav>
@@ -124,214 +141,204 @@
     <a href="important-info.html"><img src="buttons/friends-info.jpg" alt="Friends Info" class="wood-btn"></a>
 </div>
 
+<header class="max-w-6xl mx-auto text-center mb-12 pt-40">
+    <h1 class="text-6xl md:text-8xl font-bold mb-4">Weeks Creek Haven</h1>
+    <p class="text-2xl italic text-stone-200">"Your Cabin Away From Home"</p>
+    <div class="h-1.5 w-32 bg-[#d4a373] mx-auto mt-6"></div>
+</header>
+
+<main class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-6">
+    <div class="md:col-span-1 space-y-8">
+        <section class="frosted-glass p-8">
+            <h2 class="text-2xl font-bold mb-6 border-b border-white/30 pb-2 uppercase tracking-widest text-[#d4a373]">Entry & Internet</h2>
+            <div class="space-y-6">
+                <div>
+                    <p class="text-xs uppercase tracking-widest text-stone-300 font-bold">Cabin Door Code</p>
+                    <div class="flex items-center space-x-4 mt-2">
+                        <p class="text-4xl font-mono text-white font-black drop-shadow-md">22246</p>
+                        <span class="text-sm text-stone-200 font-black italic">then</span>
+                        <img src="webpic/checkmark.jpg" alt="checkmark" class="h-16 w-16 inline-block rounded-full border-2 border-[#d4a373] hover:scale-110 transition-transform shadow-xl">
+                    </div>
+                </div>
+                <div>
+                    <p class="text-xs uppercase tracking-widest text-stone-300 font-bold">Wi-Fi Network</p>
+                    <p class="text-2xl font-bold text-white">WeeksCreekHaven</p>
+                    <p class="text-xs uppercase tracking-widest text-stone-300 mt-4 font-bold">Password</p>
+                    <p class="text-2xl font-bold text-white">creeklife</p>
+                </div>
+                <img src="webpic/wifi.jpg" alt="WiFi" class="rounded-lg shadow-2xl w-full border border-white/20 hover:scale-[1.02] transition-transform">
+            </div>
+        </section>
+
+        <section class="frosted-glass p-8 accent-border">
+            <h2 class="text-2xl font-bold mb-4 uppercase tracking-widest text-[#d4a373]">Need Help?</h2>
+            <div class="space-y-3 text-white">
+                <p class="font-black text-lg">Lance: <span class="font-normal">770.549.9358</span></p>
+                <p class="font-black text-lg">Heather: <span class="font-normal">678.993.3617</span></p>
+            </div>
+        </section>
+    </div>
+
+    <div class="md:col-span-2 space-y-8">
+        <section class="frosted-glass p-8">
+            <h2 class="text-3xl font-bold mb-6 text-[#d4a373]">WELCOME TO BLUE RIDGE!</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div class="flex flex-col space-y-2 group">
+                    <div class="bg-[#d4a373]/30 p-2 rounded text-center border border-[#d4a373]/50 text-[10px] font-black uppercase text-white shadow-sm">Hot Tub</div>
+                    <img src="webpic/hottub.jpg" class="rounded shadow-xl w-full aspect-square object-cover transform group-hover:scale-[1.05] transition-transform border border-white/10">
+                </div>
+                <div class="flex flex-col space-y-2 group">
+                    <div class="bg-[#d4a373]/30 p-2 rounded text-center border border-[#d4a373]/50 text-[10px] font-black uppercase text-white shadow-sm">98" TV</div>
+                    <img src="webpic/bigtv.jpg" class="rounded shadow-xl w-full aspect-square object-cover transform group-hover:scale-[1.05] transition-transform border border-white/10">
+                </div>
+                <div class="flex flex-col space-y-2 group">
+                    <div class="bg-[#d4a373]/30 p-2 rounded text-center border border-[#d4a373]/50 text-[10px] font-black uppercase text-white shadow-sm">Gas Log Fireplace</div>
+                    <img src="webpic/fire.jpg" class="rounded shadow-xl w-full aspect-square object-cover transform group-hover:scale-[1.05] transition-transform border border-white/10">
+                </div>
+                <div class="flex flex-col space-y-2 group">
+                    <div class="bg-[#d4a373]/30 p-2 rounded text-center border border-[#d4a373]/50 text-[10px] font-black uppercase text-white shadow-sm">Firepit</div>
+                    <img src="webpic/firepit.jpg" class="rounded shadow-xl w-full aspect-square object-cover transform group-hover:scale-[1.05] transition-transform border border-white/10">
+                </div>
+                <div class="flex flex-col space-y-2 group">
+                    <div class="bg-[#d4a373]/30 p-2 rounded text-center border border-[#d4a373]/50 text-[10px] font-black uppercase text-white shadow-sm">Porch Swing</div>
+                    <img src="webpic/porchswing.jpg" class="rounded shadow-xl w-full aspect-square object-cover transform group-hover:scale-[1.05] transition-transform border border-white/10">
+                </div>
+                <div class="flex flex-col space-y-2 group">
+                    <div class="bg-[#d4a373]/30 p-2 rounded text-center border border-[#d4a373]/50 text-[10px] font-black uppercase text-white shadow-sm">Streamside</div>
+                    <img src="webpic/heathers.jpg" class="rounded shadow-xl w-full aspect-square object-cover transform group-hover:scale-[1.05] transition-transform border border-white/10">
+                </div>
+            </div>
+        </section>
+
+        <section class="frosted-glass p-8">
+            <h2 class="text-3xl font-bold mb-6 border-b border-white/30 pb-2 uppercase tracking-widest text-[#d4a373]">Alexa Commands</h2>
+            <div class="flex justify-center mb-6">
+                <div class="flex gap-2 overflow-hidden rounded-lg shadow-2xl border border-white/20 hover:scale-[1.02] transition-transform max-w-full">
+                    <img src="webpic/alexa.jpg" alt="Alexa" class="w-1/2 h-auto object-cover">
+                    <img src="webpic/alexa2.jpg" alt="Alexa" class="w-1/2 h-auto object-cover">
+                </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="p-4 bg-black/60 rounded border border-white/10 shadow-md">
+                    <p class="text-[#d4a373] font-black text-lg">"ALEXA, Cabin on/off"</p>
+                    <p class="text-xs text-stone-200 font-black">Toggle main area lights</p>
+                </div>
+                <div class="p-4 bg-black/60 rounded border border-white/10 shadow-md">
+                    <p class="text-[#d4a373] font-black text-lg">"ALEXA, Set fireside to 30%"</p>
+                    <p class="text-xs text-stone-200 font-black">Perfect watching atmosphere</p>
+                </div>
+                <div class="p-4 bg-black/60 rounded border border-white/10 shadow-md">
+                    <p class="text-[#d4a373] font-black text-lg">"ALEXA, Going out"</p>
+                    <p class="text-xs text-stone-200 font-black">Locks and lights secure in 30s</p>
+                </div>
+                <div class="p-4 bg-red-950/60 rounded border border-red-500/50 shadow-md">
+                    <p class="text-white font-black italic text-lg">"Don't say Alexa, burn it down"</p>
+                    <p class="text-[11px] text-red-300 font-black uppercase tracking-tighter">NO 🔥</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="md:col-span-3 space-y-12 mt-8">
+        <div class="text-center">
+            <div class="section-header-accent">
+                <h2 class="text-3xl md:text-5xl font-bold uppercase tracking-[0.2em] text-[#d4a373]">Important Guest Links</h2>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
+            <div class="flex flex-col space-y-3">
+                <a href="troubleshoot.html" class="px-2 py-4 bg-[#d4a373]/20 hover:bg-[#d4a373] hover:text-black rounded-lg transition-all border border-[#d4a373]/40 text-xs font-black uppercase text-center shadow-xl">Troubleshoot</a>
+                <a href="troubleshoot.html"><img src="webpic/bigfootbath.jpg" class="rounded-xl w-full aspect-square object-cover hover:scale-105 transition-transform shadow-2xl border border-white/10"></a>
+            </div>
+            <div class="flex flex-col space-y-3">
+                <a href="checkout.html" class="px-2 py-4 bg-[#d4a373]/20 hover:bg-[#d4a373] hover:text-black rounded-lg transition-all border border-[#d4a373]/40 text-xs font-black uppercase text-center shadow-xl">Checkout</a>
+                <a href="checkout.html"><img src="webpic/rockers.jpg" class="rounded-xl w-full aspect-square object-cover hover:scale-105 transition-transform shadow-2xl border border-white/10"></a>
+            </div>
+            <div class="flex flex-col space-y-3">
+                <a href="maintenance.html" class="px-2 py-4 bg-[#d4a373]/20 hover:bg-[#d4a373] hover:text-black rounded-lg transition-all border border-[#d4a373]/40 text-xs font-black uppercase text-center shadow-xl">Maintenance</a>
+                <a href="maintenance.html"><img src="webpic/riverswing.jpg" class="rounded-xl w-full aspect-square object-cover hover:scale-105 transition-transform shadow-2xl border border-white/10"></a>
+            </div>
+            <div class="flex flex-col space-y-3">
+                <a href="onlineguestbook.html" class="px-2 py-4 bg-[#d4a373]/20 hover:bg-[#d4a373] hover:text-black rounded-lg transition-all border border-[#d4a373]/40 text-xs font-black uppercase text-center shadow-xl">Online Guest Book</a>
+                <a href="onlineguestbook.html"><img src="webpic/Guestnotebook.jpg" class="rounded-xl w-full aspect-square object-cover hover:scale-105 transition-transform shadow-2xl border border-white/10"></a>
+            </div>
+            <div class="flex flex-col space-y-3">
+                <a href="provisions.html" class="px-2 py-4 bg-[#d4a373]/20 hover:bg-[#d4a373] hover:text-black rounded-lg transition-all border border-[#d4a373]/40 text-xs font-black uppercase text-center shadow-xl">Provisions</a>
+                <a href="provisions.html"><img src="webpic/hammock.jpg" class="rounded-xl w-full aspect-square object-cover hover:scale-105 transition-transform shadow-2xl border border-white/10"></a>
+            </div>
+        </div>
+
+        <section class="frosted-glass p-10 border-t-4 border-[#d4a373]">
+            <a href="checkout.html" class="block mb-10 overflow-hidden rounded-xl group max-w-4xl mx-auto border-2 border-white/20 shadow-2xl">
+                <img src="webpic/wct.jpg" alt="Kitchen Table" class="w-full object-cover transform group-hover:scale-[1.04] group-hover:brightness-110 transition-all duration-500">
+            </a>
+            
+            <h2 class="text-4xl font-bold mb-10 text-center uppercase tracking-[0.2em] text-[#d4a373]">Before You Leave...</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <ul class="space-y-5">
+                    <li class="flex items-start bg-black/60 p-4 rounded-lg border-l-4 border-[#d4a373] shadow-lg"><span class="text-[#d4a373] font-black mr-3 text-xl">✔</span> <span class="text-white font-black">Strip sheets from all used beds.</span></li>
+                    <li class="flex items-start bg-black/60 p-4 rounded-lg border-l-4 border-[#d4a373] shadow-lg"><span class="text-[#d4a373] font-black mr-3 text-xl">✔</span> <span class="text-white font-black">Wash used sheets and towels.</span></li>
+                    <li class="flex items-start bg-black/60 p-4 rounded-lg border-l-4 border-[#d4a373] shadow-lg"><span class="text-[#d4a373] font-black mr-3 text-xl">✔</span> <span class="text-white font-black">Transfer to dryer and start cycle.</span></li>
+                </ul>
+                <ul class="space-y-5">
+                    <li class="flex items-start bg-black/60 p-4 rounded-lg border-l-4 border-[#d4a373] shadow-lg"><span class="text-[#d4a373] font-black mr-3 text-xl">✔</span> <span class="text-white font-black">Wash dishes or start dishwasher.</span></li>
+                    <li class="flex items-start bg-black/60 p-4 rounded-lg border-l-4 border-[#d4a373] shadow-lg"><span class="text-[#d4a373] font-black mr-3 text-xl">✔</span> <span class="text-white font-black">Ensure fireplace is set to 'Pilot'.</span></li>
+                    <li class="flex items-start bg-black/60 p-4 rounded-lg border-l-4 border-[#d4a373] shadow-lg"><span class="text-[#d4a373] font-black mr-3 text-xl">✔</span> <span class="text-white font-black">Trash bagged and in bear cans.</span></li>
+                </ul>
+                <ul class="space-y-5">
+                    <li class="flex items-start bg-black/60 p-4 rounded-lg border-l-4 border-[#d4a373] shadow-lg"><span class="text-[#d4a373] font-black mr-3 text-xl">✔</span> <span class="text-white font-black">Clean out all personal fridge items.</span></li>
+                    <li class="flex items-start bg-black/60 p-4 rounded-lg border-l-4 border-[#d4a373] shadow-lg"><span class="text-[#d4a373] font-black mr-3 text-xl">✔</span> <span class="text-white font-black">Turn off lights and lock all doors.</span></li>
+                    <li class="flex items-start bg-black/60 p-4 rounded-lg border-l-4 border-[#d4a373] shadow-lg"><span class="text-[#d4a373] font-black mr-3 text-xl">✔</span> <span class="text-white font-black">Leave the cabin as you found it!</span></li>
+                </ul>
+            </div>
+
+            <div class="mt-16 flex flex-col items-center">
+                <img src="webpic/$200.jpg" alt="$200 Cleaning Fee" class="max-w-md w-full rounded shadow-2xl border-2 border-white/30 transform hover:rotate-1 transition-transform">
+                <div class="mt-10 p-8 bg-black/70 border-2 border-dashed border-[#d4a373]/60 rounded-xl max-w-2xl text-center shadow-xl">
+                    <p class="text-stone-100 italic font-black text-xl leading-relaxed">
+                        "If you don't have time or don't want to clean, no worries! We just ask that you cover the $200 cleaning fee they charge us."
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="frosted-glass p-10 border-2 border-[#d4a373] rounded-2xl max-w-3xl mx-auto text-center shadow-2xl">
+            <h2 class="text-3xl font-bold mb-8 uppercase tracking-widest text-[#d4a373]">The Refreshing Cabin Spritz Bidet</h2>
+            <div class="overflow-hidden rounded-xl shadow-2xl border border-white/20 mb-8 max-w-md mx-auto">
+                <img src="webpic/bidet.jpg" alt="Bidet" class="w-full h-auto object-cover transform hover:scale-[1.04] transition-transform duration-500">
+            </div>
+            <p class="text-2xl font-black text-white italic drop-shadow-xl">"Don't forget to check out the bidet for the freshest end-of-poo experience ever."</p>
+        </section>
+    </div>
+</main>
+
+<footer class="max-w-6xl mx-auto mt-20 text-center bg-black/70 py-10 rounded-t-3xl border-t border-white/30 shadow-2xl">
+    <p class="text-[#d4a373] uppercase tracking-[0.4em] font-black text-sm mb-6 shadow-sm">421 Weeks Creek Road, Blue Ridge GA 30513</p>
+    <p class="text-4xl font-black italic text-white drop-shadow-2xl">Thanks and Love You — Heather and Lance</p>
+    <p class="mt-6 text-stone-200 text-xs font-black uppercase tracking-widest">© 2026 Weeks Creek Haven | Guest Portal v2.1</p>
+</footer>
+
 <script>
-    // Mobile Menu Toggle Logic
     const menuBtn = document.getElementById('mobile-menu-button');
     const closeBtnMobile = document.getElementById('close-mobile-menu');
     const mobileMenu = document.getElementById('mobile-menu');
 
     function toggleMenu() {
         mobileMenu.classList.toggle('hidden');
-        // Prevent scrolling when menu is open
         document.body.classList.toggle('overflow-hidden');
     }
 
     menuBtn.addEventListener('click', toggleMenu);
     closeBtnMobile.addEventListener('click', toggleMenu);
 
-    // Close menu if a link is clicked
     mobileMenu.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
             mobileMenu.classList.add('hidden');
             document.body.classList.remove('overflow-hidden');
         });
     });
-
-    /* --- Keep your existing Lightbox JS below this line --- */
-    const galleryItems = document.querySelectorAll('.gallery-item');
-    // ... rest of your lightbox code
 </script>
-
-    <header class="max-w-6xl mx-auto text-center mb-12 pt-40">
-        <h1 class="text-6xl md:text-8xl font-bold mb-4">Weeks Creek Haven</h1>
-        <p class="text-2xl italic text-stone-200">"Your Cabin Away From Home"</p>
-        <div class="h-1.5 w-32 bg-[#d4a373] mx-auto mt-6"></div>
-    </header>
-
-    <main class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-6">
-        
-        <div class="md:col-span-1 space-y-8">
-            <section class="frosted-glass p-8">
-                <h2 class="text-2xl font-bold mb-6 border-b border-white/30 pb-2 uppercase tracking-widest text-[#d4a373]">Entry & Internet</h2>
-                <div class="space-y-6">
-                    <div>
-                        <p class="text-xs uppercase tracking-widest text-stone-300 font-bold">Cabin Door Code</p>
-                        <div class="flex items-center space-x-4 mt-2">
-                            <p class="text-4xl font-mono text-white font-black drop-shadow-md">22246</p>
-                            <span class="text-sm text-stone-200 font-black italic">then</span>
-                            <img src="webpic/checkmark.jpg" alt="checkmark" class="h-16 w-16 inline-block rounded-full border-2 border-[#d4a373] hover:scale-110 transition-transform shadow-xl">
-                        </div>
-                    </div>
-                    <div>
-                        <p class="text-xs uppercase tracking-widest text-stone-300 font-bold">Wi-Fi Network</p>
-                        <p class="text-2xl font-bold text-white">WeeksCreekHaven</p>
-                        <p class="text-xs uppercase tracking-widest text-stone-300 mt-4 font-bold">Password</p>
-                        <p class="text-2xl font-bold text-white">creeklife</p>
-                    </div>
-                    <img src="webpic/wifi.jpg" alt="WiFi" class="rounded-lg shadow-2xl w-full border border-white/20 hover:scale-[1.02] transition-transform">
-                </div>
-            </section>
-
-            <section class="frosted-glass p-8 accent-border">
-                <h2 class="text-2xl font-bold mb-4 uppercase tracking-widest text-[#d4a373]">Need Help?</h2>
-                <div class="space-y-3 text-white">
-                    <p class="font-black text-lg">Lance: <span class="font-normal">770.549.9358</span></p>
-                    <p class="font-black text-lg">Heather: <span class="font-normal">678.993.3617</span></p>
-                </div>
-            </section>
-        </div>
-
-        <div class="md:col-span-2 space-y-8">
-            <section class="frosted-glass p-8">
-                <h2 class="text-3xl font-bold mb-6 text-[#d4a373]">WELCOME TO BLUE RIDGE!</h2>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    <div class="flex flex-col space-y-2 group">
-                        <div class="bg-[#d4a373]/30 p-2 rounded text-center border border-[#d4a373]/50 text-[10px] font-black uppercase text-white shadow-sm">Hot Tub</div>
-                        <img src="webpic/hottub.jpg" class="rounded shadow-xl w-full aspect-square object-cover transform group-hover:scale-[1.05] transition-transform border border-white/10">
-                    </div>
-                    <div class="flex flex-col space-y-2 group">
-                        <div class="bg-[#d4a373]/30 p-2 rounded text-center border border-[#d4a373]/50 text-[10px] font-black uppercase text-white shadow-sm">98" TV</div>
-                        <img src="webpic/bigtv.jpg" class="rounded shadow-xl w-full aspect-square object-cover transform group-hover:scale-[1.05] transition-transform border border-white/10">
-                    </div>
-                    <div class="flex flex-col space-y-2 group">
-                        <div class="bg-[#d4a373]/30 p-2 rounded text-center border border-[#d4a373]/50 text-[10px] font-black uppercase text-white shadow-sm">Gas Log Fireplace</div>
-                        <img src="webpic/fire.jpg" class="rounded shadow-xl w-full aspect-square object-cover transform group-hover:scale-[1.05] transition-transform border border-white/10">
-                    </div>
-                    <div class="flex flex-col space-y-2 group">
-                        <div class="bg-[#d4a373]/30 p-2 rounded text-center border border-[#d4a373]/50 text-[10px] font-black uppercase text-white shadow-sm">Firepit</div>
-                        <img src="webpic/firepit.jpg" class="rounded shadow-xl w-full aspect-square object-cover transform group-hover:scale-[1.05] transition-transform border border-white/10">
-                    </div>
-                    <div class="flex flex-col space-y-2 group">
-                        <div class="bg-[#d4a373]/30 p-2 rounded text-center border border-[#d4a373]/50 text-[10px] font-black uppercase text-white shadow-sm">Porch Swing</div>
-                        <img src="webpic/porchswing.jpg" class="rounded shadow-xl w-full aspect-square object-cover transform group-hover:scale-[1.05] transition-transform border border-white/10">
-                    </div>
-                    <div class="flex flex-col space-y-2 group">
-                        <div class="bg-[#d4a373]/30 p-2 rounded text-center border border-[#d4a373]/50 text-[10px] font-black uppercase text-white shadow-sm">Streamside</div>
-                        <img src="webpic/heathers.jpg" class="rounded shadow-xl w-full aspect-square object-cover transform group-hover:scale-[1.05] transition-transform border border-white/10">
-                    </div>
-                </div>
-            </section>
-
-            <section class="frosted-glass p-8">
-                <h2 class="text-3xl font-bold mb-6 border-b border-white/30 pb-2 uppercase tracking-widest text-[#d4a373]">Alexa Commands</h2>
-                <div class="flex justify-center mb-6">
-                   <div class="flex justify-center mb-6">
-    <div class="flex gap-2 overflow-hidden rounded-lg shadow-2xl border border-white/20 hover:scale-[1.02] transition-transform max-w-full">
-        <img src="webpic/alexa.jpg" alt="Alexa" class="w-1/2 h-auto object-cover">
-        <img src="webpic/alexa2.jpg" alt="Alexa" class="w-1/2 h-auto object-cover">
-    </div>
-</div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="p-4 bg-black/60 rounded border border-white/10 shadow-md">
-                        <p class="text-[#d4a373] font-black text-lg">"ALEXA, Cabin on/off"</p>
-                        <p class="text-xs text-stone-200 font-black">Toggle main area lights</p>
-                    </div>
-                    <div class="p-4 bg-black/60 rounded border border-white/10 shadow-md">
-                        <p class="text-[#d4a373] font-black text-lg">"ALEXA, Set fireside to 30%"</p>
-                        <p class="text-xs text-stone-200 font-black">Perfect watching atmosphere</p>
-                    </div>
-                    <div class="p-4 bg-black/60 rounded border border-white/10 shadow-md">
-                        <p class="text-[#d4a373] font-black text-lg">"ALEXA, Going out"</p>
-                        <p class="text-xs text-stone-200 font-black">Locks and lights secure in 30s</p>
-                    </div>
-                    <div class="p-4 bg-red-950/60 rounded border border-red-500/50 shadow-md">
-                        <p class="text-white font-black italic text-lg">"Don't say Alexa, burn it down"</p>
-                        <p class="text-[11px] text-red-300 font-black uppercase tracking-tighter">NO 🔥</p>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <div class="md:col-span-3 space-y-12 mt-8">
-            <div class="text-center">
-                <div class="section-header-accent">
-                    <h2 class="text-3xl md:text-5xl font-bold uppercase tracking-[0.2em] text-[#d4a373]">Important Guest Links</h2>
-                </div>
-            </div>
-            
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
-                <div class="flex flex-col space-y-3">
-                    <a href="troubleshoot.html" class="px-2 py-4 bg-[#d4a373]/20 hover:bg-[#d4a373] hover:text-black rounded-lg transition-all border border-[#d4a373]/40 text-xs font-black uppercase text-center shadow-xl">Troubleshoot</a>
-                    <a href="troubleshoot.html"><img src="webpic/bigfootbath.jpg" class="rounded-xl w-full aspect-square object-cover hover:scale-105 transition-transform shadow-2xl border border-white/10"></a>
-                </div>
-                <div class="flex flex-col space-y-3">
-                    <a href="checkout.html" class="px-2 py-4 bg-[#d4a373]/20 hover:bg-[#d4a373] hover:text-black rounded-lg transition-all border border-[#d4a373]/40 text-xs font-black uppercase text-center shadow-xl">Checkout</a>
-                    <a href="checkout.html"><img src="webpic/rockers.jpg" class="rounded-xl w-full aspect-square object-cover hover:scale-105 transition-transform shadow-2xl border border-white/10"></a>
-                </div>
-                <div class="flex flex-col space-y-3">
-                    <a href="maintenance.html" class="px-2 py-4 bg-[#d4a373]/20 hover:bg-[#d4a373] hover:text-black rounded-lg transition-all border border-[#d4a373]/40 text-xs font-black uppercase text-center shadow-xl">Maintenance</a>
-                    <a href="maintenance.html"><img src="webpic/riverswing.jpg" class="rounded-xl w-full aspect-square object-cover hover:scale-105 transition-transform shadow-2xl border border-white/10"></a>
-                </div>
-                <div class="flex flex-col space-y-3">
-                    <a href="onlineguestbook.html" class="px-2 py-4 bg-[#d4a373]/20 hover:bg-[#d4a373] hover:text-black rounded-lg transition-all border border-[#d4a373]/40 text-xs font-black uppercase text-center shadow-xl">Online Guest Book</a>
-                    <a href="onlineguestbook.html"><img src="webpic/Guestnotebook.jpg" class="rounded-xl w-full aspect-square object-cover hover:scale-105 transition-transform shadow-2xl border border-white/10"></a>
-                </div>
-                <div class="flex flex-col space-y-3">
-                    <a href="provisions.html" class="px-2 py-4 bg-[#d4a373]/20 hover:bg-[#d4a373] hover:text-black rounded-lg transition-all border border-[#d4a373]/40 text-xs font-black uppercase text-center shadow-xl">Provisions</a>
-                    <a href="provisions.html"><img src="webpic/hammock.jpg" class="rounded-xl w-full aspect-square object-cover hover:scale-105 transition-transform shadow-2xl border border-white/10"></a>
-                </div>
-            </div>
-
-            <section class="frosted-glass p-10 border-t-4 border-[#d4a373]">
-                <a href="checkout.html" class="block mb-10 overflow-hidden rounded-xl group max-w-4xl mx-auto border-2 border-white/20 shadow-2xl">
-                    <img src="webpic/wct.jpg" alt="Kitchen Table" class="w-full object-cover transform group-hover:scale-[1.04] group-hover:brightness-110 transition-all duration-500">
-                </a>
-                
-                <h2 class="text-4xl font-bold mb-10 text-center uppercase tracking-[0.2em] text-[#d4a373]">Before You Leave...</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-                    <ul class="space-y-5">
-                        <li class="flex items-start bg-black/60 p-4 rounded-lg border-l-4 border-[#d4a373] shadow-lg"><span class="text-[#d4a373] font-black mr-3 text-xl">✔</span> <span class="text-white font-black">Strip sheets from all used beds.</span></li>
-                        <li class="flex items-start bg-black/60 p-4 rounded-lg border-l-4 border-[#d4a373] shadow-lg"><span class="text-[#d4a373] font-black mr-3 text-xl">✔</span> <span class="text-white font-black">Wash used sheets and towels.</span></li>
-                        <li class="flex items-start bg-black/60 p-4 rounded-lg border-l-4 border-[#d4a373] shadow-lg"><span class="text-[#d4a373] font-black mr-3 text-xl">✔</span> <span class="text-white font-black">Transfer to dryer and start cycle.</span></li>
-                    </ul>
-                    <ul class="space-y-5">
-                        <li class="flex items-start bg-black/60 p-4 rounded-lg border-l-4 border-[#d4a373] shadow-lg"><span class="text-[#d4a373] font-black mr-3 text-xl">✔</span> <span class="text-white font-black">Wash dishes or start dishwasher.</span></li>
-                        <li class="flex items-start bg-black/60 p-4 rounded-lg border-l-4 border-[#d4a373] shadow-lg"><span class="text-[#d4a373] font-black mr-3 text-xl">✔</span> <span class="text-white font-black">Ensure fireplace is set to 'Pilot'.</span></li>
-                        <li class="flex items-start bg-black/60 p-4 rounded-lg border-l-4 border-[#d4a373] shadow-lg"><span class="text-[#d4a373] font-black mr-3 text-xl">✔</span> <span class="text-white font-black">Trash bagged and in bear cans.</span></li>
-                    </ul>
-                    <ul class="space-y-5">
-                        <li class="flex items-start bg-black/60 p-4 rounded-lg border-l-4 border-[#d4a373] shadow-lg"><span class="text-[#d4a373] font-black mr-3 text-xl">✔</span> <span class="text-white font-black">Clean out all personal fridge items.</span></li>
-                        <li class="flex items-start bg-black/60 p-4 rounded-lg border-l-4 border-[#d4a373] shadow-lg"><span class="text-[#d4a373] font-black mr-3 text-xl">✔</span> <span class="text-white font-black">Turn off lights and lock all doors.</span></li>
-                        <li class="flex items-start bg-black/60 p-4 rounded-lg border-l-4 border-[#d4a373] shadow-lg"><span class="text-[#d4a373] font-black mr-3 text-xl">✔</span> <span class="text-white font-black">Leave the cabin as you found it!</span></li>
-                    </ul>
-                </div>
-
-                <div class="mt-16 flex flex-col items-center">
-                    <img src="webpic/$200.jpg" alt="$200 Cleaning Fee" class="max-w-md w-full rounded shadow-2xl border-2 border-white/30 transform hover:rotate-1 transition-transform">
-                    <div class="mt-10 p-8 bg-black/70 border-2 border-dashed border-[#d4a373]/60 rounded-xl max-w-2xl text-center shadow-xl">
-                        <p class="text-stone-100 italic font-black text-xl leading-relaxed">
-                            "If you don't have time or don't want to clean, no worries! We just ask that you cover the $200 cleaning fee they charge us."
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-            <section class="frosted-glass p-10 border-2 border-[#d4a373] rounded-2xl max-w-3xl mx-auto text-center shadow-2xl">
-                <h2 class="text-3xl font-bold mb-8 uppercase tracking-widest text-[#d4a373]">The Refreshing Cabin Spritz Bidet</h2>
-                <div class="overflow-hidden rounded-xl shadow-2xl border border-white/20 mb-8 max-w-md mx-auto">
-                    <img src="webpic/bidet.jpg" alt="Bidet" class="w-full h-auto object-cover transform hover:scale-[1.04] transition-transform duration-500">
-                </div>
-                <p class="text-2xl font-black text-white italic drop-shadow-xl">"Don't forget to check out the bidet for the freshest end-of-poo experience ever."</p>
-            </section>
-        </div>
-    </main>
-
-    <footer class="max-w-6xl mx-auto mt-20 text-center bg-black/70 py-10 rounded-t-3xl border-t border-white/30 shadow-2xl">
-        <p class="text-[#d4a373] uppercase tracking-[0.4em] font-black text-sm mb-6 shadow-sm">421 Weeks Creek Road, Blue Ridge GA 30513</p>
-        <p class="text-4xl font-black italic text-white drop-shadow-2xl">Thanks and Love You — Heather and Lance</p>
-        <p class="mt-6 text-stone-200 text-xs font-black uppercase tracking-widest">© 2026 Weeks Creek Haven | Guest Portal v2.1</p>
-    </footer>
 
 </body>
 </html>

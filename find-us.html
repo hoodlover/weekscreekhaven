@@ -18,21 +18,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* Lightened base color and increased default weight */
         body { font-family: 'Montserrat', sans-serif; color: #fdfaf6; scroll-behavior: smooth; }
         h1, h2, h3, h4 { font-family: 'Crimson Text', serif; font-weight: 700; }
         
-        /* Soft shadow to separate light text from textured backgrounds */
         .text-readable {
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-        }
-
-        /* Wood Button Transition and Responsive Sizing */
-        .wood-btn {
-            transition: transform 0.2s ease;
-            height: 50px;
-            width: auto;
-            display: block;
         }
 
         .bg-wood { 
@@ -42,7 +32,7 @@
             background-size: cover;
         }
         
-.railroad-tie-nav {
+        .railroad-tie-nav {
             background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('webpic/railroad-tie-texture.jpg');
             background-size: auto 100%;
             background-repeat: repeat-x;
@@ -70,7 +60,6 @@
         .nav-link-group a:hover .normal-img { display: none; }
         .nav-link-group a:hover .hover-img { display: block; }
 
-        /* Brighter accent colors for dark mode */
         .accent-green { color: #a3b899; }
         .parchment { background-color: rgba(244, 238, 224, 0.95); border: 1px solid #dcd3bd; color: #3d3128; }
         
@@ -124,7 +113,7 @@
 </nav>
 
 <div id="mobile-menu" class="hidden fixed inset-0 z-[60] flex flex-col items-center justify-center space-y-4 bg-stone-900/95 backdrop-blur-sm">
-    <button id="close-mobile-menu" class="absolute top-6 right-8 text-white text-5xl font-light">&times;</button>
+    <button id="close-mobile-menu" class="absolute top-6 right-8 text-white text-5xl font-light">×</button>
     
     <a href="things-to-do.html"><img src="buttons/to-do-see.jpg" alt="To Do" class="wood-btn"></a>
     <a href="need-to-know.html"><img src="buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn"></a>
@@ -133,22 +122,102 @@
     <a href="important-info.html"><img src="buttons/friends-info.jpg" alt="Friends Info" class="wood-btn"></a>
 </div>
 
+<main class="pt-32 px-6">
+    <section class="max-w-6xl mx-auto pt-10 pb-24 px-6">
+        
+        <section class="grid md:grid-cols-2 gap-12 mb-20 items-start">
+            <div class="space-y-6">
+                <h2 class="text-6xl italic extra-heavy-shadow accent-green text-readable">Your Way to the Haven</h2>
+                <p class="text-xl font-semibold leading-relaxed text-readable">
+                    We are located at <strong class="text-white">421 Weeks Creek Rd</strong>. While the drive is beautiful, mountain roads can be tricky for GPS.
+                </p>
+                
+                <div class="bg-amber-50 border-l-8 border-amber-500 p-6 rounded-r-lg shadow-xl">
+                    <h4 class="font-extrabold text-amber-900 mb-2 uppercase tracking-tight text-base">The "No Cell Service" Pro-Tip</h4>
+                    <p class="text-amber-950 text-sm font-bold leading-relaxed">
+                        Cell service drops significantly as you enter the Aska Adventure Area. Load your GPS directions while you are still in downtown Blue Ridge or at home. Once you arrive, our High-Speed Fiber Wi-Fi will get you back online instantly!
+                    </p>
+                </div>
+
+                <div class="pt-4">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=421+Weeks+Creek+Rd,+Blue+Ridge,+GA+30513" target="_blank" class="inline-block bg-green-700 text-white px-10 py-4 rounded-full font-extrabold text-lg shadow-2xl hover:bg-green-600 hover:scale-105 transition transform">Open in Google Maps</a>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="map-container border-8 border-white shadow-2xl rounded-lg overflow-hidden">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3293.418047913387!2d-84.23847992427027!3d34.801657472882324!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x885f97305943714b%3A0xc3f58a5e128913b7!2s421%20Weeks%20Creek%20Rd%2C%20Blue%20Ridge%2C%20GA%2030513!5e0!3m2!1sen!2sus!4v1710185000000!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                <p class="text-sm text-stone-300 font-bold text-center italic text-readable">Tip: Look for the <b>'Welcome Friends'</b> cedar sign at the driveway just after the road splits. Stay left.</p>
+            </div>
+        </section>
+
+        <section class="parchment p-8 md:p-12 rounded-2xl shadow-2xl">
+            <h2 class="text-5xl text-center mb-12 italic border-b-2 border-stone-400 pb-6 font-bold">Nearby Recreation Areas</h2>
+            <div class="grid md:grid-cols-3 gap-10">
+                <div class="space-y-3">
+                    <h3 class="text-3xl font-extrabold text-green-900">Sandy Bottoms</h3>
+                    <p class="text-base font-bold text-stone-800">Perfect for **river access** and shallow water wading. A great spot to launch a tube or just sit by the Toccoa River.</p>
+                </div>
+                <div class="space-y-3">
+                    <h3 class="text-3xl font-extrabold text-green-900">Deep Hole</h3>
+                    <p class="text-base font-bold text-stone-800">A popular **fishing and camping** area. Known for its deeper waters, it's a favorite starting point for many kayaking trips.</p>
+                </div>
+                <div class="space-y-3">
+                    <h3 class="text-3xl font-extrabold text-green-900">Lake Blue Ridge</h3>
+                    <p class="text-base font-bold text-stone-800">Only 20 minutes away. Visit the **Morganton Point Recreation Area** for swimming, boat rentals, and lakeside picnics.</p>
+                </div>
+            </div>
+
+            <div class="mt-12 text-center">
+                <img src="info/21_Recreation_Areas.jpg" 
+                     alt="Detailed Recreation Guide" 
+                     id="guide-thumb"
+                     class="w-full max-w-[300px] mx-auto rounded shadow-2xl border-4 border-white cursor-zoom-in hover:scale-105 transition-transform"
+                     onclick="openModal()">
+                <p class="text-xs text-stone-500 mt-2 font-bold uppercase">Click to enlarge</p>
+            </div>
+
+            <div id="image-modal" class="hidden fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeModal()">
+                <span class="absolute top-5 right-10 text-white text-6xl cursor-pointer font-light">&times;</span>
+                <img src="info/21_Recreation_Areas.jpg" class="max-w-full max-h-[90vh] rounded-lg shadow-2xl border-2 border-white object-contain">
+            </div>
+        </section>
+    </section>
+</main>
+
+<footer class="bg-stone-950 text-stone-400 py-16 px-6 text-center">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-8">
+        <div class="text-center md:text-left">
+            <p class="text-white text-2xl font-serif italic mb-2">Weeks Creek Haven</p>
+            <p class="font-bold">421 Weeks Creek Rd | Blue Ridge, GA 30513</p>
+        </div>
+        <div class="flex flex-wrap justify-center gap-6 text-xs font-black uppercase tracking-widest text-green-500">
+            <a href="index.html" class="hover:text-white">Home</a>
+            <a href="need-to-know.html" class="hover:text-white">Need to Know</a>
+            <a href="find-us.html" class="hover:text-white text-white underline">Find Us</a>
+            <a href="gallery.html" class="hover:text-white">Gallery</a>
+            <a href="important-info.html" class="hover:text-white">Friends Portal</a>
+        </div>
+    </div>
+    <div class="text-center mt-10 text-xs text-stone-600 pt-8 border-t border-stone-800 uppercase tracking-widest font-bold">
+        © 2026 Heather & Lance | Blue Ridge, Georgia
+    </div>
+</footer>
+
 <script>
-    // Mobile Menu Toggle Logic
     const menuBtn = document.getElementById('mobile-menu-button');
     const closeBtnMobile = document.getElementById('close-mobile-menu');
     const mobileMenu = document.getElementById('mobile-menu');
 
     function toggleMenu() {
         mobileMenu.classList.toggle('hidden');
-        // Prevent scrolling when menu is open
         document.body.classList.toggle('overflow-hidden');
     }
 
     menuBtn.addEventListener('click', toggleMenu);
     closeBtnMobile.addEventListener('click', toggleMenu);
 
-    // Close menu if a link is clicked
     mobileMenu.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
             mobileMenu.classList.add('hidden');
@@ -156,105 +225,18 @@
         });
     });
 
-    /* --- Keep your existing Lightbox JS below this line --- */
-    const galleryItems = document.querySelectorAll('.gallery-item');
-    // ... rest of your lightbox code
+    function openModal() {
+        const modal = document.getElementById('image-modal');
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('image-modal');
+        modal.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
 </script>
-
-    <main class="pt-32 px-6">
-        <section class="max-w-6xl mx-auto pt-10 pb-24 px-6">
-            
-            <section class="grid md:grid-cols-2 gap-12 mb-20 items-start">
-                <div class="space-y-6">
-                    <h2 class="text-6xl italic extra-heavy-shadow accent-green text-readable">Your Way to the Haven</h2>
-                    <p class="text-xl font-semibold leading-relaxed text-readable">
-                        We are located at <strong class="text-white">421 Weeks Creek Rd</strong>. While the drive is beautiful, mountain roads can be tricky for GPS.
-                    </p>
-                    
-                    <div class="bg-amber-50 border-l-8 border-amber-500 p-6 rounded-r-lg shadow-xl">
-                        <h4 class="font-extrabold text-amber-900 mb-2 uppercase tracking-tight text-base">The "No Cell Service" Pro-Tip</h4>
-                        <p class="text-amber-950 text-sm font-bold leading-relaxed">
-                            Cell service drops significantly as you enter the Aska Adventure Area. Load your GPS directions while you are still in downtown Blue Ridge or at home. Once you arrive, our High-Speed Fiber Wi-Fi will get you back online instantly!
-                        </p>
-                    </div>
-
-                    <div class="pt-4">
-                        <a href="https://www.google.com/maps/dir/?api=1&destination=421+Weeks+Creek+Rd+Blue+Ridge+GA+30513" target="_blank" class="inline-block bg-green-700 text-white px-10 py-4 rounded-full font-extrabold text-lg shadow-2xl hover:bg-green-600 hover:scale-105 transition transform">Open in Google Maps</a>
-                    </div>
-                </div>
-
-                <div class="space-y-4">
-                    <div class="map-container border-8 border-white shadow-2xl rounded-lg overflow-hidden">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3301.782163989182!2d-84.2847!3d34.8142!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x885f90f23f000001%3A0x0!2zNDIxIFdlZWtzIENyZWVrIFJkLCBCbHVlIFJpZGdlLCBHQSAzMDUxMw!5e0!3m2!1sen!2sus!4v1710000000000!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
-                    </div>
-                    <p class="text-sm text-stone-300 font-bold text-center italic text-readable">Tip: Look for the <b>'Welcome Friends'</b> cedar sign at the driveway just after the road splits. Stay left.</p>
-                </div>
-            </section>
-
-            <section class="parchment p-8 md:p-12 rounded-2xl shadow-2xl">
-                <h2 class="text-5xl text-center mb-12 italic border-b-2 border-stone-400 pb-6 font-bold">Nearby Recreation Areas</h2>
-                <div class="grid md:grid-cols-3 gap-10">
-                    
-                    <div class="space-y-3">
-                        <h3 class="text-3xl font-extrabold text-green-900">Sandy Bottoms</h3>
-                        <p class="text-base font-bold text-stone-800">Perfect for **river access** and shallow water wading. A great spot to launch a tube or just sit by the Toccoa River.</p>
-                    </div>
-
-                    <div class="space-y-3">
-                        <h3 class="text-3xl font-extrabold text-green-900">Deep Hole</h3>
-                        <p class="text-base font-bold text-stone-800">A popular **fishing and camping** area. Known for its deeper waters, it's a favorite starting point for many kayaking trips.</p>
-                    </div>
-
-                    <div class="space-y-3">
-                        <h3 class="text-3xl font-extrabold text-green-900">Lake Blue Ridge</h3>
-                        <p class="text-base font-bold text-stone-800">Only 20 minutes away. Visit the **Morganton Point Recreation Area** for swimming, boat rentals, and lakeside picnics.</p>
-                    </div>
-
-                </div>
-
-               <div class="mt-12 text-center">
-    <img src="info/21_Recreation_Areas.jpg" 
-         alt="Detailed Recreation Guide" 
-         id="guide-thumb"
-         class="max-w-xs mx-auto rounded shadow-2xl border-4 border-white cursor-zoom-in hover:scale-105 transition-transform"
-         onclick="openModal()">
-    <p class="text-xs text-stone-500 mt-2 font-bold uppercase">Click to enlarge</p>
-</div>
-
-<div id="image-modal" class="hidden fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeModal()">
-    <span class="absolute top-5 right-5 text-white text-4xl cursor-pointer font-bold">&times;</span>
-    <img src="info/21_Recreation_Areas.jpg" class="max-w-full max-h-full rounded-lg shadow-2xl border-4 border-white">
-</div>
-            </section>
-        </section>
-    </main>
-
-    <footer class="bg-stone-950 text-stone-400 py-16 px-6 text-center">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-8">
-            <div class="text-center md:text-left">
-                <p class="text-white text-2xl font-serif italic mb-2">Weeks Creek Haven</p>
-                <p class="font-bold">421 Weeks Creek Rd | Blue Ridge, GA 30513</p>
-            </div>
-            <div class="flex flex-wrap justify-center gap-6 text-xs font-black uppercase tracking-widest text-green-500">
-                <a href="index.html" class="hover:text-white">Home</a>
-                <a href="need-to-know.html" class="hover:text-white">Need to Know</a>
-                <a href="find-us.html" class="hover:text-white text-white underline">Find Us</a>
-                <a href="gallery.html" class="hover:text-white">Gallery</a>
-                <a href="important-info.html" class="hover:text-white">Friends Portal</a>
-            </div>
-        </div>
-        <div class="text-center mt-10 text-xs text-stone-600 pt-8 border-t border-stone-800 uppercase tracking-widest font-bold">
-            © 2026 Heather & Lance | Blue Ridge, Georgia
-        </div>
-    </footer>
-
-    <script>
-        const menuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-        menuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-    </script>
 
 </body>
 </html>
