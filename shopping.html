@@ -50,7 +50,7 @@
     }
 
     .railroad-tie-nav {
-        background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/webpic/railroad-tie-texture.jpg');
+        background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('webpic/railroad-tie-texture.jpg');
         background-size: auto 100%;
         background-repeat: repeat-x;
         border-bottom: 4px solid #1a1512;
@@ -111,7 +111,7 @@
     left: 0;
     opacity: 0;
     /* Only the top image fades in */
-    transition: opacity 0.8s ease-in-out;
+    transition: opacity 0.4s ease-in-out;
     z-index: 2;
 }
 
@@ -237,64 +237,41 @@
 
 <main class="max-w-6xl mx-auto px-6 pb-24 space-y-20">
     
-       <section id="family-fun">
+    <section id="fine-dining">
         <div class="mb-8 pb-3 section-heading">
-            <h2 class="text-4xl">Adventure Awaits</h2>
+            <h2 class="text-4xl">Premier Dining & Local Eats</h2>
         </div>
-
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-blue-400">
-                <img src="info/activities/04_br_rail.png" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer hover:opacity-90">
-                <h4 class="accent-blue-light uppercase tracking-wider text-sm mb-2">Scenic Railway</h4>
-                <p class="text-sm card-desc leading-relaxed">A historic 26-mile round trip along the Toccoa River.</p>
+                       <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-amber-400">
+                <img src="info/foodshopping/02_Dining1.png" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer hover:opacity-90">
+                <h4 class="accent-gold uppercase tracking-wider text-sm mb-2">The Top List #1-5</h4>
+                <p class="text-sm card-desc">Southern Comfort, Farm-to-Table, and Elevated Pub Grub.</p>
+            </div>
+            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-amber-400">
+                <img src="info/foodshopping/03_Dining2.png" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer hover:opacity-90">
+                <h4 class="accent-gold uppercase tracking-wider text-sm mb-2">The Local's Pick #6-10</h4>
+                <p class="text-sm card-desc">Cuban Vibes, Riverside Trout, and Premium Steakhouses.</p>
+            </div>
+            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-amber-400">
+                <img src="info/foodshopping/04_Dining3.png" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer hover:opacity-90">
+                <h4 class="accent-gold uppercase tracking-wider text-sm mb-2">Hidden Gems #11-15</h4>
+                <p class="text-sm card-desc">Famous Apple Orchards, Trackside BBQ, and Lakeside Dining.</p>
+            </div>
+  <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-emerald-400">
+                <img src="info/foodshopping/cafes_curioshops.png" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer hover:opacity-90">
+                <h4 class="accent-gold uppercase tracking-wider text-sm mb-2">Coffee & Curio Trail</h4>
+                <p class="text-sm card-desc">The best downtown spots for a latte and a unique find.</p>
             </div>
 
-            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-blue-400">
-                <img src="info/activities/06_Mercier_Orchards.png" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer hover:opacity-90">
-                <h4 class="accent-blue-light uppercase tracking-wider text-sm mb-2">Mercier Orchards</h4>
-                <p class="text-sm card-desc leading-relaxed">U-pick fruit, famous fried pies, and a massive farm market.</p>
+ <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-amber-400">
+                <img src="info/foodshopping/01_Good_Eats.png" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer hover:opacity-90">
+                <h4 class="accent-gold uppercase tracking-wider text-sm mb-2">Weeks Creek Favorites</h4>
+                <p class="text-sm card-desc">Authentic dining options within 4 miles of the cabin.</p>
             </div>
-
-            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-blue-400">
-                <img src="info/activities/04_lillypad_village.png" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer hover:opacity-90">
-                <h4 class="accent-blue-light uppercase tracking-wider text-sm mb-2">The Lilly Pad Village</h4>
-                <p class="text-sm card-desc leading-relaxed">Gem mining, mountain mini-golf, and catch-and-release fishing.</p>
-            </div>
-            
-            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-blue-400">
-                <img src="info/activities/05_BJ_Reece_Orchards.png" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer hover:opacity-90">
-                <h4 class="accent-blue-light uppercase tracking-wider text-sm mb-2">BJ Reece Orchards</h4>
-                <p class="text-sm card-desc leading-relaxed">Apple picking, farm animals, and family-friendly farm fun.</p>
-            </div>
-
-            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-blue-400">
-                <img src="info/activities/Tubing.png" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer hover:opacity-90">
-                <h4 class="accent-blue-light uppercase tracking-wider text-sm mb-2">River Tubing</h4>
-                <p class="text-sm card-desc leading-relaxed">Relaxing floats down the Toccoa River for all ages.</p>
-            </div>
-
-            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-blue-400">
-                <img src="info/fishing/05_fish_hatchery.png" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer hover:opacity-90">
-                <h4 class="accent-blue-light uppercase tracking-wider text-sm mb-2">National Fish Hatchery</h4>
-                <p class="text-sm card-desc leading-relaxed">Explore the trout life cycle, family activities & enjoy prime fishing on Rock Creek.</p>
-            </div>
-
-            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-blue-400">
-                <img src="info/activities/03_Recreation_Areas.png" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer hover:opacity-90">
-                <h4 class="accent-blue-light uppercase tracking-wider text-sm mb-2">Parks & Recreation</h4>
-                <p class="text-sm card-desc leading-relaxed">Beaches, boat launches, and scenic picnic spots around the lake.</p>
-            </div>
-
-            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-blue-400">
-                <img src="info/activities/02_Fun_Thing_in_Blue_Ridge.png" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer hover:opacity-90">
-                <h4 class="accent-blue-light uppercase tracking-wider text-sm mb-2">Local Attractions</h4>
-                <p class="text-sm card-desc leading-relaxed">Explore downtown, gem mining, and agritourism highlights.</p>
-            </div>
-
-            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-blue-400">
-                <img src="info/activities/09_Toccoa_River_Trail_Canoe.png" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer hover:opacity-90">
-                <h4 class="accent-blue-light uppercase tracking-wider text-sm mb-2">Canoe & Kayak Trail</h4>
-                <p class="text-sm card-desc leading-relaxed">A 13.8-mile trail perfect for paddling and mountain trout fishing.</p>
+            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-amber-400">
+                <img src="info/foodshopping/07_wineries.png" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer hover:opacity-90">
+                <h4 class="accent-gold uppercase tracking-wider text-sm mb-2">Rustic Vineyard Guide</h4>
+                <p class="text-sm card-desc">A curated map of the best wineries in North Georgia.</p>
             </div>
         </div>
     </section>
@@ -314,16 +291,11 @@
                 <h4 class="accent-gold uppercase tracking-wider text-sm mb-2">Honorable Mentions</h4>
                 <p class="text-sm card-desc">Sweets, Pottery, and unique local arts and crafts.</p>
             </div>
-            <div class="adventure-card p-4 rounded-xl flex flex-col border-t-4 border-t-emerald-400">
-                <img src="info/foodshopping/cafes_curioshops.png" onclick="openLightbox(this.src)" class="rounded-lg mb-4 cursor-pointer hover:opacity-90">
-                <h4 class="accent-gold uppercase tracking-wider text-sm mb-2">Coffee & Curio Trail</h4>
-                <p class="text-sm card-desc">The best downtown spots for a latte and a unique find.</p>
-            </div>
+          
         </div>
     </section>
 
 </main>
-
 <footer class="bg-black/80 text-stone-400 py-16 px-6 text-center border-t border-stone-800">
     <p class="text-white text-2xl font-serif italic mb-2">Weeks Creek Haven</p>
     <p class="text-xs uppercase tracking-widest font-bold">© 2026 Heather & Lance | Blue Ridge, Georgia</p>
