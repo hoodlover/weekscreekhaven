@@ -78,20 +78,63 @@
         }
 
         @media (min-width: 1536px) { .wood-btn { height: 80px; } }
+  /* This specifically stops the 5% growth on the logo images */
+.logo-link:hover .wood-btn { 
+    transform: scale(1.0) !important; 
+}
+
+
+/* 1. Position the container */
+.logo-link {
+    position: relative;
+    display: inline-block;
+    background: transparent; /* Ensures no background bleed */
+}
+
+/* 2. The Bottom Image (Normal) */
+.logo-link .normal-img {
+    opacity: 1;
+    /* We remove the transition here so it stays solid */
+    transition: none; 
+}
+
+/* 3. The Top Image (Hover) */
+.logo-link .hover-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    /* Only the top image fades in */
+    transition: opacity 0.8s ease-in-out;
+    z-index: 2;
+}
+
+/* 4. Hover State */
+.logo-link:hover .hover-img {
+    opacity: 1;
+}
+
+/* Optional: Hide the normal image ONLY after hover is complete 
+   or keep it visible underneath to prevent the 'gap' */
+.logo-link:hover .normal-img {
+    opacity: 1; /* Keeping this at 1 ensures there is always a solid image */
+}
+
     </style>
 </head>
 <body class="bg-wood">
 
-    <div id="lightbox" onclick="closeLightbox()">
+  <div id="lightbox" onclick="closeLightbox()">
         <img id="lightbox-img" src="" alt="Enlarged view">
         <div class="absolute top-5 right-10 text-white text-5xl font-bold">&times;</div>
     </div>
 
 <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
-    <a href="index.html" class="flex-shrink-0">
-        <img src="buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn">
-    </a>
-    
+   <a href="index.html" class="flex-shrink-0 logo-link">
+    <img src="buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn normal-img">
+    <img src="buttons/week-creek-button-crop-hover.jpg" alt="Weeks Creek Haven" class="wood-btn hover-img">
+</a>
+
     <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
         <a href="things-to-do.html">
             <img src="buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
