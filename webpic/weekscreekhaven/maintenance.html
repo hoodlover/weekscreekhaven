@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haven Upkeep | Weeks Creek Haven</title>
+    
+        <link rel="icon" type="image/png" href="/webpic/Weeks_Creek_Haven_Favicon.png">
+
+    <meta name="description" content="Welcome to Weeks Creek Haven (421 Weeks Creek Rd), your rustic streamside log cabin in Blue Ridge, GA. Located in the Aska Adventure Area with Hot Tub, Fast Fiber Internet, and epic 98-inch TV. Book your escape!">
+    
+    <meta property="og:title" content="Weeks Creek Haven | Blue Ridge, GA Log Cabin">
+    <meta property="og:description" content="A unique chinking log cabin escape! Fast Fiber, large Hot Tub, Streamside relaxation, and room for 11 guests. Check our availability!">
+    <meta property="og:image" content="/webpic/Weeks_Creek_Haven_Social_Preview.png">
+    <meta property="og:url" content="https://weekscreekhaven.com/">
+    <meta property="og:type" content="website">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Lightened base color and increased default weight */
+        body { font-family: 'Montserrat', sans-serif; color: #fdfaf6; scroll-behavior: smooth; }
+        h1, h2, h3, h4 { font-family: 'Crimson Text', serif; font-weight: 700; }
+        
+        /* Soft shadow to separate light text from textured backgrounds */
+        .text-readable {
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+        }
+
+        .bg-wood { 
+            background-color: #1a1512;
+            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('/webpic/vintage-wooden-board-textured-background.jpg');
+            background-attachment: fixed;
+            background-size: cover;
+        }
+        
+    .railroad-tie-nav {
+        background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('webpic/railroad-tie-texture.jpg');
+        background-size: auto 100%;
+        background-repeat: repeat-x;
+        border-bottom: 4px solid #1a1512;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+    }
+
+    .wood-btn {
+        transition: transform 0.2s ease;
+        height: 80px; 
+        width: auto;
+        display: block;
+    }
+
+    @media (min-width: 768px) {
+        .wood-btn { height: 64px; } 
+    }
+
+    @media (min-width: 1536px) {
+        .wood-btn { height: 96px; } 
+    }
+
+    .wood-btn:hover { transform: scale(1.05); }
+
+        .nav-link-group a .hover-img { display: none; }
+        .nav-link-group a:hover .normal-img { display: none; }
+        .nav-link-group a:hover .hover-img { display: block; }
+
+        /* Brighter accent colors for dark mode */
+        .accent-green { color: #a3b899; }
+        .parchment { background-color: rgba(244, 238, 224, 0.95); border: 1px solid #dcd3bd; color: #3d3128; }
+        
+        #mobile-menu {
+            background-image: linear-gradient(rgba(0,0,0,0.95), rgba(0,0,0,0.95)), url('/webpic/railroad-tie-texture.jpg');
+            background-size: cover;
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 400px;
+            border: 0;
+        }
+  
+/* This specifically stops the 5% growth on the logo images */
+.logo-link:hover .wood-btn { 
+    transform: scale(1.0) !important; 
+}
+
+
+/* 1. Position the container */
+.logo-link {
+    position: relative;
+    display: inline-block;
+    background: transparent; /* Ensures no background bleed */
+}
+
+/* 2. The Bottom Image (Normal) */
+.logo-link .normal-img {
+    opacity: 1;
+    /* We remove the transition here so it stays solid */
+    transition: none; 
+}
+
+/* 3. The Top Image (Hover) */
+.logo-link .hover-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    /* Only the top image fades in */
+    transition: opacity 0.8s ease-in-out;
+    z-index: 2;
+}
+
+/* 4. Hover State */
+.logo-link:hover .hover-img {
+    opacity: 1;
+}
+
+/* Optional: Hide the normal image ONLY after hover is complete 
+   or keep it visible underneath to prevent the 'gap' */
+.logo-link:hover .normal-img {
+    opacity: 1; /* Keeping this at 1 ensures there is always a solid image */
+}
+
+    </style>
+</head>
+<body class="bg-wood">
+
+<nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
+   <a href="index.html" class="flex-shrink-0 logo-link">
+    <img src="buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn normal-img">
+    <img src="buttons/week-creek-button-crop-hover.jpg" alt="Weeks Creek Haven" class="wood-btn hover-img">
+</a>
+    
+    <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
+        <a href="things-to-do.html">
+            <img src="buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
+            <img src="buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
+        </a>
+        <a href="need-to-know.html">
+            <img src="buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
+            <img src="buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
+        </a>
+        <a href="find-us.html">
+            <img src="buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
+            <img src="buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
+        </a>
+        <a href="gallery.html">
+            <img src="buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
+            <img src="buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
+        </a>
+        <a href="important-info.html">
+            <img src="buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
+            <img src="buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
+        </a>
+    </div>
+
+    <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none p-2 bg-black/40 rounded-lg border border-white/20">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path id="menu-icon-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+</nav>
+
+<div id="mobile-menu" class="hidden fixed inset-0 z-[60] flex flex-col items-center justify-center space-y-4 bg-stone-900/95 backdrop-blur-sm">
+    <button id="close-mobile-menu" class="absolute top-6 right-8 text-white text-5xl font-light">&times;</button>
+    
+    <a href="things-to-do.html"><img src="buttons/to-do-see.jpg" alt="To Do" class="wood-btn"></a>
+    <a href="need-to-know.html"><img src="buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn"></a>
+    <a href="find-us.html"><img src="buttons/find-cabin.jpg" alt="Find Us" class="wood-btn"></a>
+    <a href="gallery.html"><img src="buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn"></a>
+    <a href="important-info.html"><img src="buttons/friends-info.jpg" alt="Friends Info" class="wood-btn"></a>
+</div>
+
+<script>
+    // Mobile Menu Toggle Logic
+    const menuBtn = document.getElementById('mobile-menu-button');
+    const closeBtnMobile = document.getElementById('close-mobile-menu');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    function toggleMenu() {
+        mobileMenu.classList.toggle('hidden');
+        // Prevent scrolling when menu is open
+        document.body.classList.toggle('overflow-hidden');
+    }
+
+    menuBtn.addEventListener('click', toggleMenu);
+    closeBtnMobile.addEventListener('click', toggleMenu);
+
+    // Close menu if a link is clicked
+    mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        });
+    });
+
+    /* --- Keep your existing Lightbox JS below this line --- */
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    // ... rest of your lightbox code
+</script>
+    <div class="min-h-screen pt-32 pb-12 px-6 flex flex-col items-center">
+        
+        <div class="parchment p-8 md:p-14 rounded-2xl shadow-2xl max-w-2xl w-full border-t-8 border-green-900">
+            <h1 class="text-4xl text-green-900 mb-2 italic">Haven Upkeep</h1>
+            <p class="mb-8 text-stone-600">Help Lance & Heather keep the cabin perfect for the next guest.</p>
+
+            <form action="https://formspree.io/f/mzdjnprj" method="POST" class="space-y-8">
+                
+                <section>
+                    <h3 class="text-xl font-bold uppercase tracking-widest text-stone-800 border-b border-stone-300 mb-4 pb-1">Restock Needed</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="flex items-center space-x-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer">
+                            <input type="checkbox" name="restock[]" value="Coffee Beans" class="w-5 h-5 accent-green-800"> <span class="text-stone-800">Coffee Beans</span>
+                        </label>
+                        <label class="flex items-center space-x-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer">
+                            <input type="checkbox" name="restock[]" value="Toilet Paper" class="w-5 h-5 accent-green-800"> <span class="text-stone-800">Toilet Paper</span>
+                        </label>
+                        <label class="flex items-center space-x-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer">
+                            <input type="checkbox" name="restock[]" value="Paper Towels" class="w-5 h-5 accent-green-800"> <span class="text-stone-800">Paper Towels</span>
+                        </label>
+                        <label class="flex items-center space-x-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer">
+                            <input type="checkbox" name="restock[]" value="Hand Soap" class="w-5 h-5 accent-green-800"> <span class="text-stone-800">Hand Soap</span>
+                        </label>
+                        <label class="flex items-center space-x-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer">
+                            <input type="checkbox" name="restock[]" value="Dish Tabs" class="w-5 h-5 accent-green-800"> <span class="text-stone-800">Dishwasher Tabs</span>
+                        </label>
+                        <label class="flex items-center space-x-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer">
+                            <input type="checkbox" name="restock[]" value="Propane" class="w-5 h-5 accent-green-800"> <span class="text-stone-800">Propane/Charcoal</span>
+                        </label>
+                    </div>
+                </section>
+
+                <section>
+                    <h3 class="text-xl font-bold uppercase tracking-widest text-stone-800 border-b border-stone-300 mb-4 pb-1">Maintenance Notes</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold mb-1 text-stone-800">Anything acting up?</label>
+                            <textarea name="maintenance_issue" rows="3" placeholder="Broken lightbulbs, leaky faucets, Alexa being moody..." class="w-full p-3 border border-stone-300 rounded focus:border-green-800 outline-none bg-white text-stone-800"></textarea>
+                        </div>
+                        <p class="text-xs text-stone-500 italic">"If it's urgent, please text Lance immediately at 770.549.9358!"</p>
+                    </div>
+                </section>
+
+                <section class="bg-green-900/5 p-6 rounded-lg border border-green-900/20">
+                    <h3 class="text-lg font-bold text-green-900 mb-2">Cleanliness Check</h3>
+                    <label class="flex items-start space-x-3 cursor-pointer">
+                        <input type="checkbox" name="cleaning_done" class="mt-1 w-5 h-5 accent-green-800" required>
+                        <span class="text-sm text-stone-700">We've stripped the sheets, washed the towels, and taken out the trash.</span>
+                    </label>
+                </section>
+
+                <button type="submit" class="w-full bg-green-900 text-white font-bold py-4 rounded hover:bg-black transition shadow-lg uppercase tracking-widest">
+                    Submit Update
+                </button>
+            </form>
+
+            <footer class="mt-12 text-center text-xs text-stone-500 uppercase tracking-widest border-t border-stone-200 pt-6">
+                Weeks Creek Haven | 421 Weeks Creek Rd
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // Mobile Menu Toggle
+        const btn = document.getElementById('mobile-menu-button');
+        const menu = document.getElementById('mobile-menu');
+        if(btn && menu) {
+            btn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+            });
+        }
+    </script>
+</body>
+</html>

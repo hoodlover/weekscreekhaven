@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guest Book | Weeks Creek Haven</title>
+    
+    <link rel="icon" type="image/png" href="/webpic/Weeks_Creek_Haven_Favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
+        h1, h2, h3 { font-family: 'Crimson Text', serif; }
+        
+        /* Wood Button Transition and Responsive Sizing */
+        .wood-btn {
+            transition: transform 0.2s ease;
+            height: 50px;
+            width: auto;
+            display: block;
+        }
+
+        .bg-wood { 
+            background-color: #fcfaf7;
+            background-image: linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.4)), url('/webpic/vintage-wooden-board-textured-background.jpg');
+            background-attachment: fixed;
+            background-size: cover;
+        }
+        
+        .parchment { background-color: rgba(244, 238, 224, 0.95); border: 1px solid #dcd3bd; }
+        
+        .heavy-shadow { text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2); }
+
+    .railroad-tie-nav {
+        background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('webpic/railroad-tie-texture.jpg');
+        background-size: auto 100%;
+        background-repeat: repeat-x;
+        border-bottom: 4px solid #1a1512;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+    }
+
+    .wood-btn {
+        transition: transform 0.2s ease;
+        height: 80px; 
+        width: auto;
+        display: block;
+    }
+
+    @media (min-width: 768px) {
+        .wood-btn { height: 64px; } 
+    }
+
+    @media (min-width: 1536px) {
+        .wood-btn { height: 96px; } 
+    }
+
+    .wood-btn:hover { transform: scale(1.05); }
+
+        .nav-link-group a .hover-img { display: none; }
+        .nav-link-group a:hover .normal-img { display: none; }
+        .nav-link-group a:hover .hover-img { display: block; }
+
+        /* Missing class from your original code */
+        .input-style {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid #d1cebd;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .input-style:focus { border-color: #14532d; }
+
+        @media (min-width: 1536px) { .wood-btn { height: 80px; } }
+/* This specifically stops the 5% growth on the logo images */
+.logo-link:hover .wood-btn { 
+    transform: scale(1.0) !important; 
+}
+
+
+/* 1. Position the container */
+.logo-link {
+    position: relative;
+    display: inline-block;
+    background: transparent; /* Ensures no background bleed */
+}
+
+/* 2. The Bottom Image (Normal) */
+.logo-link .normal-img {
+    opacity: 1;
+    /* We remove the transition here so it stays solid */
+    transition: none; 
+}
+
+/* 3. The Top Image (Hover) */
+.logo-link .hover-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    /* Only the top image fades in */
+    transition: opacity 0.8s ease-in-out;
+    z-index: 2;
+}
+
+/* 4. Hover State */
+.logo-link:hover .hover-img {
+    opacity: 1;
+}
+
+/* Optional: Hide the normal image ONLY after hover is complete 
+   or keep it visible underneath to prevent the 'gap' */
+.logo-link:hover .normal-img {
+    opacity: 1; /* Keeping this at 1 ensures there is always a solid image */
+}
+
+    </style>
+</head>
+<body class="bg-wood">
+
+<nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
+   <a href="index.html" class="flex-shrink-0 logo-link">
+    <img src="buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn normal-img">
+    <img src="buttons/week-creek-button-crop-hover.jpg" alt="Weeks Creek Haven" class="wood-btn hover-img">
+</a>
+    
+    <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
+        <a href="things-to-do.html">
+            <img src="buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
+            <img src="buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
+        </a>
+        <a href="need-to-know.html">
+            <img src="buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
+            <img src="buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
+        </a>
+        <a href="find-us.html">
+            <img src="buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
+            <img src="buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
+        </a>
+        <a href="gallery.html">
+            <img src="buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
+            <img src="buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
+        </a>
+        <a href="important-info.html">
+            <img src="buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
+            <img src="buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
+        </a>
+    </div>
+
+    <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none p-2 bg-black/40 rounded-lg border border-white/20">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path id="menu-icon-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+</nav>
+
+<div id="mobile-menu" class="hidden fixed inset-0 z-[60] flex flex-col items-center justify-center space-y-4 bg-stone-900/95 backdrop-blur-sm">
+    <button id="close-mobile-menu" class="absolute top-6 right-8 text-white text-5xl font-light">&times;</button>
+    
+    <a href="things-to-do.html"><img src="buttons/to-do-see.jpg" alt="To Do" class="wood-btn"></a>
+    <a href="need-to-know.html"><img src="buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn"></a>
+    <a href="find-us.html"><img src="buttons/find-cabin.jpg" alt="Find Us" class="wood-btn"></a>
+    <a href="gallery.html"><img src="buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn"></a>
+    <a href="important-info.html"><img src="buttons/friends-info.jpg" alt="Friends Info" class="wood-btn"></a>
+</div>
+
+<script>
+    // Mobile Menu Toggle Logic
+    const menuBtn = document.getElementById('mobile-menu-button');
+    const closeBtnMobile = document.getElementById('close-mobile-menu');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    function toggleMenu() {
+        mobileMenu.classList.toggle('hidden');
+        // Prevent scrolling when menu is open
+        document.body.classList.toggle('overflow-hidden');
+    }
+
+    menuBtn.addEventListener('click', toggleMenu);
+    closeBtnMobile.addEventListener('click', toggleMenu);
+
+    // Close menu if a link is clicked
+    mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        });
+    });
+
+    /* --- Keep your existing Lightbox JS below this line --- */
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    // ... rest of your lightbox code
+</script>
+    <div class="pt-32 pb-12 px-6">
+        <div class="max-w-3xl mx-auto parchment p-8 md:p-14 rounded-2xl shadow-2xl border-t-8 border-green-900">
+            
+            <header class="text-center mb-12">
+                <h1 class="text-5xl md:text-6xl font-serif italic text-green-900 mb-4 heavy-shadow">The Haven Guest Book</h1>
+                <p class="text-lg text-stone-600 font-serif italic">"Share a favorite adventure, a laugh, or your darkest secret."</p>
+            </header>
+
+            <form action="https://formspree.io/f/mzdjnprj" method="POST" enctype="multipart/form-data" class="space-y-8">
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-2">Guest Name(s)</label>
+                        <input type="text" name="guest_names" required class="w-full p-4 input-style" placeholder="The Smith Family">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-2">Dates of Stay</label>
+                        <input type="text" name="stay_dates" class="w-full p-4 input-style" placeholder="Oct 12-15, 2026">
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-serif font-bold text-stone-800 mb-2">What was your favorite mountain adventure?</label>
+                        <textarea name="favorite_adventure" rows="3" required class="w-full p-4 input-style" placeholder="Hiking the Toccoa Swinging Bridge..."></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-serif font-bold text-stone-800 mb-2">Got a laugh,scary moment or faux pas made by one in your group?</label>
+                        <textarea name="darkest_secret" rows="3" class="w-full p-4 input-style" placeholder="Keep it interesting..."></textarea>
+                    <label class="block text-sm font-serif font-bold text-stone-800 mb-2">How could we have made your stay even better?</label>
+                    <textarea name="feedback" rows="2" class="w-full p-4 input-style" placeholder="Be honest, we love to improve!"></textarea>
+                </div>
+
+                <div class="text-center pt-6">
+                    <button type="submit" class="bg-green-900 text-white font-bold py-4 px-12 rounded-full hover:bg-black transition-all shadow-xl uppercase tracking-widest">
+                        Sign the Book
+                    </button>
+                    <p class="mt-6 text-[10px] text-stone-400 italic uppercase tracking-widest">
+                        "Get Away, Have Fun and Play, Enjoy Your Stay"
+                    </p>
+                </div>
+            </form>
+        </div>
+
+        <footer class="mt-12 text-center text-xs text-stone-500 uppercase tracking-widest">
+            Weeks Creek Haven | Hosted by Lance & Heather
+        </footer>
+    </div>
+
+    <script>
+        const btn = document.getElementById('mobile-menu-button');
+        const menu = document.getElementById('mobile-menu');
+        if(btn) btn.onclick = () => menu?.classList.toggle('hidden');
+    </script>
+</body>
+</html>
