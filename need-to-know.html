@@ -13,7 +13,6 @@
         body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
         h1, h2, h3, h4 { font-family: 'Crimson Text', serif; }
         
-        /* Unified Dark Shadow from Index */
         .extra-heavy-shadow {
             text-shadow: 3px 3px 6px rgba(0,0,0,1), 0px 0px 25px rgba(0,0,0,1), 0px 0px 10px rgba(0,0,0,0.8);
         }
@@ -45,7 +44,6 @@
 
         .wood-btn:hover { transform: scale(1.05); }
 
-        /* Unified Hover Logic Fix */
         .logo-link, .nav-link-group a { position: relative; display: inline-block; }
         
         .logo-link .hover-img, .nav-link-group a .hover-img {
@@ -90,8 +88,17 @@
         .zoom-card { cursor: pointer; transition: 0.3s; }
         .zoom-card:hover { transform: scale(1.02); }
 
-        .check-item { display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid rgba(139, 69, 19, 0.1); }
-        .custom-check { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 1px solid #8B4513; flex-shrink: 0; }
+        .check-item { display: flex; align-items: flex-start; gap: 15px; padding: 12px 0; border-bottom: 1px solid rgba(139, 69, 19, 0.1); }
+        .custom-check { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid #8B4513; flex-shrink: 0; margin-top: 4px; }
+        
+        .btn-subtitle {
+            display: block;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 2px;
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body class="bg-wood">
@@ -153,14 +160,27 @@
     <section class="parchment p-8 rounded-xl">
         <h2 class="section-title text-center">Quick Links & Resources</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
-            <a href="checkout.html" class="p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#8B4513] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Check Out</a>
-            <a href="cleaningchecklist.html" class="p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#8B4513] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Cleaning Checklist</a>
-            <a href="contact.html" class="p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#8B4513] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Contact Us</a>
-            <a href="maintenance.html" class="p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#8B4513] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Maintenance</a>
-            <a href="onlineguestbook.html" class="p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#8B4513] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Online Guest Book</a>
-            <a href="provisions.html" class="p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#8B4513] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Food & Stuff</a>
-            <a href="troubleshoot.html" class="p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#8B4513] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Troubleshoot Help</a>
-            <a href="important.html" class="p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#8B4513] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Guest Access</a>
+            <a href="checkout.html" class="flex flex-col justify-center p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#8B4513] hover:text-white transition-all shadow-sm">
+                <span class="font-bold uppercase text-sm tracking-widest leading-tight">Check Out</span>
+                <span class="btn-subtitle">Online Guest Book</span>
+            </a>
+
+            <a href="cleaningchecklist.html" class="flex items-center justify-center p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#8B4513] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Cleaning Checklist</a>
+            <a href="contact.html" class="flex items-center justify-center p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#8B4513] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Contact Us</a>
+
+            <a href="maintenance.html" class="flex flex-col justify-center p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#8B4513] hover:text-white transition-all shadow-sm">
+                <span class="font-bold uppercase text-sm tracking-widest leading-tight">Maintenance</span>
+                <span class="btn-subtitle">Cabin Issues to Report</span>
+            </a>
+
+            <a href="onlineguestbook.html" class="flex flex-col justify-center p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#8B4513] hover:text-white transition-all shadow-sm">
+                <span class="font-bold uppercase text-sm tracking-widest leading-tight">Online Guest Book</span>
+                <span class="btn-subtitle">Not checking out?</span>
+            </a>
+
+            <a href="provisions.html" class="flex items-center justify-center p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#8B4513] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Food & Stuff</a>
+            <a href="troubleshoot.html" class="flex items-center justify-center p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#8B4513] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Troubleshoot Help</a>
+            <a href="important.html" class="flex items-center justify-center p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#8B4513] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Guest Access</a>
         </div>
     </section>
 
@@ -197,13 +217,44 @@
     <section class="parchment p-8 md:p-12 rounded-xl">
         <h2 class="section-title">Departure Checklist</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-            <div class="text-lg">
-                <div class="check-item"><img src="webpic/checkmark.jpg" class="custom-check"> Strip sheets from used beds.</div>
-                <div class="check-item"><img src="webpic/checkmark.jpg" class="custom-check"> Start dishwasher & wash dishes.</div>
-                <div class="check-item"><img src="webpic/checkmark.jpg" class="custom-check"> Wash towels & start dryer.</div>
-                <div class="check-item"><img src="webpic/checkmark.jpg" class="custom-check"> Set fireplace to 'Pilot'.</div>
-                <div class="check-item"><img src="webpic/checkmark.jpg" class="custom-check"> Trash to bear-proof bins.</div>
-                <div class="check-item"><img src="webpic/checkmark.jpg" class="custom-check"> Say "Alexa, Going Home".</div>
+            <div class="text-base">
+                <div class="check-item">
+                    <img src="webpic/checkmark.jpg" class="custom-check">
+                    <span><strong>Trash:</strong> Bagged trash in outside deck bin. Food trash must go in the bear-proof tall garbage can.</span>
+                </div>
+                <div class="check-item">
+                    <img src="webpic/checkmark.jpg" class="custom-check">
+                    <span><strong>Dishes:</strong> Load and start dishwasher. Please do not leave dirty dishes in the sink.</span>
+                </div>
+                <div class="check-item">
+                    <img src="webpic/checkmark.jpg" class="custom-check">
+                    <span><strong>Bathrooms:</strong> Clean used bathrooms so they are ready for the next adventures.</span>
+                </div>
+                <div class="check-item">
+                    <img src="webpic/checkmark.jpg" class="custom-check">
+                    <span><strong>Fireplace:</strong> Fully off. Leave pilot light on. Close the screens.</span>
+                </div>
+                <div class="check-item">
+                    <img src="webpic/checkmark.jpg" class="custom-check">
+                    <span><strong>Linens:</strong> Strip beds and place in laundry area. Please start at least one load (start to finish).</span>
+                </div>
+                <div class="check-item">
+                    <img src="webpic/checkmark.jpg" class="custom-check">
+                    <span><strong>Hot Tub:</strong> Towels to laundry area. Close cover and lower temp to 80°F.</span>
+                </div>
+                <div class="check-item">
+                    <img src="webpic/checkmark.jpg" class="custom-check">
+                    <span><strong>Lights & Air:</strong> All lights off. Thermostat to 75°F (Summer) or 60°F (Winter).</span>
+                </div>
+                <div class="check-item">
+                    <img src="webpic/checkmark.jpg" class="custom-check">
+                    <span><strong>Lock Up:</strong> Windows closed and smart doors locked. (Say "Alexa, going out").</span>
+                </div>
+                
+                <div class="mt-8 p-4 bg-stone-200/50 border-l-4 border-[#8B4513] italic text-stone-700">
+                    "This is not an AirBnB. Let's leave it great for the next family visit."
+                </div>
+
                 <p class="italic text-stone-600 mt-6 text-sm">Check-out is at 11:00 AM.</p>
             </div>
             <div>
