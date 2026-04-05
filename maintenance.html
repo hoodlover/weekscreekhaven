@@ -45,6 +45,36 @@
    </div>
 </nav>
 
+<div id="mobile-menu" class="hidden fixed inset-0 z-[60] flex flex-col items-center justify-center space-y-4 bg-stone-900/95 backdrop-blur-sm">
+    <button id="close-mobile-menu" class="absolute top-6 right-8 text-white text-5xl font-light">&times;</button>
+    <a href="things-to-do.html"><img src="buttons/to-do-see.jpg" alt="To Do" class="wood-btn"></a>
+    <a href="need-to-know.html"><img src="buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn"></a>
+    <a href="find-us.html"><img src="buttons/find-cabin.jpg" alt="Find Us" class="wood-btn"></a>
+    <a href="gallery.html"><img src="buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn"></a>
+    <a href="important-info.html"><img src="buttons/friends-info.jpg" alt="Friends Info" class="wood-btn"></a>
+</div>
+
+<script>
+    const menuBtn = document.getElementById('mobile-menu-button');
+    const closeBtnMobile = document.getElementById('close-mobile-menu');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    function toggleMenu() {
+        mobileMenu.classList.toggle('hidden');
+        document.body.classList.toggle('overflow-hidden');
+    }
+
+    menuBtn.addEventListener('click', toggleMenu);
+    closeBtnMobile.addEventListener('click', toggleMenu);
+
+    mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        });
+    });
+</script>
+
 <div class="min-h-screen pt-32 pb-12 px-6 flex flex-col items-center">
     <div class="parchment p-8 md:p-14 rounded-2xl shadow-2xl max-w-3xl w-full border-t-8 border-orange-800">
         <h1 class="text-4xl text-orange-900 mb-2 italic">Report a Cabin Issue</h1>

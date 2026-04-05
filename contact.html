@@ -51,12 +51,13 @@ p {
         }
 
         /* Wood Background Classes */
+        .bg-wood { background-color: #1a1512; background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('webpic/vintage-wooden-board-textured-background.jpg'); background-attachment: fixed; background-size: cover; }
         .bg-about-wood { 
             background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('webpic/heap-various-size-wood-log_1150-38093.jpg'); 
             background-size: cover; background-position: center;
         }
         .bg-rules-wood { 
-            background-image: url('webpic/lightbardwood..jpg'); 
+            background-image: url('webpic/lightbardwood.jpg'); 
             background-size: cover; background-position: center;
         }
         .bg-book-wood { 
@@ -188,22 +189,13 @@ p {
     </svg>
 </button>
 </nav>
-<div id="mobile-menu" class="hidden fixed inset-0 z-40 flex flex-col items-center justify-center space-y-2 nav-link-group">
-    <a href="things-to-do.html">
-        <img src="buttons/to-do-see.jpg" alt="To Do" class="wood-btn">
-    </a>
-    <a href="need-to-know.html">
-        <img src="buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn">
-    </a>
-    <a href="find-us.html">
-        <img src="buttons/find-cabin.jpg" alt="Find Us" class="wood-btn">
-    </a>
-    <a href="gallery.html">
-        <img src="buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn">
-    </a>
-    <a href="important-info.html">
-        <img src="buttons/friends-info.jpg" alt="Friends Info" class="wood-btn">
-    </a>
+<div id="mobile-menu" class="hidden fixed inset-0 z-[60] flex flex-col items-center justify-center space-y-4 bg-stone-900/95 backdrop-blur-sm">
+    <button id="close-mobile-menu" class="absolute top-6 right-8 text-white text-5xl font-light">&times;</button>
+    <a href="things-to-do.html"><img src="buttons/to-do-see.jpg" alt="To Do" class="wood-btn"></a>
+    <a href="need-to-know.html"><img src="buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn"></a>
+    <a href="find-us.html"><img src="buttons/find-cabin.jpg" alt="Find Us" class="wood-btn"></a>
+    <a href="gallery.html"><img src="buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn"></a>
+    <a href="important-info.html"><img src="buttons/friends-info.jpg" alt="Friends Info" class="wood-btn"></a>
 </div>
 
     <header class="relative h-[60vh] flex flex-col items-center justify-center text-white overflow-hidden">
@@ -276,16 +268,25 @@ p {
        
     </footer>
 
-    <script>
-        const menuBtn = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const menuIcon = document.getElementById('menu-icon');
+<script>
+    const menuBtn = document.getElementById('mobile-menu-button');
+    const closeBtnMobile = document.getElementById('close-mobile-menu');
+    const mobileMenu = document.getElementById('mobile-menu');
 
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-            const isOpen = !mobileMenu.classList.contains('hidden');
-            menuIcon.setAttribute('d', isOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16');
+    function toggleMenu() {
+        mobileMenu.classList.toggle('hidden');
+        document.body.classList.toggle('overflow-hidden');
+    }
+
+    menuBtn.addEventListener('click', toggleMenu);
+    closeBtnMobile.addEventListener('click', toggleMenu);
+
+    mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
         });
-    </script>
+    });
+</script>
 </body>
 </html>
