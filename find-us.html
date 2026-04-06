@@ -168,30 +168,50 @@
 <main class="pt-32 px-6">
     <section class="max-w-6xl mx-auto pt-10 pb-24 px-6">
         
-        <section class="grid md:grid-cols-2 gap-12 mb-20 items-start">
-            <div class="space-y-6">
-                <h2 class="text-6xl italic extra-heavy-shadow accent-green text-readable">Your Way to the Haven</h2>
-                <p class="text-xl font-semibold leading-relaxed text-readable">
-                    We are located at <strong class="text-white">421 Weeks Creek Rd</strong>. While the drive is beautiful, mountain roads can be tricky for GPS.
-                </p>
-                
-                <div class="bg-amber-50 border-l-8 border-amber-500 p-6 rounded-r-lg shadow-xl">
-                    <h4 class="font-extrabold text-amber-900 mb-2 uppercase tracking-tight text-base">The "No Cell Service" Pro-Tip</h4>
-                    <p class="text-amber-950 text-sm font-bold leading-relaxed">
-                        Cell service drops significantly as you enter the Aska Adventure Area. Load your GPS directions while you are still in downtown Blue Ridge or at home. Once you arrive, our High-Speed Fiber Wi-Fi will get you back online instantly!
+        <section class="mb-20">
+            <div class="grid md:grid-cols-2 gap-12 items-start mb-12">
+                <div class="space-y-6">
+                    <h2 class="text-6xl italic extra-heavy-shadow accent-green text-readable">Your Way to the Haven</h2>
+                    <p class="text-xl font-semibold leading-relaxed text-readable">
+                        We are located at <strong class="text-white">421 Weeks Creek Rd</strong>. While the drive is beautiful, mountain roads can be tricky for GPS.
                     </p>
+                    
+                    <div class="bg-amber-50 border-l-8 border-amber-500 p-6 rounded-r-lg shadow-xl">
+                        <h4 class="font-extrabold text-amber-900 mb-2 uppercase tracking-tight text-base">The "No Cell Service" Pro-Tip</h4>
+                        <p class="text-amber-950 text-sm font-bold leading-relaxed">
+                            Cell service drops significantly as you enter the Aska Adventure Area. Load your GPS directions while you are still in downtown Blue Ridge or at home. Once you arrive, our High-Speed Fiber Wi-Fi will get you back online instantly!
+                        </p>
+                    </div>
+
+                    <div class="pt-4">
+                        <a href="https://www.google.com/maps/dir/?api=1&destination=421+Weeks+Creek+Rd,+Blue+Ridge,+GA+30513" target="_blank" class="inline-block bg-green-700 text-white px-10 py-4 rounded-full font-extrabold text-lg shadow-2xl hover:bg-green-600 hover:scale-105 transition transform">Open in Google Maps</a>
+                    </div>
                 </div>
 
-                <div class="pt-4">
-                    <a href="https://www.google.com/maps/dir/?api=1&destination=421+Weeks+Creek+Rd,+Blue+Ridge,+GA+30513" target="_blank" class="inline-block bg-green-700 text-white px-10 py-4 rounded-full font-extrabold text-lg shadow-2xl hover:bg-green-600 hover:scale-105 transition transform">Open in Google Maps</a>
+                <div class="space-y-4">
+                    <div onclick="openLocalMapModal()" class="border-8 border-white rounded-lg overflow-hidden cursor-zoom-in transition-transform duration-300 ease-in-out hover:scale-105" style="box-shadow: 0 25px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.1);">
+                        <img src="webpic/localmap.jpg" alt="Illustrated map to Weeks Creek Haven showing Weeks Creek Road, Dial Road, Van Zandt's Store, and the Toccoa River" class="w-full h-auto block pointer-events-none">
+                    </div>
+                    <p class="text-sm text-stone-300 font-bold text-center italic text-readable">Look for the <b>'Welcome Friends'</b> cedar sign at the driveway just after the road splits. Stay left. <span class="text-stone-500 not-italic">(click to enlarge)</span></p>
+                </div>
+
+                <!-- Local Map Fullsize Modal -->
+                <div id="localmap-modal" class="hidden fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeLocalMapModal()">
+                    <span class="absolute top-5 right-10 text-white text-6xl cursor-pointer font-light leading-none">&times;</span>
+                    <img src="webpic/localmap.jpg" alt="Illustrated map to Weeks Creek Haven" class="max-w-full max-h-[90vh] rounded-lg shadow-2xl border-4 border-white object-contain">
                 </div>
             </div>
 
-            <div class="space-y-4">
-                <div class="map-container border-8 border-white shadow-2xl rounded-lg overflow-hidden">
+            <!-- Google Maps Embed Section -->
+            <div class="mt-10">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="flex-1 h-px bg-stone-600"></div>
+                    <h3 class="text-3xl italic accent-green text-readable whitespace-nowrap font-bold">Navigate with Google Maps</h3>
+                    <div class="flex-1 h-px bg-stone-600"></div>
+                </div>
+                <div class="map-container border-8 border-white shadow-2xl rounded-lg overflow-hidden" style="box-shadow: 0 25px 60px rgba(0,0,0,0.7);">
                     <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3293.418047913387!2d-84.23847992427027!3d34.801657472882324!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x885f97305943714b%3A0xc3f58a5e128913b7!2s421%20Weeks%20Creek%20Rd%2C%20Blue%20Ridge%2C%20GA%2030513!5e0!3m2!1sen!2sus!4v1710185000000!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
                 </div>
-                <p class="text-sm text-stone-300 font-bold text-center italic text-readable">Tip: Look for the <b>'Welcome Friends'</b> cedar sign at the driveway just after the road splits. Stay left.</p>
             </div>
         </section>
 
@@ -267,6 +287,16 @@
             document.body.classList.remove('overflow-hidden');
         });
     });
+
+    function openLocalMapModal() {
+        document.getElementById('localmap-modal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLocalMapModal() {
+        document.getElementById('localmap-modal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
 
     function openModal() {
         const modal = document.getElementById('image-modal');
