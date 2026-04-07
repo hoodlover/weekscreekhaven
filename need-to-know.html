@@ -158,21 +158,38 @@
 
 <main class="max-w-6xl mx-auto py-16 px-6 space-y-20">
 
-<section id="weather-section" class="parchment p-8 rounded-xl flex flex-col md:flex-row items-center justify-between gap-6 opacity-0 transition-opacity duration-500">
-    <div class="text-center md:text-left">
-        <h2 class="text-3xl font-serif text-[#8B4513] uppercase tracking-tight">Creek Weather</h2>
-        <p id="weather-desc" class="italic text-stone-600 lowercase capitalize">Loading local conditions...</p>
+<section id="weather-section" class="parchment p-8 md:p-12 rounded-xl opacity-0 transition-opacity duration-700">
+    <div class="flex flex-col md:flex-row justify-between items-start mb-8 border-b border-stone-300 pb-6">
+        <div>
+            <h2 class="section-title mb-2">7-Day Creek Outlook</h2>
+            <p id="weather-summary" class="text-lg italic text-stone-600">Loading your mountain forecast...</p>
+        </div>
+        <div class="text-right hidden md:block">
+            <p class="text-xs uppercase tracking-widest font-bold text-[#8B4513]">Blue Ridge, GA</p>
+            <p id="current-temp-large" class="text-5xl font-serif text-[#8B4513]">--°F</p>
+        </div>
     </div>
-    <div class="flex items-center gap-4">
-        <div id="weather-icon-container" class="w-16 h-16 bg-[#8B4513]/10 rounded-full flex items-center justify-center">
-            </div>
-        <div class="text-5xl font-serif text-[#8B4513]" id="current-temp">--°F</div>
-    </div>
-    <div class="grid grid-cols-2 gap-4 text-xs font-bold uppercase tracking-widest text-stone-500">
-        <div>High: <span id="temp-max" class="text-stone-800">--°</span></div>
-        <div>Low: <span id="temp-min" class="text-stone-800">--°</span></div>
-        <div>Humidity: <span id="humidity" class="text-stone-800">--%</span></div>
-        <div>Wind: <span id="wind" class="text-stone-800">--mph</span></div>
+
+    <div id="forecast-7day" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
+        </div>
+
+    <div class="mt-8 pt-6 border-t border-stone-300 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+        <div>
+            <p class="text-[10px] uppercase tracking-widest font-bold text-stone-500">Humidity</p>
+            <p id="stat-humidity" class="text-lg font-serif text-stone-800">--%</p>
+        </div>
+        <div>
+            <p class="text-[10px] uppercase tracking-widest font-bold text-stone-500">Wind Speed</p>
+            <p id="stat-wind" class="text-lg font-serif text-stone-800">-- mph</p>
+        </div>
+        <div>
+            <p class="text-[10px] uppercase tracking-widest font-bold text-stone-500">UV Index</p>
+            <p id="stat-uv" class="text-lg font-serif text-stone-800">--</p>
+        </div>
+        <div>
+            <p class="text-[10px] uppercase tracking-widest font-bold text-stone-500">Sunset</p>
+            <p id="stat-sunset" class="text-lg font-serif text-stone-800">--:--</p>
+        </div>
     </div>
 </section>
 
@@ -330,33 +347,52 @@
 </script>
 
 <script>
-async function loadCreekWeather() {
+async function loadDetailedWeather() {
     try {
         const response = await fetch('/api/weather');
         const data = await response.json();
         
-        // Update the UI with data from OpenWeatherMap
-        document.getElementById('current-temp').innerText = `${Math.round(data.current.temp)}°F`;
-        document.getElementById('weather-desc').innerText = data.current.weather[0].description;
-        document.getElementById('temp-max').innerText = `${Math.round(data.daily[0].temp.max)}°`;
-        document.getElementById('temp-min').innerText = `${Math.round(data.daily[0].temp.min)}°`;
-        document.getElementById('humidity').innerText = `${data.current.humidity}%`;
-        document.getElementById('wind').innerText = `${Math.round(data.current.wind_speed)} mph`;
+        // 1. Current Overview
+        document.getElementById('current-temp-large').innerText = `${Math.round(data.current.temp)}°F`;
+        document.getElementById('weather-summary').innerText = data.daily[0].summary || data.current.weather[0].description;
+        
+        // 2. Cabin Stats
+        document.getElementById('stat-humidity').innerText = `${data.current.humidity}%`;
+        document.getElementById('stat-wind').innerText = `${Math.round(data.current.wind_speed)} mph`;
+        document.getElementById('stat-uv').innerText = data.current.uvi;
+        
+        const sunsetTime = new Date(data.current.sunset * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('stat-sunset').innerText = sunsetTime;
 
-        // Load the official OpenWeather icon
-        const iconCode = data.current.weather[0].icon;
-        document.getElementById('weather-icon-container').innerHTML = 
-            `<img src="https://openweathermap.org/img/wn/${iconCode}@2x.png" alt="weather">`;
+        // 3. Build the 7-Day Forecast
+        const container = document.getElementById('forecast-7day');
+        container.innerHTML = ''; 
 
-        // Fade the section in
+        data.daily.slice(0, 7).forEach((day, index) => {
+            const date = new Date(day.dt * 1000);
+            const dayName = index === 0 ? 'Today' : date.toLocaleDateString('en-US', { weekday: 'short' });
+            const monthDay = date.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
+
+            container.innerHTML += `
+                <div class="flex flex-col items-center p-4 bg-stone-100/50 rounded-lg border border-stone-200">
+                    <p class="text-[10px] font-bold uppercase text-[#8B4513]">${dayName}</p>
+                    <p class="text-[9px] text-stone-500 mb-2">${monthDay}</p>
+                    <img src="https://openweathermap.org/img/wn/${day.weather[0].icon}.png" class="w-10 h-10" alt="weather">
+                    <div class="text-sm font-bold text-stone-800">
+                        ${Math.round(day.temp.max)}° <span class="text-stone-400 font-normal">/ ${Math.round(day.temp.min)}°</span>
+                    </div>
+                    <p class="text-[9px] text-blue-500 mt-2 font-bold">${Math.round(day.pop * 100)}% Rain</p>
+                </div>
+            `;
+        });
+
         document.getElementById('weather-section').classList.remove('opacity-0');
     } catch (err) {
-        console.error("Weather failed to load:", err);
+        console.error("Detailed weather failed:", err);
     }
 }
 
-// Run the function when the page loads
-window.addEventListener('DOMContentLoaded', loadCreekWeather);
+window.addEventListener('DOMContentLoaded', loadDetailedWeather);
 </script>
 
 </body>
