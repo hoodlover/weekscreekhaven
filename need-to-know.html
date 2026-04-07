@@ -218,6 +218,29 @@
         </div>
     </section>
 
+	<section class="parchment p-8 md:p-12 rounded-xl">
+    <div class="flex flex-col md:flex-row justify-between items-end mb-6">
+        <div>
+            <h2 class="section-title mb-2">Pack Accordingly</h2>
+            <p class="text-lg italic text-stone-600">Mountain weather changes fast—check the 7-day outlook for Blue Ridge.</p>
+        </div>
+        <p class="text-xs uppercase tracking-widest font-bold text-[#8B4513] pb-2">Elevation: ~1,700 ft</p>
+    </div>
+    
+    <a class="weatherwidget-io" href="https://forecast7.com/en/34p86_84p32/blue-ridge/" 
+       data-label_1="BLUE RIDGE" 
+       data-label_2="7-DAY FORECAST" 
+       data-font="Crimson Text" 
+       data-icons="Climacons Animated" 
+       data-days="7" 
+       data-theme="original" 
+       data-basecolor="#f4eee0" 
+       data-accent="rgba(139, 69, 19, 0.1)" 
+       data-textcolor="#3d3128" 
+       data-highcolor="#8B4513" 
+       data-lowcolor="#5a3a22">BLUE RIDGE FORECAST</a>
+</section>
+
     <section class="parchment p-8 md:p-12 rounded-xl">
         <h2 class="section-title">Departure Checklist</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
@@ -309,6 +332,9 @@
         document.getElementById("myModal").style.display = "none";
         document.body.style.overflow = "auto"; 
     }
+</script>
+<script>
+    !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
 </script>
 </body>
 </html>
