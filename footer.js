@@ -48,7 +48,7 @@
              class="mb-4 mx-auto w-full max-w-md rounded-lg opacity-80 hover:opacity-100 transition-opacity">
         <p class="text-white text-xl font-serif italic extra-heavy-shadow normal-case mb-1">Weeks Creek Haven</p>
         <p class="text-stone-200 extra-heavy-shadow mb-2">421 Weeks Creek Rd | Blue Ridge, GA 30513</p>
-        <p class="text-stone-350">&copy; 2026 H &amp; L Havens, LLC | Blue Ridge, Georgia</p>
+        <p class="text-stone-300">&copy; 2026 H &amp; L Havens, LLC | Blue Ridge, Georgia</p>
       </div>
 
     </footer>
