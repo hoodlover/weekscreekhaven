@@ -32,6 +32,7 @@
       .wch-nav-link {
         display: inline-block;
         color: #15803d;
+        background: rgba(255,255,255,0.08);
         border: 1px solid rgba(21,128,61,0.55);
         border-radius: 4px;
         padding: 3px 10px;
@@ -52,6 +53,7 @@
       .wch-nav-link-active {
         display: inline-block;
         color: #fff;
+        background: rgba(255,255,255,0.08);
         border: 1px solid rgba(255,255,255,0.4);
         border-radius: 4px;
         padding: 3px 10px;
@@ -112,4 +114,4 @@
     injectFooter();
   }
 
-})();
+})();S
