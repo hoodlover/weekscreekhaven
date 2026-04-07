@@ -57,7 +57,7 @@
       <a href="need-to-know.html"> <img src="buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn"></a>
       <a href="find-us.html">      <img src="buttons/find-cabin.jpg"   alt="Find Us"      class="wood-btn"></a>
       <a href="checkout.html">     <img src="buttons/check.jpg"        alt="Checkout"     class="wood-btn"></a>
-     // <a href="gallery.html">      <img src="buttons/cabin-gallery.jpg" alt="Gallery"     class="wood-btn"></a>
+      <a href="gallery.html">      <img src="buttons/submit-hover.jpg" alt="Gallery"     class="wood-btn"></a>
       <a href="important-info.html"><img src="buttons/friends-info.jpg" alt="Friends Info" class="wood-btn"></a>
     </div>
   `;

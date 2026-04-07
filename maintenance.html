@@ -41,27 +41,8 @@
 </head>
 <body class="bg-wood">
 
-<nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 flex justify-between items-center">
-   <a href="index.html" class="flex-shrink-0">
-    <img src="buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn">
-   </a>
-   <div class="hidden md:flex space-x-2">
-        <a href="things-to-do.html"><img src="buttons/to-do-see.jpg" alt="To Do" class="wood-btn"></a>
-        <a href="need-to-know.html"><img src="buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn"></a>
-        <a href="maintenance.html"><img src="buttons/friends-info.jpg" alt="Upkeep" class="wood-btn"></a>
-   </div>
-</nav>
-
-<div id="mobile-menu" class="hidden fixed inset-0 z-[60] flex flex-col items-center justify-center space-y-1 nav-link-group">
-    <button id="close-mobile-menu" class="absolute top-6 right-8 text-white text-5xl font-light">&times;</button>
-    <a href="index.html"><img src="buttons/home.jpg" alt="Home" class="wood-btn"></a> 
-    <a href="things-to-do.html"><img src="buttons/to-do-see.jpg" alt="To Do" class="wood-btn"></a>
-    <a href="need-to-know.html"><img src="buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn"></a>
-    <a href="find-us.html"><img src="buttons/find-cabin.jpg" alt="Find Us" class="wood-btn"></a>
-    <a href="checkout.html"><img src="buttons/check.jpg" alt="Checkout" class="wood-btn"></a>
-    <a href="gallery.html"><img src="buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn"></a>
-    <a href="important-info.html"><img src="buttons/friends-info.jpg" alt="Friends Info" class="wood-btn"></a>
-</div>
+<div id="nav-placeholder"></div>
+<script src="nav.js"></script>
 
 <script>
     const menuBtn = document.getElementById('mobile-menu-button');
@@ -144,9 +125,9 @@
             </button>
         </form>
 
-        <footer class="mt-12 text-center text-xs text-stone-500 uppercase tracking-widest border-t border-stone-200 pt-6">
-            Weeks Creek Haven | 421 Weeks Creek Rd
-        </footer>
+     <div id="footer-placeholder"></div>
+<script src="footer.js"></script>
+
     </div>
 </div>
 
