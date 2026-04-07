@@ -158,6 +158,24 @@
 
 <main class="max-w-6xl mx-auto py-16 px-6 space-y-20">
 
+<section id="weather-section" class="parchment p-8 rounded-xl flex flex-col md:flex-row items-center justify-between gap-6 opacity-0 transition-opacity duration-500">
+    <div class="text-center md:text-left">
+        <h2 class="text-3xl font-serif text-[#8B4513] uppercase tracking-tight">Creek Weather</h2>
+        <p id="weather-desc" class="italic text-stone-600 lowercase capitalize">Loading local conditions...</p>
+    </div>
+    <div class="flex items-center gap-4">
+        <div id="weather-icon-container" class="w-16 h-16 bg-[#8B4513]/10 rounded-full flex items-center justify-center">
+            </div>
+        <div class="text-5xl font-serif text-[#8B4513]" id="current-temp">--°F</div>
+    </div>
+    <div class="grid grid-cols-2 gap-4 text-xs font-bold uppercase tracking-widest text-stone-500">
+        <div>High: <span id="temp-max" class="text-stone-800">--°</span></div>
+        <div>Low: <span id="temp-min" class="text-stone-800">--°</span></div>
+        <div>Humidity: <span id="humidity" class="text-stone-800">--%</span></div>
+        <div>Wind: <span id="wind" class="text-stone-800">--mph</span></div>
+    </div>
+</section>
+
     <section class="parchment p-8 rounded-xl">
         <h2 class="section-title text-center">Quick Links & Resources</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
@@ -217,29 +235,6 @@
             <img src="webpic/trash.png" class="zoom-card pic-outline shadow-2xl w-full" onclick="openModal(this.src)">
         </div>
     </section>
-
-	<section class="parchment p-8 md:p-12 rounded-xl">
-    <div class="flex flex-col md:flex-row justify-between items-end mb-6">
-        <div>
-            <h2 class="section-title mb-2">Pack Accordingly</h2>
-            <p class="text-lg italic text-stone-600">Mountain weather changes fast—check the 7-day outlook for Blue Ridge.</p>
-        </div>
-        <p class="text-xs uppercase tracking-widest font-bold text-[#8B4513] pb-2">Elevation: ~1,700 ft</p>
-    </div>
-    
-    <a class="weatherwidget-io" href="https://forecast7.com/en/34p86_84p32/blue-ridge/" 
-       data-label_1="BLUE RIDGE" 
-       data-label_2="7-DAY FORECAST" 
-       data-font="Crimson Text" 
-       data-icons="Climacons Animated" 
-       data-days="7" 
-       data-theme="original" 
-       data-basecolor="#f4eee0" 
-       data-accent="rgba(139, 69, 19, 0.1)" 
-       data-textcolor="#3d3128" 
-       data-highcolor="#8B4513" 
-       data-lowcolor="#5a3a22">BLUE RIDGE FORECAST</a>
-</section>
 
     <section class="parchment p-8 md:p-12 rounded-xl">
         <h2 class="section-title">Departure Checklist</h2>
@@ -333,8 +328,32 @@
         document.body.style.overflow = "auto"; 
     }
 </script>
-<script>
-    !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
-</script>
+async function loadCreekWeather() {
+    try {
+        const response = await fetch('/api/weather');
+        const data = await response.json();
+        
+        // Update the UI with data from OpenWeatherMap
+        document.getElementById('current-temp').innerText = `${Math.round(data.current.temp)}°F`;
+        document.getElementById('weather-desc').innerText = data.current.weather[0].description;
+        document.getElementById('temp-max').innerText = `${Math.round(data.daily[0].temp.max)}°`;
+        document.getElementById('temp-min').innerText = `${Math.round(data.daily[0].temp.min)}°`;
+        document.getElementById('humidity').innerText = `${data.current.humidity}%`;
+        document.getElementById('wind').innerText = `${Math.round(data.current.wind_speed)} mph`;
+
+        // Load the official OpenWeather icon
+        const iconCode = data.current.weather[0].icon;
+        document.getElementById('weather-icon-container').innerHTML = 
+            `<img src="https://openweathermap.org/img/wn/${iconCode}@2x.png" alt="weather">`;
+
+        // Fade the section in
+        document.getElementById('weather-section').classList.remove('opacity-0');
+    } catch (err) {
+        console.error("Weather failed to load:", err);
+    }
+}
+
+// Run the function when the page loads
+window.addEventListener('DOMContentLoaded', loadCreekWeather);
 </body>
 </html>
