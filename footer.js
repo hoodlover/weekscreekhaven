@@ -34,7 +34,7 @@
 
   // ── Full footer HTML ─────────────────────────────────────
   const footerHTML = `
-    <footer class="py-6 px-6 text-center bg-footer-wood">
+    <footer class="pt-2 pb-6 px-6 text-center bg-footer-wood">
 
       <!-- Nav links row -->
       <div class="max-w-6xl mx-auto flex flex-wrap justify-center gap-6 mb-4">
@@ -48,7 +48,7 @@
              class="mb-4 mx-auto w-full max-w-md rounded-lg opacity-80 hover:opacity-100 transition-opacity">
         <p class="text-white text-xl font-serif italic extra-heavy-shadow normal-case mb-1">Weeks Creek Haven</p>
         <p class="text-stone-200 extra-heavy-shadow mb-2">421 Weeks Creek Rd | Blue Ridge, GA 30513</p>
-        <p>&copy; 2026 H &amp; L Havens, LLC | Blue Ridge, Georgia</p>
+        <p class="text-stone-200">&copy; 2026 H &amp; L Havens, LLC | Blue Ridge, Georgia</p>
       </div>
 
     </footer>
