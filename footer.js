@@ -24,12 +24,14 @@
   // ── Figure out which page we're on ──────────────────────
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 
+  // ── Shared styles ────────────────────────────────────────
+  const baseStyle   = 'color:#15803d; border:1px solid rgba(21,128,61,0.55); border-radius:4px; padding:3px 10px; text-shadow:0 0 10px rgba(21,128,61,0.8), 1px 1px 0 #000;';
+  const activeStyle = 'color:#fff; border:1px solid rgba(255,255,255,0.4); border-radius:4px; padding:3px 10px; text-shadow:0 1px 4px rgba(0,0,0,0.9), 1px 1px 0 #000; cursor:default; pointer-events:none;';
+
   // ── Build the nav link HTML ──────────────────────────────
   const linksHTML = navLinks.map(link => {
     const isActive = link.href === currentPage;
-    const activeClasses = 'text-white border-b border-white/50 cursor-default pointer-events-none';
-    const normalClasses = 'text-green-400 hover:text-white';
-    return `<a href="${link.href}" class="${isActive ? activeClasses : normalClasses} text-xs font-bold uppercase tracking-widest">${link.label}</a>`;
+    return `<a href="${link.href}" class="text-sm font-bold uppercase tracking-widest" style="${isActive ? activeStyle : baseStyle}">${link.label}</a>`;
   }).join('\n');
 
   // ── Full footer HTML ─────────────────────────────────────
@@ -37,7 +39,7 @@
     <footer class="pt-2 pb-2 px-6 text-center bg-footer-wood">
 
       <!-- Nav links row -->
-      <div class="max-w-6xl mx-auto flex flex-wrap justify-center gap-6 mb-4">
+      <div class="max-w-6xl mx-auto flex flex-wrap justify-center gap-3 mb-4">
         ${linksHTML}
       </div>
 
