@@ -30,12 +30,13 @@
         @media (min-width: 768px) { .wood-btn { height: 64px; } }
         @media (min-width: 1536px) { .wood-btn { height: 96px; } } */
 
-	/* In your <style> block — change these three lines: */
-.wood-btn { height: 89px; }          /* was 80px — mobile */
+		.wood-btn { height: 80px; }          /* was 80px — mobile */
 
-@media (min-width: 768px)  { .wood-btn { height: 80px; } }   /* was 64px — desktop */
+@media (min-width: 768px)  { .wood-btn { height: 74px; } }   /* was 64px — desktop */
 @media (min-width: 1536px) { .wood-btn { height: 112px; } }  /* was 96px — 2xl */
         #mobile-menu { background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('webpic/railroad-tie-texture.jpg'); background-size: cover; }
+
+    .wood-btn:hover { transform: scale(1.05); }
 		
         .wood-btn:hover { transform: scale(1.05); }
         .logo-link:hover .wood-btn { transform: scale(1.0) !important; }

@@ -40,20 +40,12 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.8);
         }
 
-        .wood-btn {
-            transition: transform 0.2s ease;
-            height: 80px; 
-            width: auto;
-            display: block;
-        }
+	.wood-btn { height: 80px; }          /* was 80px — mobile */
 
-        @media (min-width: 768px) {
-            .wood-btn { height: 64px; } 
-        }
-
-        @media (min-width: 1536px) {
-            .wood-btn { height: 96px; } 
-        }
+@media (min-width: 768px)  { .wood-btn { height: 74px; } }   /* was 64px — desktop */
+@media (min-width: 1536px) { .wood-btn { height: 112px; } }  /* was 96px — 2xl */
+        
+    .wood-btn:hover { transform: scale(1.05); }
 
         .wood-btn:hover { transform: scale(1.05); }
         .nav-link-group a .hover-img { display: none; }
