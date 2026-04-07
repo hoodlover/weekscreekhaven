@@ -26,9 +26,15 @@
         .bg-book-wood { background-image: url('webpic/rusticboards.jpg'); background-size: cover; background-position: center; }
         .bg-footer-wood { background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('webpic/barn.jpg'); background-size: cover; background-position: center; }
         .railroad-tie-nav { background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('webpic/railroad-tie-texture.jpg'); background-size: auto 100%; background-repeat: repeat-x; border-bottom: 4px solid #1a1512; box-shadow: 0 4px 20px rgba(0,0,0,0.8); }
-        .wood-btn { transition: transform 0.2s ease; height: 80px; width: auto; display: block; }
+        /* .wood-btn { transition: transform 0.2s ease; height: 80px; width: auto; display: block; }
         @media (min-width: 768px) { .wood-btn { height: 64px; } }
-        @media (min-width: 1536px) { .wood-btn { height: 96px; } }
+        @media (min-width: 1536px) { .wood-btn { height: 96px; } } */
+
+	/* In your <style> block — change these three lines: */
+.wood-btn { height: 80px; }          /* was 80px — mobile */
+
+@media (min-width: 768px)  { .wood-btn { height: 80px; } }   /* was 64px — desktop */
+@media (min-width: 1536px) { .wood-btn { height: 112px; } }  /* was 96px — 2xl */
         .wood-btn:hover { transform: scale(1.05); }
         .logo-link:hover .wood-btn { transform: scale(1.0) !important; }
         .logo-link { position: relative; display: inline-block; }
