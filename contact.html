@@ -147,50 +147,8 @@ p {
 </head>
 <body class="bg-wood">
 
-<nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
-   <a href="index.html" class="flex-shrink-0 logo-link">
-    <img src="buttons/week-creek-button-crop.jpg" alt="Weeks Creek Haven" class="wood-btn normal-img">
-    <img src="buttons/week-creek-button-crop-hover.jpg" alt="Weeks Creek Haven" class="wood-btn hover-img">
-</a>
-    
-    <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
-        <a href="things-to-do.html">
-            <img src="buttons/to-do-see.jpg" alt="To Do & See" class="wood-btn normal-img">
-            <img src="buttons/to-do-see-hover.jpg" alt="To Do & See" class="wood-btn hover-img">
-        </a>
-        <a href="need-to-know.html">
-            <img src="buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn normal-img">
-            <img src="buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
-        </a>
-        <a href="find-us.html">
-            <img src="buttons/find-cabin.jpg" alt="Find Us" class="wood-btn normal-img">
-            <img src="buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
-        </a>
-        <a href="gallery.html">
-            <img src="buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn normal-img">
-            <img src="buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
-        </a>
-        <a href="important-info.html">
-            <img src="buttons/friends-info.jpg" alt="Friends Info" class="wood-btn normal-img">
-            <img src="buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
-        </a>
-    </div>
-<button id="mobile-menu-button" class="md:hidden text-white focus:outline-none p-2 bg-black/20 rounded-lg border border-white/20">
-    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-    </svg>
-</button>
-</nav>
-<div id="mobile-menu" class="hidden fixed inset-0 z-[60] flex flex-col items-center justify-center space-y-1 nav-link-group">
-    <button id="close-mobile-menu" class="absolute top-6 right-8 text-white text-5xl font-light">&times;</button>
-    <a href="index.html"><img src="buttons/home.jpg" alt="Home" class="wood-btn"></a> 
-    <a href="things-to-do.html"><img src="buttons/to-do-see.jpg" alt="To Do" class="wood-btn"></a>
-    <a href="need-to-know.html"><img src="buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn"></a>
-    <a href="find-us.html"><img src="buttons/find-cabin.jpg" alt="Find Us" class="wood-btn"></a>
-    <a href="checkout.html"><img src="buttons/check.jpg" alt="Checkout" class="wood-btn"></a>
-    <a href="gallery.html"><img src="buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn"></a>
-    <a href="important-info.html"><img src="buttons/friends-info.jpg" alt="Friends Info" class="wood-btn"></a>
-</div>
+<div id="nav-placeholder"></div>
+<script src="nav.js"></script>
 
     <header class="relative h-[60vh] flex flex-col items-center justify-center text-white overflow-hidden">
 <img src="webpic/heap-various-size-wood-log_1150-38093.jpg" 
@@ -236,51 +194,8 @@ p {
 
                </section>
 
-   <footer class="py-16 px-6 text-center bg-footer-wood">
-    <div class="mt-10 text-xs text-stone-400 pt-4 border-t border-stone-800 uppercase tracking-widest flex flex-col items-center">
-            
-            <img src="webpic/Weeks_Creek_Haven_Social_Preview.png" 
-                 alt="Cabin Away From Home!" 
-                 class="mt-6 mx-auto w-full max-w-md rounded-lg opacity-80 hover:opacity-100 transition-opacity">
-				 
-				 <br><p>© 2026 Heather & Lance | Blue Ridge, Georgia</p>
-        </div>
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-8">
-            <div class="text-center md:text-left">
-                <p class="text-white text-xl font-serif italic extra-heavy-shadow">Weeks Creek Haven</p>
-                <p class="text-stone-200 extra-heavy-shadow">421 Weeks Creek Rd | Blue Ridge, GA 30513</p>
-            </div>
-            <div class="flex flex-wrap justify-center gap-6 text-xs font-bold uppercase tracking-widest text-green-400">
-                <a href="index.html" class="hover:text-white">Home</a>
-                <a href="need-to-know.html" class="hover:text-white">Need to Know</a>
-                <a href="find-us.html" class="hover:text-white">Find Us</a>
-                <a href="gallery.html" class="hover:text-white">Gallery</a>
-                <a href="important-info.html" class="hover:text-white">Friends Portal</a>
-            </div>
-        </div>
-        
-       
-    </footer>
+   <div id="footer-placeholder"></div>
+<script src="footer.js"></script>
 
-<script>
-    const menuBtn = document.getElementById('mobile-menu-button');
-    const closeBtnMobile = document.getElementById('close-mobile-menu');
-    const mobileMenu = document.getElementById('mobile-menu');
-
-    function toggleMenu() {
-        mobileMenu.classList.toggle('hidden');
-        document.body.classList.toggle('overflow-hidden');
-    }
-
-    menuBtn.addEventListener('click', toggleMenu);
-    closeBtnMobile.addEventListener('click', toggleMenu);
-
-    mobileMenu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            mobileMenu.classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-        });
-    });
-</script>
 </body>
 </html>
