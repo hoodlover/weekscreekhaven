@@ -24,14 +24,54 @@
   // ── Figure out which page we're on ──────────────────────
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 
-  // ── Shared styles ────────────────────────────────────────
-  const baseStyle   = 'color:#15803d; border:1px solid rgba(21,128,61,0.55); border-radius:4px; padding:3px 10px; text-shadow:0 0 10px rgba(21,128,61,0.8), 1px 1px 0 #000;';
-  const activeStyle = 'color:#fff; border:1px solid rgba(255,255,255,0.4); border-radius:4px; padding:3px 10px; text-shadow:0 1px 4px rgba(0,0,0,0.9), 1px 1px 0 #000; cursor:default; pointer-events:none;';
+  // ── Inject hover styles once ─────────────────────────────
+  if (!document.getElementById('wch-footer-styles')) {
+    const style = document.createElement('style');
+    style.id = 'wch-footer-styles';
+    style.textContent = `
+      .wch-nav-link {
+        display: inline-block;
+        color: #15803d;
+        border: 1px solid rgba(21,128,61,0.55);
+        border-radius: 4px;
+        padding: 3px 10px;
+        text-shadow: 0 0 10px rgba(21,128,61,0.8), 1px 1px 0 #000;
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        transition: all 0.2s ease;
+      }
+      .wch-nav-link:hover {
+        color: #fff;
+        background: rgba(21,128,61,0.35);
+        border-color: rgba(21,128,61,0.9);
+        text-shadow: 0 0 8px rgba(21,128,61,0.9), 1px 1px 0 #000;
+      }
+      .wch-nav-link-active {
+        display: inline-block;
+        color: #fff;
+        border: 1px solid rgba(255,255,255,0.4);
+        border-radius: 4px;
+        padding: 3px 10px;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.9), 1px 1px 0 #000;
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        cursor: default;
+        pointer-events: none;
+      }
+    `;
+    document.head.appendChild(style);
+  }
 
   // ── Build the nav link HTML ──────────────────────────────
   const linksHTML = navLinks.map(link => {
     const isActive = link.href === currentPage;
-    return `<a href="${link.href}" class="text-sm font-bold uppercase tracking-widest" style="${isActive ? activeStyle : baseStyle}">${link.label}</a>`;
+    return `<a href="${link.href}" class="${isActive ? 'wch-nav-link-active' : 'wch-nav-link'}">${link.label}</a>`;
   }).join('\n');
 
   // ── Full footer HTML ─────────────────────────────────────
@@ -50,7 +90,7 @@
              class="mb-4 mx-auto w-full max-w-md rounded-lg opacity-80 hover:opacity-100 transition-opacity">
         <p class="text-white text-xl font-serif italic extra-heavy-shadow normal-case mb-1">Weeks Creek Haven</p>
         <p class="text-stone-100 extra-heavy-shadow mb-2">421 Weeks Creek Rd | Blue Ridge, GA 30513</p>
-        <p class="text-stone-300" style="text-shadow: 0 1px 3px rgba(0,0,0,0.7), 0 2px 6px rgba(0,0,0,0.5);">&copy; 2026 H &amp; L Havens, LLC | Beautiful Blue Ridge</p>
+        <p class="text-stone-300" style="text-shadow: 0 1px 3px rgba(0,0,0,0.95), 0 2px 8px rgba(0,0,0,0.85), 1px 1px 0 #000;">&copy; 2026 H &amp; L Havens, LLC | Beautiful Blue Ridge</p>
       </div>
 
     </footer>
