@@ -328,6 +328,8 @@
         document.body.style.overflow = "auto"; 
     }
 </script>
+
+<script>
 async function loadCreekWeather() {
     try {
         const response = await fetch('/api/weather');
@@ -355,5 +357,7 @@ async function loadCreekWeather() {
 
 // Run the function when the page loads
 window.addEventListener('DOMContentLoaded', loadCreekWeather);
+</script>
+
 </body>
 </html>
