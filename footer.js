@@ -36,7 +36,7 @@
         border: 1px solid rgba(21,128,61,0.55);
         border-radius: 4px;
         padding: 3px 10px;
-        text-shadow: 0 0 10px rgba(21,128,61,0.8), 1px 1px 0 #000;
+        text-shadow: 0 0 10px rgba(21,128,61,1.2), 1px 1px 0 #000;
         text-decoration: none;
         font-size: 0.875rem;
         font-weight: 700;
