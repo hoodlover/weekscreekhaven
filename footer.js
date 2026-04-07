@@ -36,7 +36,12 @@
   // ── Full footer HTML ─────────────────────────────────────
   const footerHTML = `
     <footer class="py-16 px-6 text-center bg-footer-wood">
-      <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-8 mb-10">
+      
+      <div class="flex flex-col items-center border-t border-stone-800 pt-10 text-xs text-stone-400 uppercase tracking-widest">
+        <img src="webpic/Weeks_Creek_Haven_Social_Preview.png"
+             alt="Cabin Away From Home!"
+
+<div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm gap-8 mb-10">
 
         <div class="text-center md:text-left">
           <p class="text-white text-xl font-serif italic extra-heavy-shadow">Weeks Creek Haven</p>
@@ -49,9 +54,6 @@
 
       </div>
 
-      <div class="flex flex-col items-center border-t border-stone-800 pt-10 text-xs text-stone-400 uppercase tracking-widest">
-        <img src="webpic/Weeks_Creek_Haven_Social_Preview.png"
-             alt="Cabin Away From Home!"
              class="mb-6 mx-auto w-full max-w-md rounded-lg opacity-80 hover:opacity-100 transition-opacity">
         <p>&copy; 2026 H &amp; L Havens, LLC | Blue Ridge, Georgia</p>
       </div>
