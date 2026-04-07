@@ -130,10 +130,13 @@
 <div id="weather-dashboard" class="bg-black/50 backdrop-blur-xl border border-white/20 rounded-lg p-4 opacity-0 transition-opacity duration-700 shadow-2xl mb-6">
     <div class="flex justify-between items-end border-b border-white/20 pb-2 mb-3">
         <div class="flex flex-col">
-            <h3 class="text-[14px] uppercase tracking-widest font-bold text-stone-300 leading-none">Weather Status at the haven& Your 3-day forecast</h3>
+            <h3 class="text-[14px] uppercase tracking-widest font-bold text-stone-300 leading-none">Weather Stats at the haven & 3-day forecast</h3>
             <p id="ai-summary" class="text-sm italic text-white leading-tight mt-1">Loading outlook...</p>
         </div>
-        <span id="index-temp" class="text-4xl font-serif text-white font-bold leading-none drop-shadow-md">--°F</span>
+        <div class="text-right hidden md:block">
+            <p class="text-xs uppercase tracking-widest font-bold text-[#8B4513]">Blue Ridge, GA</p>
+            <p id="current-temp-large" class="text-5xl font-serif text-[#8B4513]">--°F</p>
+        </div>
     </div>
 
     <div class="grid grid-cols-3 gap-2 mb-4" id="forecast-container">
@@ -141,15 +144,15 @@
 
     <div class="flex justify-between items-center pt-3 border-t border-white/20 text-center">
         <div class="flex-1">
-            <p class="text-[10px] uppercase tracking-tighter text-stone-400 font-bold">Wind</p>
+            <p class="text-[12px] uppercase tracking-tighter text-stone-400 font-bold">Wind</p>
             <p id="stat-wind" class="text-xs text-stone-100 font-serif font-bold">-- mph</p>
         </div>
         <div class="flex-1 border-x border-white/20 px-1">
-            <p class="text-[10px] uppercase tracking-tighter text-stone-400 font-bold">Humidity</p>
+            <p class="text-[12px] uppercase tracking-tighter text-stone-400 font-bold">Humidity</p>
             <p id="stat-humidity" class="text-xs text-stone-100 font-serif font-bold">--%</p>
         </div>
         <div class="flex-1">
-            <p class="text-[10px] uppercase tracking-tighter text-stone-400 font-bold">Sunset</p>
+            <p class="text-[12px] uppercase tracking-tighter text-stone-400 font-bold">Sunset</p>
             <p id="stat-sunset" class="text-xs text-stone-100 font-serif font-bold">--:--</p>
         </div>
     </div>
@@ -165,11 +168,11 @@
                     <span class="text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-stone-300">Bedrooms</span>
                 </div>
                 <div class="bg-stone-800/60 backdrop-blur-sm border border-white/10 p-3 md:p-4 rounded-lg text-center shadow-inner">
-                    <span class="block text-lg md:text-xl font-bold text-white">Fiber</span>
+                    <span class="block text-lg md:text-xl font-bold text-white">1G FIBER</span>
                     <span class="text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-stone-300">Wi-Fi</span>
                 </div>
                 <div class="bg-stone-800/60 backdrop-blur-sm border border-white/10 p-3 md:p-4 rounded-lg text-center shadow-inner">
-                    <span class="block text-lg md:text-xl font-bold text-white">Hot Tub</span>
+                    <span class="block text-lg md:text-xl font-bold text-white">HOT TUB</span>
                     <span class="text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-stone-300">Relax</span>
                 </div>
             </div>
