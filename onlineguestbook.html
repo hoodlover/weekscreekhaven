@@ -40,20 +40,10 @@
         box-shadow: 0 4px 20px rgba(0,0,0,0.8);
     }
 
-    .wood-btn {
-        transition: transform 0.2s ease;
-        height: 80px; 
-        width: auto;
-        display: block;
-    }
+ .wood-btn { height: 89px; }          /* was 80px — mobile */
 
-    @media (min-width: 768px) {
-        .wood-btn { height: 64px; } 
-    }
-
-    @media (min-width: 1536px) {
-        .wood-btn { height: 96px; } 
-    }
+@media (min-width: 768px)  { .wood-btn { height: 80px; } }   /* was 64px — desktop */
+@media (min-width: 1536px) { .wood-btn { height: 112px; } }  /* was 96px — 2xl */
 
     .wood-btn:hover { transform: scale(1.05); }
 
@@ -154,12 +144,13 @@
     </button>
 </nav>
 
-<div id="mobile-menu" class="hidden fixed inset-0 z-[60] flex flex-col items-center justify-center space-y-4 bg-stone-900/95 backdrop-blur-sm">
+<div id="mobile-menu" class="hidden fixed inset-0 z-[60] flex flex-col items-center justify-center space-y-1 nav-link-group">
     <button id="close-mobile-menu" class="absolute top-6 right-8 text-white text-5xl font-light">&times;</button>
-    
+    <a href="index.html"><img src="buttons/home.jpg" alt="Home" class="wood-btn"></a> 
     <a href="things-to-do.html"><img src="buttons/to-do-see.jpg" alt="To Do" class="wood-btn"></a>
     <a href="need-to-know.html"><img src="buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn"></a>
     <a href="find-us.html"><img src="buttons/find-cabin.jpg" alt="Find Us" class="wood-btn"></a>
+    <a href="checkout.html"><img src="buttons/check.jpg" alt="Checkout" class="wood-btn"></a>
     <a href="gallery.html"><img src="buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn"></a>
     <a href="important-info.html"><img src="buttons/friends-info.jpg" alt="Friends Info" class="wood-btn"></a>
 </div>

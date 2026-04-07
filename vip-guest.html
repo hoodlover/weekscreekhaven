@@ -35,20 +35,10 @@
         box-shadow: 0 4px 20px rgba(0,0,0,0.8);
     }
 
-    .wood-btn {
-        transition: transform 0.2s ease;
-        height: 80px; 
-        width: auto;
-        display: block;
-    }
+.wood-btn { height: 89px; }          /* was 80px — mobile */
 
-    @media (min-width: 768px) {
-        .wood-btn { height: 64px; } 
-    }
-
-    @media (min-width: 1536px) {
-        .wood-btn { height: 96px; } 
-    }
+@media (min-width: 768px)  { .wood-btn { height: 80px; } }   /* was 64px — desktop */
+@media (min-width: 1536px) { .wood-btn { height: 112px; } }  /* was 96px — 2xl */    }
 
     .wood-btn:hover { transform: scale(1.05); }
         .frosted-glass {
@@ -175,12 +165,13 @@
     </button>
 </nav>
 
-<div id="mobile-menu" class="hidden fixed inset-0 z-[60] flex flex-col items-center justify-center space-y-4 bg-stone-900/95 backdrop-blur-sm">
+<div id="mobile-menu" class="hidden fixed inset-0 z-[60] flex flex-col items-center justify-center space-y-1 nav-link-group">
     <button id="close-mobile-menu" class="absolute top-6 right-8 text-white text-5xl font-light">&times;</button>
-    
+    <a href="index.html"><img src="buttons/home.jpg" alt="Home" class="wood-btn"></a> 
     <a href="things-to-do.html"><img src="buttons/to-do-see.jpg" alt="To Do" class="wood-btn"></a>
     <a href="need-to-know.html"><img src="buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn"></a>
     <a href="find-us.html"><img src="buttons/find-cabin.jpg" alt="Find Us" class="wood-btn"></a>
+    <a href="checkout.html"><img src="buttons/check.jpg" alt="Checkout" class="wood-btn"></a>
     <a href="gallery.html"><img src="buttons/cabin-gallery.jpg" alt="Gallery" class="wood-btn"></a>
     <a href="important-info.html"><img src="buttons/friends-info.jpg" alt="Friends Info" class="wood-btn"></a>
 </div>
@@ -280,8 +271,8 @@
                         <p class="text-xs text-stone-400">Locks doors and turns off lights after 30 seconds</p>
                     </div>
                     <div class="p-4 bg-red-900/20 rounded border border-red-500/30">
-                        <p class="text-white font-bold italic">"Don’t say ALEXA, burn it down"</p>
-                        <p class="text-[10px] text-red-400 font-black uppercase tracking-widest">NO 🔥</p>
+                        <p class="text-white font-bold italic">"Donâ€™t say ALEXA, burn it down"</p>
+                        <p class="text-[10px] text-red-400 font-black uppercase tracking-widest">NO ðŸ”¥</p>
                     </div>
                 </div>
             </section>
@@ -311,19 +302,19 @@
                 <h2 class="text-3xl font-bold mb-8 text-center uppercase tracking-[0.2em]">Things to do before you leave</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
                     <ul class="space-y-4 text-stone-300">
-                        <li class="flex items-start"><span class="text-[#d4a373] mr-2">•</span> Strip sheets from the bed you used.</li>
-                        <li class="flex items-start"><span class="text-[#d4a373] mr-2">•</span> Wash sheets, pillow cases and towels.</li>
-                        <li class="flex items-start"><span class="text-[#d4a373] mr-2">•</span> Place them in the dryer and start it.</li>
+                        <li class="flex items-start"><span class="text-[#d4a373] mr-2">â€¢</span> Strip sheets from the bed you used.</li>
+                        <li class="flex items-start"><span class="text-[#d4a373] mr-2">â€¢</span> Wash sheets, pillow cases and towels.</li>
+                        <li class="flex items-start"><span class="text-[#d4a373] mr-2">â€¢</span> Place them in the dryer and start it.</li>
                     </ul>
                     <ul class="space-y-4 text-stone-300">
-                        <li class="flex items-start"><span class="text-[#d4a373] mr-2">•</span> Hand wash dishes or start the dishwasher.</li>
-                        <li class="flex items-start"><span class="text-[#d4a373] mr-2">•</span> Fireplace turned to 'Pilot'.</li>
-                        <li class="flex items-start"><span class="text-[#d4a373] mr-2">•</span> Bag & take out trash to the bear cans.</li>
+                        <li class="flex items-start"><span class="text-[#d4a373] mr-2">â€¢</span> Hand wash dishes or start the dishwasher.</li>
+                        <li class="flex items-start"><span class="text-[#d4a373] mr-2">â€¢</span> Fireplace turned to 'Pilot'.</li>
+                        <li class="flex items-start"><span class="text-[#d4a373] mr-2">â€¢</span> Bag & take out trash to the bear cans.</li>
                     </ul>
                     <ul class="space-y-4 text-stone-300">
-                        <li class="flex items-start"><span class="text-[#d4a373] mr-2">•</span> Clean out your fridge stuffs.</li>
-                        <li class="flex items-start"><span class="text-[#d4a373] mr-2">•</span> Turn off lights and lock all smart doors.</li>
-                        <li class="flex items-start"><span class="text-[#d4a373] mr-2">•</span> Basically, just leave it as you found it.</li>
+                        <li class="flex items-start"><span class="text-[#d4a373] mr-2">â€¢</span> Clean out your fridge stuffs.</li>
+                        <li class="flex items-start"><span class="text-[#d4a373] mr-2">â€¢</span> Turn off lights and lock all smart doors.</li>
+                        <li class="flex items-start"><span class="text-[#d4a373] mr-2">â€¢</span> Basically, just leave it as you found it.</li>
                     </ul>
                 </div>
                 
@@ -339,7 +330,7 @@
 
     <footer class="max-w-6xl mx-auto mt-12 text-center">
         <p class="text-stone-500 uppercase tracking-widest text-[10px] mb-4">421 Weeks Creek Road, Blue Ridge GA 30513</p>
-        <p class="text-2xl font-bold italic">Thanks and Love You — Heather and Lance</p>
+        <p class="text-2xl font-bold italic">Thanks and Love You â€” Heather and Lance</p>
     </footer>
 
     <div id="lightbox">
