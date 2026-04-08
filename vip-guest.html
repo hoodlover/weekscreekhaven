@@ -12,7 +12,7 @@
             margin: 0;
             padding: 0;
             background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
-                        url('https://www.weekscreekhaven.com/webpic/wood1.jpg');
+                        url('webpic/wood1.webp');
             background-size: cover;
             background-attachment: fixed;
             background-position: center;
@@ -28,7 +28,7 @@
         }
 
     .railroad-tie-nav {
-        background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('webpic/railroad-tie-texture.jpg');
+        background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('webpic/railroad-tie-texture.webp');
         background-size: auto 100%;
         background-repeat: repeat-x;
         border-bottom: 4px solid #1a1512;
@@ -247,7 +247,7 @@
                 <h2 class="text-3xl font-bold mb-6 uppercase tracking-[0.2em]">A Peek At The Guest Book</h2>
                 <div class="inline-block cursor-pointer group" onclick="openGallery(0)">
                     <div class="relative overflow-hidden rounded-lg border-4 border-[#d4a373]/50 transition-all group-hover:border-[#d4a373]">
-                        <img src="/webpic/guestbook-cover.jpg" alt="Guest Book" class="h-48 md:h-64 object-cover transition-transform group-hover:scale-105">
+                        <img src="/webpic/guestbook-cover.webp" alt="Guest Book" class="h-48 md:h-64 object-cover transition-transform group-hover:scale-105">
                         <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
                     </div>
                     <p class="mt-2 text-xs font-bold uppercase text-stone-400 tracking-widest group-hover:text-[#d4a373]">Click to open pages</p>
@@ -296,9 +296,9 @@
 
     <script>
         const guestBookImages = [
-            '/webpic/guestbook-1.jpg',
-            '/webpic/guestbook-2.jpg',
-            '/webpic/guestbook-3.jpg'
+            '/webpic/guestbook-1.webp',
+            '/webpic/guestbook-2.webp',
+            '/webpic/guestbook-3.webp'
         ];
         let currentImgIndex = 0;
 
