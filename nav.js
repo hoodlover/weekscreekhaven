@@ -11,15 +11,33 @@
 // ============================================================
 
 (function () {
+
+  // ── Inject nav height fix styles ────────────────────────
+  const styleEl = document.createElement('style');
+  styleEl.textContent = `
+    .railroad-tie-nav {
+      max-height: 80px !important;
+    }
+    .railroad-tie-nav .wood-btn {
+      height: 60px !important;
+      width: auto !important;
+      max-width: none !important;
+    }
+    .railroad-tie-nav .logo-link .wood-btn {
+      height: 64px !important;
+    }
+  `;
+  document.head.appendChild(styleEl);
+
   const navHTML = `
     <!-- ===== TOP NAV BAR ===== -->
-    <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 2xl:py-6 2xl:px-12 flex justify-between items-center">
+    <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 flex justify-between items-center">
       <a href="index.html" class="flex-shrink-0 logo-link">
         <img src="buttons/week-creek-button-crop.jpg"       alt="Weeks Creek Haven" class="wood-btn normal-img">
         <img src="buttons/week-creek-button-crop-hover.jpg" alt="Weeks Creek Haven" class="wood-btn hover-img">
       </a>
 
-      <div class="hidden md:flex space-x-1 2xl:space-x-4 nav-link-group items-center">
+      <div class="hidden md:flex space-x-1 nav-link-group items-center">
         <a href="things-to-do.html">
           <img src="buttons/to-do-see.jpg"       alt="To Do &amp; See" class="wood-btn normal-img">
           <img src="buttons/to-do-see-hover.jpg" alt="To Do &amp; See" class="wood-btn hover-img">
