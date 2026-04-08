@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fine Dining & The Shops | Weeks Creek Haven</title>
+    <title>Fine Dining & The Shops | Blue Ridge | Weeks Creek Haven</title>
     <link rel="icon" type="image/png" href="webpic/Weeks_Creek_Haven_Favicon.png">
     <meta name="description" content="Explore the premier fine dining and unique shopping treasures in Downtown Blue Ridge and North Georgia.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
  
-  <style>
+ <style>
     body { 
         font-family: 'Montserrat', sans-serif; 
         color: #f4eee0; 
@@ -49,7 +49,7 @@
         text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
 
-    .railroad-tie-nav {
+.railroad-tie-nav {
         background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('webpic/railroad-tie-texture.jpg');
         background-size: auto 100%;
         background-repeat: repeat-x;
@@ -57,13 +57,14 @@
         box-shadow: 0 4px 20px rgba(0,0,0,0.8);
     }
 
-.wood-btn { height: 89px; }          /* was 80px — mobile */
+ 	.wood-btn { height: 80px; }          /* was 80px — mobile */
 
-@media (min-width: 768px)  { .wood-btn { height: 80px; } }   /* was 64px — desktop */
+@media (min-width: 768px)  { .wood-btn { height: 74px; } }   /* was 64px — desktop */
 @media (min-width: 1536px) { .wood-btn { height: 112px; } }  /* was 96px — 2xl */
+        #mobile-menu { background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('webpic/railroad-tie-texture.jpg'); background-size: cover; }
     }
 
-    .wood-btn:hover { transform: scale(1.05); }
+    .wood-btn:hover { transform: scale(1.05); }   
 
     .nav-link-group a .hover-img { display: none; }
     .nav-link-group a:hover .normal-img { display: none; }
@@ -117,6 +118,10 @@
     opacity: 1; /* Keeping this at 1 ensures there is always a solid image */
 }
 
+    .back-arrow-link:hover img,
+    a[href="things-to-do.html"]:hover img {
+        transform: scale(1.05);
+    }
     </style>
 </head>
 <body class="bg-wood">
@@ -152,10 +157,14 @@
     // ... rest of your lightbox code
 </script>
 
-<header class="pt-40 pb-12 px-6 max-w-6xl mx-auto">
-    <div class="flex flex-col md:flex-row justify-between items-stretch gap-8">
-        <div class="text-left flex-grow">
-            <h1 class="text-2xl md:text-4xl header-title extra-heavy-shadow uppercase leading-tight font-bold md:whitespace-nowrap">
+
+<header class="pt-52 pb-3 px-6 max-w-6xl mx-auto">
+    <div class="flex flex-col md:flex-row gap-1 items-stretch">
+
+        <!-- Left column: Title text — ~half width -->
+        <div class="flex-1 flex flex-col justify-between text-left">
+            <div>
+             <h1 class="text-2xl md:text-4xl header-title extra-heavy-shadow uppercase leading-tight font-bold md:whitespace-nowrap">
                 The Reason You Are In Blue Ridge
             </h1>
             <h1 class="text-5xl md:text-7xl header-title extra-heavy-shadow uppercase leading-tight">
@@ -170,22 +179,28 @@
             <h1 class="text-4xl md:text-6xl header-title extra-heavy-shadow uppercase leading-tight">
                 In North Georgia
             </h1>
+            </div>
+            <p class="text-4x1 header-sub font-light italic">               
+        Whether you’re looking for the best trout dishes on the Toccoa River, <BR>a farm-to-table experience at Harvest on Main, <BR>or just a quiet afternoon hunting for antique treasures and gems, <BR>we’ve got you covered.
+            </p>
         </div>
-        <div class="relative flex-grow md:flex-initial md:w-2/5 min-h-[250px]">
-            <div class="md:absolute md:inset-0 flex justify-end items-center">
-                <img src="info/foodshopping/shopping_page.png" 
-                     alt="Shopping in Downtown Blue Ridge" 
-                     onclick="openLightbox(this.src)"
-                     class="h-full w-auto object-contain max-h-full cursor-pointer transition-transform duration-300 hover:scale-105 drop-shadow-2xl rounded-lg border-2 border-white/20">
+
+        <!-- Right column: Book image + back arrow underneath — ~half width -->
+        <div class="flex-1 flex flex-col items-center justify-between gap-4">
+            <img src="info/foodshopping/shopping_page.png" 
+                 alt="Shopping Guide Header" 
+                 onclick="openLightbox(this.src)"
+                 class="w-auto object-contain cursor-pointer transition-transform duration-300 hover:scale-105 drop-shadow-2xl rounded-lg"
+                 style="max-height: 320px;">
+            <div class="flex justify-center">
+                <a href="things-to-do.html" style="display:inline-block; text-decoration:none;">
+                    <img src="buttons/shoppingback.jpg" alt="Back to Things To Do" style="height:200px; width:auto; transition: transform 0.3s ease;">
+                </a>
             </div>
         </div>
-    </div>
-    <p class="text-xl header-sub max-w-full mr-auto ml-0 mt-6 font-light italic text-left">
-        Whether you’re looking for the best trout dishes on the Toccoa River, a farm-to-table experience at Harvest on Main, or just a quiet afternoon hunting for antique treasures and gems, we’ve got you covered.<br><br>
-       Click any guide below to enlarge details.
-    </p>
-</header>
 
+    </div>
+</header>
 <main class="max-w-6xl mx-auto px-6 pb-24 space-y-20">
     
     <section id="fine-dining">

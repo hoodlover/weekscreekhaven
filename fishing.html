@@ -117,6 +117,10 @@
     opacity: 1; /* Keeping this at 1 ensures there is always a solid image */
 }
 
+    .back-arrow-link:hover img,
+    a[href="things-to-do.html"]:hover img {
+        transform: scale(1.05);
+    }
     </style>
 </head>
 <body class="bg-wood">
@@ -153,37 +157,48 @@
 </script>
 
 
-<header class="pt-40 pb-12 px-6 max-w-6xl mx-auto">
-    <div class="flex flex-col md:flex-row justify-between items-stretch gap-8">
-        
-        <div class="text-left flex-grow">
-            <h1 class="text-3xl md:text-4xl header-title extra-heavy-shadow uppercase leading-tight text-bold">
+<header class="pt-52 pb-3 px-6 max-w-6xl mx-auto">
+    <div class="flex flex-col md:flex-row gap-1 items-stretch">
+
+        <!-- Left column: Title text — ~half width -->
+        <div class="flex-1 flex flex-col justify-between text-left">
+            <div>
+            <h1 class="text-2xl md:text-3xl header-title extra-heavy-shadow uppercase leading-tight">
                 Explore Blue Ridge
             </h1>
-            <h1 class="text-5xl md:text-7xl header-title extra-heavy-shadow uppercase leading-tight">
+            <h1 class="text-5xl md:text-6xl header-title extra-heavy-shadow uppercase leading-tight">
                 Fishing In
             </h1>
-            <h1 class="text-5xl md:text-7xl header-title extra-heavy-shadow uppercase leading-tight">
-                Blue Ridge
+            <h1 class="text-5xl md:text-5xl header-title extra-heavy-shadow uppercase leading-tight">
+                Aska Adventure Area
             </h1>
-            <h1 class="text-5xl md:text-7xl header-title extra-heavy-shadow uppercase leading-tight">
-                "Trout"
+           <h1 class="text-5xl md:text-2xl header-title extra-heavy-shadow uppercase leading-tight">
+		       Trout Fishing Capital of Georgia
             </h1>
+			 <h1 class="text-5xl md:text-2xl header-title extra-heavy-shadow uppercase leading-tight">
+                wild rainbow, brown, and brook trout
+            </h1>
+            </div>
+            <p class="text-4x1 header-sub font-light italic">
+                Click any guide below to view fishing maps,<br>regulations, and the best local honey holes.
+            </p>
         </div>
 
-        <div class="relative flex-grow md:flex-initial md:w-1/3 min-h-[200px]">
-            <div class="md:absolute md:inset-0 flex justify-end items-center">
-                <img src="info/fishing/Fishing_Page.png" 
-                     alt="Fishing Guide Header" 
-                     onclick="openLightbox(this.src)"
-                     class="h-full w-auto object-contain max-h-full cursor-pointer transition-transform duration-300 hover:scale-105 drop-shadow-2xl rounded-lg">
+        <!-- Right column: Book image + back arrow underneath — ~half width -->
+        <div class="flex-1 flex flex-col items-center justify-between gap-4">
+            <img src="info/fishing/Fishing_Page.png" 
+                 alt="Fishing Guide Header" 
+                 onclick="openLightbox(this.src)"
+                 class="w-auto object-contain cursor-pointer transition-transform duration-300 hover:scale-105 drop-shadow-2xl rounded-lg"
+                 style="max-height: 320px;">
+            <div class="flex justify-center">
+                <a href="things-to-do.html" style="display:inline-block; text-decoration:none;">
+                    <img src="buttons/fishingback.jpg" alt="Back to Things To Do" style="height:250px; width:auto; transition: transform 0.3s ease;">
+                </a>
             </div>
         </div>
+
     </div>
-    
-    <p class="text-xl header-sub max-w-full mr-auto ml-0 mt-6 font-light italic text-left">
-        Click any guide below to view fishing maps, regulations, and the best local honey holes.
-    </p>
 </header>
 
 <main class="max-w-6xl mx-auto px-6 pb-24 space-y-20">
