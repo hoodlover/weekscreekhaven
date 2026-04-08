@@ -138,7 +138,7 @@
                 <div class="absolute -inset-2 md:-inset-4 bg-green-900/10 rounded-lg blur-xl opacity-70"></div>
                 <img src="gallery/cabin.jpg" alt="Beautiful Sunset" class="relative rounded-lg shadow-2xl border-4 md:border-8 border-white/90 transform group-hover:scale-[1.01] transition-transform duration-500">
                 <div class="absolute bottom-4 right-4 bg-black/50 backdrop-blur-md px-3 py-1 rounded text-white text-xs italic font-serif">
-                    The Cabin at Sunset - Nothin' Better
+                    The Cabin at Sunset - Nothin Better
                 </div>
             </div>
 
@@ -349,50 +349,40 @@
 async function updateHomeWeather() {
     try {
         const response = await fetch('/api/weather');
-        if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
         
-        // 1. Update the Large Temperature (Corrected ID)
-        const mainTemp = document.getElementById('current-temp-large');
-        if (mainTemp) mainTemp.innerText = `${Math.round(data.current.temp)}°F`;
+        // 1. Core Info
+        document.getElementById('index-temp').innerText = `${Math.round(data.current.temp)}°F`;
+        document.getElementById('ai-summary').innerText = data.daily[0].summary || data.current.weather[0].description;
 
-        // 2. AI/Summary text
-        const summary = document.getElementById('ai-summary');
-        if (summary) summary.innerText = data.daily[0].summary || data.current.weather[0].description;
-
-        // 3. Update the Stats Row
+        // 2. High-Value Stats
         document.getElementById('stat-wind').innerText = `${Math.round(data.current.wind_speed)} mph`;
         document.getElementById('stat-humidity').innerText = `${data.current.humidity}%`;
         const sunsetTime = new Date(data.current.sunset * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
         document.getElementById('stat-sunset').innerText = sunsetTime;
 
-        // 4. Build the 3-Day Forecast Grid
+        // 3. 3-Day Forecast Grid
         const container = document.getElementById('forecast-container');
         container.innerHTML = ''; 
-        
-        // Loop through the first 3 days (Today + next 2)
-// ... existing code ...
-data.daily.slice(0, 3).forEach((day, i) => {
-    const date = new Date(day.dt * 1000).toLocaleDateString('en-US', { weekday: 'short' });
-    container.innerHTML += `
-        <div class="text-center p-2 rounded bg-black/30 backdrop-blur-sm border border-white/10 shadow-sm">
-            <p class="text-[14px] font-bold uppercase text-stone-200 mb-1">${i === 0 ? 'Today' : date}</p>
-            <img src="https://openweathermap.org/img/wn/${day.weather[0].icon}.png" class="mx-auto w-8 h-8 filter drop-shadow-md" alt="weather icon">
-            <p class="text-sm text-white font-bold leading-none mt-1">
-                ${Math.round(day.temp.max)}° <span class="text-stone-300 font-normal">/ ${Math.round(day.temp.min)}°</span>
-            </p>
-            <p class="text-[12px] text-blue-300 font-bold mt-2 uppercase tracking-tighter">${Math.round(day.pop * 100)}% Rain</p>
-        </div>
-    `;
-});
-// ... rest of code ...
+        for (let i = 0; i < 3; i++) {
+            const day = data.daily[i];
+            const date = new Date(day.dt * 1000).toLocaleDateString('en-US', { weekday: 'short' });
+            
+            container.innerHTML += `
+                <div class="text-center p-2 rounded bg-white/10 border border-white/10 shadow-sm">
+                    <p class="text-[14px] font-bold uppercase text-stone-200 mb-1">${i === 0 ? 'Today' : date}</p>
+                    <img src="https://openweathermap.org/img/wn/${day.weather[0].icon}.png" class="mx-auto w-8 h-8 filter drop-shadow-md" alt="weather">
+                    <p class="text-sm text-white font-bold leading-none mt-1">
+                        ${Math.round(day.temp.max)}° <span class="text-stone-300 font-normal">/ ${Math.round(day.temp.min)}°</span>
+                    </p>
+                    <p class="text-[14px] text-green-600 font-bold mt-2 uppercase tracking-tighter">${Math.round(day.pop * 100)}% Rain</p>
+                </div>
+            `;
+        }
 
-        // Fade in the dashboard once data is loaded
         document.getElementById('weather-dashboard').classList.remove('opacity-0');
     } catch (err) {
         console.error("Home weather failed:", err);
-        // Fallback: show the box anyway so it's not invisible if the API is down
-        document.getElementById('weather-dashboard').classList.remove('opacity-0');
     }
 }
 window.addEventListener('DOMContentLoaded', updateHomeWeather);
