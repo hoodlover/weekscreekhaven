@@ -207,15 +207,14 @@
         document.body.style.overflow = 'auto';
     }
 
-    function openModal() {
-        const modal = document.getElementById('image-modal');
-        modal.classList.remove('hidden');
+    function openRecModal(src) {
+        document.getElementById('rec-modal-img').src = src;
+        document.getElementById('rec-modal').classList.remove('hidden');
         document.body.style.overflow = 'hidden';
     }
 
-    function closeModal() {
-        const modal = document.getElementById('image-modal');
-        modal.classList.add('hidden');
+    function closeRecModal() {
+        document.getElementById('rec-modal').classList.add('hidden');
         document.body.style.overflow = 'auto';
     }
 </script>
