@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"c:/Users/lance/Documents/421 Weeks Creek Rd/GitRepos/weekscreekhaven\" && git add -A && git diff --cached --quiet && exit 0 || git commit -m \"Auto-save changes\" && git push 2>/dev/null || true",
+            "statusMessage": "Pushing changes..."
+          }
+        ]
+      }
+    ]
+  }
+}
