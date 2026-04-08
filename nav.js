@@ -11,15 +11,15 @@
 
 (function () {
 
-  // ── Inject all nav CSS automatically ────────────────────
+  // -- Inject all nav CSS automatically --------------------
   const style = document.createElement('style');
   style.textContent = `
-    /* ── Nav bar: locked height on ALL screen sizes ── */
+    /* -- Nav bar: locked height on ALL screen sizes -- */
     .railroad-tie-nav {
       max-height: 80px !important;
     }
 
-    /* ── Nav buttons: one consistent size everywhere ── */
+    /* -- Nav buttons: one consistent size everywhere -- */
     .railroad-tie-nav .wood-btn {
       height: 58px !important;
       width: auto !important;
@@ -33,19 +33,19 @@
       transform: scale(1.0) !important;
     }
 
-    /* ── Logo hover swap ── */
+    /* -- Logo hover swap -- */
     .logo-link { position: relative; display: inline-block; }
     .logo-link .hover-img { position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s ease-in-out; z-index: 2; }
     .logo-link:hover .hover-img { opacity: 1; }
 
-    /* ── Desktop nav button hover swap ── */
+    /* -- Desktop nav button hover swap -- */
     .nav-link-group a .hover-img { display: none; }
     .nav-link-group a:hover .normal-img { display: none; }
     .nav-link-group a:hover .hover-img { display: block; }
 
-    /* ── Mobile full-screen menu ── */
+    /* -- Mobile full-screen menu -- */
     #mobile-menu {
-      background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('webpic/railroad-tie-texture.jpg');
+      background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('webpic/railroad-tie-texture.webp');
       background-size: cover;
     }
     /* Bigger buttons inside the mobile overlay menu */
@@ -60,30 +60,30 @@
     <!-- ===== TOP NAV BAR ===== -->
     <nav class="fixed w-full z-50 railroad-tie-nav py-2 px-6 flex justify-between items-center">
       <a href="index.html" class="flex-shrink-0 logo-link">
-        <img src="buttons/week-creek-button-crop.jpg"       alt="Weeks Creek Haven" class="wood-btn normal-img">
-        <img src="buttons/week-creek-button-crop-hover.jpg" alt="Weeks Creek Haven" class="wood-btn hover-img">
+        <img src="buttons/week-creek-button-crop.webp"       alt="Weeks Creek Haven" class="wood-btn normal-img">
+        <img src="buttons/week-creek-button-crop-hover.webp" alt="Weeks Creek Haven" class="wood-btn hover-img">
       </a>
 
       <div class="hidden md:flex space-x-1 nav-link-group items-center">
         <a href="things-to-do.html">
-          <img src="buttons/to-do-see.jpg"       alt="To Do &amp; See" class="wood-btn normal-img">
-          <img src="buttons/to-do-see-hover.jpg" alt="To Do &amp; See" class="wood-btn hover-img">
+          <img src="buttons/to-do-see.webp"       alt="To Do &amp; See" class="wood-btn normal-img">
+          <img src="buttons/to-do-see-hover.webp" alt="To Do &amp; See" class="wood-btn hover-img">
         </a>
         <a href="need-to-know.html">
-          <img src="buttons/need-to-know.jpg"       alt="Need to Know" class="wood-btn normal-img">
-          <img src="buttons/need-to-know-hover.jpg" alt="Need to Know" class="wood-btn hover-img">
+          <img src="buttons/need-to-know.webp"       alt="Need to Know" class="wood-btn normal-img">
+          <img src="buttons/need-to-know-hover.webp" alt="Need to Know" class="wood-btn hover-img">
         </a>
         <a href="find-us.html">
-          <img src="buttons/find-cabin.jpg"       alt="Find Us" class="wood-btn normal-img">
-          <img src="buttons/find-cabin-hover.jpg" alt="Find Us" class="wood-btn hover-img">
+          <img src="buttons/find-cabin.webp"       alt="Find Us" class="wood-btn normal-img">
+          <img src="buttons/find-cabin-hover.webp" alt="Find Us" class="wood-btn hover-img">
         </a>
         <a href="gallery.html">
-          <img src="buttons/cabin-gallery.jpg"       alt="Gallery" class="wood-btn normal-img">
-          <img src="buttons/cabin-gallery-hover.jpg" alt="Gallery" class="wood-btn hover-img">
+          <img src="buttons/cabin-gallery.webp"       alt="Gallery" class="wood-btn normal-img">
+          <img src="buttons/cabin-gallery-hover.webp" alt="Gallery" class="wood-btn hover-img">
         </a>
         <a href="important-info.html">
-          <img src="buttons/friends-info.jpg"       alt="Friends Info" class="wood-btn normal-img">
-          <img src="buttons/friends-info-hover.jpg" alt="Friends Info" class="wood-btn hover-img">
+          <img src="buttons/friends-info.webp"       alt="Friends Info" class="wood-btn normal-img">
+          <img src="buttons/friends-info-hover.webp" alt="Friends Info" class="wood-btn hover-img">
         </a>
       </div>
 
@@ -97,13 +97,13 @@
     <!-- ===== MOBILE FULL-SCREEN MENU ===== -->
     <div id="mobile-menu" class="hidden fixed inset-0 z-[60] flex flex-col items-center justify-center space-y-1 nav-link-group">
       <button id="close-mobile-menu" class="absolute top-6 right-8 text-white text-5xl font-light">&times;</button>
-      <a href="index.html">        <img src="buttons/home.jpg"         alt="Home"         class="wood-btn"></a>
-      <a href="things-to-do.html"> <img src="buttons/to-do-see.jpg"    alt="To Do"        class="wood-btn"></a>
-      <a href="need-to-know.html"> <img src="buttons/need-to-know.jpg" alt="Need to Know" class="wood-btn"></a>
-      <a href="find-us.html">      <img src="buttons/find-cabin.jpg"   alt="Find Us"      class="wood-btn"></a>
-      <a href="checkout.html">     <img src="buttons/check.jpg"        alt="Checkout"     class="wood-btn"></a>
-      <a href="gallery.html">      <img src="buttons/cabin-gallery.jpg" alt="Gallery"     class="wood-btn"></a>
-      <a href="important-info.html"><img src="buttons/friends-info.jpg" alt="Friends Info" class="wood-btn"></a>
+      <a href="index.html">        <img src="buttons/home.webp"         alt="Home"         class="wood-btn"></a>
+      <a href="things-to-do.html"> <img src="buttons/to-do-see.webp"    alt="To Do"        class="wood-btn"></a>
+      <a href="need-to-know.html"> <img src="buttons/need-to-know.webp" alt="Need to Know" class="wood-btn"></a>
+      <a href="find-us.html">      <img src="buttons/find-cabin.webp"   alt="Find Us"      class="wood-btn"></a>
+      <a href="checkout.html">     <img src="buttons/check.webp"        alt="Checkout"     class="wood-btn"></a>
+      <a href="gallery.html">      <img src="buttons/cabin-gallery.webp" alt="Gallery"     class="wood-btn"></a>
+      <a href="important-info.html"><img src="buttons/friends-info.webp" alt="Friends Info" class="wood-btn"></a>
     </div>
   `;
 
