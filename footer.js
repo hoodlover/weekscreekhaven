@@ -31,7 +31,7 @@
     style.textContent = `
       .wch-nav-link {
         display: inline-block;
-        color: #15803d;
+        color: #fef3c7;
         background: rgba(255,255,255,0.14);
         border: 1px solid rgba(21,128,61,0.55);
         border-radius: 4px;
