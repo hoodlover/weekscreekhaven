@@ -13,23 +13,27 @@
 
   // ── Inject all nav CSS automatically ────────────────────
   const style = document.createElement('style');
+  style.id = 'nav-injected-styles';
+  // Using :is() + high-specificity selectors to beat any existing .wood-btn rules
   style.textContent = `
     /* ── Nav bar: locked height on ALL screen sizes ── */
-    .railroad-tie-nav {
+    nav.railroad-tie-nav {
       max-height: 80px !important;
     }
 
-    /* ── Nav buttons: one consistent size everywhere ── */
-    .railroad-tie-nav .wood-btn {
+    /* ── Override ANY existing .wood-btn height rules site-wide ── */
+    nav.railroad-tie-nav img.wood-btn,
+    nav.railroad-tie-nav a img.wood-btn {
       height: 58px !important;
       width: auto !important;
-      display: block;
-      transition: transform 0.2s ease;
+      display: block !important;
+      transition: transform 0.2s ease !important;
     }
-    .railroad-tie-nav .wood-btn:hover {
-      transform: scale(1.05);
+    nav.railroad-tie-nav img.wood-btn:hover,
+    nav.railroad-tie-nav a:hover img.wood-btn {
+      transform: scale(1.05) !important;
     }
-    .railroad-tie-nav .logo-link:hover .wood-btn {
+    nav.railroad-tie-nav .logo-link:hover img.wood-btn {
       transform: scale(1.0) !important;
     }
 
@@ -43,13 +47,15 @@
     .nav-link-group a:hover .normal-img { display: none; }
     .nav-link-group a:hover .hover-img { display: block; }
 
-    /* ── Mobile full-screen menu ── */
+    /* ── Mobile full-screen menu background ── */
     #mobile-menu {
       background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('webpic/railroad-tie-texture.jpg');
       background-size: cover;
     }
-    /* Bigger buttons inside the mobile overlay menu */
-    #mobile-menu .wood-btn {
+
+    /* ── Bigger buttons inside the mobile overlay menu ── */
+    #mobile-menu img.wood-btn,
+    #mobile-menu a img.wood-btn {
       height: 72px !important;
       width: auto !important;
     }
