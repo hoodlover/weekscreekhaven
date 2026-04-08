@@ -6,28 +6,55 @@
 //    <div id="nav-placeholder"></div>
 //    <script src="/nav.js"></script>
 //
-//  Make sure the CSS below (railroad-tie-nav, wood-btn, etc.)
-//  is either in a shared stylesheet OR kept in each page's <style>.
+//  CSS is injected automatically — no changes needed in each page.
 // ============================================================
 
 (function () {
 
-  // ── Inject nav height fix styles ────────────────────────
-  const styleEl = document.createElement('style');
-  styleEl.textContent = `
+  // ── Inject all nav CSS automatically ────────────────────
+  const style = document.createElement('style');
+  style.textContent = `
+    /* ── Nav bar: locked height on ALL screen sizes ── */
     .railroad-tie-nav {
       max-height: 80px !important;
     }
+
+    /* ── Nav buttons: one consistent size everywhere ── */
     .railroad-tie-nav .wood-btn {
-      height: 60px !important;
+      height: 58px !important;
       width: auto !important;
-      max-width: none !important;
+      display: block;
+      transition: transform 0.2s ease;
     }
-    .railroad-tie-nav .logo-link .wood-btn {
-      height: 64px !important;
+    .railroad-tie-nav .wood-btn:hover {
+      transform: scale(1.05);
+    }
+    .railroad-tie-nav .logo-link:hover .wood-btn {
+      transform: scale(1.0) !important;
+    }
+
+    /* ── Logo hover swap ── */
+    .logo-link { position: relative; display: inline-block; }
+    .logo-link .hover-img { position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s ease-in-out; z-index: 2; }
+    .logo-link:hover .hover-img { opacity: 1; }
+
+    /* ── Desktop nav button hover swap ── */
+    .nav-link-group a .hover-img { display: none; }
+    .nav-link-group a:hover .normal-img { display: none; }
+    .nav-link-group a:hover .hover-img { display: block; }
+
+    /* ── Mobile full-screen menu ── */
+    #mobile-menu {
+      background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('webpic/railroad-tie-texture.jpg');
+      background-size: cover;
+    }
+    /* Bigger buttons inside the mobile overlay menu */
+    #mobile-menu .wood-btn {
+      height: 72px !important;
+      width: auto !important;
     }
   `;
-  document.head.appendChild(styleEl);
+  document.head.appendChild(style);
 
   const navHTML = `
     <!-- ===== TOP NAV BAR ===== -->
@@ -80,33 +107,28 @@
     </div>
   `;
 
-  // ── Inject into placeholder ──────────────────────────────
   function injectNav() {
     const placeholder = document.getElementById('nav-placeholder');
     if (placeholder) {
       placeholder.innerHTML = navHTML;
     } else {
-      // Fallback: prepend to body if no placeholder exists
       document.body.insertAdjacentHTML('afterbegin', navHTML);
     }
     initToggle();
   }
 
-  // ── Wire up open / close logic ───────────────────────────
   function initToggle() {
-    const menuBtn       = document.getElementById('mobile-menu-button');
-    const closeBtn      = document.getElementById('close-mobile-menu');
-    const mobileMenu    = document.getElementById('mobile-menu');
+    const menuBtn    = document.getElementById('mobile-menu-button');
+    const closeBtn   = document.getElementById('close-mobile-menu');
+    const mobileMenu = document.getElementById('mobile-menu');
 
     if (!menuBtn || !mobileMenu) return;
 
-    // Open
     menuBtn.addEventListener('click', () => {
       mobileMenu.classList.toggle('hidden');
       document.body.classList.toggle('overflow-hidden');
     });
 
-    // Close via X button
     if (closeBtn) {
       closeBtn.addEventListener('click', () => {
         mobileMenu.classList.add('hidden');
@@ -114,7 +136,6 @@
       });
     }
 
-    // Close when a link is tapped
     mobileMenu.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
         mobileMenu.classList.add('hidden');
@@ -123,7 +144,6 @@
     });
   }
 
-  // Run after DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', injectNav);
   } else {
