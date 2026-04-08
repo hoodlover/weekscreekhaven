@@ -10,7 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     
     <style>
-        /* 1. UNIVERSAL BACKGROUND: The Dark Vintage Wood */
         body { 
             font-family: 'Montserrat', sans-serif; 
             color: #f4eee0; 
@@ -23,39 +22,17 @@
 
         h1, h2, h3, h4 { font-family: 'Crimson Text', serif; }
         
-        /* 2. HEADER STYLE: Consistent with Landing Page */
         .extra-heavy-shadow {
-            text-shadow: 2px 2px 8px rgba(0,0,0,1), 0px 0px 20px rgba(0,0,0,0.8);
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 1), 0px 0px 25px rgba(0, 0, 0, 1), 0px 0px 10px rgba(0, 0, 0, 0.8);
         }
 
-        /* 3. THE PARCHMENT LABEL: Replacing the white borders */
-        .gallery-card {
-            break-inside: avoid;
-            margin-bottom: 2rem;
-            background: rgba(244, 238, 224, 0.95); /* Our new Parchment standard */
-            padding: 8px;
-            border-radius: 4px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transition: transform 0.3s ease;
-            border: 1px solid #dcd3bd;
-        }
-        .gallery-card:hover { transform: translateY(-5px); }
-
-        .parchment-label { 
-            background-color: transparent;
-            color: #3d3128; /* Deep Brown Text */
-            font-family: 'Crimson Text', serif;
-            font-style: italic;
-            font-weight: 700;
-            border-top: 1px solid rgba(0,0,0,0.1);
-            margin-top: 8px;
-            padding-top: 8px;
-        }
-
-        /* 4. REFINED NAVIGATION (Ensuring height consistency) */
+        /* Consistent Navigation with Black/Dark Gray Accent */
         .railroad-tie-nav {
-            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('webpic/railroad-tie-texture.webp');
-            border-bottom: 4px solid #1a6b3a; /* The Deep Forest Green anchor */
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('webpic/railroad-tie-texture.webp');
+            background-size: auto 100%;
+            background-repeat: repeat-x;
+            border-bottom: 4px solid #1a1512; /* Dark Gray / Black bar */
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
         }
 
         .wood-btn { height: 80px; transition: transform 0.2s; }
@@ -63,11 +40,38 @@
         @media (min-width: 1536px) { .wood-btn { height: 112px; } }
         .wood-btn:hover { transform: scale(1.05); }
 
-        /* Lightbox - matching the Forest theme */
+        /* The Parchment Card Art Style */
+        .gallery-card {
+            break-inside: avoid;
+            margin-bottom: 2.5rem;
+            background: rgba(244, 238, 224, 0.98); 
+            padding: 12px;
+            border-radius: 2px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            transition: transform 0.3s ease;
+            border: 1px solid #dcd3bd;
+            cursor: pointer;
+        }
+        .gallery-card:hover { transform: translateY(-8px) rotate(1deg); }
+
+        .parchment-label { 
+            color: #3d3128;
+            font-family: 'Crimson Text', serif;
+            font-style: italic;
+            font-weight: 700;
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 12px;
+            padding: 8px 4px 4px 4px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
         #lightbox { 
             display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(10, 20, 10, 0.95); justify-content: center; align-items: center; 
+            background: rgba(0,0,0,0.95); justify-content: center; align-items: center; 
         }
+        #lightbox img { max-width: 90%; max-height: 80vh; border: 4px solid white; }
+        .nav-btn { position: absolute; top: 50%; color: white; font-size: 4rem; cursor: pointer; padding: 20px; }
     </style>
 </head>
 <body>
@@ -75,41 +79,128 @@
 <div id="nav-placeholder"></div>
 <script src="nav.js"></script>
 
-<header class="pt-56 pb-20 px-6 text-center">
-    <h1 class="text-5xl md:text-7xl text-white extra-heavy-shadow uppercase tracking-widest font-bold">
-        The Haven Collection
+<header class="pt-56 pb-24 px-6 text-center">
+    <h1 class="text-5xl md:text-8xl text-white extra-heavy-shadow uppercase tracking-widest font-bold">
+        Weeks Creek Haven Gallery
     </h1>
-    <p class="text-xl italic text-stone-300 mt-4 extra-heavy-shadow">A visual journey through Weeks Creek Haven</p>
 </header>
 
 <main class="max-w-7xl mx-auto px-6 pb-24">
     <div class="columns-1 md:columns-2 lg:columns-3 gap-8">
         
-        <div class="gallery-card group cursor-pointer" onclick="openLightbox(0)">
-            <img src="gallery/Sun sets over the creekside cabin.webp" alt="Sunset" class="w-full rounded-sm">
-            <div class="parchment-label text-sm text-center">Sunset Over the Haven</div>
+        <div class="gallery-card" onclick="openLightbox(0)">
+            <img src="gallery/Sun sets over the creekside cabin.webp" alt="Sunset" class="w-full">
+            <div class="parchment-label">Sunset Over the Haven</div>
         </div>
 
-        <div class="gallery-card group cursor-pointer" onclick="openLightbox(1)">
-            <img src="gallery/Porch1.webp" alt="Porch" class="w-full rounded-sm">
-            <div class="parchment-label text-sm text-center">Welcome to the Porch</div>
+        <div class="gallery-card" onclick="openLightbox(1)">
+            <img src="gallery/Porch1.webp" alt="Porch" class="w-full">
+            <div class="parchment-label">Welcome to the Porch</div>
         </div>
 
-        <div class="gallery-card group cursor-pointer" onclick="openLightbox(2)">
-            <img src="gallery/Watch your favorite classic DVDs with your family.webp" alt="Media Room" class="w-full rounded-sm">
-            <div class="parchment-label text-sm text-center">Family Movie Night Ready</div>
+        <div class="gallery-card" onclick="openLightbox(2)">
+            <img src="gallery/Watch your favorite classic DVDs with your family.webp" alt="Media Room" class="w-full">
+            <div class="parchment-label">Family Movie Night Ready</div>
         </div>
 
-        <div class="gallery-card group cursor-pointer" onclick="openLightbox(3)">
-            <img src="webpic/lovethecabin.webp" alt="Cabin Love" class="w-full rounded-sm">
-            <div class="parchment-label text-sm text-center">Everything We Love At The Cabin</div>
+        <div class="gallery-card" onclick="openLightbox(3)">
+            <img src="gallery/TV Room.webp" alt="TV Room" class="w-full">
+            <div class="parchment-label">Cozy Media Room Seating</div>
         </div>
 
+        <div class="gallery-card" onclick="openLightbox(4)">
+            <img src="gallery/Queen bed in loft. Best views of the woods. Almost like you_re in a treehouse.webp" alt="Loft" class="w-full">
+            <div class="parchment-label">The Treehouse Loft Suite</div>
         </div>
+
+        <div class="gallery-card" onclick="openLightbox(5)">
+            <img src="gallery/Queen bed main floor. Lovely wooded view.webp" alt="Main Bedroom" class="w-full">
+            <div class="parchment-label">Main Floor Serenity</div>
+        </div>
+
+        <div class="gallery-card" onclick="openLightbox(6)">
+            <img src="gallery/Queen bed main floor. Open the window to hear the stream.webp" alt="Stream Bedroom" class="w-full">
+            <div class="parchment-label">Fall Asleep to the Stream</div>
+        </div>
+
+        <div class="gallery-card" onclick="openLightbox(7)">
+            <img src="gallery/Queen bed ground level. Quiet. Desk to write, quiet to think.webp" alt="Work" class="w-full">
+            <div class="parchment-label">Quiet Ground Level Workspace</div>
+        </div>
+
+        <div class="gallery-card" onclick="openLightbox(8)">
+            <img src="webpic/lovethecabin.webp" alt="Love" class="w-full">
+            <div class="parchment-label">Everything We Love At The Cabin</div>
+        </div>
+
+        <div class="gallery-card" onclick="openLightbox(9)">
+            <img src="gallery/Washer & Dryer.webp" alt="Laundry" class="w-full">
+            <div class="parchment-label">In-Cabin Laundry Convenience</div>
+        </div>
+
+        <div class="gallery-card" onclick="openLightbox(10)">
+            <img src="gallery/Steps from the front door. The sound of the stream.webp" alt="Stream" class="w-full">
+            <div class="parchment-label">Weeks Creek: Just Steps Away</div>
+        </div>
+
+        <div class="gallery-card" onclick="openLightbox(11)">
+            <img src="gallery/Hot tub on the ground-level deck.webp" alt="Hot Tub" class="w-full">
+            <div class="parchment-label">Rested Mind, Rested Body</div>
+        </div>
+
+        <div class="gallery-card" onclick="openLightbox(12)">
+            <img src="gallery/Layout of the main living space from the loft.webp" alt="Layout" class="w-full">
+            <div class="parchment-label">Open Concept Living from Above</div>
+        </div>
+
+        <div class="gallery-card" onclick="openLightbox(13)">
+            <img src="gallery/Living room inviting conversation.webp" alt="Living Room" class="w-full">
+            <div class="parchment-label">Space for Conversations</div>
+        </div>
+
+        <div class="gallery-card" onclick="openLightbox(14)">
+            <img src="gallery/Everything you for good meals with great people.webp" alt="Kitchen" class="w-full">
+            <div class="parchment-label">Fully Equipped Kitchen</div>
+        </div>
+
+        <div class="gallery-card" onclick="openLightbox(15)">
+            <img src="gallery/A swing to listen to the stream.webp" alt="Swing" class="w-full">
+            <div class="parchment-label">Best Place to Listen to the Rain</div>
+        </div>
+
+        <div class="gallery-card" onclick="openLightbox(16)">
+            <img src="gallery/Beautiful view of the cabin in daylight.webp" alt="Daylight" class="w-full">
+            <div class="parchment-label">Sunlight Through the Trees</div>
+        </div>
+
+        <div class="gallery-card" onclick="openLightbox(17)">
+            <img src="gallery/Cabin_Front_1.webp" alt="Dusk" class="w-full">
+            <div class="parchment-label">Exterior Glow at Dusk</div>
+        </div>
+
+    </div>
 </main>
 
 <div id="footer-placeholder"></div>
 <script src="footer.js"></script>
+
+<div id="lightbox" onclick="closeLightbox()">
+    <span class="close-btn" style="position:absolute; top:20px; right:30px; font-size:3rem; cursor:pointer;">&times;</span>
+    <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+    function openLightbox(index) {
+        const images = document.querySelectorAll('.gallery-card img');
+        document.getElementById('lightbox-img').src = images[index].src;
+        document.getElementById('lightbox').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+        document.getElementById('lightbox').style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+</script>
 
 </body>
 </html>
