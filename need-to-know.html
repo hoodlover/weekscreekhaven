@@ -39,18 +39,9 @@
 
         .wood-btn:hover { transform: scale(1.05); }
 
-        .logo-link, .nav-link-group a { position: relative; display: inline-block; }
-        
-        .logo-link .hover-img, .nav-link-group a .hover-img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-            z-index: 2;
-        }
-
-        .logo-link:hover .hover-img, .nav-link-group a:hover .hover-img { opacity: 1; }
+        .logo-link { position: relative; display: inline-block; }
+        .logo-link .hover-img { position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s ease-in-out; z-index: 2; }
+        .logo-link:hover .hover-img { opacity: 1; }
         .logo-link:hover .wood-btn { transform: scale(1.0) !important; }
 
         .parchment { 
