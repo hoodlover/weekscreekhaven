@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dylan & Rachel | Weeks Creek Haven VIP</title>
+    
+    <link rel="icon" type="image/webp" href="webpic/Weeks_Creek_Haven_Favicon.webp" loading="lazy">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
+        h1, h2, h3, h4 { font-family: 'Crimson Text', serif; }
+        
+        details summary::-webkit-details-marker { display: none; }
+        details summary { list-style: none; }
+        summary { display: flex !important; }
+
+        .heavy-shadow {
+            text-shadow: 4px 4px 15px rgba(0, 0, 0, 0.9), 0px 0px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .bg-wood { 
+            background-color: #fcfaf7;
+            background-image: url('webpic/vintage-wooden-board-textured-background.webp');
+        }
+        
+	.wood-btn { height: 80px; }          
+
+@media (min-width: 768px)  { .wood-btn { height: 74px; } }   
+@media (min-width: 1536px) { .wood-btn { height: 112px; } }  
+        #mobile-menu { background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('webpic/railroad-tie-texture.webp'); background-size: cover; }
+
+    .wood-btn:hover { transform: scale(1.05); }
+
+    .nav-link-group a .hover-img { display: none; }
+    .nav-link-group a:hover .normal-img { display: none; }
+    .nav-link-group a:hover .hover-img { display: block; }
+
+        .hero-btn {
+            height: 140px;
+            width: auto;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 1536px) {
+            .hero-btn {
+                height: 180px;
+            }
+        }
+
+        .accent-green { color: #A45D41; }
+        .parchment { background-color: rgba(244, 238, 224, 0.9); border: 1px solid #dcd3bd; }
+        
+        #mobile-menu {
+            background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('webpic/railroad-tie-texture.webp');
+            background-size: cover;
+        }
+
+        summary::-webkit-details-marker { display: none; }
+        summary { list-style: none; }
+
+.logo-link:hover .wood-btn { 
+    transform: scale(1.0) !important; 
+}
+
+.logo-link {
+    position: relative;
+    display: inline-block;
+    background: transparent; 
+}
+
+.logo-link .normal-img {
+    opacity: 1;
+    transition: none; 
+}
+
+.logo-link .hover-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    z-index: 2;
+}
+
+.logo-link:hover .hover-img {
+    opacity: 1;
+}
+
+.logo-link:hover .normal-img {
+    opacity: 1; 
+}
+
+    </style>
+</head>
+<body class="bg-wood">
+
+<div id="nav-placeholder"></div>
+<script src="nav.js"></script>
+
+
+    <header class="relative h-[55vh] flex items-center justify-center text-white overflow-hidden">
+        <img src="info/00_Intro_Page.webp" loading="lazy" alt="Mountain View" class="absolute inset-0 w-full h-full object-cover">
+        <div class="absolute inset-0 bg-black/45"></div>
+        <div class="relative z-10 text-center px-4 mt-12">
+            <h1 class="text-5xl md:text-4xl mb-2 tracking-tight font-serif heavy-shadow uppercase">Welcome, Dylan & Rachel</h1>
+            <p class="text-xl md:text-3xl italic text-stone-200 font-serif heavy-shadow" style="font-variant: small-caps;">"Enjoy a relaxing, fun and engaging time... engaging Dylan, right>"</p>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto py-16 px-6">
+        
+        <div class="parchment p-10 md:p-14 rounded-2xl shadow-2xl mb-16 border-l-8 border-green-900/40 text-center">
+            <h2 class="text-3xl md:text-4xl mb-4 text-stone-900 font-serif italic text-center underline">A Special Welcome</h2>
+            <p class="text-xl text-stone-800 leading-relaxed max-w-3xl mx-auto font-serif italic">
+                "We are so happy to have you both at the Haven! Please feel completely at home. Enjoy the warm fire, the views of the creek from the big windows, and of course, a good glass of red wine. This cabin is yours to enjoy, so relax and make some memories."
+            </p>
+        </div>
+
+            <div class="relative group rounded-2xl shadow-2xl border-4 border-[#4a4747] overflow-hidden">
+        <img src="guests/dylan.webp" loading="lazy" 
+             alt="Personal Welcome for Dylan & Rachel" 
+             onclick="openVipLightbox()" 
+             class="w-full h-auto cursor-zoom-in group-hover:opacity-95 transition-opacity">
+        <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-all pointer-events-none"></div>
+    </div>
+
+                <div class="flex justify-center mt-6">
+                    <a href="guests/cabin_welcome.webp" download="Welcome-to-Weeks-Creek.webp" class="flex items-center gap-2 text-stone-100 hover:text-green-900 transition-colors font-serif italic text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Save your welcome photo
+                    </a>
+                </div>
+
+        <div class="grid md:grid-cols-2 gap-10 mt-16">
+            
+            <section class="space-y-8">
+                <div class="parchment p-8 rounded-xl shadow-xl vip-card">
+                    <h3 class="text-2xl font-serif font-bold text-green-900 uppercase tracking-wider mb-6 pb-2 border-b border-stone-300">Access Essentials</h3>
+                    <ul class="space-y-4 text-xl">
+                        <li><span class="font-bold text-stone-500 uppercase text-xs block">Cabin Address</span> 421 Weeks Creek Rd</li>
+                        <li><span class="font-bold text-red-800 uppercase text-xs block">Smart Door Code</span> 4321#</li>
+                        <li><span class="font-bold text-stone-500 uppercase text-xs block">Gig Fiber Wi-Fi:</span> WeeksCreekHaven</li>
+                        <li><span class="font-bold text-stone-500 uppercase text-xs block">Password:</span> creeklife</li>
+                    </ul>
+                </div>
+
+                <div class="parchment p-8 rounded-xl shadow-xl vip-card border-l-amber-800">
+                    <h3 class="text-2xl font-serif font-bold text-amber-800 uppercase tracking-wider mb-6 pb-2 border-b border-stone-300"> Our Favorites</h3>
+                    <ul class="space-y-4 text-base text-stone-700 italic font-serif">
+                        <li><strong class="text-amber-900 font-bold not-italic"> The Wine Cellar:</strong> Please, help yourself to a bottle from the second row! Well, if we had a wine cellar that would be great for you.</li>
+                        <li><strong class="text-amber-900 font-bold not-italic"> Kitchen is Yours:</strong> We've stocked extra provisions just for you.  Well not really but help yourselves to what is still there.</li>
+                        <li><strong class="text-amber-900 font-bold not-italic"> Streamside Access:</strong> Fishing gear is in the closet; help yourself. Ahh but which closet?  Fish in the stream are pretty little.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="space-y-4">
+                
+                <div class="parchment p-8 rounded-xl shadow-xl vip-card">
+                    <h3 class="text-2xl font-serif font-bold text-green-900 uppercase tracking-wider mb-4"> Our Contact</h3>
+                    <div class="flex flex-col gap-4 text-stone-800 font-bold italic text-xl">
+                        <p>Heather: 678.993.3617</p>
+                        <p>Lance: 770.549.9358</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="mt-20 py-12 border-t-2 border-green-800 border-dashed text-center">
+    
+    <a href="guest-private.html" 
+       class="inline-block bg-green-950 text-stone-100 font-serif italic text-3xl px-12 py-7 rounded-full shadow-2xl border-4 border-amber-300 transform scale-100 hover:scale-105 hover:bg-green-900 transition-all duration-300">
+        <span class="block text-4xl mb-2">Explore the Main Guide</span>
+        <span class="block text-xl opacity-80">(Standard Guest Area)</span>
+        <span class="block text-4xl mt-3 text-amber-300">?</span>
+    </a>
+
+</div>
+
+    </main>
+
+    <div id="full-image" class="fixed inset-0 z-[100] hidden bg-black/90 items-center justify-center p-4">
+        <a href="#" class="absolute inset-0 cursor-default"></a> 
+        <div class="relative max-w-4xl max-h-full flex flex-col items-center">
+            <img src="guests/dylan.webp" class="rounded-lg shadow-2xl max-h-[85vh] w-auto">
+            <div class="mt-4 flex gap-8 text-white font-serif text-lg">
+                <a href="#" class="hover:text-stone-300">Close</a>
+                <a href="guests/dylan.webp" download="dylan.webp" class="hover:text-green-400">Download Original</a>
+            </div>
+        </div>
+    </div>
+
+<div id="footer-placeholder"></div>
+<script src="footer.js"></script>
+
+<script>
+    const vipLightbox = document.getElementById('full-image');
+
+    function openVipLightbox() {
+        vipLightbox.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; 
+    }
+
+    function closeVipLightbox() {
+        vipLightbox.style.display = 'none';
+        document.body.style.overflow = 'auto'; 
+    }
+
+    vipLightbox.addEventListener('click', function(e) {
+        if (e.target === vipLightbox || e.target.innerText === 'Close') {
+            closeVipLightbox();
+        }
+    });
+</script>
+
+<script>document.addEventListener("contextmenu", function(e){ e.preventDefault(); });</script>
+</body>
+</html>
