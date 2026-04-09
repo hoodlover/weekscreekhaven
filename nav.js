@@ -17,6 +17,12 @@
     /* -- Nav bar: locked height on ALL screen sizes -- */
     .railroad-tie-nav {
       max-height: 80px !important;
+      background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('webpic/rrtie.webp');
+      background-size: auto 125%;
+      background-repeat: repeat-x;
+      background-position: left center;
+      border-bottom: 4px solid #1a1512;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.8);
     }
 
     /* -- Nav buttons: one consistent size everywhere -- */

@@ -46,7 +46,7 @@
       }
       .wch-nav-link:hover {
         color: #4a4747;
-        background: rgba(245,245,244,0.6);
+        background: rgba(245,245,244,0.64);
         border-color: #4a4747;
         text-shadow: none;
       }
