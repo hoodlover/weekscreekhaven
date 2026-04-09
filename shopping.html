@@ -268,7 +268,11 @@
 <script src="footer.js"></script>
 
 <script>
+    const pageImages = Array.from(document.querySelectorAll('.adventure-card img'));
+    let currentIndex = 0;
+
     function openLightbox(src) {
+        currentIndex = pageImages.findIndex(img => img.src === src);
         document.getElementById('lightbox-img').src = src;
         document.getElementById('lightbox').style.display = 'flex';
         document.body.style.overflow = 'hidden';
@@ -277,6 +281,18 @@
         document.getElementById('lightbox').style.display = 'none';
         document.body.style.overflow = 'auto';
     }
+    function changeImage(dir) {
+        currentIndex = (currentIndex + dir + pageImages.length) % pageImages.length;
+        document.getElementById('lightbox-img').src = pageImages[currentIndex].src;
+    }
+    document.addEventListener('keydown', (e) => {
+        const lb = document.getElementById('lightbox');
+        if (lb.style.display === 'flex') {
+            if (e.key === 'ArrowRight') changeImage(1);
+            if (e.key === 'ArrowLeft') changeImage(-1);
+            if (e.key === 'Escape') closeLightbox();
+        }
+    });
 </script>
 	
 <div id="lightbox" onclick="closeLightbox()">
