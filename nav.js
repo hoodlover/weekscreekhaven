@@ -16,12 +16,12 @@
   style.textContent = `
     /* -- Nav bar: locked height on ALL screen sizes -- */
     .railroad-tie-nav {
-      max-height: 80px !important;
+      max-height: 180px !important;
     }
 
     /* -- Nav buttons: one consistent size everywhere -- */
     .railroad-tie-nav .wood-btn {
-      height: 58px !important;
+      height: 158px !important;
       width: auto !important;
       display: block;
       transition: transform 0.2s ease;
