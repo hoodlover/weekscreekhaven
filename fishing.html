@@ -136,33 +136,6 @@
 <div id="nav-placeholder"></div>
 <script src="nav.js"></script>
 
-<script>
-    // Mobile Menu Toggle Logic
-    const menuBtn = document.getElementById('mobile-menu-button');
-    const closeBtnMobile = document.getElementById('close-mobile-menu');
-    const mobileMenu = document.getElementById('mobile-menu');
-
-    function toggleMenu() {
-        mobileMenu.classList.toggle('hidden');
-        // Prevent scrolling when menu is open
-        document.body.classList.toggle('overflow-hidden');
-    }
-
-    menuBtn.addEventListener('click', toggleMenu);
-    closeBtnMobile.addEventListener('click', toggleMenu);
-
-    // Close menu if a link is clicked
-    mobileMenu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            mobileMenu.classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-        });
-    });
-
-    /* --- Keep your existing Lightbox JS below this line --- */
-    const galleryItems = document.querySelectorAll('.gallery-item');
-    // ... rest of your lightbox code
-</script>
 
 
 <header class="pt-28 md:pt-52 pb-3 px-6 max-w-6xl mx-auto">
