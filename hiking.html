@@ -64,10 +64,22 @@
 
     #lightbox {
         display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%;
-        background-color: rgba(0,0,0,0.9); justify-content: center; align-items: center;
+        background-color: rgba(0,0,0,0.92); justify-content: center; align-items: center;
     }
-    #lightbox-img { max-width: 90%; max-height: 90%; border: 3px solid black; }
+    #lightbox-img { max-width: 82%; max-height: 80vh; border: 4px solid #231f1f; border-radius: 4px; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
     .close-btn { position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; cursor: pointer; }
+    .nav-btn {
+        position: absolute; top: 50%; transform: translateY(-50%);
+        background: rgba(35,31,31,0.75); color: #f4eee0;
+        border: 2px solid #231f1f; border-radius: 8px;
+        font-size: 2rem; line-height: 1; cursor: pointer;
+        padding: 12px 18px; user-select: none;
+        transition: background 0.2s, color 0.2s;
+        z-index: 10;
+    }
+    .nav-btn:hover { background: #A45D41; color: #fff; border-color: #A45D41; }
+    #prev-btn { left: 16px; }
+    #next-btn { right: 16px; }
 /* This specifically stops the 5% growth on the logo images */
 .logo-link:hover .wood-btn { 
     transform: scale(1.0) !important; 
