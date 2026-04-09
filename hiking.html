@@ -274,7 +274,9 @@
 	
     <div id="lightbox" onclick="closeLightbox()">
         <span class="close-btn">&times;</span>
+        <span id="prev-btn" class="nav-btn" onclick="event.stopPropagation(); changeImage(-1)">&#10094;</span>
         <img id="lightbox-img" src="" alt="Enlarged view">
+        <span id="next-btn" class="nav-btn" onclick="event.stopPropagation(); changeImage(1)">&#10095;</span>
     </div>
 
 </body>
