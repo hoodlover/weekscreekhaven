@@ -31,12 +31,12 @@
     style.textContent = `
       .wch-nav-link {
         display: inline-block;
-        color: #fef3c7;
-        background: rgba(255,255,255,0.14);
-        border: 1px solid rgba(21,128,61,0.55);
+        color: #fff;
+        background: rgba(164,93,65,0.8);
+        border: 1px solid #A45D41;
         border-radius: 4px;
         padding: 3px 10px;
-        text-shadow: 0 0 10px rgba(21,128,61,1.2), 1px 1px 0 #000;
+        text-shadow: 1px 1px 0 rgba(0,0,0,0.4);
         text-decoration: none;
         font-size: 0.875rem;
         font-weight: 700;
@@ -45,10 +45,10 @@
         transition: all 0.2s ease;
       }
       .wch-nav-link:hover {
-        color: #fff;
-        background: rgba(21,128,61,0.35);
-        border-color: rgba(21,128,61,0.9);
-        text-shadow: 0 0 8px rgba(21,128,61,0.9), 1px 1px 0 #000;
+        color: #4a4747;
+        background: #f5f5f4;
+        border-color: #4a4747;
+        text-shadow: none;
       }
       .wch-nav-link-active {
         display: inline-block;
