@@ -261,7 +261,11 @@
 <script src="footer.js"></script>
 
     <script>
+        const hikeImages = Array.from(document.querySelectorAll('.adventure-card img'));
+        let currentHikeIndex = 0;
+
         function openLightbox(src) {
+            currentHikeIndex = hikeImages.findIndex(img => img.src === src);
             document.getElementById('lightbox-img').src = src;
             document.getElementById('lightbox').style.display = 'flex';
             document.body.style.overflow = 'hidden';
@@ -270,6 +274,18 @@
             document.getElementById('lightbox').style.display = 'none';
             document.body.style.overflow = 'auto';
         }
+        function changeImage(dir) {
+            currentHikeIndex = (currentHikeIndex + dir + hikeImages.length) % hikeImages.length;
+            document.getElementById('lightbox-img').src = hikeImages[currentHikeIndex].src;
+        }
+        document.addEventListener('keydown', (e) => {
+            const lb = document.getElementById('lightbox');
+            if (lb.style.display === 'flex') {
+                if (e.key === 'ArrowRight') changeImage(1);
+                if (e.key === 'ArrowLeft') changeImage(-1);
+                if (e.key === 'Escape') closeLightbox();
+            }
+        });
     </script>
 	
     <div id="lightbox" onclick="closeLightbox()">
