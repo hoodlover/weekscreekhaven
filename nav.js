@@ -65,12 +65,26 @@
       </a>
 
       <div class="hidden md:flex space-x-1 nav-link-group items-center">
-        <a href="index.html"          class="nav-text-btn">Home</a>
-        <a href="things-to-do.html"   class="nav-text-btn">Things To Do</a>
-        <a href="need-to-know.html"   class="nav-text-btn">Need To Know</a>
-        <a href="find-us.html"        class="nav-text-btn">Find Us</a>
-        <a href="gallery.html"        class="nav-text-btn">Gallery</a>
-        <a href="important-info.html" class="nav-text-btn">Friends Portal</a>
+        <a href="things-to-do.html">
+          <img src="buttons/to-do-see.webp"       alt="To Do &amp; See" class="wood-btn normal-img">
+          <img src="buttons/to-do-see-hover.webp" alt="To Do &amp; See" class="wood-btn hover-img">
+        </a>
+        <a href="need-to-know.html">
+          <img src="buttons/need-to-know.webp"       alt="Need to Know" class="wood-btn normal-img">
+          <img src="buttons/need-to-know-hover.webp" alt="Need to Know" class="wood-btn hover-img">
+        </a>
+        <a href="find-us.html">
+          <img src="buttons/find-cabin.webp"       alt="Find Us" class="wood-btn normal-img">
+          <img src="buttons/find-cabin-hover.webp" alt="Find Us" class="wood-btn hover-img">
+        </a>
+        <a href="gallery.html">
+          <img src="buttons/cabin-gallery.webp"       alt="Gallery" class="wood-btn normal-img">
+          <img src="buttons/cabin-gallery-hover.webp" alt="Gallery" class="wood-btn hover-img">
+        </a>
+        <a href="important-info.html">
+          <img src="buttons/friends-info.webp"       alt="Friends Info" class="wood-btn normal-img">
+          <img src="buttons/friends-info-hover.webp" alt="Friends Info" class="wood-btn hover-img">
+        </a>
       </div>
 
       <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none p-2 bg-black/20 rounded-lg border border-white/20">
