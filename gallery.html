@@ -50,12 +50,20 @@
 
         /* Lightbox Styles */
         #lightbox { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); justify-content: center; align-items: center; }
-        #lightbox img { max-width: 90%; max-height: 80vh; border: 4px solid white; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
-        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); color: white; font-size: 4rem; cursor: pointer; padding: 20px; user-select: none; transition: color 0.2s; }
-        .nav-btn:hover { color: #d4a373; }
-        #prev { left: 20px; }
-        #next { right: 20px; }
-        #close { position: absolute; top: 20px; right: 30px; color: white; font-size: 3rem; cursor: pointer; }
+        #lightbox img { max-width: 82%; max-height: 80vh; border: 4px solid #363333; box-shadow: 0 0 50px rgba(0,0,0,0.5); border-radius: 4px; }
+        .nav-btn {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(54,51,51,0.75); color: #f4eee0;
+            border: 2px solid #363333; border-radius: 8px;
+            font-size: 2rem; line-height: 1; cursor: pointer;
+            padding: 12px 18px; user-select: none;
+            transition: background 0.2s, color 0.2s;
+            z-index: 10;
+        }
+        .nav-btn:hover { background: #A45D41; color: #fff; border-color: #A45D41; }
+        #prev { left: 16px; }
+        #next { right: 16px; }
+        #close { position: absolute; top: 20px; right: 30px; color: white; font-size: 3rem; cursor: pointer; line-height: 1; }
         #caption { position: absolute; bottom: 40px; color: #f4eee0; font-family: 'Crimson Text', serif; font-style: italic; font-size: 1.5rem; text-align: center; width: 80%; }
         
         .gallery-item { cursor: pointer; break-inside: avoid; margin-bottom: 2rem; }
