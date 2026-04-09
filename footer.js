@@ -32,7 +32,7 @@
       .wch-nav-link {
         display: inline-block;
         color: #fff;
-        background: rgba(164,93,65,0.12);
+        background: rgba(164,93,65,0.44);
         border: 1px solid #A45D41;
         border-radius: 4px;
         padding: 3px 10px;
@@ -46,7 +46,7 @@
       }
       .wch-nav-link:hover {
         color: #4a4747;
-        background: #f5f5f4;
+        background: rgba(245,245,244,0.6);
         border-color: #4a4747;
         text-shadow: none;
       }
