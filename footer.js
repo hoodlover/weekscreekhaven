@@ -32,7 +32,7 @@
       .wch-nav-link {
         display: inline-block;
         color: #fff;
-        background: rgba(164,93,65,0.8);
+        background: rgba(164,93,65,0.24);
         border: 1px solid #A45D41;
         border-radius: 4px;
         padding: 3px 10px;
