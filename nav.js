@@ -38,29 +38,10 @@
     .logo-link .hover-img { position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s ease-in-out; z-index: 2; }
     .logo-link:hover .hover-img { opacity: 1; }
 
-    /* -- Desktop text nav buttons -- */
-    .nav-text-btn {
-      display: inline-flex;
-      align-items: center;
-      padding: 0 16px;
-      height: 40px;
-      background-color: rgba(164, 93, 65, 0.8);
-      border: 1px solid #A45D41;
-      border-radius: 8px;
-      color: #fff;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 700;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      text-decoration: none;
-      transition: background-color 0.2s ease, color 0.2s ease;
-      white-space: nowrap;
-    }
-    .nav-text-btn:hover {
-      background-color: #f5f5f4;
-      color: #4a4747;
-    }
+    /* -- Desktop nav button hover swap -- */
+    .nav-link-group a .hover-img { display: none; }
+    .nav-link-group a:hover .normal-img { display: none; }
+    .nav-link-group a:hover .hover-img { display: block; }
 
     /* -- Mobile full-screen menu -- */
     #mobile-menu {
