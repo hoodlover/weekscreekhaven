@@ -88,8 +88,8 @@
           <img src="buttons/cabin-gallery-hover.webp" alt="Gallery" class="wood-btn hover-img">
         </a>
         <a href="important-info.html">
-          <img src="buttons/friends-info.webp"       alt="Friends Info" class="wood-btn normal-img">
-          <img src="buttons/friends-info-hover.webp" alt="Friends Info" class="wood-btn hover-img">
+          <img src="buttons/friends-info.webp"       alt="Friends Hub" class="wood-btn normal-img">
+          <img src="buttons/friends-info-hover.webp" alt="Friends Hub" class="wood-btn hover-img">
         </a>
       </div>
 
