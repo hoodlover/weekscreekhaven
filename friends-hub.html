@@ -10,77 +10,116 @@
     <style>
         body {
             font-family: 'Montserrat', sans-serif;
-            color: #f4eee0;
+            color: #3d3128;
             scroll-behavior: smooth;
-            background-image: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('webpic/barn.webp');
+            background-color: #1a1512;
+            background-image: linear-gradient(rgba(0,0,0,0.18), rgba(0,0,0,0.18)), url('webpic/vintage-wooden-board-textured-background.webp');
             background-attachment: fixed;
             background-size: cover;
         }
         h1, h2, h3, h4 { font-family: 'Crimson Text', serif; font-weight: 700; }
 
-        .extra-heavy-shadow {
-            text-shadow: 3px 3px 6px rgba(0,0,0,1), 0px 0px 25px rgba(0,0,0,1), 0px 0px 10px rgba(0,0,0,0.8);
-        }
-
-        .frosted {
-            background-color: rgba(255,255,255,0.06);
-            backdrop-filter: blur(6px);
-            border: 1px solid rgba(255,255,255,0.12);
-        }
+        .extra-heavy-shadow { text-shadow: 3px 3px 6px rgba(0,0,0,1), 0px 0px 25px rgba(0,0,0,1), 0px 0px 10px rgba(0,0,0,0.8); }
+        .heavy-shadow { text-shadow: 2px 2px 8px rgba(0,0,0,0.7); }
 
         .parchment {
-            background-color: rgba(244, 238, 224, 0.95);
+            background-color: rgba(244, 238, 224, 0.96);
             border: 1px solid #dcd3bd;
             color: #3d3128;
         }
 
+        .dark-card {
+            background-color: rgba(26,21,18,0.82);
+            border: 1px solid rgba(212,163,115,0.2);
+            color: #f4eee0;
+            backdrop-filter: blur(4px);
+        }
+
         /* Tab bar */
         .tab-btn {
-            padding: 0.6rem 1.1rem;
-            font-size: 0.75rem;
+            padding: 0.55rem 0.9rem;
+            font-size: 0.7rem;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.07em;
             border-radius: 0.5rem 0.5rem 0 0;
-            border: 1px solid rgba(255,255,255,0.15);
+            border: 1px solid rgba(139,90,43,0.35);
             border-bottom: none;
-            background: rgba(0,0,0,0.4);
-            color: #a8a29e;
+            background: rgba(26,21,18,0.7);
+            color: #a8906a;
             cursor: pointer;
             transition: all 0.2s;
             white-space: nowrap;
         }
-        .tab-btn:hover { background: rgba(212,163,115,0.2); color: #d4a373; }
-        .tab-btn.active { background: rgba(212,163,115,0.25); color: #d4a373; border-color: rgba(212,163,115,0.4); }
+        .tab-btn:hover { background: rgba(164,93,65,0.25); color: #d4a373; }
+        .tab-btn.active { background: rgba(244,238,224,0.95); color: #5a2e0a; border-color: #dcd3bd; font-weight: 900; }
 
         .tab-panel { display: none; }
         .tab-panel.active { display: block; }
 
-        /* Checklist items */
-        .check-row {
-            display: flex; align-items: flex-start; gap: 12px;
-            padding: 10px 0; border-bottom: 1px solid rgba(139,69,19,0.1);
+        /* Content wrapper */
+        .hub-body {
+            background-color: rgba(244,238,224,0.93);
+            border: 1px solid #dcd3bd;
+            border-top: none;
+            border-radius: 0 0.75rem 0.75rem 0.75rem;
+            color: #3d3128;
         }
-        .check-icon { width: 28px; height: 28px; border-radius: 50%; border: 1px solid #4a4747; flex-shrink: 0; margin-top: 2px; }
 
-        /* Maintenance form */
-        .maint-input { background-color: #fff !important; color: #3d3128 !important; border: 1px solid #dcd3bd !important; }
-        .maint-input:focus { border-color: #166534 !important; outline: none; }
+        /* Checklist items */
+        .check-row { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(139,69,19,0.1); }
+        .check-row:last-child { border-bottom: none; }
+        .check-icon { width: 26px; height: 26px; border-radius: 50%; border: 1px solid #4a4747; flex-shrink: 0; margin-top: 2px; object-fit:cover; }
+        input[type="checkbox"] { width: 1.15rem; height: 1.15rem; accent-color: #A45D41; cursor: pointer; flex-shrink: 0; margin-top: 2px; }
 
+        /* Form inputs */
+        .maint-input { background-color: #fff !important; color: #3d3128 !important; border: 1px solid #dcd3bd !important; border-radius: 0.4rem; padding: 0.65rem 0.75rem; width: 100%; }
+        .maint-input:focus { border-color: #A45D41 !important; outline: none; }
+        .input-style { background: rgba(255,255,255,0.8); border: 1px solid #d1cebd; border-radius: 6px; outline: none; padding: 0.75rem 1rem; width: 100%; }
+        .input-style:focus { border-color: #A45D41; }
+
+        /* Nav */
         #mobile-menu { background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('webpic/railroad-tie-texture.webp'); background-size: cover; }
-
         .wood-btn:hover { transform: scale(1.05); }
         .logo-link { position: relative; display: inline-block; }
         .logo-link .hover-img { position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s ease-in-out; z-index: 2; }
         .logo-link:hover .hover-img { opacity: 1; }
         .logo-link:hover .wood-btn { transform: scale(1.0) !important; }
+        .logo-link .normal-img { opacity: 1; transition: none; }
 
         /* Lightbox */
-        #lightbox { display: none; position: fixed; z-index: 200; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.92); justify-content: center; align-items: center; }
+        #lightbox { display: none; position: fixed; z-index: 200; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.93); justify-content: center; align-items: center; }
         #lightbox-img { max-width: 90%; max-height: 90%; border: 3px solid #4a4747; border-radius: 4px; }
-        .close-btn { position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; cursor: pointer; line-height: 1; }
+        .lb-close { position: absolute; top: 18px; right: 28px; color: white; font-size: 44px; cursor: pointer; line-height: 1; }
 
-        .text-outlined { -webkit-text-stroke: 1px black; paint-order: stroke fill; }
+        /* Toast */
+        #toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(4rem); background: #1a1512; color: #d4a373; padding: 0.75rem 1.5rem; border-radius: 2rem; font-weight: 800; font-size: 0.85rem; border: 2px solid #d4a373; z-index: 500; opacity: 0; transition: all 0.4s; pointer-events: none; white-space: nowrap; }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* Secret overlay */
+        #secret-overlay { display: none; position: fixed; inset: 0; z-index: 600; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; flex-direction: column; }
+
+        /* Burn animation */
+        #fire-overlay { display: none; position: fixed; inset: 0; z-index: 550; pointer-events: none; }
+        .flame { position: absolute; bottom: 0; font-size: 3rem; animation: riseFlame 2.5s ease-out forwards; }
+        @keyframes riseFlame { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-100vh) scale(0.3)} }
+
+        /* Idle warning */
+        #idle-popup { display: none; position: fixed; bottom: 5rem; right: 2rem; z-index: 400; background: rgba(26,21,18,0.95); color: #d4a373; border: 2px solid #d4a373; border-radius: 1rem; padding: 1rem 1.5rem; font-size: 0.8rem; font-weight: 800; max-width: 220px; text-align: center; animation: popIn 0.4s ease; }
+        @keyframes popIn { from{transform:scale(0.7);opacity:0} to{transform:scale(1);opacity:1} }
+
+        .section-title { font-size: 2.5rem; font-weight: 700; color: #A45D41; text-transform: uppercase; letter-spacing: -0.02em; margin-bottom: 1.25rem; }
+
+        /* Zoom cards */
+        .zoom-card { cursor: zoom-in; transition: transform 0.2s; }
+        .zoom-card:hover { transform: scale(1.02); }
+
+        /* Easter egg hint */
+        .egg-hint { font-size: 0.6rem; color: transparent; user-select: none; }
+        .egg-hint:hover { color: #A45D41; cursor: default; }
+
+        /* Confetti canvas */
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 300; display: none; }
     </style>
 </head>
 <body>
@@ -88,131 +127,169 @@
 <div id="nav-placeholder"></div>
 <script src="nav.js"></script>
 
-<!-- Header -->
-<header class="max-w-5xl mx-auto text-center pt-36 pb-8 px-4">
-    <h1 class="text-5xl md:text-7xl font-bold mb-3 extra-heavy-shadow">Friends Hub</h1>
-    <p class="text-xl italic text-stone-300 extra-heavy-shadow">Weeks Creek Haven &mdash; Everything you need, one page.</p>
-    <div class="h-1 w-28 bg-[#d4a373] mx-auto mt-5"></div>
+<!-- Toast notification -->
+<div id="toast"></div>
 
-    <!-- SOS contact strip -->
-    <div class="mt-6 inline-flex gap-6 frosted px-6 py-3 rounded-xl text-sm">
+<!-- Idle popup -->
+<div id="idle-popup">
+    &#128062; Hey... the creek is out there.<br>Go enjoy it!
+    <button onclick="document.getElementById('idle-popup').style.display='none'" class="block mx-auto mt-2 text-white text-xs underline">I know, I know</button>
+</div>
+
+<!-- Confetti canvas -->
+<canvas id="confetti-canvas"></canvas>
+
+<!-- SECRET OVERLAY (Konami Code) -->
+<div id="secret-overlay">
+    <div class="parchment p-10 md:p-16 rounded-2xl shadow-2xl text-center max-w-lg mx-4 border-t-8 border-[#A45D41]">
+        <div class="text-6xl mb-4">&#128373;</div>
+        <h2 class="text-4xl text-[#A45D41] font-serif italic mb-3">YOU FOUND THE SECRET VAULT.</h2>
+        <p class="text-stone-600 text-lg italic mb-6">"Your reward for this incredible achievement is... the knowledge that you still have to clean the cabin."</p>
+        <p class="text-stone-500 text-sm mb-2">&#8593;&#8593;&#8595;&#8595;&#8592;&#8594;&#8592;&#8594; B A</p>
+        <p class="text-xs text-stone-400 italic">You absolute legend.</p>
+        <button onclick="document.getElementById('secret-overlay').style.display='none'" class="mt-6 bg-[#A45D41] text-white px-8 py-3 rounded-full font-black uppercase tracking-widest hover:bg-black transition">Close Vault</button>
+    </div>
+</div>
+
+<!-- FIRE OVERLAY -->
+<div id="fire-overlay"></div>
+
+<!-- Lightbox -->
+<div id="lightbox" onclick="closeLightbox()">
+    <span class="lb-close" onclick="closeLightbox()">&times;</span>
+    <img id="lightbox-img" style="max-width:90%;max-height:90%;border:3px solid #4a4747;border-radius:4px;">
+</div>
+
+<!-- Header -->
+<header class="max-w-5xl mx-auto text-center pt-36 pb-6 px-4">
+    <h1 class="text-5xl md:text-7xl font-bold mb-2 extra-heavy-shadow text-[#f4eee0]" style="font-variant:small-caps;">Friends Hub</h1>
+    <p class="text-lg italic text-stone-300 heavy-shadow">Weeks Creek Haven &mdash; Everything you need, one page.</p>
+    <div class="h-1 w-24 bg-[#A45D41] mx-auto mt-4 mb-5"></div>
+    <!-- SOS strip -->
+    <div class="inline-flex flex-wrap justify-center gap-4 dark-card px-6 py-3 rounded-xl text-sm">
         <span class="font-black text-[#d4a373]">Need Lance?</span>
-        <span class="text-white font-bold">770.549.9358</span>
-        <span class="text-stone-400">|</span>
+        <span id="lance-num" class="text-white font-bold cursor-pointer hover:text-[#d4a373] transition" onclick="lanceClick()">770.549.9358</span>
+        <span class="text-stone-500">|</span>
         <span class="font-black text-[#d4a373]">Heather</span>
         <span class="text-white font-bold">678.993.3617</span>
     </div>
+    <p class="egg-hint mt-1">psst... try the konami code</p>
 </header>
 
 <!-- Tab bar -->
 <div class="max-w-5xl mx-auto px-4">
-    <div class="flex gap-1 overflow-x-auto pb-0" id="tab-bar">
-        <button class="tab-btn active" onclick="switchTab('checkin', this)">&#9646; Check In</button>
-        <button class="tab-btn" onclick="switchTab('scoop', this)">&#9650; The Scoop</button>
-        <button class="tab-btn" onclick="switchTab('provisions', this)">&#9654; Provisions</button>
-        <button class="tab-btn" onclick="switchTab('checkout', this)">&#9632; Check Out</button>
-        <button class="tab-btn" onclick="switchTab('maintenance', this)">&#9881; Maintenance</button>
+    <div class="flex gap-1 overflow-x-auto pb-0">
+        <button class="tab-btn active" onclick="switchTab('checkin',this)">&#9646; Check In</button>
+        <button class="tab-btn" onclick="switchTab('scoop',this)">&#9650; The Scoop</button>
+        <button class="tab-btn" onclick="switchTab('provisions',this)">&#9654; Provisions</button>
+        <button class="tab-btn" onclick="switchTab('checkout',this)">&#9632; Check Out</button>
+        <button class="tab-btn" onclick="switchTab('guestbook',this)">&#9998; Guest Book</button>
+        <button class="tab-btn" onclick="switchTab('maintenance',this)">&#9881; Maintenance</button>
     </div>
 
-    <!-- Tab content wrapper -->
-    <div class="frosted rounded-b-2xl rounded-tr-2xl p-6 md:p-10 mb-16 border border-[#d4a373]/30">
+    <!-- Tab body -->
+    <div class="hub-body p-6 md:p-10 mb-16 shadow-2xl">
 
-        <!-- ===== TAB 1: CHECK IN ===== -->
-        <div id="tab-checkin" class="tab-panel active space-y-10">
 
-            <!-- Access block -->
+        <!-- ==================== TAB 1: CHECK IN ==================== -->
+        <div id="tab-checkin" class="tab-panel active space-y-8">
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="frosted p-6 rounded-xl space-y-5">
-                    <h2 class="text-2xl text-[#d4a373] uppercase tracking-widest extra-heavy-shadow border-b border-white/20 pb-2">Entry & Internet</h2>
+
+                <!-- Access block -->
+                <div class="parchment p-6 rounded-xl shadow-lg space-y-5 border-t-4 border-[#A45D41]">
+                    <h2 class="section-title">Entry &amp; Internet</h2>
                     <div>
-                        <p class="text-xs uppercase tracking-widest text-stone-400 font-bold">Cabin Door Code</p>
+                        <p class="text-xs uppercase tracking-widest text-stone-500 font-bold">Cabin Door Code</p>
                         <div class="flex items-center gap-4 mt-2">
-                            <p class="text-5xl font-mono font-black text-white extra-heavy-shadow">22246</p>
-                            <span class="text-stone-300 italic text-sm font-bold">then</span>
-                            <img src="webpic/checkmark.webp" alt="checkmark" class="h-14 w-14 rounded-full border-2 border-[#d4a373] hover:scale-110 transition-transform shadow-xl">
+                            <p id="door-code" class="text-5xl font-mono font-black text-stone-900 cursor-pointer hover:text-[#A45D41] transition select-all" onclick="doorCodeClick()" title="Click me...">22246</p>
+                            <span class="text-stone-400 italic text-sm font-bold">then</span>
+                            <img src="webpic/checkmark.webp" alt="checkmark" class="h-12 w-12 rounded-full border-2 border-[#A45D41] hover:scale-110 transition-transform shadow-lg">
                         </div>
+                        <p class="text-[10px] text-stone-400 italic mt-1">click the code to copy</p>
                     </div>
                     <div>
-                        <p class="text-xs uppercase tracking-widest text-stone-400 font-bold">Wi-Fi Network</p>
-                        <p class="text-2xl font-bold text-white extra-heavy-shadow">WeeksCreekHaven</p>
-                        <p class="text-xs uppercase tracking-widest text-stone-400 mt-3 font-bold">Password</p>
-                        <p class="text-2xl font-bold text-white extra-heavy-shadow">creeklife</p>
+                        <p class="text-xs uppercase tracking-widest text-stone-500 font-bold">Wi-Fi Network</p>
+                        <p class="text-2xl font-bold text-stone-900">WeeksCreekHaven</p>
+                        <p class="text-xs uppercase tracking-widest text-stone-500 mt-3 font-bold">Password</p>
+                        <p id="wifi-pass" class="text-2xl font-bold text-stone-900 cursor-pointer hover:text-[#A45D41] transition" onclick="copyWifi()" title="Click to copy">creeklife</p>
+                        <p class="text-[10px] text-stone-400 italic mt-1">click the password to copy</p>
                     </div>
-                    <img src="webpic/wifi.webp" alt="WiFi" class="rounded-lg shadow-xl w-full border border-white/10 hover:scale-[1.02] transition-transform">
+                    <img src="webpic/wifi.webp" alt="WiFi" class="rounded-lg shadow-xl w-full border border-stone-200 hover:scale-[1.02] transition-transform zoom-card" onclick="openLightbox(this.src)">
                 </div>
 
                 <!-- Cabin feature grid -->
-                <div class="frosted p-6 rounded-xl">
-                    <h2 class="text-2xl text-[#d4a373] uppercase tracking-widest extra-heavy-shadow border-b border-white/20 pb-2 mb-4">Welcome to Blue Ridge!</h2>
+                <div class="parchment p-6 rounded-xl shadow-lg border-t-4 border-[#A45D41]">
+                    <h2 class="section-title">Welcome to Blue Ridge!</h2>
                     <div class="grid grid-cols-3 gap-2">
                         <div class="flex flex-col gap-1 group">
-                            <div class="bg-[#d4a373]/30 p-1 rounded text-center text-[10px] font-black uppercase text-white text-outlined border border-black/40">Hot Tub</div>
-                            <img src="webpic/hottub.webp" onclick="openLightbox(this.src)" class="rounded shadow-lg w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-pointer">
+                            <div class="bg-[#A45D41]/20 p-1 rounded text-center text-[10px] font-black uppercase text-stone-700 border border-stone-300">Hot Tub</div>
+                            <img src="webpic/hottub.webp" onclick="openLightbox(this.src)" class="rounded shadow-md w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-zoom-in border border-stone-200">
                         </div>
                         <div class="flex flex-col gap-1 group">
-                            <div class="bg-[#d4a373]/30 p-1 rounded text-center text-[10px] font-black uppercase text-white text-outlined border border-black/40">98&quot; TV</div>
-                            <img src="webpic/bigtv.webp" onclick="openLightbox(this.src)" class="rounded shadow-lg w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-pointer">
+                            <div class="bg-[#A45D41]/20 p-1 rounded text-center text-[10px] font-black uppercase text-stone-700 border border-stone-300">98&quot; TV</div>
+                            <img src="webpic/bigtv.webp" onclick="openLightbox(this.src)" class="rounded shadow-md w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-zoom-in border border-stone-200">
                         </div>
                         <div class="flex flex-col gap-1 group">
-                            <div class="bg-[#d4a373]/30 p-1 rounded text-center text-[10px] font-black uppercase text-white text-outlined border border-black/40">Fireplace</div>
-                            <img src="webpic/fire.webp" onclick="openLightbox(this.src)" class="rounded shadow-lg w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-pointer">
+                            <div class="bg-[#A45D41]/20 p-1 rounded text-center text-[10px] font-black uppercase text-stone-700 border border-stone-300">Fireplace</div>
+                            <img src="webpic/fire.webp" onclick="openLightbox(this.src)" class="rounded shadow-md w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-zoom-in border border-stone-200">
                         </div>
                         <div class="flex flex-col gap-1 group">
-                            <div class="bg-[#d4a373]/30 p-1 rounded text-center text-[10px] font-black uppercase text-white text-outlined border border-black/40">Firepit</div>
-                            <img src="webpic/firepit.webp" onclick="openLightbox(this.src)" class="rounded shadow-lg w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-pointer">
+                            <div class="bg-[#A45D41]/20 p-1 rounded text-center text-[10px] font-black uppercase text-stone-700 border border-stone-300">Firepit</div>
+                            <img src="webpic/firepit.webp" onclick="openLightbox(this.src)" class="rounded shadow-md w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-zoom-in border border-stone-200">
                         </div>
                         <div class="flex flex-col gap-1 group">
-                            <div class="bg-[#d4a373]/30 p-1 rounded text-center text-[10px] font-black uppercase text-white text-outlined border border-black/40">Porch Swing</div>
-                            <img src="webpic/porchswing.webp" onclick="openLightbox(this.src)" class="rounded shadow-lg w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-pointer">
+                            <div class="bg-[#A45D41]/20 p-1 rounded text-center text-[10px] font-black uppercase text-stone-700 border border-stone-300">Porch Swing</div>
+                            <img src="webpic/porchswing.webp" onclick="openLightbox(this.src)" class="rounded shadow-md w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-zoom-in border border-stone-200">
                         </div>
                         <div class="flex flex-col gap-1 group">
-                            <div class="bg-[#d4a373]/30 p-1 rounded text-center text-[10px] font-black uppercase text-white text-outlined border border-black/40">Streamside</div>
-                            <img src="webpic/heathers.webp" onclick="openLightbox(this.src)" class="rounded shadow-lg w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-pointer">
+                            <div class="bg-[#A45D41]/20 p-1 rounded text-center text-[10px] font-black uppercase text-stone-700 border border-stone-300">Streamside</div>
+                            <img src="webpic/heathers.webp" onclick="openLightbox(this.src)" class="rounded shadow-md w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-zoom-in border border-stone-200">
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Alexa commands -->
-            <div class="frosted p-6 rounded-xl">
-                <h2 class="text-2xl text-[#d4a373] uppercase tracking-widest extra-heavy-shadow border-b border-white/20 pb-2 mb-5">Alexa Commands</h2>
+            <!-- Alexa -->
+            <div class="parchment p-6 rounded-xl shadow-lg border-t-4 border-[#A45D41]">
+                <h2 class="section-title">Alexa Commands</h2>
                 <div class="flex justify-center mb-5">
-                    <div class="flex gap-2 overflow-hidden rounded-lg shadow-2xl border border-white/10 max-w-md w-full hover:scale-[1.01] transition-transform">
+                    <div class="flex gap-1 overflow-hidden rounded-lg shadow-xl border border-stone-300 max-w-md w-full hover:scale-[1.01] transition-transform">
                         <img src="webpic/alexa.webp" alt="Alexa" class="w-1/2 h-auto object-cover">
                         <img src="webpic/alexa2.webp" alt="Alexa" class="w-1/2 h-auto object-cover">
                     </div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div class="p-4 bg-black/60 rounded border border-white/10 shadow">
-                        <p class="text-[#d4a373] font-black">"ALEXA, Cabin on/off"</p>
+                    <div class="p-4 bg-stone-800 rounded border border-stone-600 shadow">
+                        <p class="text-[#d4a373] font-black">&ldquo;ALEXA, Cabin on/off&rdquo;</p>
                         <p class="text-xs text-stone-300 font-bold mt-1">Toggle main area lights</p>
                     </div>
-                    <div class="p-4 bg-black/60 rounded border border-white/10 shadow">
-                        <p class="text-[#d4a373] font-black">"ALEXA, Set fireside to 30%"</p>
+                    <div class="p-4 bg-stone-800 rounded border border-stone-600 shadow">
+                        <p class="text-[#d4a373] font-black">&ldquo;ALEXA, Set fireside to 30%&rdquo;</p>
                         <p class="text-xs text-stone-300 font-bold mt-1">Perfect watching atmosphere</p>
                     </div>
-                    <div class="p-4 bg-black/60 rounded border border-white/10 shadow">
-                        <p class="text-[#d4a373] font-black">"ALEXA, Going out"</p>
+                    <div class="p-4 bg-stone-800 rounded border border-stone-600 shadow">
+                        <p class="text-[#d4a373] font-black">&ldquo;ALEXA, Going out&rdquo;</p>
                         <p class="text-xs text-stone-300 font-bold mt-1">Locks and lights secure in 30s</p>
                     </div>
-                    <div class="p-4 bg-red-950/70 rounded border border-red-500/40 shadow">
-                        <p class="text-white font-black italic">"Don't say Alexa, burn it down"</p>
-                        <p class="text-[11px] text-red-300 font-black uppercase tracking-tighter mt-1">NO &#128293;</p>
+                    <div id="burn-card" class="p-4 bg-red-950 rounded border border-red-700 shadow cursor-pointer select-none" onclick="burnClick()" title="Don't.">
+                        <p class="text-white font-black italic">&ldquo;Don&rsquo;t say Alexa, burn it down&rdquo;</p>
+                        <p class="text-[11px] text-red-300 font-black uppercase tracking-tighter mt-1">NO &#128293; &mdash; <span class="text-red-400 font-normal italic">click at your own risk</span></p>
                     </div>
                 </div>
             </div>
         </div>
 
 
-        <!-- ===== TAB 2: THE SCOOP ===== -->
-        <div id="tab-scoop" class="tab-panel space-y-10">
+        <!-- ==================== TAB 2: THE SCOOP ==================== -->
+        <div id="tab-scoop" class="tab-panel space-y-8">
 
             <!-- Weather -->
-            <div id="weather-section" class="parchment p-6 md:p-8 rounded-xl opacity-0 transition-opacity duration-700">
-                <div class="flex flex-col md:flex-row justify-between items-start mb-6 border-b border-stone-300 pb-4">
+            <div id="weather-section" class="parchment p-6 md:p-8 rounded-xl shadow-lg border-t-4 border-[#A45D41] opacity-0 transition-opacity duration-700">
+                <div class="flex flex-col md:flex-row justify-between items-start mb-5 border-b border-stone-300 pb-4">
                     <div>
-                        <h2 class="text-3xl text-[#A45D41] uppercase font-bold">7-Day Creek Outlook</h2>
-                        <p id="weather-summary" class="text-base italic text-stone-600 mt-1">Loading your mountain forecast...</p>
+                        <h2 class="section-title mb-1">7-Day Creek Outlook</h2>
+                        <p id="weather-summary" class="text-base italic text-stone-600">Loading your mountain forecast...</p>
                     </div>
                     <div class="text-right hidden md:block mt-2">
                         <p class="text-xs uppercase tracking-widest font-bold text-stone-500">Blue Ridge, GA</p>
@@ -220,7 +297,7 @@
                     </div>
                 </div>
                 <div id="forecast-7day" class="grid grid-cols-4 sm:grid-cols-7 gap-2"></div>
-                <div class="mt-6 pt-4 border-t border-stone-300 grid grid-cols-4 gap-4 text-center">
+                <div class="mt-5 pt-4 border-t border-stone-300 grid grid-cols-4 gap-4 text-center">
                     <div><p class="text-[10px] uppercase tracking-widest font-bold text-stone-500">Humidity</p><p id="stat-humidity" class="text-base font-serif text-stone-800">--%</p></div>
                     <div><p class="text-[10px] uppercase tracking-widest font-bold text-stone-500">Wind</p><p id="stat-wind" class="text-base font-serif text-stone-800">-- mph</p></div>
                     <div><p class="text-[10px] uppercase tracking-widest font-bold text-stone-500">UV Index</p><p id="stat-uv" class="text-base font-serif text-stone-800">--</p></div>
@@ -229,101 +306,111 @@
             </div>
 
             <!-- Hot Tub -->
-            <div class="parchment p-6 md:p-8 rounded-xl grid md:grid-cols-2 gap-8 items-center">
+            <div class="parchment p-6 md:p-8 rounded-xl shadow-lg grid md:grid-cols-2 gap-8 items-center border-t-4 border-[#A45D41]">
                 <div>
-                    <img src="info/HotTub.webp" onclick="openLightbox(this.src)" class="cursor-zoom-in border-4 border-[#4a4747] rounded shadow-2xl w-full hover:scale-[1.02] transition-transform">
+                    <img src="info/HotTub.webp" onclick="openLightbox(this.src)" class="zoom-card border-4 border-[#4a4747] rounded shadow-2xl w-full">
                     <p class="text-center text-xs mt-2 italic text-stone-500">Click to expand Hot Tub &amp; Cover Lifter Guide</p>
                 </div>
                 <div>
-                    <h2 class="text-3xl text-[#A45D41] uppercase font-bold mb-4">Hot Tub &amp; Spa</h2>
+                    <h2 class="section-title">Hot Tub &amp; Spa</h2>
                     <div class="space-y-2 text-sm leading-relaxed">
                         <p><strong>Soak Time:</strong> Limit to 15 minutes. Step out if you feel lightheaded.</p>
-                        <p><strong>Towels:</strong> Use the dedicated large towels in the entertainment room — not the bathroom ones.</p>
-                        <p><strong>Cover Lifter:</strong> Always use the lifter arm. Don't drag the cover off the edge.</p>
-                        <p><strong>When Done:</strong> Replace cover fully on all sides to keep heat in and critters out.</p>
-                        <p><strong>Kids:</strong> Supervised at all times. Limit to 5–10 minutes in hot water.</p>
-                        <p><strong>Alcohol &amp; Hot Tubs:</strong> Use extra caution — heat + booze = dizzy fast.</p>
+                        <p><strong>Towels:</strong> Use the dedicated large towels in the entertainment room &mdash; not the bathroom ones.</p>
+                        <p><strong>Cover Lifter:</strong> Always use the lifter arm. Don&rsquo;t drag the cover off the edge.</p>
+                        <p><strong>When Done:</strong> Replace cover fully on all sides. Keep heat in, critters out.</p>
+                        <p><strong>Kids:</strong> Supervised at all times. Limit to 5&ndash;10 minutes in hot water.</p>
+                        <p><strong>Alcohol &amp; Hot Tubs:</strong> Heat + booze = dizzy fast. You&rsquo;ve been warned.</p>
                         <p><strong>Glassware:</strong> No glass near the hot tub. Use the plastic cups provided.</p>
-                        <p><strong>Lower-Level Spa Tub:</strong> Jets are currently out of order — tub itself is fully usable.</p>
+                        <p><strong>Lower Spa Tub:</strong> Jets out of order &mdash; tub itself is fully usable.</p>
                     </div>
                 </div>
             </div>
 
             <!-- Mountain Safety -->
-            <div class="parchment p-6 md:p-8 rounded-xl grid md:grid-cols-2 gap-8 items-center">
+            <div class="parchment p-6 md:p-8 rounded-xl shadow-lg grid md:grid-cols-2 gap-8 items-center border-t-4 border-[#A45D41]">
                 <div>
-                    <h2 class="text-3xl text-[#A45D41] uppercase font-bold mb-4">Mountain Safety</h2>
+                    <h2 class="section-title">Mountain Safety</h2>
                     <div class="space-y-2 text-sm leading-relaxed">
-                        <p><strong>Black Bears:</strong> Active year-round. Never feed them. Make noise, back away slowly. No food outside.</p>
-                        <p><strong>Other Wildlife:</strong> Coyotes, deer, wild turkeys. Keep distance, don't feed.</p>
-                        <p><strong>Snakes:</strong> Watch your step on trails, wood piles, tall grass. Copperheads are present. Leave them alone.</p>
+                        <p><strong>Black Bears:</strong> Active year-round. Never feed them. Make noise, back away slowly. No food outside &mdash; ever.</p>
+                        <p><strong>Other Wildlife:</strong> Coyotes, deer, wild turkeys. Keep distance, don&rsquo;t feed.</p>
+                        <p><strong>Snakes:</strong> Watch your step on trails, wood piles, tall grass. Copperheads are real. Leave them alone.</p>
                         <p><strong>Firepit:</strong> Never leave unattended. Douse with water, stir ash until cold. Check Fannin County burn bans.</p>
-                        <p><strong>Mountain Roads:</strong> Steep and slick after rain or ice. Take it slow, especially at night. 4WD recommended in winter.</p>
-                        <p><strong>Weather:</strong> Changes fast. Bring a layer — it's 10–15&deg;F cooler at elevation.</p>
-                        <p><strong>Emergencies:</strong> 911 still works with spotty service. Nearest hospital: Fannin Regional, ~15 min away.</p>
+                        <p><strong>Mountain Roads:</strong> Steep and slick after rain or ice. Slow down, especially at night.</p>
+                        <p><strong>Weather:</strong> Changes fast. Bring a layer &mdash; 10&ndash;15&deg;F cooler at elevation.</p>
+                        <p><strong>Emergencies:</strong> 911 still works. Nearest hospital: Fannin Regional, ~15 min.</p>
                     </div>
                 </div>
                 <div>
-                    <img src="info/05_Safety.webp" onclick="openLightbox(this.src)" class="cursor-zoom-in border-4 border-[#4a4747] rounded shadow-2xl w-full hover:scale-[1.02] transition-transform">
+                    <img src="info/05_Safety.webp" onclick="openLightbox(this.src)" class="zoom-card border-4 border-[#4a4747] rounded shadow-2xl w-full">
                 </div>
             </div>
 
             <!-- Bear Bins -->
-            <div class="parchment p-6 md:p-8 rounded-xl grid md:grid-cols-2 gap-8 items-center">
+            <div class="parchment p-6 md:p-8 rounded-xl shadow-lg grid md:grid-cols-2 gap-8 items-center border-t-4 border-[#A45D41]">
                 <div>
-                    <img src="webpic/trash.webp" onclick="openLightbox(this.src)" class="cursor-zoom-in border-4 border-[#4a4747] rounded shadow-2xl w-full hover:scale-[1.02] transition-transform">
+                    <img id="bear-bin-img" src="webpic/trash.webp" onclick="openLightbox(this.src)" class="zoom-card border-4 border-[#4a4747] rounded shadow-2xl w-full" onmouseover="bearBinHover()">
                 </div>
                 <div>
-                    <h2 class="text-3xl text-[#A45D41] uppercase font-bold mb-4">Garbage &amp; Bear Bins</h2>
+                    <h2 class="section-title">Garbage &amp; Bear Bins</h2>
                     <div class="space-y-2 text-sm leading-relaxed">
-                        <p><strong>Opening:</strong> Pinch both side handles inward at the same time, then lift the lid. Takes a little force — that's the point!</p>
-                        <p><strong>Closing:</strong> Press the lid down firmly until it clicks locked on both sides.</p>
-                        <p><strong>Bag it first.</strong> Always bag your trash before placing it in any can.</p>
-                        <p><strong>Food waste &amp; smelly trash</strong> goes in the tall bear-proof can on the front porch. Latch it completely. Bears are real.</p>
+                        <p><strong>Opening:</strong> Pinch both side handles inward at the same time, then lift. Takes force &mdash; that&rsquo;s the point.</p>
+                        <p><strong>Closing:</strong> Press down firmly until it clicks locked on both sides.</p>
+                        <p><strong>Bag it first.</strong> Always. Every time.</p>
+                        <p><strong>Food waste &amp; smelly trash</strong> goes in the tall bear-proof can on the front porch. Bears are real and they hold grudges.</p>
                         <p><strong>General trash</strong> (dry, non-food) can go in the smaller deck bin.</p>
-                        <p><strong>No loose garbage outside.</strong> Ever. Bears are crafty and they hold grudges.</p>
-                        <p><strong>Full can?</strong> Extra trash bags under the kitchen sink.</p>
+                        <p><strong>No loose garbage outside.</strong> Ever. Did we mention bears?</p>
+                        <p><strong>Full can?</strong> Extra bags under the kitchen sink.</p>
                     </div>
                 </div>
+            </div>
+
+            <!-- BIDET BEAR (moved here from Check Out) -->
+            <div class="parchment p-8 rounded-2xl shadow-xl border-4 border-[#A45D41] max-w-2xl mx-auto text-center">
+                <h2 class="section-title text-center">The Refreshing Cabin Spritz Bidet</h2>
+                <div class="overflow-hidden rounded-xl shadow-2xl mb-5 max-w-xs mx-auto border-2 border-stone-300">
+                    <img id="bidet-bear" src="webpic/bidet.webp" alt="Bidet" class="w-full h-auto object-cover hover:scale-[1.04] transition-transform duration-500 cursor-pointer" onclick="bidetClick()">
+                </div>
+                <p class="text-xl font-black text-stone-900 italic drop-shadow">&ldquo;Don&rsquo;t forget to check out the bidet for the freshest end-of-poo experience ever.&rdquo;</p>
+                <p class="egg-hint mt-2">the bear knows... click him</p>
             </div>
         </div>
 
 
-        <!-- ===== TAB 3: PROVISIONS ===== -->
+        <!-- ==================== TAB 3: PROVISIONS ==================== -->
         <div id="tab-provisions" class="tab-panel space-y-8">
             <div class="grid md:grid-cols-2 gap-8">
-                <div class="parchment p-6 rounded-xl shadow-xl border-l-8 border-orange-900/40">
-                    <h2 class="text-3xl font-serif font-bold text-stone-900 mb-3">Firewood &amp; BBQ</h2>
-                    <p class="text-sm mb-5 leading-relaxed">We provide the firepit and charcoal BBQ, but guests are responsible for their own fuel.<br><strong>** Please use local firewood only **</strong> to protect our forests!</p>
+                <div class="parchment p-6 rounded-xl shadow-lg border-l-8 border-orange-900/40">
+                    <h2 class="section-title">Firewood &amp; BBQ</h2>
+                    <p class="text-sm mb-5 leading-relaxed">We provide the firepit and charcoal BBQ, but guests supply their own fuel.<br><strong>** Please use LOCAL firewood only **</strong> to protect our forests!</p>
                     <div class="space-y-3">
-                        <div class="bg-white/50 p-4 rounded border border-stone-200">
+                        <div class="bg-stone-100 p-4 rounded border border-stone-200">
                             <h4 class="font-bold text-stone-800">Local Roadside Stands</h4>
-                            <p class="text-xs uppercase text-stone-700 mt-1">Best for seasoned hardwood. Keep an eye out along Aska Rd!</p>
+                            <p class="text-xs text-stone-600 mt-1">Best for seasoned hardwood. Keep an eye out along Aska Rd!</p>
                         </div>
-                        <div class="bg-white/50 p-4 rounded border border-stone-200">
+                        <div class="bg-stone-100 p-4 rounded border border-stone-200">
                             <h4 class="font-bold text-stone-800">Home Depot / Lowes</h4>
-                            <p class="text-xs uppercase text-stone-700 mt-1">Located on Hwy 515 for bundles of wood and charcoal.</p>
+                            <p class="text-xs text-stone-600 mt-1">On Hwy 515 for bundles of wood and charcoal.</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="parchment p-6 rounded-xl shadow-xl border-l-8 border-green-900/40">
-                    <h2 class="text-3xl font-serif font-bold text-stone-900 mb-3">Groceries &amp; Supplies</h2>
-                    <p class="text-sm mb-5 leading-relaxed">Blue Ridge has options for stocking the fully equipped kitchen. Remember to grab extra beans for the <strong>Breville Espresso machine</strong>!</p>
+                <div class="parchment p-6 rounded-xl shadow-lg border-l-8 border-green-900/40">
+                    <h2 class="section-title">Groceries &amp; Supplies</h2>
+                    <p class="text-sm mb-5 leading-relaxed">Blue Ridge has options for stocking the fully equipped kitchen. Remember to grab beans for the <strong>Breville Espresso machine!</strong></p>
                     <ul class="space-y-3">
-                        <li class="bg-white/50 p-3 rounded border border-stone-200">
+                        <li class="bg-stone-100 p-3 rounded border border-stone-200">
                             <span class="font-bold block text-stone-800">Ingles Market</span>
-                            <p class="text-xs uppercase text-stone-700">Closest full-service grocery</p>
+                            <p class="text-xs text-stone-600">Closest full-service grocery</p>
                         </li>
-                        <li class="bg-white/50 p-3 rounded border border-stone-200">
+                        <li class="bg-stone-100 p-3 rounded border border-stone-200">
                             <span class="font-bold block text-stone-800">Walmart Supercenter</span>
-                            <p class="text-xs uppercase text-stone-700">Hwy 5, Blue Ridge</p>
+                            <p class="text-xs text-stone-600">Hwy 5, Blue Ridge</p>
                         </li>
-                        <li class="bg-white/50 p-3 rounded border border-stone-200">
-                            <span class="font-bold block text-stone-800">Van Zandts</span>
-                            <p class="text-xs text-stone-700 mt-1">Around the corner, over the bridge. Snacks, milk, eggs, chachki tourist stuff and breakfast and lunch.</p>
+                        <li class="bg-stone-100 p-3 rounded border border-stone-200">
+                            <span class="font-bold block text-stone-800">Van Zandts &#9733;</span>
+                            <p class="text-xs text-stone-700 mt-1">Around the corner, over the bridge. Snacks, milk, eggs, chachki tourist stuff, breakfast and lunch.</p>
                             <p class="text-xs font-black text-stone-900 mt-1">Denver, the owner, makes the best hash browns.</p>
-                            <p class="text-xs italic text-stone-600 mt-1">Tell him Lance sent ya.</p>
+                            <p class="text-xs italic text-stone-500 mt-1">Tell him Lance sent ya.</p>
                         </li>
                     </ul>
                 </div>
@@ -333,20 +420,20 @@
                 <h3 class="text-3xl font-serif italic text-red-900 mb-5 text-center">A Note on Wildlife</h3>
                 <div class="grid md:grid-cols-2 gap-8 items-center">
                     <div class="space-y-4">
-                        <p class="text-stone-700 italic border-l-4 border-stone-300 pl-4 leading-relaxed">
-                            "For your safety, please don't feed the wildlife, pet them, or leave loose garbage outside or in your car. There are black bears, coyotes, and deer in the area."
+                        <p class="text-stone-700 italic border-l-4 border-stone-300 pl-4 leading-relaxed text-sm">
+                            &ldquo;For your safety, please don&rsquo;t feed the wildlife, pet them, or leave loose garbage outside or in your car. There are black bears, coyotes, and deer in the area.&rdquo;
                         </p>
-                        <div class="bg-stone-800/5 p-5 rounded-lg border border-stone-200">
-                            <p class="font-bold text-stone-900 mb-2">Opening the bear-proof bin requires the "pinch and lift" technique:</p>
+                        <div class="bg-stone-100 p-5 rounded-lg border border-stone-200">
+                            <p class="font-bold text-stone-900 mb-2 text-sm">Opening the bear-proof bin: the &ldquo;pinch and lift&rdquo; technique:</p>
                             <ul class="text-sm space-y-2 text-stone-700">
-                                <li><span class="font-bold text-red-900 uppercase">The Mechanism:</span> Place your fingers inside the two slots on the black latch.</li>
-                                <li><span class="font-bold text-red-900 uppercase">The Action:</span> Pinch the internal tabs together while simultaneously lifting the lid with your other hand.</li>
+                                <li><span class="font-bold text-red-900 uppercase text-xs">Mechanism:</span> Place your fingers inside the two slots on the black latch.</li>
+                                <li><span class="font-bold text-red-900 uppercase text-xs">Action:</span> Pinch the internal tabs together while lifting the lid with your other hand.</li>
                             </ul>
                             <p class="mt-3 text-xs font-bold text-stone-500 italic uppercase">Not so great when you have trash in your hand!</p>
                         </div>
                     </div>
                     <div class="flex flex-col items-center">
-                        <img src="webpic/trash.webp" onclick="openLightbox(this.src)" class="cursor-zoom-in rounded-lg shadow-lg border-4 border-[#4a4747] w-full max-w-xs hover:scale-[1.02] transition-transform">
+                        <img src="webpic/trash.webp" onclick="openLightbox(this.src)" class="zoom-card rounded-lg shadow-lg border-4 border-[#4a4747] w-full max-w-xs">
                         <p class="mt-2 text-xs font-bold uppercase tracking-widest text-stone-500 text-center">Always use the bear-proof bin on the side of the porch!</p>
                     </div>
                 </div>
@@ -354,183 +441,472 @@
         </div>
 
 
-        <!-- ===== TAB 4: CHECK OUT ===== -->
+        <!-- ==================== TAB 4: CHECK OUT ==================== -->
         <div id="tab-checkout" class="tab-panel space-y-8">
 
-            <a href="#" onclick="openLightbox('webpic/wct.webp'); return false;" class="block overflow-hidden rounded-xl group max-w-3xl mx-auto border-2 border-white/10 shadow-2xl">
-                <img src="webpic/wct.webp" alt="Cabin Table" class="w-full object-cover group-hover:scale-[1.03] group-hover:brightness-110 transition-all duration-500">
-            </a>
+            <div class="parchment p-6 md:p-10 rounded-xl shadow-lg border-l-8 border-green-900">
+                <h2 class="text-3xl font-serif font-bold mb-2 text-stone-900 border-b border-stone-300 pb-2 uppercase tracking-tight">Friends &amp; Family Departure Checklist</h2>
+                <p class="font-serif italic mb-5 text-stone-700 text-sm">
+                    If you have time to <a href="provisions.html" class="underline decoration-stone-400 hover:text-green-800 transition">restock</a> anything you used up, that would be amazing! Thanks.
+                </p>
 
-            <h2 class="text-3xl text-center text-[#d4a373] uppercase tracking-widest extra-heavy-shadow">Before You Leave...</h2>
-
-            <div class="parchment p-6 md:p-8 rounded-xl">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                    <div class="check-row"><img src="webpic/checkmark.webp" class="check-icon"><span><strong>Linens:</strong> Strip sheets from all used beds.</span></div>
-                    <div class="check-row"><img src="webpic/checkmark.webp" class="check-icon"><span><strong>Laundry:</strong> Wash used sheets and towels. Transfer to dryer and start.</span></div>
-                    <div class="check-row"><img src="webpic/checkmark.webp" class="check-icon"><span><strong>Dishes:</strong> Load and start the dishwasher. No dirty dishes in the sink.</span></div>
-                    <div class="check-row"><img src="webpic/checkmark.webp" class="check-icon"><span><strong>Fireplace:</strong> Set to 'Pilot.' Close the screens.</span></div>
-                    <div class="check-row"><img src="webpic/checkmark.webp" class="check-icon"><span><strong>Trash:</strong> Bagged and in the bear-proof cans. Food waste in the tall porch can.</span></div>
-                    <div class="check-row"><img src="webpic/checkmark.webp" class="check-icon"><span><strong>Fridge:</strong> Clean out all personal items.</span></div>
-                    <div class="check-row"><img src="webpic/checkmark.webp" class="check-icon"><span><strong>Hot Tub:</strong> Towels to laundry area. Close cover, lower temp to 80&deg;F.</span></div>
-                    <div class="check-row"><img src="webpic/checkmark.webp" class="check-icon"><span><strong>Bathrooms:</strong> Clean used bathrooms so they're ready for the next adventure.</span></div>
-                    <div class="check-row"><img src="webpic/checkmark.webp" class="check-icon"><span><strong>Lights &amp; Air:</strong> All lights off. Thermostat to 75&deg;F (Summer) or 60&deg;F (Winter).</span></div>
-                    <div class="check-row"><img src="webpic/checkmark.webp" class="check-icon"><span><strong>Lock Up:</strong> Windows closed, smart doors locked. ("Alexa, going out")</span></div>
+                <div class="space-y-1 text-sm mb-6">
+                    <div class="check-row"><input type="checkbox" id="c-trash"><label for="c-trash"><strong>Trash:</strong> Place all bagged trash in the outside deck bin. Food trash MUST go in the bear-proof tall can on the porch.</label></div>
+                    <div class="check-row"><input type="checkbox" id="c-dishes"><label for="c-dishes"><strong>Dishes:</strong> Load the dishwasher and start the cycle. No dirty dishes in the sink. We will find you.</label></div>
+                    <div class="check-row"><input type="checkbox" id="c-bathrooms"><label for="c-bathrooms"><strong>Bathrooms:</strong> Clean the bathrooms you used. Ready for the next adventure party.</label></div>
+                    <div class="check-row"><input type="checkbox" id="c-fireplace"><label for="c-fireplace"><strong>Fireplace:</strong> Fully off. Leave pilot light on. Close the screens.</label></div>
+                    <div class="check-row"><input type="checkbox" id="c-linens"><label for="c-linens"><strong>Linens:</strong> Strip beds, place in laundry area. Start at least one load start-to-finish.</label></div>
+                    <div class="check-row"><input type="checkbox" id="c-hottub"><label for="c-hottub"><strong>Hot Tub:</strong> Towels to laundry area. Cover closed. Temp lowered to 80&deg;F.</label></div>
+                    <div class="check-row"><input type="checkbox" id="c-lights"><label for="c-lights"><strong>Lights &amp; Air:</strong> All lights off. Thermostat to 75&deg;F (Summer) or 60&deg;F (Winter).</label></div>
+                    <div class="check-row"><input type="checkbox" id="c-fridge"><label for="c-fridge"><strong>Fridge:</strong> Remove all personal food items. Don&rsquo;t leave us your mystery tupperware.</label></div>
+                    <div class="check-row"><input type="checkbox" id="c-lockup"><label for="c-lockup"><strong>Lock Up:</strong> Windows closed, smart doors locked. (&ldquo;Alexa, going out&rdquo;)</label></div>
+                    <div class="check-row"><input type="checkbox" id="c-trace"><label for="c-trace"><strong>Leave No Trace:</strong> This is not an AirBnB. Leave it great for the next family visit.</label></div>
                 </div>
-                <div class="mt-6 p-4 bg-stone-200/50 border-l-4 border-[#4a4747] italic text-stone-700 text-sm">
-                    "This is not an AirBnB. Let's leave it great for the next family visit."
-                </div>
-                <p class="italic text-stone-600 mt-4 text-sm">Check-out is at 3:00 PM.</p>
-            </div>
 
-            <!-- $200 fee section -->
-            <div class="flex flex-col items-center gap-6">
-                <img src="webpic/$200.webp" alt="$200 Cleaning Fee" class="max-w-sm w-full rounded shadow-2xl border-2 border-white/20 hover:rotate-1 transition-transform">
-                <div class="frosted p-6 border-2 border-dashed border-[#d4a373]/60 rounded-xl max-w-2xl text-center shadow-xl">
-                    <p class="text-stone-100 italic font-black text-lg leading-relaxed">
-                        "If you don't have time or don't want to clean, no worries! We just ask that you cover the $200 cleaning fee they charge us."
-                    </p>
+                <div id="all-checked-msg" class="hidden p-4 bg-green-900/10 border border-green-800 rounded-lg text-green-900 font-bold text-center text-sm">
+                    &#9989; You&rsquo;re a legend. See you next time!
+                </div>
+
+                <div class="mt-6 bg-stone-900 text-white p-5 rounded-lg text-center shadow-inner">
+                    <h4 class="text-lg font-serif italic mb-1">Quick Exit:</h4>
+                    <p class="text-xl font-bold uppercase tracking-widest text-[#d4a373]">&ldquo;Alexa, Going Home&rdquo;</p>
                 </div>
             </div>
 
-            <!-- Bidet -->
-            <div class="frosted p-8 border-2 border-[#d4a373] rounded-2xl max-w-2xl mx-auto text-center shadow-2xl">
-                <h2 class="text-2xl font-bold mb-5 uppercase tracking-widest text-[#d4a373] extra-heavy-shadow">The Refreshing Cabin Spritz Bidet</h2>
-                <div class="overflow-hidden rounded-xl shadow-2xl mb-5 max-w-xs mx-auto border border-white/10">
-                    <img src="webpic/bidet.webp" alt="Bidet" class="w-full h-auto object-cover hover:scale-[1.04] transition-transform duration-500">
+            <!-- Restock section -->
+            <div class="parchment p-6 md:p-8 rounded-xl shadow-lg border-t-4 border-orange-800/40">
+                <h3 class="text-xl font-serif font-bold text-stone-800 mb-4 border-b border-stone-300 pb-1 uppercase tracking-widest">Haven Supplies Update</h3>
+                <p class="text-xs font-bold uppercase tracking-widest text-stone-500 mb-3">What needs restocking?</p>
+                <form action="https://formspree.io/f/mzdjnprj" method="POST" class="space-y-4">
+                    <input type="hidden" name="_subject" value="Restock & Checkout Report">
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
+                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Coffee Beans"> Coffee Beans</label>
+                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Toilet Paper"> Toilet Paper</label>
+                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Paper Towels"> Paper Towels</label>
+                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Dishwasher Pods"> Dishwasher Pods</label>
+                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Hand Soap"> Hand Soap</label>
+                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Dish Soap"> Dish Soap</label>
+                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Dish Scrub Pads"> Dish Scrub Pads</label>
+                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Laundry Pods"> Laundry Pods</label>
+                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Keurig Pods"> Keurig Pods</label>
+                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Propane"> Propane</label>
+                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Charcoal"> Charcoal</label>
+                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Square Napkins"> Square Napkins</label>
+                    </div>
+                    <div class="bg-stone-100 p-3 rounded border border-stone-200 text-sm">
+                        <label class="flex items-center gap-2 cursor-pointer font-bold text-stone-800 mb-2"><input type="checkbox" name="restock[]" value="Batteries"> Remote/Flashlight Batteries</label>
+                        <div class="ml-6 flex gap-4 text-xs">
+                            <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" name="restock[]" value="AA"> AA</label>
+                            <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" name="restock[]" value="AAA"> AAA</label>
+                            <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" name="restock[]" value="C or D"> C or D</label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-1">Maintenance Notes</label>
+                        <textarea name="maintenance_issue" rows="2" class="maint-input text-sm" placeholder="Broken bulbs, leaky faucets, anything Lance should know..."></textarea>
+                        <p class="text-[10px] text-stone-500 italic mt-1">"If it&rsquo;s urgent, text Lance at 770.549.9358!"</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-1">Your Name(s)</label>
+                        <input type="text" name="guest_names" class="maint-input" placeholder="The Smith Crew" required>
+                    </div>
+                    <div class="bg-green-900/5 p-3 rounded border border-green-800/20">
+                        <label class="flex items-center gap-2 cursor-pointer text-xs text-stone-700 font-bold uppercase tracking-tight">
+                            <input type="checkbox" name="cleanliness_confirm" value="yes" required>
+                            We&rsquo;ve stripped the sheets, washed the towels, and taken out the trash.
+                        </label>
+                    </div>
+                    <button type="submit" class="w-full bg-green-900 text-white font-bold py-3 rounded hover:bg-black transition shadow-lg uppercase tracking-widest text-sm">Send Checkout Report</button>
+                </form>
+            </div>
+
+            <!-- $200 cleaning fee -->
+            <div class="flex flex-col items-center gap-5">
+                <img id="fee-img" src="webpic/$200.webp" alt="$200 Cleaning Fee" class="max-w-sm w-full rounded shadow-2xl border-2 border-stone-300 hover:rotate-1 transition-transform cursor-pointer" onclick="feeClick()">
+                <div class="parchment p-5 border-2 border-dashed border-[#A45D41]/60 rounded-xl max-w-2xl text-center shadow-lg">
+                    <p class="text-stone-700 italic font-bold text-lg leading-relaxed">&ldquo;If you don&rsquo;t have time or don&rsquo;t want to clean, no worries! We just ask that you cover the $200 cleaning fee they charge us.&rdquo;</p>
                 </div>
-                <p class="text-xl font-black text-white italic drop-shadow-xl">"Don't forget to check out the bidet for the freshest end-of-poo experience ever."</p>
             </div>
         </div>
 
 
-        <!-- ===== TAB 5: MAINTENANCE ===== -->
+        <!-- ==================== TAB 5: GUEST BOOK ==================== -->
+        <div id="tab-guestbook" class="tab-panel">
+            <div class="parchment p-8 md:p-12 rounded-2xl shadow-2xl max-w-3xl mx-auto border-t-8 border-green-900">
+                <header class="text-center mb-8">
+                    <h1 class="text-4xl md:text-5xl font-serif italic text-green-900 mb-3">The Haven Guest Book</h1>
+                    <p class="text-base text-stone-600 font-serif italic">&ldquo;Share a favorite adventure, a laugh, or your darkest secret.&rdquo;</p>
+                </header>
+                <form action="https://formspree.io/f/mzdjnprj" method="POST" class="space-y-6">
+                    <div class="grid md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-1">Guest Name(s)</label>
+                            <input type="text" name="guest_names" required class="input-style font-sans" placeholder="The Smith Family">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-1">Dates of Stay</label>
+                            <div class="flex items-center gap-2">
+                                <input type="date" name="stay_start" class="input-style font-sans text-sm flex-1" required>
+                                <span class="text-stone-400 text-sm">to</span>
+                                <input type="date" name="stay_end" class="input-style font-sans text-sm flex-1" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-serif font-bold text-stone-800 mb-1">What was your favorite mountain adventure?</label>
+                        <textarea name="favorite_adventure" rows="3" required class="input-style font-sans" placeholder="Hiking the Toccoa Swinging Bridge..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-serif font-bold text-stone-800 mb-1">Got a laugh, scary moment or faux pas made by someone in your group?</label>
+                        <textarea name="funny_moment" rows="3" class="input-style font-sans" placeholder="Keep it interesting..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-serif font-bold text-stone-800 mb-1">How could we have made your stay even better?</label>
+                        <textarea name="feedback" rows="2" class="input-style font-sans" placeholder="Be honest, we love to improve!"></textarea>
+                    </div>
+                    <div class="text-center pt-4">
+                        <button type="submit" class="bg-green-900 text-white font-bold py-4 px-12 rounded-full hover:bg-black transition shadow-xl uppercase tracking-widest">Sign the Book</button>
+                        <p class="mt-4 text-[10px] text-stone-400 italic uppercase tracking-widest">"Get Away, Have Fun and Play, Enjoy Your Stay"</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+        <!-- ==================== TAB 6: MAINTENANCE ==================== -->
         <div id="tab-maintenance" class="tab-panel">
             <div class="parchment p-6 md:p-10 rounded-2xl shadow-2xl max-w-3xl mx-auto border-t-8 border-orange-800">
                 <h1 class="text-3xl text-orange-900 mb-2 italic">Report a Cabin Issue</h1>
-                <p class="mb-6 text-stone-600 text-sm">Spotted something that needs a tool belt? Let Lance &amp; Heather know so we can keep the Haven humming.</p>
-
-                <form action="https://formspree.io/f/mzdjnprj" method="POST" class="space-y-6">
+                <p class="mb-5 text-stone-600 text-sm">Spotted something that needs a tool belt? Let Lance &amp; Heather know so we can keep the Haven humming.</p>
+                <form action="https://formspree.io/f/mzdjnprj" method="POST" class="space-y-5">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-wide text-stone-800 mb-1">Location of Issue</label>
-                            <input type="text" name="location" placeholder="e.g. Kitchen, Loft, Hot Tub Deck" class="maint-input w-full p-3 rounded" required>
+                            <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Location of Issue</label>
+                            <input type="text" name="location" placeholder="e.g. Kitchen, Loft, Hot Tub Deck" class="maint-input" required>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-wide text-stone-800 mb-1">Urgency Level</label>
-                            <select name="priority" class="maint-input w-full p-3 rounded" required>
+                            <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Urgency Level</label>
+                            <select name="priority" class="maint-input" required>
                                 <option value="low">Low &mdash; Just an FYI for later</option>
                                 <option value="medium">Medium &mdash; Fix when convenient</option>
                                 <option value="high">High &mdash; Needs attention ASAP</option>
                             </select>
                         </div>
                     </div>
-
                     <div>
-                        <h3 class="text-base font-bold uppercase tracking-widest text-stone-800 border-b border-stone-300 mb-3 pb-1">What's acting up?</h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            <label class="flex items-center gap-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-sm text-stone-800">
-                                <input type="checkbox" name="category[]" value="HVAC" class="w-4 h-4 accent-orange-800"> Heating / Cooling
-                            </label>
-                            <label class="flex items-center gap-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-sm text-stone-800">
-                                <input type="checkbox" name="category[]" value="Plumbing" class="w-4 h-4 accent-orange-800"> Plumbing / Leaks
-                            </label>
-                            <label class="flex items-center gap-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-sm text-stone-800">
-                                <input type="checkbox" name="category[]" value="Electrical" class="w-4 h-4 accent-orange-800"> Electrical / Lighting
-                            </label>
-                            <label class="flex items-center gap-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-sm text-stone-800">
-                                <input type="checkbox" name="category[]" value="Appliances" class="w-4 h-4 accent-orange-800"> Appliances (Kitchen/Laundry)
-                            </label>
-                            <label class="flex items-center gap-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-sm text-stone-800">
-                                <input type="checkbox" name="category[]" value="Connectivity" class="w-4 h-4 accent-orange-800"> Wi-Fi / 98-inch TV
-                            </label>
-                            <label class="flex items-center gap-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-sm text-stone-800">
-                                <input type="checkbox" name="category[]" value="Hot Tub" class="w-4 h-4 accent-orange-800"> Hot Tub / Exterior
-                            </label>
+                        <h3 class="text-sm font-bold uppercase tracking-widest text-stone-700 border-b border-stone-300 mb-3 pb-1">What&rsquo;s acting up?</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                            <label class="flex items-center gap-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="category[]" value="HVAC" class="w-4 h-4 accent-orange-800"> Heating / Cooling</label>
+                            <label class="flex items-center gap-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="category[]" value="Plumbing" class="w-4 h-4 accent-orange-800"> Plumbing / Leaks</label>
+                            <label class="flex items-center gap-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="category[]" value="Electrical" class="w-4 h-4 accent-orange-800"> Electrical / Lighting</label>
+                            <label class="flex items-center gap-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="category[]" value="Appliances" class="w-4 h-4 accent-orange-800"> Appliances (Kitchen/Laundry)</label>
+                            <label class="flex items-center gap-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="category[]" value="Connectivity" class="w-4 h-4 accent-orange-800"> Wi-Fi / 98-inch TV</label>
+                            <label class="flex items-center gap-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="category[]" value="Hot Tub" class="w-4 h-4 accent-orange-800"> Hot Tub / Exterior</label>
                         </div>
                     </div>
-
                     <div>
-                        <h3 class="text-base font-bold uppercase tracking-widest text-stone-800 border-b border-stone-300 mb-3 pb-1">Details</h3>
-                        <label class="block text-xs font-bold mb-1 text-stone-800">Please describe the issue:</label>
-                        <textarea name="description" rows="4" placeholder="Be as specific as possible (e.g. 'The third lightbulb from the left in the kitchen is flickering')." class="maint-input w-full p-3 rounded" required></textarea>
-                        <p class="mt-2 text-xs text-stone-500 italic">"If it's urgent (water leak, no heat, etc.), please text Lance immediately at 770.549.9358!"</p>
+                        <label class="block text-xs font-bold mb-1 text-stone-700">Please describe the issue:</label>
+                        <textarea name="description" rows="4" placeholder="Be as specific as possible (e.g. 'The third lightbulb from the left in the kitchen is flickering and judging me')." class="maint-input" required></textarea>
+                        <p class="mt-2 text-xs text-stone-500 italic">&ldquo;If it&rsquo;s urgent (water leak, no heat, etc.), please text Lance immediately at 770.549.9358!&rdquo;</p>
                     </div>
-
-                    <button type="submit" class="w-full bg-orange-900 text-white font-bold py-4 rounded hover:bg-black transition shadow-lg uppercase tracking-widest">
-                        Send Maintenance Report
-                    </button>
+                    <button type="submit" class="w-full bg-orange-900 text-white font-bold py-4 rounded hover:bg-black transition shadow-lg uppercase tracking-widest">Send Maintenance Report</button>
                 </form>
             </div>
         </div>
 
-    </div><!-- end tab content wrapper -->
+    </div><!-- end hub-body -->
 </div><!-- end max-w container -->
-
-<!-- Lightbox -->
-<div id="lightbox" onclick="closeLightbox()" style="display:none; position:fixed; z-index:200; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.92); justify-content:center; align-items:center;">
-    <span class="close-btn" onclick="closeLightbox()">&times;</span>
-    <img id="lightbox-img" style="max-width:90%; max-height:90%; border:3px solid #4a4747; border-radius:4px;">
-</div>
 
 <div id="footer-placeholder"></div>
 <script src="footer.js"></script>
 
 <script>
-    // Tab switching
-    function switchTab(name, btn) {
-        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('tab-' + name).classList.add('active');
-        btn.classList.add('active');
-        if (name === 'scoop') loadWeather();
-    }
+// ============================
+// TAB SWITCHING
+// ============================
+function switchTab(name, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+    if (name === 'scoop') loadWeather();
+}
 
-    // Lightbox
-    function openLightbox(src) {
-        const lb = document.getElementById('lightbox');
-        document.getElementById('lightbox-img').src = src;
-        lb.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
-    function closeLightbox() {
-        document.getElementById('lightbox').style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
+// ============================
+// LIGHTBOX
+// ============================
+function openLightbox(src) {
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+    document.getElementById('lightbox').style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
 
-    // Weather (loads on demand when The Scoop tab opens)
-    let weatherLoaded = false;
-    async function loadWeather() {
-        if (weatherLoaded) return;
-        try {
-            const response = await fetch('/api/weather');
-            const data = await response.json();
-            document.getElementById('current-temp-large').innerText = `${Math.round(data.current.temp)}°F`;
-            document.getElementById('weather-summary').innerText = data.daily[0].summary || data.current.weather[0].description;
-            document.getElementById('stat-humidity').innerText = `${data.current.humidity}%`;
-            document.getElementById('stat-wind').innerText = `${Math.round(data.current.wind_speed)} mph`;
-            document.getElementById('stat-uv').innerText = data.current.uvi;
-            const sunset = new Date(data.current.sunset * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            document.getElementById('stat-sunset').innerText = sunset;
+// ============================
+// TOAST
+// ============================
+function showToast(msg, duration) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), duration || 2800);
+}
 
-            const container = document.getElementById('forecast-7day');
-            container.innerHTML = '';
-            data.daily.slice(0, 7).forEach((day, i) => {
-                const date = new Date(day.dt * 1000);
-                const dayName = i === 0 ? 'Today' : date.toLocaleDateString('en-US', { weekday: 'short' });
-                const monthDay = date.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
-                container.innerHTML += `
-                    <div class="flex flex-col items-center p-2 bg-stone-100/50 rounded border border-stone-200">
-                        <p class="text-[10px] font-bold uppercase text-[#4a4747]">${dayName}</p>
-                        <p class="text-[9px] text-stone-500 mb-1">${monthDay}</p>
-                        <img src="https://openweathermap.org/img/wn/${day.weather[0].icon}.png" class="w-8 h-8" alt="weather">
-                        <div class="text-xs font-bold text-stone-800">${Math.round(day.temp.max)}° <span class="text-stone-400 font-normal">/ ${Math.round(day.temp.min)}°</span></div>
-                        <p class="text-[9px] text-[#4a4747] mt-1 font-bold">${Math.round(day.pop * 100)}% Rain</p>
-                    </div>`;
-            });
-            document.getElementById('weather-section').classList.remove('opacity-0');
-            weatherLoaded = true;
-        } catch(err) { console.error('Weather failed:', err); }
+// ============================
+// WEATHER
+// ============================
+let weatherLoaded = false;
+async function loadWeather() {
+    if (weatherLoaded) return;
+    try {
+        const res = await fetch('/api/weather');
+        const data = await res.json();
+        document.getElementById('current-temp-large').innerText = `${Math.round(data.current.temp)}°F`;
+        document.getElementById('weather-summary').innerText = data.daily[0].summary || data.current.weather[0].description;
+        document.getElementById('stat-humidity').innerText = `${data.current.humidity}%`;
+        document.getElementById('stat-wind').innerText = `${Math.round(data.current.wind_speed)} mph`;
+        document.getElementById('stat-uv').innerText = data.current.uvi;
+        const sunset = new Date(data.current.sunset * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('stat-sunset').innerText = sunset;
+        const container = document.getElementById('forecast-7day');
+        container.innerHTML = '';
+        data.daily.slice(0, 7).forEach((day, i) => {
+            const date = new Date(day.dt * 1000);
+            const dayName = i === 0 ? 'Today' : date.toLocaleDateString('en-US', { weekday: 'short' });
+            const monthDay = date.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
+            container.innerHTML += `<div class="flex flex-col items-center p-2 bg-stone-100/50 rounded border border-stone-200">
+                <p class="text-[10px] font-bold uppercase text-[#4a4747]">${dayName}</p>
+                <p class="text-[9px] text-stone-500 mb-1">${monthDay}</p>
+                <img src="https://openweathermap.org/img/wn/${day.weather[0].icon}.png" class="w-8 h-8">
+                <div class="text-xs font-bold text-stone-800">${Math.round(day.temp.max)}° <span class="text-stone-400 font-normal">/ ${Math.round(day.temp.min)}°</span></div>
+                <p class="text-[9px] text-[#4a4747] mt-1 font-bold">${Math.round(day.pop * 100)}% Rain</p>
+            </div>`;
+        });
+        document.getElementById('weather-section').classList.remove('opacity-0');
+        weatherLoaded = true;
+    } catch(e) { console.error('Weather failed:', e); }
+}
+
+// ============================
+// DEPARTURE CHECKLIST auto-complete
+// ============================
+const checkboxIds = ['c-trash','c-dishes','c-bathrooms','c-fireplace','c-linens','c-hottub','c-lights','c-fridge','c-lockup','c-trace'];
+checkboxIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', () => {
+        const allChecked = checkboxIds.every(cid => document.getElementById(cid)?.checked);
+        const msg = document.getElementById('all-checked-msg');
+        if (msg) msg.classList.toggle('hidden', !allChecked);
+        if (allChecked) showToast('✓ All done! You absolute rockstar. 🏔', 4000);
+    });
+});
+
+// ============================
+// COPY DOOR CODE
+// ============================
+let doorClicks = 0;
+function doorCodeClick() {
+    navigator.clipboard?.writeText('22246').catch(()=>{});
+    doorClicks++;
+    if (doorClicks === 1) showToast('📋 Door code copied! 22246 then ✓');
+    else if (doorClicks === 3) showToast('You already got it. Get off your phone and go inside. 😄');
+    else if (doorClicks === 7) showToast('SEVEN times? The door code is 22246. GO. INSIDE.');
+}
+
+// ============================
+// COPY WIFI PASSWORD
+// ============================
+function copyWifi() {
+    navigator.clipboard?.writeText('creeklife').catch(()=>{});
+    showToast('📶 WiFi password copied! creeklife');
+}
+
+// ============================
+// LANCE PHONE NUMBER CLICK
+// ============================
+let lanceClicks = 0;
+function lanceClick() {
+    lanceClicks++;
+    const msgs = [
+        '📞 770.549.9358 — He will answer.',
+        '📞 Still his number. Still will answer.',
+        '📞 Okay he MIGHT not answer the third time.',
+        '📞 Stop. Go check the cabin first.',
+        '🚨 Lance has been notified of your shenanigans.',
+        '🧹 Your punishment: clean the cabin twice.',
+    ];
+    showToast(msgs[Math.min(lanceClicks - 1, msgs.length - 1)], 3500);
+}
+
+// ============================
+// BURN IT DOWN CARD
+// ============================
+let burnClicks = 0;
+function burnClick() {
+    burnClicks++;
+    if (burnClicks < 3) {
+        showToast(`⚠️ Don't do it. (${3 - burnClicks} warnings left)`);
+        return;
     }
+    // Fire animation
+    const overlay = document.getElementById('fire-overlay');
+    overlay.innerHTML = '';
+    overlay.style.display = 'block';
+    const emojis = ['🔥','🔥','🔥','💨','🔥','🔥','💥','🔥'];
+    for (let i = 0; i < 28; i++) {
+        const flame = document.createElement('span');
+        flame.className = 'flame';
+        flame.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        flame.style.left = Math.random() * 100 + 'vw';
+        flame.style.animationDelay = Math.random() * 1.5 + 's';
+        flame.style.fontSize = (2 + Math.random() * 3) + 'rem';
+        overlay.appendChild(flame);
+    }
+    setTimeout(() => { overlay.style.display = 'none'; overlay.innerHTML = ''; burnClicks = 0; }, 3500);
+    showToast('🔥 YOU DID IT. LANCE IS ON HIS WAY. 🔥', 4000);
+}
+
+// ============================
+// BIDET BEAR CLICK
+// ============================
+let bidetClicks = 0;
+const bidetMsgs = [
+    '🐻 The bear used it first. Just so you know.',
+    '🚿 Two spritz minimum. It\'s a lifestyle.',
+    '🐻 The bear says: "Once you go bidet, you never go back."',
+    '🧻 Toilet paper is so 2003.',
+    '🐻 Bear rating: 10 out of 10. Would spray again.',
+];
+function bidetClick() {
+    showToast(bidetMsgs[bidetClicks % bidetMsgs.length], 3500);
+    bidetClicks++;
+}
+
+// ============================
+// BEAR BIN HOVER EASTER EGG
+// ============================
+let bearHoverCount = 0;
+function bearBinHover() {
+    bearHoverCount++;
+    if (bearHoverCount === 8) showToast('🐻 Okay we get it. You\'re scared of the bear bin.', 3500);
+    if (bearHoverCount === 15) showToast('🐻 The bear has noticed you staring at his bin.', 3500);
+}
+
+// ============================
+// $200 FEE IMAGE CLICK
+// ============================
+let feeClicks = 0;
+function feeClick() {
+    feeClicks++;
+    const msgs = [
+        '💸 Still $200. We checked.',
+        '💸 Checked again. Still $200.',
+        '💸 The number did not change. It\'s $200.',
+        '💸 Lance has been notified that you tried to will the $200 away.',
+        '🧹 New fee: clean the cabin AND call your mother.',
+    ];
+    showToast(msgs[Math.min(feeClicks - 1, msgs.length - 1)], 3200);
+}
+
+// ============================
+// KONAMI CODE
+// ============================
+const konamiCode = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+let konamiIdx = 0;
+document.addEventListener('keydown', e => {
+    if (e.key === konamiCode[konamiIdx]) {
+        konamiIdx++;
+        if (konamiIdx === konamiCode.length) {
+            konamiIdx = 0;
+            document.getElementById('secret-overlay').style.display = 'flex';
+        }
+    } else { konamiIdx = 0; }
+});
+
+// ============================
+// IDLE EASTER EGG
+// ============================
+let idleTimer;
+function resetIdle() {
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+        document.getElementById('idle-popup').style.display = 'block';
+    }, 3 * 60 * 1000); // 3 minutes
+}
+['mousemove','keydown','touchstart','scroll','click'].forEach(e => document.addEventListener(e, resetIdle, { passive: true }));
+resetIdle();
+
+// ============================
+// CONFETTI on checkout complete (all checked)
+// ============================
+function launchConfetti() {
+    const canvas = document.getElementById('confetti-canvas');
+    canvas.style.display = 'block';
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const pieces = Array.from({length: 120}, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        w: 8 + Math.random() * 8,
+        h: 14 + Math.random() * 10,
+        color: ['#A45D41','#d4a373','#4a9b6f','#f4eee0','#5a2e0a'][Math.floor(Math.random()*5)],
+        rot: Math.random() * 360,
+        vx: (Math.random() - 0.5) * 3,
+        vy: 2 + Math.random() * 4,
+        vr: (Math.random() - 0.5) * 5,
+    }));
+    let frame = 0;
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(p => {
+            ctx.save();
+            ctx.translate(p.x + p.w/2, p.y + p.h/2);
+            ctx.rotate(p.rot * Math.PI / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+            ctx.restore();
+            p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+        });
+        frame++;
+        if (frame < 180) requestAnimationFrame(draw);
+        else { ctx.clearRect(0,0,canvas.width,canvas.height); canvas.style.display = 'none'; }
+    }
+    draw();
+}
+
+// Trigger confetti when all checkboxes checked
+checkboxIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', () => {
+        if (checkboxIds.every(cid => document.getElementById(cid)?.checked)) launchConfetti();
+    });
+});
+
+// ============================
+// SECRET KEYWORD LISTENER
+// ============================
+let typedBuffer = '';
+const secretWords = {
+    'bigfoot': () => showToast('🦶 Bigfoot was here. He used the bidet. Twice.', 4000),
+    'bearlife': () => showToast('🐻 BEAR MODE ACTIVATED. Don\'t look them in the eyes.', 4000),
+    'creeklife': () => showToast('🏞️ Living the creek life! That\'s the spirit.', 4000),
+    'lance': () => showToast('👋 Lance is probably napping. Shhh.', 3500),
+    'heather': () => showToast('💛 Heather is the one who actually keeps this place running.', 4000),
+    'bidet': () => showToast('🚿 You know about the bidet. You\'re one of us now.', 4000),
+};
+document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key.length === 1) {
+        typedBuffer = (typedBuffer + e.key.toLowerCase()).slice(-12);
+        for (const [word, fn] of Object.entries(secretWords)) {
+            if (typedBuffer.endsWith(word)) { fn(); typedBuffer = ''; break; }
+        }
+    }
+});
 </script>
 <script>document.addEventListener("contextmenu", function(e){ e.preventDefault(); });</script>
 </body>
