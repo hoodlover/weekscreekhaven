@@ -841,7 +841,7 @@ function resetIdle() {
 resetIdle();
 
 // ============================
-// CONFETTI on checkout complete (all checked)
+// CONFETTI — shoots from both sides
 // ============================
 function launchConfetti() {
     const canvas = document.getElementById('confetti-canvas');
@@ -849,17 +849,27 @@ function launchConfetti() {
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    const pieces = Array.from({length: 120}, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height - canvas.height,
-        w: 8 + Math.random() * 8,
-        h: 14 + Math.random() * 10,
-        color: ['#A45D41','#d4a373','#4a9b6f','#f4eee0','#5a2e0a'][Math.floor(Math.random()*5)],
-        rot: Math.random() * 360,
-        vx: (Math.random() - 0.5) * 3,
-        vy: 2 + Math.random() * 4,
-        vr: (Math.random() - 0.5) * 5,
-    }));
+    const colors = ['#A45D41','#d4a373','#4a9b6f','#f4eee0','#5a2e0a','#fbbf24','#34d399'];
+    // Left cannon + right cannon
+    const pieces = Array.from({length: 160}, (_, i) => {
+        const fromLeft = i < 80;
+        const angle = fromLeft
+            ? (Math.random() * 70 - 20) * Math.PI / 180   // sprays right
+            : (Math.random() * 70 + 110) * Math.PI / 180; // sprays left
+        const speed = 8 + Math.random() * 10;
+        return {
+            x: fromLeft ? 0 : canvas.width,
+            y: canvas.height * (0.4 + Math.random() * 0.4),
+            w: 8 + Math.random() * 9,
+            h: 14 + Math.random() * 10,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            rot: Math.random() * 360,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed - 4,
+            vy_add: 0.35,
+            vr: (Math.random() - 0.5) * 8,
+        };
+    });
     let frame = 0;
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -868,24 +878,47 @@ function launchConfetti() {
             ctx.translate(p.x + p.w/2, p.y + p.h/2);
             ctx.rotate(p.rot * Math.PI / 180);
             ctx.fillStyle = p.color;
+            ctx.globalAlpha = Math.max(0, 1 - frame / 200);
             ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
             ctx.restore();
-            p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+            p.x += p.vx; p.y += p.vy; p.vy += p.vy_add; p.rot += p.vr;
         });
         frame++;
-        if (frame < 180) requestAnimationFrame(draw);
+        if (frame < 220) requestAnimationFrame(draw);
         else { ctx.clearRect(0,0,canvas.width,canvas.height); canvas.style.display = 'none'; }
     }
     draw();
 }
 
-// Trigger confetti when all checkboxes checked
+// Trigger confetti when all departure checkboxes checked
 checkboxIds.forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('change', () => {
         if (checkboxIds.every(cid => document.getElementById(cid)?.checked)) launchConfetti();
     });
 });
+
+// ============================
+// CLEANLINESS CONFIRM CHECKBOX
+// ============================
+const cleanMsgs = [
+    "🎉 LEGEND STATUS ACHIEVED. Lance might actually cry.",
+    "🧹 Look at you. A cleaning hero. A true cabin champion.",
+    "🏅 Gold star. Framed. On Lance's wall. Forever.",
+    "🫡 Sheets stripped. Towels washed. Bears respected. You're done.",
+    "✨ The cabin thanks you. The next family thanks you. We all thank you.",
+];
+function cleanlinessCheck(el) {
+    const msg = document.getElementById('clean-msg');
+    if (el.checked) {
+        msg.textContent = cleanMsgs[Math.floor(Math.random() * cleanMsgs.length)];
+        msg.classList.remove('hidden');
+        launchConfetti();
+        showToast('🧹 YOU. ARE. A. HERO. 🏅', 4500);
+    } else {
+        msg.classList.add('hidden');
+    }
+}
 
 // ============================
 // SECRET KEYWORD LISTENER
