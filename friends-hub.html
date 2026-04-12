@@ -512,10 +512,11 @@
                     </div>
                     <div class="bg-green-900/5 p-3 rounded border border-green-800/20">
                         <label class="flex items-center gap-2 cursor-pointer text-xs text-stone-700 font-bold uppercase tracking-tight">
-                            <input type="checkbox" name="cleanliness_confirm" value="yes" required>
+                            <input type="checkbox" name="cleanliness_confirm" value="yes" required onchange="cleanlinessCheck(this)">
                             We&rsquo;ve stripped the sheets, washed the towels, and taken out the trash.
                         </label>
                     </div>
+                    <div id="clean-msg" class="hidden text-center py-3 text-green-900 font-black text-base italic"></div>
                     <button type="submit" class="w-full bg-green-900 text-white font-bold py-3 rounded hover:bg-black transition shadow-lg uppercase tracking-widest text-sm">Send Checkout Report</button>
                 </form>
             </div>
