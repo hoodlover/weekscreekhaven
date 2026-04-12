@@ -109,7 +109,7 @@
       <a href="find-us.html">      <img src="buttons/find-cabin.webp"   alt="Find Us"      class="wood-btn"></a>
       <a href="checkout.html">     <img src="buttons/check.webp"        alt="Checkout"     class="wood-btn"></a>
       <a href="gallery.html">      <img src="buttons/cabin-gallery.webp" alt="Gallery"     class="wood-btn"></a>
-      <a href="important-info.html"><img src="buttons/friends-info.webp" alt="Friends Info" class="wood-btn"></a>
+      <a href="important-info.html"><img src="buttons/friends-info.webp" alt="Friends Hub" class="wood-btn"></a>
     </div>
   `;
 
