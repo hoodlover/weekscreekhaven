@@ -1,4 +1,4 @@
-const CACHE_NAME = 'friends-hub-v3';
+const CACHE_NAME = 'friends-hub-v4';
 
 const PRECACHE_URLS = [
   '/friends-hub.html',
