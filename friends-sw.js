@@ -28,6 +28,9 @@ const PRECACHE_URLS = [
   '/webpic/trash.webp',
   '/info/HotTub.webp',
   '/info/05_Safety.webp',
+  // emergency icons
+  '/webpic/hospicon.png',
+  '/webpic/policon.png',
   // checkout
   '/webpic/bidet.webp',
   '/webpic/$200.webp',
