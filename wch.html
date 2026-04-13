@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weeks Creek Haven — Blue Ridge, GA</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: #fff; color: #1a1a1a; }
+
+  /* NAV */
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 40px; border-bottom: 1px solid #e8e8e8; position: sticky; top: 0; background: #fff; z-index: 100; }
+  .nav-logo { font-size: 18px; font-weight: 600; letter-spacing: -0.5px; }
+  .nav-logo span { color: #2d6a4f; }
+  .nav-links { display: flex; gap: 28px; font-size: 13px; color: #555; }
+  .nav-links a { text-decoration: none; color: inherit; cursor: pointer; transition: color 0.2s; }
+  .nav-links a:hover { color: #1a1a1a; }
+  .nav-btn { background: #2d6a4f; color: white; border: none; padding: 10px 22px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+  .nav-btn:hover { background: #1f4f38; }
+
+  /* HERO */
+  .hero { display: grid; grid-template-columns: 1.6fr 1fr; grid-template-rows: 240px 240px; gap: 4px; height: 480px; overflow: hidden; background: #111; }
+  .hero-main { grid-row: 1 / 3; position: relative; overflow: hidden; }
+  .hero-main img, .hero-sub img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s; }
+  .hero-main:hover img, .hero-sub:hover img { transform: scale(1.03); }
+  .hero-sub { overflow: hidden; }
+  .hero-badge { position: absolute; bottom: 20px; right: 20px; background: white; color: #1a1a1a; padding: 9px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid #ddd; z-index: 2; }
+  .hero-main { position: relative; }
+
+  /* CONTENT */
+  .content { max-width: 1100px; margin: 0 auto; padding: 36px 40px; }
+
+  .listing-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 20px; }
+  .listing-title h1 { font-size: 26px; font-weight: 600; margin-bottom: 10px; line-height: 1.3; }
+  .listing-meta { display: flex; align-items: center; gap: 6px; font-size: 14px; color: #555; flex-wrap: wrap; }
+  .listing-meta .star { color: #2d6a4f; font-weight: 600; }
+  .listing-meta .dot { color: #bbb; }
+  .listing-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .action-btn { border: 1px solid #ddd; background: #fff; padding: 9px 16px; border-radius: 8px; font-size: 13px; cursor: pointer; color: #1a1a1a; font-family: inherit; transition: background 0.2s; }
+  .action-btn:hover { background: #f5f5f5; }
+
+  .divider { border: none; border-top: 1px solid #f0f0f0; margin: 28px 0; }
+
+  /* MAIN LAYOUT */
+  .main-layout { display: grid; grid-template-columns: 1fr 360px; gap: 64px; align-items: start; }
+
+  /* HOST */
+  .host-row { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+  .host-avatar { width: 52px; height: 52px; border-radius: 50%; background: #2d6a4f; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 17px; flex-shrink: 0; }
+  .host-info p:first-child { font-weight: 600; font-size: 16px; }
+  .host-info p:last-child { font-size: 13px; color: #777; margin-top: 2px; }
+  .superhost-badge { display: inline-flex; align-items: center; gap: 4px; background: #e8f5ee; color: #2d6a4f; font-size: 11px; font-weight: 500; padding: 3px 8px; border-radius: 4px; margin-left: 8px; }
+
+  /* STATS */
+  .stats-row { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+  .stat-chip { display: flex; align-items: center; gap: 8px; padding: 10px 18px; border: 1px solid #e8e8e8; border-radius: 100px; font-size: 14px; background: #fafafa; }
+  .stat-chip strong { font-weight: 600; }
+
+  /* HIGHLIGHTS */
+  .highlights { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 28px; }
+  .highlight { display: flex; align-items: flex-start; gap: 14px; padding: 18px; background: #f9f9f9; border-radius: 14px; border: 1px solid #f0f0f0; }
+  .highlight-icon { width: 40px; height: 40px; border-radius: 10px; background: #e8f5ee; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; }
+  .highlight-text p:first-child { font-size: 14px; font-weight: 600; }
+  .highlight-text p:last-child { font-size: 12px; color: #777; margin-top: 3px; line-height: 1.4; }
+
+  /* SECTIONS */
+  .section-title { font-size: 18px; font-weight: 600; margin-bottom: 14px; }
+  .description { font-size: 15px; line-height: 1.75; color: #444; margin-bottom: 16px; }
+  .show-more { font-size: 14px; font-weight: 500; color: #2d6a4f; cursor: pointer; text-decoration: underline; background: none; border: none; font-family: inherit; padding: 0; margin-top: 4px; }
+
+  /* AMENITIES */
+  .amenities-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+  .amenity { display: flex; align-items: center; gap: 12px; font-size: 14px; padding: 12px 8px; border-radius: 8px; transition: background 0.15s; }
+  .amenity:hover { background: #f9f9f9; }
+  .amenity-icon { font-size: 18px; width: 28px; text-align: center; }
+
+  /* EXPLORE */
+  .explore-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 16px; }
+  .explore-card { border-radius: 14px; overflow: hidden; border: 1px solid #f0f0f0; cursor: pointer; transition: box-shadow 0.2s; }
+  .explore-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+  .explore-img { height: 96px; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+  .explore-img.hike { background: #dff0d8; }
+  .explore-img.fish { background: #d4eaf5; }
+  .explore-img.eat  { background: #fde8d0; }
+  .explore-img.fun  { background: #ede8fb; }
+  .explore-body { padding: 12px 14px; }
+  .explore-body p:first-child { font-size: 13px; font-weight: 600; }
+  .explore-body p:last-child { font-size: 12px; color: #777; margin-top: 3px; }
+
+  /* RULES */
+  .rules-grid { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #f0f0f0; border-radius: 14px; overflow: hidden; }
+  .rule-item { padding: 15px 20px; display: flex; align-items: center; gap: 12px; font-size: 14px; border-bottom: 1px solid #f0f0f0; }
+  .rule-item:nth-last-child(-n+2) { border-bottom: none; }
+  .rule-icon { font-size: 16px; width: 22px; text-align: center; }
+
+  /* MAP */
+  .map-placeholder { height: 200px; background: #e8f0e8; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #2d6a4f; font-size: 14px; font-weight: 500; margin-top: 16px; border: 1px solid #d0e8d0; }
+
+  /* CONTACT */
+  .contact-section { background: #f9f9f9; border-radius: 16px; padding: 24px 28px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #f0f0f0; margin-top: 24px; }
+  .contact-info p:first-child { font-size: 17px; font-weight: 600; }
+  .contact-info p:last-child { font-size: 13px; color: #666; margin-top: 5px; }
+  .contact-btns { display: flex; gap: 10px; flex-shrink: 0; }
+  .contact-btn { padding: 11px 20px; border-radius: 10px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid #ddd; background: #fff; color: #1a1a1a; font-family: inherit; transition: background 0.2s; }
+  .contact-btn:hover { background: #f0f0f0; }
+  .contact-btn.primary { background: #2d6a4f; color: white; border-color: #2d6a4f; }
+  .contact-btn.primary:hover { background: #1f4f38; }
+
+  /* BOOKING CARD */
+  .booking-card { background: #fff; border: 1px solid #ddd; border-radius: 18px; padding: 28px; position: sticky; top: 80px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+  .price-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 4px; }
+  .price { font-size: 24px; font-weight: 700; }
+  .price-note { font-size: 14px; color: #666; }
+  .rating-row { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #666; margin-bottom: 22px; }
+  .rating-row strong { color: #1a1a1a; }
+
+  .date-grid { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #ccc; border-radius: 12px; overflow: hidden; margin-bottom: 10px; }
+  .date-box { padding: 13px 16px; cursor: pointer; transition: background 0.15s; }
+  .date-box:hover { background: #f9f9f9; }
+  .date-box:first-child { border-right: 1px solid #e8e8e8; }
+  .date-label { font-size: 10px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: #888; }
+  .date-val { font-size: 14px; color: #888; margin-top: 4px; }
+
+  .guests-box { border: 1px solid #ccc; border-radius: 12px; padding: 13px 16px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: background 0.15s; }
+  .guests-box:hover { background: #f9f9f9; }
+  .guests-label { font-size: 10px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: #888; display: block; margin-bottom: 4px; }
+  .guests-val { font-size: 14px; color: #888; }
+  .chevron { font-size: 14px; color: #888; }
+
+  .book-btn { width: 100%; background: #2d6a4f; color: white; border: none; padding: 15px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 12px; font-family: inherit; transition: background 0.2s; }
+  .book-btn:hover { background: #1f4f38; }
+  .book-note { text-align: center; font-size: 13px; color: #888; margin-bottom: 20px; }
+
+  .fee-breakdown { display: flex; flex-direction: column; gap: 12px; }
+  .fee-row { display: flex; justify-content: space-between; font-size: 14px; color: #555; }
+  .fee-row span:last-child { font-weight: 500; color: #1a1a1a; }
+  .fee-row.total { color: #1a1a1a; font-weight: 700; padding-top: 14px; border-top: 1px solid #f0f0f0; font-size: 15px; }
+  .fee-row.total span:last-child { font-weight: 700; }
+
+  /* REVIEWS PREVIEW */
+  .reviews-summary { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
+  .review-score { font-size: 48px; font-weight: 700; line-height: 1; color: #2d6a4f; }
+  .review-breakdown { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .review-bar { display: flex; align-items: center; gap: 10px; font-size: 12px; color: #666; }
+  .bar-track { flex: 1; height: 4px; background: #f0f0f0; border-radius: 2px; overflow: hidden; }
+  .bar-fill { height: 100%; background: #2d6a4f; border-radius: 2px; }
+
+  /* FOOTER */
+  footer { border-top: 1px solid #f0f0f0; padding: 32px 40px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #888; background: #fafafa; margin-top: 64px; }
+  footer a { color: #2d6a4f; text-decoration: none; }
+
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; grid-template-rows: 300px; }
+    .hero-sub { display: none; }
+    .main-layout { grid-template-columns: 1fr; }
+    .booking-card { position: static; }
+    .highlights { grid-template-columns: 1fr; }
+    .explore-grid { grid-template-columns: 1fr 1fr; }
+    .rules-grid { grid-template-columns: 1fr; }
+    .contact-section { flex-direction: column; gap: 16px; align-items: flex-start; }
+    .listing-header { flex-direction: column; }
+    .content { padding: 24px 20px; }
+    .nav { padding: 14px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">Weeks Creek <span>Haven</span></div>
+  <div class="nav-links">
+    <a href="#">To Do & See</a>
+    <a href="#">Need to Know</a>
+    <a href="#">Find Cabin</a>
+    <a href="#">Gallery</a>
+    <a href="#">Friends Info</a>
+  </div>
+  <button class="nav-btn">Check Availability</button>
+</nav>
+
+<div class="hero">
+  <div class="hero-main">
+    <img src="Another_lovely_evening_view.webp" alt="Weeks Creek Haven at dusk" onerror="this.style.background='#2d4a2d'; this.style.display='flex'; this.alt='';">
+    <div class="hero-badge">📷 View all photos</div>
+  </div>
+  <div class="hero-sub">
+    <img src="A_swing_to_listen_to_the_stream__Voted_best_place_to_listen_to_the_rain_by_my_family.webp" alt="Porch swing" onerror="this.style.background='#3a5a3a';">
+  </div>
+  <div class="hero-sub">
+    <img src="A_lovely_place_to_stand_and_listen_to_the_stream.webp" alt="Creek bridge" onerror="this.style.background='#4a6a4a';">
+  </div>
+</div>
+
+<div class="content">
+  <div class="listing-header">
+    <div class="listing-title">
+      <h1>Weeks Creek Haven — Chinking Log Cabin in the Mountains</h1>
+      <div class="listing-meta">
+        <span class="star">★ 4.98</span>
+        <span class="dot">·</span>
+        <span>47 reviews</span>
+        <span class="dot">·</span>
+        <span>🏅 Superhost</span>
+        <span class="dot">·</span>
+        <span>Blue Ridge, Georgia</span>
+        <span class="dot">·</span>
+        <span>Aska Adventure Area</span>
+      </div>
+    </div>
+    <div class="listing-actions">
+      <button class="action-btn">↑ Share</button>
+      <button class="action-btn">♡ Save</button>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="main-layout">
+    <div>
+
+      <div class="host-row">
+        <div class="host-avatar">HL</div>
+        <div class="host-info">
+          <p>Hosted by Heather & Lance <span class="superhost-badge">⭐ Superhost</span></p>
+          <p>3 years hosting · Usually responds within an hour</p>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-chip"><strong>11</strong>&nbsp;guests</div>
+        <div class="stat-chip"><strong>4</strong>&nbsp;bedrooms</div>
+        <div class="stat-chip"><strong>2.5</strong>&nbsp;baths</div>
+        <div class="stat-chip"><strong>11</strong>&nbsp;beds</div>
+      </div>
+
+      <div class="highlights">
+        <div class="highlight">
+          <div class="highlight-icon">🛁</div>
+          <div class="highlight-text">
+            <p>Large hot tub</p>
+            <p>Soak under the mountain stars after a day on the trail</p>
+          </div>
+        </div>
+        <div class="highlight">
+          <div class="highlight-icon">📡</div>
+          <div class="highlight-text">
+            <p>1G fiber Wi-Fi</p>
+            <p>Full-speed internet — stream, work, video call with no lag</p>
+          </div>
+        </div>
+        <div class="highlight">
+          <div class="highlight-icon">📺</div>
+          <div class="highlight-text">
+            <p>98-inch smart TV</p>
+            <p>Epic movie nights with the whole crew</p>
+          </div>
+        </div>
+        <div class="highlight">
+          <div class="highlight-icon">🌊</div>
+          <div class="highlight-text">
+            <p>Streamside property</p>
+            <p>Fall asleep and wake up to the sound of Weeks Creek</p>
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <p class="section-title">About this place</p>
+      <p class="description">Nestled in the heart of Blue Ridge, Georgia, Weeks Creek Haven is a thoughtfully curated mountain retreat. This authentic chinking log cabin sits streamside in the Aska Adventure Area — owned and cared for by H & L Havens. Every detail reflects a commitment to providing a true sanctuary where guests can unplug and immerse themselves in the natural beauty of the North Georgia mountains.</p>
+      <p class="description">Wake up to the sound of the creek, spend your evenings on the porch swing listening to the rain, and gather everyone around the fire pit under the trees. Whether you're here to hike the ridges, cast a line on the Toccoa River, or simply exhale — this is your cabin away from home.</p>
+      <button class="show-more">Show more ›</button>
+
+      <hr class="divider">
+
+      <p class="section-title">What this place offers</p>
+      <div class="amenities-grid">
+        <div class="amenity"><span class="amenity-icon">🛁</span>Large hot tub</div>
+        <div class="amenity"><span class="amenity-icon">📡</span>1G fiber internet</div>
+        <div class="amenity"><span class="amenity-icon">📺</span>98-inch smart TV</div>
+        <div class="amenity"><span class="amenity-icon">🔥</span>Gas log fireplace</div>
+        <div class="amenity"><span class="amenity-icon">🪵</span>Outdoor fire pit with seating</div>
+        <div class="amenity"><span class="amenity-icon">🍳</span>Fully equipped kitchen</div>
+        <div class="amenity"><span class="amenity-icon">🪑</span>Porch swing overlooking forest</div>
+        <div class="amenity"><span class="amenity-icon">🍖</span>BBQ grill & firewood</div>
+        <div class="amenity"><span class="amenity-icon">🚗</span>Free parking on premises</div>
+        <div class="amenity"><span class="amenity-icon">🏔️</span>Epic high ceilings & loft</div>
+      </div>
+
+      <hr class="divider">
+
+      <p class="section-title">★ 4.98 · 47 reviews</p>
+      <div class="reviews-summary">
+        <div class="review-score">4.98</div>
+        <div class="review-breakdown">
+          <div class="review-bar"><span style="width:60px">Cleanliness</span><div class="bar-track"><div class="bar-fill" style="width:99%"></div></div><span>5.0</span></div>
+          <div class="review-bar"><span style="width:60px">Accuracy</span><div class="bar-track"><div class="bar-fill" style="width:99%"></div></div><span>5.0</span></div>
+          <div class="review-bar"><span style="width:60px">Location</span><div class="bar-track"><div class="bar-fill" style="width:97%"></div></div><span>4.9</span></div>
+          <div class="review-bar"><span style="width:60px">Value</span><div class="bar-track"><div class="bar-fill" style="width:97%"></div></div><span>4.9</span></div>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <p class="section-title">Explore Blue Ridge</p>
+      <div class="explore-grid">
+        <div class="explore-card">
+          <div class="explore-img hike">🥾</div>
+          <div class="explore-body">
+            <p>Hiking & Falls</p>
+            <p>ASKA trails & hidden waterfalls</p>
+          </div>
+        </div>
+        <div class="explore-card">
+          <div class="explore-img fish">🎣</div>
+          <div class="explore-body">
+            <p>Trout Fishing</p>
+            <p>Toccoa River & Noontootla Creek</p>
+          </div>
+        </div>
+        <div class="explore-card">
+          <div class="explore-img eat">🍽️</div>
+          <div class="explore-body">
+            <p>Eat & Shop</p>
+            <p>Downtown Blue Ridge dining</p>
+          </div>
+        </div>
+        <div class="explore-card">
+          <div class="explore-img fun">🚂</div>
+          <div class="explore-body">
+            <p>Family Fun</p>
+            <p>Scenic railway & Mercier Orchards</p>
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <p class="section-title">House rules</p>
+      <div class="rules-grid">
+        <div class="rule-item"><span class="rule-icon">🚭</span>No smoking on premises</div>
+        <div class="rule-item"><span class="rule-icon">🐾</span>No pets allowed</div>
+        <div class="rule-item"><span class="rule-icon">👥</span>Max 11 guests</div>
+        <div class="rule-item"><span class="rule-icon">🎉</span>No parties or events</div>
+        <div class="rule-item"><span class="rule-icon">🔧</span>Report any breakage immediately</div>
+        <div class="rule-item"><span class="rule-icon">🧹</span>Clean up spills & food</div>
+      </div>
+
+      <hr class="divider">
+
+      <p class="section-title">Where you'll be</p>
+      <p style="font-size:14px; color:#666; margin-top:-6px; margin-bottom:4px;">421 Weeks Creek Rd · Blue Ridge, Georgia 30513</p>
+      <div class="map-placeholder">📍 Blue Ridge, GA — Aska Adventure Area · 31 min from Fannin Regional Hospital</div>
+
+      <div class="contact-section">
+        <div class="contact-info">
+          <p>Need help during your stay?</p>
+          <p>Lance · 770.549.9358 &nbsp;&nbsp;|&nbsp;&nbsp; Heather · 678.993.3617</p>
+        </div>
+        <div class="contact-btns">
+          <button class="contact-btn">Guest resources</button>
+          <button class="contact-btn primary">Message hosts</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOOKING CARD -->
+    <div>
+      <div class="booking-card">
+        <div class="price-row">
+          <span class="price">$285</span>
+          <span class="price-note">/ night</span>
+        </div>
+        <div class="rating-row">
+          <strong>★ 4.98</strong> · 47 reviews
+        </div>
+
+        <div class="date-grid">
+          <div class="date-box">
+            <div class="date-label">Check-in</div>
+            <div class="date-val">Add date</div>
+          </div>
+          <div class="date-box">
+            <div class="date-label">Checkout</div>
+            <div class="date-val">Add date</div>
+          </div>
+        </div>
+
+        <div class="guests-box">
+          <div>
+            <span class="guests-label">Guests</span>
+            <span class="guests-val">1 guest</span>
+          </div>
+          <span class="chevron">›</span>
+        </div>
+
+        <button class="book-btn">Check availability</button>
+        <p class="book-note">You won't be charged yet</p>
+
+        <div class="fee-breakdown">
+          <div class="fee-row"><span>$285 × 3 nights</span><span>$855</span></div>
+          <div class="fee-row"><span>Cleaning fee</span><span>$150</span></div>
+          <div class="fee-row"><span>Service fee</span><span>$85</span></div>
+          <div class="fee-row total"><span>Total before taxes</span><span>$1,090</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div>© 2026 Weeks Creek Haven · 421 Weeks Creek Rd, Blue Ridge, GA 30513</div>
+  <div style="display:flex; gap:20px;">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Sitemap</a>
+  </div>
+</footer>
+
+</body>
+</html>
