@@ -6,7 +6,7 @@ const PRECACHE_URLS = [
   '/nav.js',
   '/footer.js',
   // backgrounds & textures
-  '/webpic/lightbardwood..webp',
+  '/webpic/lightbardwood.webp',
   '/webpic/railroad-tie-texture.webp',
   '/webpic/rrtie.webp',
   '/webpic/barn.webp',
