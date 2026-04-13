@@ -1222,5 +1222,54 @@ document.addEventListener('keydown', e => {
 });
 </script>
 <script>document.addEventListener("contextmenu", function(e){ e.preventDefault(); });</script>
+
+<!-- Service Worker Registration + PWA Install -->
+<script>
+// Register service worker
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/friends-sw.js')
+        .then(() => console.log('Friends Hub SW registered'))
+        .catch(e => console.error('SW error:', e));
+}
+
+// PWA install prompt
+let deferredInstallPrompt = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    // Show the banner if not already installed
+    const banner = document.getElementById('pwa-banner');
+    if (banner) banner.style.display = 'block';
+});
+
+function installPWA() {
+    if (!deferredInstallPrompt) return;
+    deferredInstallPrompt.prompt();
+    deferredInstallPrompt.userChoice.then(choice => {
+        if (choice.outcome === 'accepted') {
+            showToast('📲 Friends Hub installed! Find it on your home screen.', 4000);
+            document.getElementById('pwa-banner').style.display = 'none';
+        }
+        deferredInstallPrompt = null;
+    });
+}
+
+// On iOS (Safari) — show the manual hint instead
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isInStandaloneMode = ('standalone' in window.navigator) && window.navigator.standalone;
+if (isIOS && !isInStandaloneMode) {
+    const hint = document.getElementById('ios-pwa-hint');
+    if (hint) hint.style.display = 'block';
+}
+
+// Hide banners if already installed (running as standalone PWA)
+if (window.matchMedia('(display-mode: standalone)').matches || isInStandaloneMode) {
+    const b = document.getElementById('pwa-banner');
+    const h = document.getElementById('ios-pwa-hint');
+    if (b) b.style.display = 'none';
+    if (h) h.style.display = 'none';
+}
+</script>
 </body>
 </html>
