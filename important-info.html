@@ -113,20 +113,28 @@
     <div id="main-container" class="min-h-screen flex items-center justify-center px-6">
 
         <div id="gate" class="parchment p-8 md:p-14 rounded-2xl shadow-2xl text-center max-w-md w-full border-t-8 border-green-900">
-            <h1 class="text-5xl mb-6 font-serif italic text-green-900 heavy-shadow">The Haven Vault</h1>
-            <p class="mb-8 text-stone-600 italic">"Enter your secret word to unlock the cabin guide."</p>
-            
-            <input type="password" id="passInput" placeholder="Password" autofocus
+            <h1 class="text-5xl mb-3 font-serif italic text-green-900">Oh, You Got the Code?</h1>
+            <p class="mb-2 text-stone-700 font-bold italic text-base">"Well then. Someone out there likes you."</p>
+            <p class="mb-8 text-stone-500 text-sm">Type it in below and let&rsquo;s get this party started. Lance did mean to send it to you.</p>
+
+            <input type="password" id="passInput" placeholder="Your secret code" autofocus
                    onkeydown="if(event.key === 'Enter') { event.preventDefault(); checkPass(); }"
                    class="w-full p-4 border-2 border-stone-300 rounded-lg mb-4 focus:border-green-800 outline-none text-center text-xl tracking-widest">
-            
+
             <button type="button" onclick="checkPass()" class="w-full bg-green-900 text-white font-bold py-4 rounded-lg hover:bg-black transition shadow-lg uppercase tracking-widest">
                 Unlock Haven
             </button>
-            
+
             <p id="error" class="text-red-600 mt-6 font-bold hidden">Access Denied Sucker. Try again!</p>
-            
-            <div class="mt-8 pt-6 border-t border-stone-200">
+
+            <!-- PWA install nudge -->
+            <div class="mt-6 bg-stone-800 text-white rounded-xl p-4 text-left">
+                <p class="font-black text-[#d4a373] text-xs uppercase tracking-widest mb-2">&#128241; Pro Move After You Log In</p>
+                <p class="text-xs leading-relaxed text-stone-300">Once you&rsquo;re in, <strong class="text-white">add the Friends Hub to your phone&rsquo;s home screen.</strong> It works like an app &mdash; door codes, directions, hot tub temp, and everything else still loads even when you&rsquo;ve got zero cell bars on Weeks Creek Rd.</p>
+                <p class="text-[10px] text-stone-400 italic mt-2">Safari: Share &rarr; Add to Home Screen &nbsp;|&nbsp; Chrome: Menu &rarr; Install App</p>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-stone-200">
                 <a href="index.html" class="text-[10px] uppercase tracking-[0.2em] text-stone-400 hover:text-green-900 transition">Back to Main Site</a>
             </div>
         </div>
