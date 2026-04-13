@@ -182,6 +182,49 @@
     <p class="egg-hint mt-1">psst... try the konami code</p>
 </header>
 
+<!-- PWA install banner -->
+<div id="pwa-banner" class="max-w-5xl mx-auto px-4 mb-4" style="display:none;">
+    <div class="dark-card rounded-xl px-5 py-4 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-start gap-3">
+            <span class="text-2xl">&#128241;</span>
+            <div>
+                <p class="font-black text-[#d4a373] text-sm uppercase tracking-wide">Save This Page to Your Phone</p>
+                <p class="text-stone-300 text-xs mt-0.5">Install Friends Hub and access door codes, WiFi, checkout lists, and directions — <strong class="text-white">even without cell service</strong> at the cabin.</p>
+            </div>
+        </div>
+        <div class="flex gap-3 flex-shrink-0">
+            <button id="pwa-install-btn" onclick="installPWA()" class="bg-[#A45D41] hover:bg-[#8b4a32] text-white font-black text-xs uppercase tracking-widest px-5 py-2.5 rounded-full transition">&#10133; Add to Home Screen</button>
+            <button onclick="document.getElementById('pwa-banner').style.display='none'" class="text-stone-500 hover:text-stone-300 text-xs font-bold transition">Dismiss</button>
+        </div>
+    </div>
+</div>
+
+<!-- iOS install hint (shown only on iOS where prompt isn't available) -->
+<div id="ios-pwa-hint" class="max-w-5xl mx-auto px-4 mb-4" style="display:none;">
+    <div class="dark-card rounded-xl px-5 py-4 flex items-start gap-3">
+        <span class="text-2xl flex-shrink-0">&#128241;</span>
+        <div>
+            <p class="font-black text-[#d4a373] text-sm uppercase tracking-wide">Save to Your iPhone Home Screen</p>
+            <p class="text-stone-300 text-xs mt-1">Works offline at the cabin — no cell service needed! Tap <strong class="text-white">&#9633; Share</strong> at the bottom of Safari, then choose <strong class="text-white">"Add to Home Screen."</strong></p>
+            <button onclick="document.getElementById('ios-pwa-hint').style.display='none'" class="mt-2 text-stone-500 hover:text-stone-300 text-xs font-bold transition">Got it, thanks!</button>
+        </div>
+    </div>
+</div>
+
+<!-- Adventures link strip -->
+<div class="max-w-5xl mx-auto px-4 mb-2">
+    <a href="hub-adventures.html" class="flex items-center justify-between dark-card rounded-xl px-5 py-3 hover:border-[#d4a373] transition group no-underline" style="border-color: rgba(212,163,115,0.35); text-decoration: none;">
+        <div class="flex items-center gap-3">
+            <span class="text-xl">&#127956;</span>
+            <div>
+                <p class="font-black text-[#d4a373] text-sm uppercase tracking-wide group-hover:text-white transition">Hiking, Fishing &amp; Adventures</p>
+                <p class="text-stone-400 text-xs">Trails, trout spots, dining, and family fun — all offline-ready</p>
+            </div>
+        </div>
+        <span class="text-[#d4a373] text-lg group-hover:text-white transition">&#10145;</span>
+    </a>
+</div>
+
 <!-- Tab bar -->
 <div class="max-w-5xl mx-auto px-4">
     <div class="flex gap-1 overflow-x-auto pb-0">
