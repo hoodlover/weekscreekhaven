@@ -31,6 +31,7 @@ const PRECACHE_URLS = [
   // emergency icons
   '/webpic/hospicon.png',
   '/webpic/policon.png',
+  '/webpic/wpaicon.jpg',
   // checkout
   '/webpic/bidet.webp',
   '/webpic/$200.webp',
