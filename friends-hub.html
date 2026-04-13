@@ -1060,7 +1060,7 @@ function switchTab(name, btn) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('tab-' + name).classList.add('active');
     btn.classList.add('active');
-    if (name === 'scoop') loadWeather();
+    if (name === 'weather') loadWeather();
 }
 
 // ============================
