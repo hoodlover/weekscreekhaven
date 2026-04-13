@@ -182,31 +182,52 @@
     <p class="egg-hint mt-1">psst... try the konami code</p>
 </header>
 
-<!-- PWA install banner -->
-<div id="pwa-banner" class="max-w-5xl mx-auto px-4 mb-4" style="display:none;">
-    <div class="dark-card rounded-xl px-5 py-4 flex flex-wrap items-center justify-between gap-4">
-        <div class="flex items-start gap-3">
-            <span class="text-2xl">&#128241;</span>
+<!-- PWA Section: Why Install + Install Button -->
+<div id="pwa-section" class="max-w-5xl mx-auto px-4 mb-4">
+    <div class="dark-card rounded-2xl px-6 py-5">
+        <!-- Header row -->
+        <div class="flex items-center gap-3 mb-4">
+            <span class="text-3xl">&#128241;</span>
             <div>
-                <p class="font-black text-[#d4a373] text-sm uppercase tracking-wide">Save This Page to Your Phone</p>
-                <p class="text-stone-300 text-xs mt-0.5">Install Friends Hub and access door codes, WiFi, checkout lists, and directions — <strong class="text-white">even without cell service</strong> at the cabin.</p>
+                <p class="font-black text-[#d4a373] text-base uppercase tracking-wide leading-tight">Install Friends Hub on Your Phone</p>
+                <p class="text-stone-400 text-xs mt-0.5">Works like an app — no App Store needed</p>
             </div>
         </div>
-        <div class="flex gap-3 flex-shrink-0">
-            <button id="pwa-install-btn" onclick="installPWA()" class="bg-[#A45D41] hover:bg-[#8b4a32] text-white font-black text-xs uppercase tracking-widest px-5 py-2.5 rounded-full transition">&#10133; Add to Home Screen</button>
-            <button onclick="document.getElementById('pwa-banner').style.display='none'" class="text-stone-500 hover:text-stone-300 text-xs font-bold transition">Dismiss</button>
+        <!-- Why install — benefit bullets -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+            <div class="flex items-start gap-2">
+                <span class="text-[#d4a373] font-black mt-0.5">&#9679;</span>
+                <p class="text-stone-300 text-sm"><strong class="text-white">Works without WiFi or cell service</strong> — door codes, directions, and checkout list are all saved to your phone after one visit.</p>
+            </div>
+            <div class="flex items-start gap-2">
+                <span class="text-[#d4a373] font-black mt-0.5">&#9679;</span>
+                <p class="text-stone-300 text-sm"><strong class="text-white">Opens instantly from your home screen</strong> — no browser, no typing a URL, just one tap like any other app.</p>
+            </div>
+            <div class="flex items-start gap-2">
+                <span class="text-[#d4a373] font-black mt-0.5">&#9679;</span>
+                <p class="text-stone-300 text-sm"><strong class="text-white">No storage bloat</strong> — tiny footprint, no download required, nothing from the App Store.</p>
+            </div>
+            <div class="flex items-start gap-2">
+                <span class="text-[#d4a373] font-black mt-0.5">&#9679;</span>
+                <p class="text-stone-300 text-sm"><strong class="text-white">Cell service at the cabin is sketchy</strong> — Weeks Creek Rd drops signal fast. Having this saved means you're never stuck.</p>
+            </div>
         </div>
-    </div>
-</div>
-
-<!-- iOS install hint (shown only on iOS where prompt isn't available) -->
-<div id="ios-pwa-hint" class="max-w-5xl mx-auto px-4 mb-4" style="display:none;">
-    <div class="dark-card rounded-xl px-5 py-4 flex items-start gap-3">
-        <span class="text-2xl flex-shrink-0">&#128241;</span>
-        <div>
-            <p class="font-black text-[#d4a373] text-sm uppercase tracking-wide">Save to Your iPhone Home Screen</p>
-            <p class="text-stone-300 text-xs mt-1">Works offline at the cabin — no cell service needed! Tap <strong class="text-white">&#9633; Share</strong> at the bottom of Safari, then choose <strong class="text-white">"Add to Home Screen."</strong></p>
-            <button onclick="document.getElementById('ios-pwa-hint').style.display='none'" class="mt-2 text-stone-500 hover:text-stone-300 text-xs font-bold transition">Got it, thanks!</button>
+        <!-- Install buttons — Android / Chrome auto-prompt -->
+        <div id="pwa-install-row" class="flex flex-wrap gap-3 items-center" style="display:none!important;">
+            <button onclick="installPWA()" class="bg-[#A45D41] hover:bg-[#8b4a32] text-white font-black text-sm uppercase tracking-widest px-6 py-3 rounded-full transition">&#10133; Add to Home Screen</button>
+            <span class="text-stone-500 text-xs">Your browser is ready to install it right now.</span>
+        </div>
+        <!-- iOS manual instructions -->
+        <div id="ios-pwa-hint" style="display:none;">
+            <div class="bg-stone-800/60 rounded-xl px-4 py-3 border border-stone-700">
+                <p class="text-white font-black text-sm mb-1">On iPhone / iPad (Safari):</p>
+                <p class="text-stone-300 text-sm">Tap the <strong class="text-white">&#9633; Share</strong> button at the bottom of the screen, then scroll down and choose <strong class="text-white">"Add to Home Screen"</strong> — then tap <strong class="text-white">Add</strong> in the top corner.</p>
+            </div>
+        </div>
+        <!-- Fallback: already installed or dismissed — show a soft re-prompt button -->
+        <div id="pwa-reask-row" class="flex flex-wrap gap-3 items-center">
+            <button onclick="reaskInstall()" class="border border-[#A45D41] text-[#d4a373] hover:bg-[#A45D41] hover:text-white font-black text-xs uppercase tracking-widest px-5 py-2.5 rounded-full transition">&#128241; Didn't get a prompt? Try again</button>
+            <span class="text-stone-500 text-xs italic">If you already installed it, you're all set &#10003;</span>
         </div>
     </div>
 </div>
