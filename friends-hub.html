@@ -1270,7 +1270,13 @@ window.addEventListener('beforeinstallprompt', e => {
 
 function installPWA() {
     if (!deferredInstallPrompt) {
-        showToast('📲 Use the browser menu → "Add to Home Screen"', 4000);
+        const isIOSDevice = /iphone|ipad|ipod/i.test(navigator.userAgent);
+        if (isIOSDevice) {
+            const hint = document.getElementById('ios-pwa-hint');
+            if (hint) { hint.style.display = 'block'; hint.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+        } else {
+            showToast('📲 Use the browser menu → "Add to Home Screen"', 4000);
+        }
         return;
     }
     deferredInstallPrompt.prompt();
