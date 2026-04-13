@@ -1,4 +1,4 @@
-const CACHE_NAME = 'friends-hub-v5';
+const CACHE_NAME = 'friends-hub-v6';
 
 const PRECACHE_URLS = [
   '/friends-hub.html',
@@ -7,7 +7,7 @@ const PRECACHE_URLS = [
   '/nav.js',
   '/footer.js',
   // backgrounds & textures
-  '/webpic/lightbardwood.webp',
+  '/webpic/lightbardwood..webp',
   '/webpic/railroad-tie-texture.webp',
   '/webpic/rrtie.webp',
   '/webpic/barn.webp',
