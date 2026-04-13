@@ -155,30 +155,38 @@
         <!-- ==================== TAB 2: THE SCOOP ==================== -->
         <div id="tab-scoop" class="tab-panel space-y-8">
 
-            <!-- Hot Tub -->
-            <div class="parchment p-6 md:p-8 rounded-xl shadow-lg grid md:grid-cols-2 gap-8 items-center border-t-4 border-[#A45D41]">
-                <div class="order-2 md:order-1">
-                    <img src="info/HotTub.webp" class="zoom-card border-4 border-[#4a4747] rounded shadow-2xl w-full" onclick="openModal(this.src)">
-                    <p class="text-center text-xs mt-2 italic text-stone-500">Click to expand Hot Tub &amp; Cover Lifter Guide</p>
-                </div>
-                <div class="order-1 md:order-2">
-                    <h2 class="section-title">Hot Tub &amp; Spa</h2>
-                    <div class="space-y-2 text-sm leading-relaxed">
-                        <p><strong>On Arrival:</strong> Crank it to <strong>104&deg;F</strong> the moment you drop your bags &mdash; takes 2+ hours to get there. Future you (the one holding a drink at 10 PM) will be very grateful. Before leaving, drop it back to <strong>80&deg;F</strong> for the next crew.</p>
-                        <p><strong>Soak Time:</strong> Limit soaks to 15 minutes. Step out if you feel lightheaded or overheated.</p>
-                        <p><strong>Towels:</strong> Use the dedicated large towels in the entertainment room &mdash; not the bathroom ones.</p>
-                        <p><strong>Cover Lifter:</strong> Always use the lifter arm. Don&rsquo;t drag the cover off the edge.</p>
-                        <p><strong>When Done:</strong> Replace cover fully on all sides. Keeps the heat in and the critters out.</p>
-                        <p><strong>Kids:</strong> Supervised at all times. Limit to 5&ndash;10 minutes in hot water.</p>
-                        <p><strong>Alcohol &amp; Hot Tubs:</strong> Heat + booze = dizzy fast. You&rsquo;ve been warned.</p>
-                        <p><strong>Glassware:</strong> No glass near the hot tub. Use the plastic cups provided.</p>
-                        <p><strong>Lower Spa Tub:</strong> Jets out of order &mdash; the tub itself is fully usable.</p>
-                    </div>
+            <!-- Jump Nav -->
+            <div class="parchment p-4 rounded-xl shadow border border-stone-200">
+                <p class="text-xs font-black uppercase tracking-widest text-stone-400 mb-3 text-center">Jump to a section</p>
+                <div class="flex flex-wrap justify-center gap-2">
+                    <a href="#ntk-hottub" class="inline-flex items-center gap-1 px-4 py-2 bg-stone-100 hover:bg-[#A45D41] hover:text-white rounded-full text-xs font-black uppercase tracking-wide transition border border-stone-200">&#9832; Hot Tub</a>
+                    <a href="#ntk-safety" class="inline-flex items-center gap-1 px-4 py-2 bg-stone-100 hover:bg-[#A45D41] hover:text-white rounded-full text-xs font-black uppercase tracking-wide transition border border-stone-200">&#128062; Safety</a>
+                    <a href="#ntk-bugs" class="inline-flex items-center gap-1 px-4 py-2 bg-stone-100 hover:bg-[#A45D41] hover:text-white rounded-full text-xs font-black uppercase tracking-wide transition border border-stone-200">&#128027; Bugs</a>
+                    <a href="#ntk-bears" class="inline-flex items-center gap-1 px-4 py-2 bg-stone-100 hover:bg-[#A45D41] hover:text-white rounded-full text-xs font-black uppercase tracking-wide transition border border-stone-200">&#128465; Bear Bins</a>
+                    <a href="#ntk-kitchen" class="inline-flex items-center gap-1 px-4 py-2 bg-stone-100 hover:bg-[#A45D41] hover:text-white rounded-full text-xs font-black uppercase tracking-wide transition border border-stone-200">&#127962; Kitchen Sink</a>
                 </div>
             </div>
 
+            <!-- Hot Tub -->
+            <div id="ntk-hottub" class="parchment p-6 md:p-8 rounded-xl shadow-lg border-t-4 border-[#A45D41]">
+                <h2 class="section-title">Hot Tub &amp; Spa</h2>
+                <div class="space-y-2 text-sm leading-relaxed mb-6">
+                    <p><strong>On Arrival:</strong> Crank it to <strong>104&deg;F</strong> the moment you drop your bags &mdash; takes 2+ hours to get there. Future you (holding a drink at 10 PM) will be very grateful. Before leaving, drop it back to <strong>80&deg;F</strong> for the next crew.</p>
+                    <p><strong>Soak Time:</strong> Limit soaks to 15 minutes. Step out if you feel lightheaded or overheated.</p>
+                    <p><strong>Towels:</strong> Use the dedicated large towels in the entertainment room &mdash; not the bathroom ones.</p>
+                    <p><strong>Cover Lifter:</strong> Always use the lifter arm. Don&rsquo;t drag the cover off the edge.</p>
+                    <p><strong>When Done:</strong> Replace cover fully on all sides. Keeps the heat in and the critters out.</p>
+                    <p><strong>Kids:</strong> Supervised at all times. Limit to 5&ndash;10 minutes in hot water.</p>
+                    <p><strong>Alcohol &amp; Hot Tubs:</strong> Heat + booze = dizzy fast. You&rsquo;ve been warned.</p>
+                    <p><strong>Glassware:</strong> No glass near the hot tub. Use the plastic cups provided.</p>
+                    <p><strong>Lower Spa Tub:</strong> Jets out of order &mdash; the tub itself is fully usable.</p>
+                </div>
+                <img src="info/HotTub.webp" class="zoom-card border-4 border-[#4a4747] rounded shadow-2xl w-full max-w-lg mx-auto block" onclick="openModal(this.src)">
+                <p class="text-center text-xs mt-2 italic text-stone-500">Click to expand Hot Tub &amp; Cover Lifter Guide</p>
+            </div>
+
             <!-- Mountain Safety -->
-            <div class="parchment p-6 md:p-8 rounded-xl shadow-lg grid md:grid-cols-2 gap-8 items-center border-t-4 border-[#A45D41]">
+            <div id="ntk-safety" class="parchment p-6 md:p-8 rounded-xl shadow-lg grid md:grid-cols-2 gap-8 items-center border-t-4 border-[#A45D41]">
                 <div>
                     <h2 class="section-title">Mountain Safety</h2>
                     <div class="space-y-2 text-sm leading-relaxed">
@@ -196,8 +204,30 @@
                 </div>
             </div>
 
+            <!-- Bugs -->
+            <div id="ntk-bugs" class="parchment p-6 md:p-8 rounded-xl shadow-lg border-t-4 border-[#A45D41]">
+                <h2 class="section-title">Bugs</h2>
+                <div class="grid md:grid-cols-2 gap-6 items-start">
+                    <div class="space-y-2 text-sm leading-relaxed">
+                        <p class="font-black text-stone-800">Yep. Cabin in the woods. Bugs be buggin&rsquo;.</p>
+                        <p>This is their turf &mdash; we just have better furniture and working Wi-Fi. A little mountain attitude goes a long way out here.</p>
+                        <p><strong>Bring:</strong> Bug spray, DEET if you mean serious business, a citronella candle if you want to feel fancy while losing.</p>
+                        <p><strong>Pro tip:</strong> Just hand the whole situation to your 9-year-old. They like bugs. They&rsquo;ll sort it out and probably make a new friend in the process.</p>
+                        <p><strong>Ticks:</strong> Do a quick once-over after hiking through tall grass or brush. Tweezers are in the first aid kit &mdash; use them, not your fingers.</p>
+                        <p><strong>Inside the cabin:</strong> The occasional spider or rogue moth is harmless and deeply offended by the screaming. Show some respect.</p>
+                    </div>
+                    <div class="bg-stone-100 rounded-xl p-5 border border-stone-200 space-y-2 text-sm">
+                        <p class="font-black text-stone-800 uppercase tracking-wide text-xs mb-3">The Bug Survival Kit</p>
+                        <div class="flex items-start gap-2"><span class="text-[#A45D41] font-black mt-0.5">&#9679;</span><span>Bug spray &mdash; DEET for serious situations, lemon eucalyptus if you&rsquo;re a naturalist</span></div>
+                        <div class="flex items-start gap-2"><span class="text-[#A45D41] font-black mt-0.5">&#9679;</span><span>Deodorant &mdash; doubles as mild deterrent for those committed to smelling good while losing</span></div>
+                        <div class="flex items-start gap-2"><span class="text-[#A45D41] font-black mt-0.5">&#9679;</span><span>Mountain attitude: unbothered, undefeated</span></div>
+                        <div class="flex items-start gap-2"><span class="text-[#A45D41] font-black mt-0.5">&#9679;</span><span>One willing 9-year-old &mdash; fearless, curious, and has nothing to lose</span></div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Bear Bins -->
-            <div class="parchment p-6 md:p-8 rounded-xl shadow-lg grid md:grid-cols-2 gap-8 items-center border-t-4 border-[#A45D41]">
+            <div id="ntk-bears" class="parchment p-6 md:p-8 rounded-xl shadow-lg grid md:grid-cols-2 gap-8 items-center border-t-4 border-[#A45D41]">
                 <div>
                     <img src="webpic/trash.webp" class="zoom-card border-4 border-[#4a4747] rounded shadow-2xl w-full" onclick="openModal(this.src)">
                 </div>
@@ -212,6 +242,37 @@
                         <p><strong>No loose garbage outside.</strong> Ever. Did we mention the bears?</p>
                         <p><strong>Full can?</strong> Extra bags are under the kitchen sink.</p>
                     </div>
+                </div>
+            </div>
+
+            <!-- Kitchen Sink / Septic -->
+            <div id="ntk-kitchen" class="parchment p-6 md:p-8 rounded-xl shadow-lg border-t-4 border-amber-700">
+                <h2 class="section-title">The Kitchen Sink</h2>
+                <div class="space-y-3 text-sm leading-relaxed">
+                    <p class="font-black text-stone-800">Quick PSA: the septic tank is not a garbage disposal. It&rsquo;s more of a slow-going digestive system with no sense of humor and a long memory.</p>
+                    <p>If it isn&rsquo;t water or soap, it belongs in the trash. The trash can is literally right there. They&rsquo;re basically partners at this point.</p>
+                    <div class="grid sm:grid-cols-2 gap-3 mt-2">
+                        <div class="bg-red-50 border border-red-200 p-3 rounded">
+                            <p class="font-black text-red-800 text-xs uppercase tracking-wide mb-2">&#10060; Keep Out of the Drain</p>
+                            <ul class="space-y-1 text-stone-700 text-xs">
+                                <li>Food scraps &amp; grease</li>
+                                <li>Coffee grounds</li>
+                                <li>&ldquo;Flushable&rdquo; wipes (they&rsquo;re not &mdash; they&rsquo;re liars)</li>
+                                <li>Paper towels</li>
+                                <li>Anything solid, chunky, or questionable</li>
+                            </ul>
+                        </div>
+                        <div class="bg-green-50 border border-green-200 p-3 rounded">
+                            <p class="font-black text-green-800 text-xs uppercase tracking-wide mb-2">&#10003; Fair Game</p>
+                            <ul class="space-y-1 text-stone-700 text-xs">
+                                <li>Water</li>
+                                <li>Dish soap &amp; rinse water</li>
+                                <li>Septic-safe TP (provided)</li>
+                                <li>Good vibes</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p class="text-xs text-stone-500 italic">A happy septic means a happy cabin. Your future self and the next three families are quietly counting on you.</p>
                 </div>
             </div>
         </div>
