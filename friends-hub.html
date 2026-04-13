@@ -1259,24 +1259,46 @@ let deferredInstallPrompt = null;
 window.addEventListener('beforeinstallprompt', e => {
     e.preventDefault();
     deferredInstallPrompt = e;
-    // Show the banner if not already installed
-    const banner = document.getElementById('pwa-banner');
-    if (banner) banner.style.display = 'block';
+    // Show the install button row now that the prompt is ready
+    const row = document.getElementById('pwa-install-row');
+    if (row) row.style.removeProperty('display');
+    // Hide the "try again" row since we have the real prompt
+    const reask = document.getElementById('pwa-reask-row');
+    if (reask) reask.style.display = 'none';
 });
 
 function installPWA() {
-    if (!deferredInstallPrompt) return;
+    if (!deferredInstallPrompt) {
+        showToast('📲 Use the browser menu → "Add to Home Screen"', 4000);
+        return;
+    }
     deferredInstallPrompt.prompt();
     deferredInstallPrompt.userChoice.then(choice => {
         if (choice.outcome === 'accepted') {
             showToast('📲 Friends Hub installed! Find it on your home screen.', 4000);
-            document.getElementById('pwa-banner').style.display = 'none';
         }
         deferredInstallPrompt = null;
+        const row = document.getElementById('pwa-install-row');
+        if (row) row.style.display = 'none';
     });
 }
 
-// On iOS (Safari) — show the manual hint instead
+function reaskInstall() {
+    if (deferredInstallPrompt) {
+        installPWA();
+    } else {
+        // No prompt available — show platform-specific guidance
+        const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+        if (isIOS) {
+            const hint = document.getElementById('ios-pwa-hint');
+            if (hint) { hint.style.display = 'block'; hint.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+        } else {
+            showToast('📲 Open your browser menu and choose "Add to Home Screen" or "Install App"', 5000);
+        }
+    }
+}
+
+// On iOS (Safari) — show the manual hint
 const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
 const isInStandaloneMode = ('standalone' in window.navigator) && window.navigator.standalone;
 if (isIOS && !isInStandaloneMode) {
@@ -1284,12 +1306,10 @@ if (isIOS && !isInStandaloneMode) {
     if (hint) hint.style.display = 'block';
 }
 
-// Hide banners if already installed (running as standalone PWA)
+// Hide the whole PWA section if already running as installed app
 if (window.matchMedia('(display-mode: standalone)').matches || isInStandaloneMode) {
-    const b = document.getElementById('pwa-banner');
-    const h = document.getElementById('ios-pwa-hint');
-    if (b) b.style.display = 'none';
-    if (h) h.style.display = 'none';
+    const section = document.getElementById('pwa-section');
+    if (section) section.style.display = 'none';
 }
 </script>
 </body>
