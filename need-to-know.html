@@ -5,17 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weeks Creek Haven | Guest Guide</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
-    
     <style>
         body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
         h1, h2, h3, h4 { font-family: 'Crimson Text', serif; }
-        
-        .extra-heavy-shadow {
-            text-shadow: 3px 3px 6px rgba(0,0,0,1), 0px 0px 25px rgba(0,0,0,1), 0px 0px 10px rgba(0,0,0,0.8);
-        }
 
         .bg-wood {
             background-color: #1a1512;
@@ -24,60 +18,69 @@
             background-attachment: fixed;
         }
 
+        .extra-heavy-shadow {
+            text-shadow: 3px 3px 6px rgba(0,0,0,1), 0px 0px 25px rgba(0,0,0,1), 0px 0px 10px rgba(0,0,0,0.8);
+        }
 
-/* DELETE or comment out these lines in each page's <style>: */
-/* .wood-btn { height: 80px; } */
-/* @media (min-width: 768px)  { .wood-btn { height: 74px; } } */
-/* @media (min-width: 1536px) { .wood-btn { height: 112px; } } */
+        /* Tab bar */
+        .tab-btn {
+            padding: 0.55rem 0.9rem;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            border-radius: 0.5rem 0.5rem 0 0;
+            border: 1px solid rgba(139,90,43,0.35);
+            border-bottom: none;
+            background: rgba(26,21,18,0.7);
+            color: #a8906a;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .tab-btn:hover { background: rgba(164,93,65,0.25); color: #d4a373; }
+        .tab-btn.active { background: rgba(244,238,224,0.97); color: #5a2e0a; border-color: #dcd3bd; font-weight: 900; }
 
-        .wood-btn:hover { transform: scale(1.05); }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
 
-        .logo-link { position: relative; display: inline-block; }
-        .logo-link .hover-img { position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s ease-in-out; z-index: 2; }
-        .logo-link:hover .hover-img { opacity: 1; }
-        .logo-link:hover .wood-btn { transform: scale(1.0) !important; }
+        .hub-body {
+            background-color: rgba(244,238,224,0.95);
+            border: 1px solid #dcd3bd;
+            border-top: none;
+            border-radius: 0 0.75rem 0.75rem 0.75rem;
+            color: #3d3128;
+        }
 
         .parchment {
-            background-color: rgba(244, 238, 224, 0.95);
+            background-color: rgba(244, 238, 224, 0.98);
             border: 1px solid #dcd3bd;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            border-top: 24px solid #A45D41;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
         }
 
         .section-title {
-            font-size: 3.5rem; 
+            font-size: 2.5rem;
             font-weight: 700;
             color: #A45D41;
             text-transform: uppercase;
             letter-spacing: -0.02em;
-            line-height: 1.1;
-            margin-bottom: 2rem;
+            margin-bottom: 1.25rem;
         }
 
-        .pic-outline { border: 5px solid #4a4747; border-radius: 4px; }
+        .check-row { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(139,69,19,0.1); }
+        .check-row:last-child { border-bottom: none; }
+        .check-icon { width: 26px; height: 26px; border-radius: 50%; border: 1px solid #4a4747; flex-shrink: 0; margin-top: 2px; object-fit: cover; }
+        input[type="checkbox"] { width: 1.15rem; height: 1.15rem; accent-color: #A45D41; cursor: pointer; flex-shrink: 0; margin-top: 2px; }
 
-        #mobile-menu {
-            background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('webpic/railroad-tie-texture.webp');
-            background-size: cover;
-        }
-
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.95); align-items: center; justify-content: center; }
-        .modal-content { max-width: 95%; max-height: 90vh; border: 5px solid #4a4747; border-radius: 4px; }
-        .close { position: absolute; top: 20px; right: 35px; color: #fff; font-size: 60px; cursor: pointer; }
-        .zoom-card { cursor: pointer; transition: 0.3s; }
+        .zoom-card { cursor: zoom-in; transition: transform 0.2s; }
         .zoom-card:hover { transform: scale(1.02); }
 
-        .check-item { display: flex; align-items: flex-start; gap: 15px; padding: 12px 0; border-bottom: 1px solid rgba(139, 69, 19, 0.1); }
-        .custom-check { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid #4a4747; flex-shrink: 0; margin-top: 4px; }
-        
-        .btn-subtitle {
-            display: block;
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-top: 2px;
-            opacity: 0.8;
-        }
+        .btn-subtitle { display: block; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; opacity: 0.8; }
+
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.95); align-items: center; justify-content: center; }
+        .modal-content { max-width: 95%; max-height: 90vh; border: 5px solid #4a4747; border-radius: 4px; }
+        .close-modal { position: absolute; top: 20px; right: 35px; color: #fff; font-size: 60px; cursor: pointer; }
     </style>
 </head>
 <body class="bg-wood">
@@ -85,186 +88,403 @@
 <div id="nav-placeholder"></div>
 <script src="nav.js"></script>
 
-<header class="relative h-[75vh] flex flex-col items-center justify-center text-white overflow-hidden" style="margin-left: 1in; margin-right: 1in;">
+<header class="relative h-[50vh] flex flex-col items-center justify-center text-white overflow-hidden" >
     <img src="webpic/toknow.webp" class="absolute inset-0 w-full h-full object-cover">
+    <div class="absolute inset-0 bg-black/50"></div>
     <div class="relative z-10 text-center px-4 pt-20">
         <h1 class="text-6xl md:text-9xl mb-2 tracking-tight font-serif extra-heavy-shadow" style="font-variant: small-caps;">Weeks Creek Haven</h1>
-        <p class="text-2xl md:text-4xl italic mb-12 text-stone-200 font-serif extra-heavy-shadow">Everything You Need to Know</p>
+        <p class="text-2xl md:text-4xl italic mb-8 text-stone-200 font-serif extra-heavy-shadow">Everything You Need to Know</p>
     </div>
 </header>
 
-<main class="max-w-6xl mx-auto py-16 px-6 space-y-20">
+<!-- Tab system -->
+<div class="max-w-5xl mx-auto px-4 pt-10 pb-20 relative z-30">
 
-<section id="weather-section" class="parchment p-8 md:p-12 rounded-xl opacity-0 transition-opacity duration-700">
-    <div class="flex flex-col md:flex-row justify-between items-start mb-8 border-b border-stone-300 pb-6">
-        <div>
-            <h2 class="section-title mb-2">7-Day Creek Outlook</h2>
-            <p id="weather-summary" class="text-lg italic text-stone-600">Loading your mountain forecast...</p>
-        </div>
-        <div class="text-right hidden md:block">
-            <p class="text-xs uppercase tracking-widest font-bold text-[#4a4747]">Blue Ridge, GA</p>
-            <p id="current-temp-large" class="text-5xl font-serif text-[#4a4747]">--°F</p>
-        </div>
+    <div class="flex gap-1 overflow-x-auto pb-0">
+        <button class="tab-btn active" onclick="switchTab('links',this)">&#9646; Quick Links</button>
+        <button class="tab-btn" onclick="switchTab('scoop',this)">&#9650; The Scoop</button>
+        <button class="tab-btn" onclick="switchTab('departure',this)">&#9632; Departure</button>
+        <button class="tab-btn" onclick="switchTab('weather',this)">&#9729; Weather</button>
+        <button class="tab-btn" onclick="switchTab('directions',this)">&#9658; Directions</button>
+        <button class="tab-btn" onclick="switchTab('emergency',this)">&#128680; Emergency</button>
     </div>
 
-    <div id="forecast-7day" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
-        </div>
+    <div class="hub-body p-6 md:p-10 mb-16 shadow-2xl">
 
-    <div class="mt-8 pt-6 border-t border-stone-300 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-        <div>
-            <p class="text-[10px] uppercase tracking-widest font-bold text-stone-500">Humidity</p>
-            <p id="stat-humidity" class="text-lg font-serif text-#4a4747">--%</p>
-        </div>
-        <div>
-            <p class="text-[10px] uppercase tracking-widest font-bold text-stone-500">Wind Speed</p>
-            <p id="stat-wind" class="text-lg font-serif text-#4a4747">-- mph</p>
-        </div>
-        <div>
-            <p class="text-[10px] uppercase tracking-widest font-bold text-stone-500">UV Index</p>
-            <p id="stat-uv" class="text-lg font-serif text-s#4a4747">--</p>
-        </div>
-        <div>
-            <p class="text-[10px] uppercase tracking-widest font-bold text-stone-500">Sunset</p>
-            <p id="stat-sunset" class="text-lg font-serif text-stone-800">--:--</p>
-        </div>
-    </div>
-</section>
-
-    <section class="parchment p-8 rounded-xl">
-        <h2 class="section-title text-center">Quick Links & Resources</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
-            <a href="checkout.html" class="flex flex-col justify-center p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#4a4747] hover:text-white transition-all shadow-sm">
-                <span class="font-bold uppercase text-sm tracking-widest leading-tight">Check Out</span>
-                <span class="btn-subtitle">Online Guest Book</span>
-            </a>
-
-            <a href="cleaningchecklist.html" class="flex items-center justify-center p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#4a4747] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Cleaning Checklist</a>
-            <a href="contact.html" class="flex items-center justify-center p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#4a4747] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Contact Us</a>
-
-            <a href="maintenance.html" class="flex flex-col justify-center p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#4a4747] hover:text-white transition-all shadow-sm">
-                <span class="font-bold uppercase text-sm tracking-widest leading-tight">Maintenance</span>
-                <span class="btn-subtitle">Cabin Issues to Report</span>
-            </a>
-
-            <a href="onlineguestbook.html" class="flex flex-col justify-center p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#4a4747] hover:text-white transition-all shadow-sm">
-                <span class="font-bold uppercase text-sm tracking-widest leading-tight">Online Guest Book</span>
-                <span class="btn-subtitle">Not checking out?</span>
-            </a>
-
-            <a href="provisions.html" class="flex items-center justify-center p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#4a4747] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Food & Stuff</a>
-            <a href="troubleshoot.html" class="flex items-center justify-center p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#4a4747] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Troubleshoot Help</a>
-            <a href="important-info.html" class="flex items-center justify-center p-4 bg-stone-100/80 rounded-lg border border-stone-400 hover:bg-[#4a4747] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Guest Access</a>
-        </div>
-    </section>
-
-    <section class="parchment p-8 md:p-12 rounded-xl grid md:grid-cols-2 gap-12 items-center">
-        <div class="order-2 md:order-1">
-            <img src="info/HotTub.webp" class="zoom-card pic-outline shadow-2xl w-full" onclick="openModal(this.src)">
-            <p class="text-center text-xs mt-2 italic">Click to expand Hot Tub & Cover Lifter Guide</p>
-        </div>
-        <div class="order-1 md:order-2">
-            <h2 class="section-title">Hot Tub & Spa</h2>
-            <div class="text-lg space-y-2">
-                <p><strong>Soak Time:</strong> Limit soaks to 15 minutes, especially at high temperatures. Step out if you feel lightheaded, overheated, or dizzy.</p>
-                <p><strong>Towels:</strong> Use the dedicated large towels in the entertainment room — not the bathroom towels.</p>
-                <p><strong>Cover Lifter:</strong> The photo guide on the left shows all four steps. Always use the lifter arm — don't drag the cover off the edge.</p>
-                <p><strong>When You're Done:</strong> Replace the cover fully and make sure it's seated on all sides to keep heat in and debris out.</p>
-                <p><strong>Children:</strong> Kids should be supervised at all times and should limit exposure to 5–10 minutes in hot water.</p>
-                <p><strong>Alcohol & Hot Tubs:</strong> Use extra caution — heat and alcohol together increase the risk of overheating and dizziness.</p>
-                <p><strong>Glassware:</strong> No glass in or immediately around the hot tub. Use the plastic cups provided.</p>
-                <p><strong>Lower-Level Spa Tub:</strong> The jets in the lower-level bathroom tub are currently out of order — the tub itself is fully usable.</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="parchment p-8 md:p-12 rounded-xl grid md:grid-cols-2 gap-12 items-center">
-        <div>
-            <h2 class="section-title">Mountain Safety</h2>
-            <div class="text-lg space-y-2">
-                <p><strong>Black Bears:</strong> Bears are active in this area year-round. Never feed them or approach them. If you see one on the property, make noise, back away slowly, and give it space — they will move on. Do not leave food, coolers, or trash outside.</p>
-                <p><strong>Other Wildlife:</strong> Coyotes, deer, and wild turkeys are common. Keep your distance and do not feed any wildlife — it makes them bolder and more dangerous over time.</p>
-                <p><strong>Snakes:</strong> Watch where you step on trails, around wood piles, and in tall grass. Most are harmless, but copperheads are present in the mountains. Leave them alone and they'll leave you alone.</p>
-                <p><strong>Firepit:</strong> Never leave a fire unattended. Douse it completely with water and stir the ash until everything is cold to the touch before walking away. Check for any active burn bans in Fannin County before lighting up.</p>
-                <p><strong>Mountain Roads:</strong> The driveway and surrounding roads are steep and can be slick after rain or ice. Take it slow, especially at night. Four-wheel drive is strongly recommended in winter conditions.</p>
-                <p><strong>Weather:</strong> Mountain weather can change quickly. Check the forecast before heading out on hikes and bring a layer — it's often 10–15°F cooler at elevation than in town.</p>
-                <p><strong>Cell Service & Emergencies:</strong> Service can be spotty in the area. If you have an emergency, 911 is still reachable. The nearest hospital is Fannin Regional in Blue Ridge, about 15 minutes away.</p>
-            </div>
-        </div>
-        <div class="order-last">
-            <img src="info/05_Safety.webp" class="zoom-card pic-outline shadow-2xl w-full" onclick="openModal(this.src)">
-        </div>
-    </section>
-
-    <section class="parchment p-8 md:p-12 rounded-xl grid md:grid-cols-2 gap-12 items-center">
-        <div>
-            <img src="webpic/trash.webp" class="zoom-card pic-outline shadow-2xl w-full" onclick="openModal(this.src)">
-        </div>
-        <div>
-            <h2 class="section-title">Garbage &<br>Bear Bins</h2>
-            <div class="text-lg space-y-2">
-                <p><strong>Opening the bear bin:</strong> Pinch both side handles inward at the same time, then lift the lid up. It takes a little force — that's the point!</p>
-                <p><strong>Closing it:</strong> Press the lid down firmly until you hear it click locked on both sides.</p>
-                <p><strong>Bag it first.</strong> Always bag your trash before placing it in any can.</p>
-                <p><strong>Food waste & smelly trash</strong> goes in the tall bear-proof can on the front porch. Latch the lid completely — bears are real.</p>
-                <p><strong>General trash</strong> (dry, non-food) can go in the smaller deck bin.</p>
-                <p><strong>No loose garbage outside.</strong> Never leave open bags or food scraps on the deck or ground.</p>
-                <p><strong>Full can?</strong> Extra trash bags are under the kitchen sink.</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="parchment p-8 md:p-12 rounded-xl">
-        <h2 class="section-title">Departure Checklist</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-            <div class="text-base">
-                <div class="check-item">
-                    <img src="webpic/checkmark.webp" class="custom-check">
-                    <span><strong>Trash:</strong> Bagged trash in outside deck bin. Food trash must go in the bear-proof tall garbage can.</span>
-                </div>
-                <div class="check-item">
-                    <img src="webpic/checkmark.webp" class="custom-check">
-                    <span><strong>Dishes:</strong> Load and start dishwasher. Please do not leave dirty dishes in the sink.</span>
-                </div>
-                <div class="check-item">
-                    <img src="webpic/checkmark.webp" class="custom-check">
-                    <span><strong>Bathrooms:</strong> Clean used bathrooms so they are ready for the next adventures.</span>
-                </div>
-                <div class="check-item">
-                    <img src="webpic/checkmark.webp" class="custom-check">
-                    <span><strong>Fireplace:</strong> Fully off. Leave pilot light on. Close the screens.</span>
-                </div>
-                <div class="check-item">
-                    <img src="webpic/checkmark.webp" class="custom-check">
-                    <span><strong>Linens:</strong> Strip beds and place in laundry area. Please start at least one load (start to finish).</span>
-                </div>
-                <div class="check-item">
-                    <img src="webpic/checkmark.webp" class="custom-check">
-                    <span><strong>Hot Tub:</strong> Towels to laundry area. Close cover and lower temp to 80°F.</span>
-                </div>
-                <div class="check-item">
-                    <img src="webpic/checkmark.webp" class="custom-check">
-                    <span><strong>Lights & Air:</strong> All lights off. Thermostat to 75°F (Summer) or 60°F (Winter).</span>
-                </div>
-                <div class="check-item">
-                    <img src="webpic/checkmark.webp" class="custom-check">
-                    <span><strong>Lock Up:</strong> Windows closed and smart doors locked. (Say "Alexa, going out").</span>
-                </div>
-                
-                <div class="mt-8 p-4 bg-stone-200/50 border-l-4 border-[#4a4747] italic text-stone-700">
-                    "This is not an AirBnB. Let's leave it great for the next family visit."
-                </div>
-
-                <p class="italic text-stone-600 mt-6 text-sm">Check-out is at 3:00 PM.</p>
-            </div>
+        <!-- ==================== TAB 1: QUICK LINKS ==================== -->
+        <div id="tab-links" class="tab-panel active space-y-8">
             <div>
-                <img src="info/29_F_2.webp" class="zoom-card pic-outline shadow-2xl w-full" onclick="openModal(this.src)">
+                <h2 class="section-title">Quick Links &amp; Resources</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+                    <a href="checkout.html" class="flex flex-col justify-center p-4 bg-stone-100 rounded-lg border border-stone-300 hover:bg-[#A45D41] hover:text-white transition-all shadow-sm">
+                        <span class="font-bold uppercase text-sm tracking-widest leading-tight">Check Out</span>
+                        <span class="btn-subtitle">Departure Form &amp; Guest Book</span>
+                    </a>
+                    <a href="cleaningchecklist.html" class="flex items-center justify-center p-4 bg-stone-100 rounded-lg border border-stone-300 hover:bg-[#A45D41] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Cleaning Checklist</a>
+                    <a href="contact.html" class="flex items-center justify-center p-4 bg-stone-100 rounded-lg border border-stone-300 hover:bg-[#A45D41] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Contact Us</a>
+                    <a href="maintenance.html" class="flex flex-col justify-center p-4 bg-stone-100 rounded-lg border border-stone-300 hover:bg-[#A45D41] hover:text-white transition-all shadow-sm">
+                        <span class="font-bold uppercase text-sm tracking-widest leading-tight">Maintenance</span>
+                        <span class="btn-subtitle">Report a Cabin Issue</span>
+                    </a>
+                    <a href="onlineguestbook.html" class="flex flex-col justify-center p-4 bg-stone-100 rounded-lg border border-stone-300 hover:bg-[#A45D41] hover:text-white transition-all shadow-sm">
+                        <span class="font-bold uppercase text-sm tracking-widest leading-tight">Online Guest Book</span>
+                        <span class="btn-subtitle">Not checking out?</span>
+                    </a>
+                    <a href="provisions.html" class="flex items-center justify-center p-4 bg-stone-100 rounded-lg border border-stone-300 hover:bg-[#A45D41] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Food &amp; Stuff</a>
+                    <a href="troubleshoot.html" class="flex items-center justify-center p-4 bg-stone-100 rounded-lg border border-stone-300 hover:bg-[#A45D41] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Troubleshoot</a>
+                    <a href="important-info.html" class="flex items-center justify-center p-4 bg-stone-100 rounded-lg border border-stone-300 hover:bg-[#A45D41] hover:text-white transition-all font-bold uppercase text-sm tracking-widest shadow-sm">Guest Access</a>
+                </div>
+            </div>
+
+            <div class="parchment p-6 rounded-xl">
+                <h3 class="text-xl font-serif font-bold text-stone-700 mb-3 uppercase tracking-widest">Need Help Fast?</h3>
+                <div class="grid sm:grid-cols-2 gap-3 text-sm">
+                    <div class="bg-stone-100 p-4 rounded border-l-4 border-[#A45D41]">
+                        <p class="font-black text-stone-800">Lance &mdash; Your Host</p>
+                        <a href="tel:7705499358" class="text-[#A45D41] font-bold hover:underline">770.549.9358</a>
+                    </div>
+                    <div class="bg-stone-100 p-4 rounded border-l-4 border-[#A45D41]">
+                        <p class="font-black text-stone-800">Heather &mdash; Your Host</p>
+                        <a href="tel:6789933617" class="text-[#A45D41] font-bold hover:underline">678.993.3617</a>
+                    </div>
+                </div>
             </div>
         </div>
-    </section>
-</main>
 
+
+        <!-- ==================== TAB 2: THE SCOOP ==================== -->
+        <div id="tab-scoop" class="tab-panel space-y-8">
+
+            <!-- Hot Tub -->
+            <div class="parchment p-6 md:p-8 rounded-xl shadow-lg grid md:grid-cols-2 gap-8 items-center border-t-4 border-[#A45D41]">
+                <div class="order-2 md:order-1">
+                    <img src="info/HotTub.webp" class="zoom-card border-4 border-[#4a4747] rounded shadow-2xl w-full" onclick="openModal(this.src)">
+                    <p class="text-center text-xs mt-2 italic text-stone-500">Click to expand Hot Tub &amp; Cover Lifter Guide</p>
+                </div>
+                <div class="order-1 md:order-2">
+                    <h2 class="section-title">Hot Tub &amp; Spa</h2>
+                    <div class="space-y-2 text-sm leading-relaxed">
+                        <p><strong>On Arrival:</strong> Crank it to <strong>104&deg;F</strong> the moment you drop your bags &mdash; takes 2+ hours to get there. Future you (the one holding a drink at 10 PM) will be very grateful. Before leaving, drop it back to <strong>80&deg;F</strong> for the next crew.</p>
+                        <p><strong>Soak Time:</strong> Limit soaks to 15 minutes. Step out if you feel lightheaded or overheated.</p>
+                        <p><strong>Towels:</strong> Use the dedicated large towels in the entertainment room &mdash; not the bathroom ones.</p>
+                        <p><strong>Cover Lifter:</strong> Always use the lifter arm. Don&rsquo;t drag the cover off the edge.</p>
+                        <p><strong>When Done:</strong> Replace cover fully on all sides. Keeps the heat in and the critters out.</p>
+                        <p><strong>Kids:</strong> Supervised at all times. Limit to 5&ndash;10 minutes in hot water.</p>
+                        <p><strong>Alcohol &amp; Hot Tubs:</strong> Heat + booze = dizzy fast. You&rsquo;ve been warned.</p>
+                        <p><strong>Glassware:</strong> No glass near the hot tub. Use the plastic cups provided.</p>
+                        <p><strong>Lower Spa Tub:</strong> Jets out of order &mdash; the tub itself is fully usable.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mountain Safety -->
+            <div class="parchment p-6 md:p-8 rounded-xl shadow-lg grid md:grid-cols-2 gap-8 items-center border-t-4 border-[#A45D41]">
+                <div>
+                    <h2 class="section-title">Mountain Safety</h2>
+                    <div class="space-y-2 text-sm leading-relaxed">
+                        <p><strong>Black Bears:</strong> Active year-round. Never feed them. Make noise, back away slowly, give them space. No food outside &mdash; ever.</p>
+                        <p><strong>Other Wildlife:</strong> Coyotes, deer, wild turkeys. Keep your distance and don&rsquo;t feed any of them.</p>
+                        <p><strong>Snakes:</strong> Watch your step on trails, around wood piles, and in tall grass. Copperheads are present. Leave them alone and they&rsquo;ll return the favor.</p>
+                        <p><strong>Firepit:</strong> Never leave unattended. Douse with water, stir ash until cold. Check Fannin County burn bans before lighting up.</p>
+                        <p><strong>Mountain Roads:</strong> Steep and slick after rain or ice. Take it slow, especially at night. 4WD recommended in winter.</p>
+                        <p><strong>Weather:</strong> Changes fast up here. Bring a layer &mdash; it&rsquo;s often 10&ndash;15&deg;F cooler than in town.</p>
+                        <p><strong>Emergencies:</strong> 911 still works. Nearest hospital: Fannin Regional, ~15 min in Blue Ridge.</p>
+                    </div>
+                </div>
+                <div>
+                    <img src="info/05_Safety.webp" class="zoom-card border-4 border-[#4a4747] rounded shadow-2xl w-full" onclick="openModal(this.src)">
+                </div>
+            </div>
+
+            <!-- Bear Bins -->
+            <div class="parchment p-6 md:p-8 rounded-xl shadow-lg grid md:grid-cols-2 gap-8 items-center border-t-4 border-[#A45D41]">
+                <div>
+                    <img src="webpic/trash.webp" class="zoom-card border-4 border-[#4a4747] rounded shadow-2xl w-full" onclick="openModal(this.src)">
+                </div>
+                <div>
+                    <h2 class="section-title">Garbage &amp;<br>Bear Bins</h2>
+                    <div class="space-y-2 text-sm leading-relaxed">
+                        <p><strong>Opening:</strong> Pinch both side handles inward at the same time, then lift the lid. It takes force &mdash; that&rsquo;s the whole point.</p>
+                        <p><strong>Closing:</strong> Press the lid down firmly until it clicks locked on both sides.</p>
+                        <p><strong>Bag it first.</strong> Always bag your trash before placing it in any can. Every time.</p>
+                        <p><strong>Food waste &amp; smelly trash</strong> goes in the tall bear-proof can on the front porch. Latch it completely. Bears are real and they hold grudges.</p>
+                        <p><strong>General trash</strong> (dry, non-food) can go in the smaller deck bin.</p>
+                        <p><strong>No loose garbage outside.</strong> Ever. Did we mention the bears?</p>
+                        <p><strong>Full can?</strong> Extra bags are under the kitchen sink.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ==================== TAB 3: DEPARTURE ==================== -->
+        <div id="tab-departure" class="tab-panel space-y-8">
+            <div class="parchment p-6 md:p-10 rounded-xl shadow-lg border-l-8 border-green-900">
+                <h2 class="section-title">Departure Checklist</h2>
+                <p class="font-serif italic mb-5 text-stone-700 text-sm">
+                    This is not an AirBnB. Let&rsquo;s leave it great for the next family visit.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+                    <div class="space-y-1 text-sm">
+                        <div class="check-row">
+                            <img src="webpic/checkmark.webp" class="check-icon">
+                            <span><strong>Trash:</strong> Bagged trash in outside deck bin. Food trash must go in the bear-proof tall can on the porch.</span>
+                        </div>
+                        <div class="check-row">
+                            <img src="webpic/checkmark.webp" class="check-icon">
+                            <span><strong>Dishes:</strong> Load and start the dishwasher. Please do not leave dirty dishes in the sink. We will find out.</span>
+                        </div>
+                        <div class="check-row">
+                            <img src="webpic/checkmark.webp" class="check-icon">
+                            <span><strong>Bathrooms:</strong> Clean the bathrooms you used so they&rsquo;re ready for the next adventure.</span>
+                        </div>
+                        <div class="check-row">
+                            <img src="webpic/checkmark.webp" class="check-icon">
+                            <span><strong>Fireplace:</strong> Fully off. Leave pilot light on. Close the screens.</span>
+                        </div>
+                        <div class="check-row">
+                            <img src="webpic/checkmark.webp" class="check-icon">
+                            <span><strong>Linens:</strong> Strip beds and place in laundry area. Start at least one load (start-to-finish).</span>
+                        </div>
+                        <div class="check-row">
+                            <img src="webpic/checkmark.webp" class="check-icon">
+                            <span><strong>Hot Tub:</strong> Towels to laundry area. Close cover. Lower temp to 80&deg;F.</span>
+                        </div>
+                        <div class="check-row">
+                            <img src="webpic/checkmark.webp" class="check-icon">
+                            <span><strong>Lights &amp; Air:</strong> All lights off. Thermostat to 75&deg;F (Summer) or 60&deg;F (Winter).</span>
+                        </div>
+                        <div class="check-row">
+                            <img src="webpic/checkmark.webp" class="check-icon">
+                            <span><strong>Lock Up:</strong> Windows closed and smart doors locked. (Say &ldquo;Alexa, going out&rdquo;)</span>
+                        </div>
+                        <div class="mt-6 p-4 bg-stone-800 text-white rounded-lg text-center shadow-inner">
+                            <p class="text-sm font-bold italic mb-1">Quick Exit Command:</p>
+                            <p class="text-lg font-black uppercase tracking-widest text-[#d4a373]">&ldquo;Alexa, Going Home&rdquo;</p>
+                        </div>
+                        <p class="italic text-stone-500 mt-4 text-xs">Check-out is at 3:00 PM.</p>
+                    </div>
+                    <div>
+                        <img src="info/29_F_2.webp" class="zoom-card border-4 border-[#4a4747] rounded shadow-2xl w-full" onclick="openModal(this.src)">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ==================== TAB 4: WEATHER ==================== -->
+        <div id="tab-weather" class="tab-panel">
+            <div id="weather-section" class="parchment p-6 md:p-8 rounded-xl shadow-lg border-t-4 border-[#A45D41] opacity-0 transition-opacity duration-700">
+                <div class="flex flex-col md:flex-row justify-between items-start mb-5 border-b border-stone-300 pb-4">
+                    <div>
+                        <h2 class="section-title mb-1">7-Day Creek Outlook</h2>
+                        <p id="weather-summary" class="text-base italic text-stone-600">Loading your mountain forecast...</p>
+                    </div>
+                    <div class="text-right hidden md:block mt-2">
+                        <p class="text-xs uppercase tracking-widest font-bold text-stone-500">Blue Ridge, GA</p>
+                        <p id="current-temp-large" class="text-4xl font-serif text-stone-800">--&deg;F</p>
+                    </div>
+                </div>
+                <div id="forecast-7day" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4"></div>
+                <div class="mt-5 pt-4 border-t border-stone-300 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    <div><p class="text-[10px] uppercase tracking-widest font-bold text-stone-500">Humidity</p><p id="stat-humidity" class="text-lg font-serif text-stone-800">--%</p></div>
+                    <div><p class="text-[10px] uppercase tracking-widest font-bold text-stone-500">Wind Speed</p><p id="stat-wind" class="text-lg font-serif text-stone-800">-- mph</p></div>
+                    <div><p class="text-[10px] uppercase tracking-widest font-bold text-stone-500">UV Index</p><p id="stat-uv" class="text-lg font-serif text-stone-800">--</p></div>
+                    <div><p class="text-[10px] uppercase tracking-widest font-bold text-stone-500">Sunset</p><p id="stat-sunset" class="text-lg font-serif text-stone-800">--:--</p></div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ==================== TAB 5: DIRECTIONS ==================== -->
+        <div id="tab-directions" class="tab-panel space-y-6">
+
+            <div class="text-center mb-2">
+                <h2 class="text-3xl font-serif font-bold text-[#A45D41] uppercase tracking-wide">Getting to the Haven</h2>
+                <p class="text-stone-600 italic text-sm mt-1">421 Weeks Creek Rd &mdash; Blue Ridge, GA 30513</p>
+                <a href="https://maps.google.com/?q=421+Weeks+Creek+Rd+Blue+Ridge+GA+30513" target="_blank" class="inline-block mt-2 bg-[#A45D41] text-white text-xs font-black uppercase tracking-widest px-5 py-2 rounded-full hover:bg-stone-900 transition shadow">Open in Google Maps</a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- FROM DOWNTOWN BLUE RIDGE -->
+                <div class="parchment p-6 rounded-xl shadow-lg border-t-4 border-[#A45D41]">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-2xl font-serif font-bold text-stone-900">From Downtown Blue Ridge</h3>
+                            <p class="text-xs text-stone-500 uppercase tracking-widest font-bold mt-1">Blue Ridge, GA 30513</p>
+                        </div>
+                        <div class="text-right flex-shrink-0 ml-3">
+                            <p class="text-2xl font-black text-[#A45D41]">25 min</p>
+                            <p class="text-xs text-stone-500 font-bold">15.6 miles</p>
+                            <p class="text-[10px] text-stone-400 italic">via Aska Rd</p>
+                        </div>
+                    </div>
+                    <ol class="space-y-3 text-sm">
+                        <li class="flex gap-3 items-start">
+                            <span class="mt-0.5 text-[#A45D41] font-black flex-shrink-0">&#8593;</span>
+                            <div><span class="font-bold">Head toward Depot St</span><br><span class="text-stone-500 text-xs">Continue to follow Old Hwy 76 &mdash; Pass by Pizza Hut on the left in 1.1 mi</span></div>
+                        </li>
+                        <li class="flex gap-3 items-start border-t border-stone-200 pt-3">
+                            <span class="text-xs font-black text-stone-400 flex-shrink-0 mt-0.5 w-10">1.2 mi</span>
+                            <div><span class="font-bold">Turn right onto Aska Rd</span></div>
+                        </li>
+                        <li class="flex gap-3 items-start border-t border-stone-200 pt-3">
+                            <span class="text-xs font-black text-stone-400 flex-shrink-0 mt-0.5 w-10">13.2 mi</span>
+                            <div><span class="font-bold">Turn left onto Newport Rd</span></div>
+                        </li>
+                        <li class="flex gap-3 items-start border-t border-stone-200 pt-3">
+                            <span class="text-xs font-black text-stone-400 flex-shrink-0 mt-0.5 w-10">0.7 mi</span>
+                            <div><span class="font-bold">Turn right onto Dial Rd</span></div>
+                        </li>
+                        <li class="flex gap-3 items-start border-t border-stone-200 pt-3">
+                            <span class="text-xs font-black text-stone-400 flex-shrink-0 mt-0.5 w-10">0.2 mi</span>
+                            <div><span class="font-bold">Turn left onto Weeks Creek Rd</span><br><span class="text-[#A45D41] text-xs font-bold">Destination on the left &mdash; 0.4 mi</span></div>
+                        </li>
+                    </ol>
+                    <div class="mt-4 bg-stone-100 rounded-lg p-3 text-xs italic text-stone-600 border-l-4 border-[#A45D41]">
+                        &#128663; Aska Rd is curvy and beautiful. Cell service gets spotty. Don&rsquo;t rely on GPS for the last few miles.
+                    </div>
+                </div>
+
+                <!-- FROM MORGANTON -->
+                <div class="parchment p-6 rounded-xl shadow-lg border-t-4 border-green-800">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-2xl font-serif font-bold text-stone-900">From Morganton</h3>
+                            <p class="text-xs text-stone-500 uppercase tracking-widest font-bold mt-1">Morganton, GA 30560</p>
+                        </div>
+                        <div class="text-right flex-shrink-0 ml-3">
+                            <p class="text-2xl font-black text-green-800">23 min</p>
+                            <p class="text-xs text-stone-500 font-bold">13.4 miles</p>
+                            <p class="text-[10px] text-stone-400 italic">via GA-60 S &mdash; Fastest</p>
+                        </div>
+                    </div>
+                    <ol class="space-y-3 text-sm">
+                        <li class="flex gap-3 items-start">
+                            <span class="mt-0.5 text-green-800 font-black flex-shrink-0">&#8593;</span>
+                            <div><span class="font-bold">Head toward Old Hwy 76 / Old U.S. 76</span></div>
+                        </li>
+                        <li class="flex gap-3 items-start border-t border-stone-200 pt-3">
+                            <span class="text-xs font-black text-stone-400 flex-shrink-0 mt-0.5 w-10">0.3 mi</span>
+                            <div><span class="font-bold">Turn right onto GA-60 S</span></div>
+                        </li>
+                        <li class="flex gap-3 items-start border-t border-stone-200 pt-3">
+                            <span class="text-xs font-black text-stone-400 flex-shrink-0 mt-0.5 w-10">10.3 mi</span>
+                            <div><span class="font-bold">Turn right onto Dial Rd</span></div>
+                        </li>
+                        <li class="flex gap-3 items-start border-t border-stone-200 pt-3">
+                            <span class="text-xs font-black text-stone-400 flex-shrink-0 mt-0.5 w-10">2.3 mi</span>
+                            <div><span class="font-bold">Turn right onto Weeks Creek Rd</span><br><span class="text-[#A45D41] text-xs font-bold">Destination on the left &mdash; 0.4 mi</span></div>
+                        </li>
+                    </ol>
+                    <div class="mt-4 bg-stone-100 rounded-lg p-3 text-xs italic text-stone-600 border-l-4 border-green-800">
+                        &#128663; GA-60 S is the straightest shot. Dial Rd is your landmark &mdash; don&rsquo;t miss it.
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="parchment p-5 rounded-xl shadow border-2 border-dashed border-[#A45D41] text-center max-w-2xl mx-auto">
+                <p class="text-stone-700 italic font-bold text-sm leading-relaxed">
+                    &#128205; <strong>The last landmark:</strong> All routes end the same way &mdash; turn onto Weeks Creek Rd and the cabin is on the <strong>left</strong> in 0.4 mi. Look for the <strong>wooden sign</strong>. If you hit a dead end, you went too far. Turn around and look left.
+                </p>
+                <p class="text-xs text-stone-400 mt-2 italic">Cell service is unreliable on Weeks Creek Rd. Screenshot these directions before you leave town.</p>
+            </div>
+
+        </div>
+
+
+        <!-- ==================== TAB 6: EMERGENCY ==================== -->
+        <div id="tab-emergency" class="tab-panel space-y-6">
+
+            <div class="text-center mb-2">
+                <h2 class="text-3xl font-serif font-bold text-red-800 uppercase tracking-wide">&#128680; Emergency Contacts</h2>
+                <p class="text-stone-600 italic text-sm mt-1">We hope you never need this tab. But here it is.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                <!-- 911 callout -->
+                <div class="md:col-span-2 bg-red-900 text-white p-5 rounded-xl text-center shadow-xl">
+                    <p class="text-3xl font-black tracking-widest mb-1">911</p>
+                    <p class="text-sm font-bold opacity-90">Works in the area even when cell data is weak. Call first, ask questions later.</p>
+                </div>
+
+                <!-- Hosts -->
+                <div class="parchment rounded-xl p-5 border-l-4 border-[#A45D41] shadow">
+                    <p class="font-black text-[#A45D41] text-sm uppercase tracking-wide mb-3">Your Hosts</p>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-stone-800">Lance</span>
+                            <a href="tel:7705499358" class="inline-flex items-center gap-1 bg-[#A45D41] hover:bg-stone-800 text-white font-black text-xs px-4 py-2 rounded-full transition">&#128222; 770.549.9358</a>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-stone-800">Heather</span>
+                            <a href="tel:6789933617" class="inline-flex items-center gap-1 bg-[#A45D41] hover:bg-stone-800 text-white font-black text-xs px-4 py-2 rounded-full transition">&#128222; 678.993.3617</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hospital -->
+                <div class="parchment rounded-xl p-5 border-l-4 border-red-600 shadow">
+                    <div class="flex items-start gap-3">
+                        <img src="webpic/hospicon.png" alt="Hospital" class="w-12 h-12 object-contain flex-shrink-0">
+                        <div>
+                            <p class="font-black text-red-700 text-sm uppercase tracking-wide mb-1">Closest Hospital &mdash; ~31 min</p>
+                            <p class="font-bold text-stone-800 text-base">Fannin Regional Hospital</p>
+                            <p class="text-stone-600 text-sm">2855 Old Hwy 5 North, Blue Ridge, GA 30513</p>
+                            <div class="flex gap-3 mt-3 flex-wrap">
+                                <a href="tel:7066323711" class="inline-flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white font-black text-xs px-4 py-2 rounded-full transition">&#128222; (706) 632-3711</a>
+                                <a href="tel:911" class="inline-flex items-center gap-1 bg-stone-800 hover:bg-black text-white font-black text-xs px-4 py-2 rounded-full transition">&#128680; Call 911</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Police -->
+                <div class="parchment rounded-xl p-5 border-l-4 border-blue-700 shadow">
+                    <div class="flex items-start gap-3">
+                        <img src="webpic/policon.png" alt="Police" class="w-12 h-12 object-contain flex-shrink-0">
+                        <div>
+                            <p class="font-black text-blue-800 text-sm uppercase tracking-wide mb-1">Closest Police Station</p>
+                            <p class="font-bold text-stone-800 text-base">Blue Ridge Police Dept.</p>
+                            <p class="text-stone-600 text-sm">301 Church Street, Blue Ridge, GA 30513</p>
+                            <div class="flex gap-3 mt-3 flex-wrap">
+                                <a href="tel:7066323451" class="inline-flex items-center gap-1 bg-blue-700 hover:bg-blue-800 text-white font-black text-xs px-4 py-2 rounded-full transition">&#128222; (706) 632-3451</a>
+                                <a href="tel:911" class="inline-flex items-center gap-1 bg-stone-800 hover:bg-black text-white font-black text-xs px-4 py-2 rounded-full transition">&#128680; Call 911</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Poison Control -->
+                <div class="parchment rounded-xl p-5 border-l-4 border-amber-600 shadow">
+                    <p class="font-black text-amber-700 text-sm uppercase tracking-wide mb-1">Poison Control</p>
+                    <p class="font-bold text-stone-800">National Poison Control Center</p>
+                    <div class="mt-2">
+                        <a href="tel:18002221222" class="inline-flex items-center gap-1 bg-amber-600 hover:bg-amber-700 text-white font-black text-xs px-4 py-2 rounded-full transition">&#128222; 1-800-222-1222</a>
+                    </div>
+                </div>
+
+                <!-- Burn bans -->
+                <div class="parchment rounded-xl p-5 border-l-4 border-orange-700 shadow">
+                    <p class="font-black text-orange-800 text-sm uppercase tracking-wide mb-1">Fannin County Burn Bans</p>
+                    <p class="text-stone-700 text-sm">Before using the outdoor firepit, check for active burn bans. Call Fannin County Emergency Management or check <strong>gaepd.georgia.gov</strong> for current conditions.</p>
+                    <div class="mt-2">
+                        <a href="tel:7066323366" class="inline-flex items-center gap-1 bg-orange-700 hover:bg-orange-800 text-white font-black text-xs px-4 py-2 rounded-full transition">&#128222; Fannin Co. Sheriff: (706) 632-3366</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div><!-- hub-body -->
+</div><!-- max-w container -->
+
+<!-- Image Modal -->
 <div id="myModal" class="modal" onclick="closeModal()">
-    <span class="close" onclick="closeModal()">&times;</span>
+    <span class="close-modal" onclick="closeModal()">&times;</span>
     <img class="modal-content" id="img01">
 </div>
 
@@ -272,69 +492,69 @@
 <script src="footer.js"></script>
 
 <script>
+// Tab switching
+function switchTab(name, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+    if (name === 'weather') loadDetailedWeather();
+}
 
-    function openModal(src) {
-        const modal = document.getElementById("myModal");
-        const modalImg = document.getElementById("img01");
-        modal.style.display = "flex";
-        modalImg.src = src;
-        document.body.style.overflow = "hidden"; 
-    }
-    function closeModal() {
-        document.getElementById("myModal").style.display = "none";
-        document.body.style.overflow = "auto"; 
-    }
-</script>
+// Image modal
+function openModal(src) {
+    const modal = document.getElementById("myModal");
+    const modalImg = document.getElementById("img01");
+    modal.style.display = "flex";
+    modalImg.src = src;
+    document.body.style.overflow = "hidden";
+}
+function closeModal() {
+    document.getElementById("myModal").style.display = "none";
+    document.body.style.overflow = "auto";
+}
 
-<script>
+// Weather
+let weatherLoaded = false;
 async function loadDetailedWeather() {
+    if (weatherLoaded) return;
     try {
         const response = await fetch('/api/weather');
         const data = await response.json();
-        
-        // 1. Current Overview
+
         document.getElementById('current-temp-large').innerText = `${Math.round(data.current.temp)}°F`;
         document.getElementById('weather-summary').innerText = data.daily[0].summary || data.current.weather[0].description;
-        
-        // 2. Cabin Stats
         document.getElementById('stat-humidity').innerText = `${data.current.humidity}%`;
         document.getElementById('stat-wind').innerText = `${Math.round(data.current.wind_speed)} mph`;
         document.getElementById('stat-uv').innerText = data.current.uvi;
-        
+
         const sunsetTime = new Date(data.current.sunset * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         document.getElementById('stat-sunset').innerText = sunsetTime;
 
-        // 3. Build the 7-Day Forecast
         const container = document.getElementById('forecast-7day');
-        container.innerHTML = ''; 
-
+        container.innerHTML = '';
         data.daily.slice(0, 7).forEach((day, index) => {
             const date = new Date(day.dt * 1000);
             const dayName = index === 0 ? 'Today' : date.toLocaleDateString('en-US', { weekday: 'short' });
             const monthDay = date.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
-
             container.innerHTML += `
-                <div class="flex flex-col items-center p-4 bg-stone-100/50 rounded-lg border border-stone-200">
-                    <p class="text-[10px] font-bold uppercase text-[#4a4747]">${dayName}</p>
-                    <p class="text-[9px] text-stone-500 mb-2">${monthDay}</p>
+                <div class="flex flex-col items-center p-3 bg-stone-100/80 rounded-lg border border-stone-200">
+                    <p class="text-[10px] font-bold uppercase text-stone-700">${dayName}</p>
+                    <p class="text-[9px] text-stone-500 mb-1">${monthDay}</p>
                     <img src="https://openweathermap.org/img/wn/${day.weather[0].icon}.png" class="w-10 h-10" alt="weather">
-                    <div class="text-sm font-bold text-stone-800">
-                        ${Math.round(day.temp.max)}° <span class="text-stone-400 font-normal">/ ${Math.round(day.temp.min)}°</span>
-                    </div>
-                    <p class="text-[9px] text-[#4a4747] mt-2 font-bold">${Math.round(day.pop * 100)}% Rain</p>
+                    <div class="text-sm font-bold text-stone-800">${Math.round(day.temp.max)}° <span class="text-stone-400 font-normal">/ ${Math.round(day.temp.min)}°</span></div>
+                    <p class="text-[9px] text-[#A45D41] mt-1 font-bold">${Math.round(day.pop * 100)}% Rain</p>
                 </div>
             `;
         });
 
         document.getElementById('weather-section').classList.remove('opacity-0');
+        weatherLoaded = true;
     } catch (err) {
-        console.error("Detailed weather failed:", err);
+        console.error("Weather load failed:", err);
     }
 }
-
-window.addEventListener('DOMContentLoaded', loadDetailedWeather);
 </script>
-
 <script>document.addEventListener("contextmenu", function(e){ e.preventDefault(); });</script>
 </body>
 </html>
