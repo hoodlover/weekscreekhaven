@@ -1,0 +1,25 @@
+{
+  "name": "Weeks Creek Haven — Friends Hub",
+  "short_name": "Friends Hub",
+  "description": "Your cabin guide — door codes, WiFi, checkout, directions, and more. Works offline.",
+  "start_url": "/friends-hub.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#1a1512",
+  "theme_color": "#A45D41",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "webpic/Weeks_Creek_Haven_Favicon.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "webpic/Weeks_Creek_Haven_Favicon.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    }
+  ]
+}
