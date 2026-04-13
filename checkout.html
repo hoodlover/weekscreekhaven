@@ -101,9 +101,10 @@
             If you have time to <a href="provisions.html" class="underline decoration-stone-500 hover:text-green-800 transition-colors">restock</a> anything you may have used up, that would be great! Thanks.
         </p>
 
+        <p class="text-xs text-stone-500 italic mb-3 font-sans">&#128070; Tick every box. We dare you. (Something fun happens.)</p>
         <div class="space-y-1 font-sans mb-8">
             <div class="checklist-item">
-                <input type="checkbox" id="trash">
+                <input type="checkbox" id="trash" onchange="checkAllBoxes()">
                 <label for="trash" class="text-sm text-stone-700"><strong>Trash:</strong> Place all bagged trash in the outside deck bin. Ensure all food trash gets put into the bear proof tall garbage can.</label>
             </div>
             <div class="checklist-item">
