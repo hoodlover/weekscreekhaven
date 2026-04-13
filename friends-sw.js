@@ -33,6 +33,9 @@ const PRECACHE_URLS = [
   '/webpic/hospicon.png',
   '/webpic/policon.png',
   '/webpic/wpaicon.png',
+  // PWA icons
+  '/webpic/pwa-icon-192.png',
+  '/webpic/pwa-icon-512.png',
   // checkout
   '/webpic/bidet.webp',
   '/webpic/$200.webp',
