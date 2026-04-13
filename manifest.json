@@ -10,15 +10,15 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "webpic/Weeks_Creek_Haven_Favicon.webp",
+      "src": "webpic/wpaicon.png",
       "sizes": "192x192",
-      "type": "image/webp",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "webpic/Weeks_Creek_Haven_Favicon.webp",
+      "src": "webpic/wpaicon.png",
       "sizes": "512x512",
-      "type": "image/webp",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]
