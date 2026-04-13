@@ -937,51 +937,113 @@
                 <p class="text-xs text-stone-400 mt-2 italic">Cell service is unreliable on Weeks Creek Rd. Screenshot these directions before you leave town.</p>
             </div>
 
-            <!-- Emergency Contacts -->
-            <div class="mt-6">
-                <h3 class="text-2xl font-bold text-[#A45D41] mb-4 flex items-center gap-2" style="font-variant:small-caps;">
-                    &#128680; Emergency Contacts
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        </div><!-- end tab-directions -->
 
-                    <!-- Hospital -->
-                    <div class="parchment rounded-xl p-5 border-l-4 border-red-600 shadow">
-                        <div class="flex items-start gap-3">
-                            <img src="webpic/hospicon.png" alt="Hospital" class="w-12 h-12 object-contain flex-shrink-0">
-                            <div>
-                                <p class="font-black text-red-700 text-sm uppercase tracking-wide mb-1">Closest Hospital &mdash; 31 min via Aska Rd</p>
-                                <p class="font-bold text-stone-800 text-base">Fannin Regional Hospital</p>
-                                <p class="text-stone-600 text-sm">2855 Old Hwy 5 North</p>
-                                <p class="text-stone-600 text-sm">Blue Ridge, GA 30513</p>
-                                <div class="flex gap-3 mt-2 flex-wrap">
-                                    <a href="tel:7066323711" class="inline-flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white font-black text-xs px-4 py-2 rounded-full transition">&#128222; (706) 632-3711</a>
-                                    <a href="tel:911" class="inline-flex items-center gap-1 bg-stone-800 hover:bg-black text-white font-black text-xs px-4 py-2 rounded-full transition">&#128680; Call 911</a>
-                                </div>
-                            </div>
-                        </div>
+        <!-- ==================== TAB 8: WEATHER ==================== -->
+        <div id="tab-weather" class="tab-panel space-y-8">
+            <div id="weather-section" class="parchment p-6 md:p-8 rounded-xl shadow-lg border-t-4 border-[#A45D41] opacity-0 transition-opacity duration-700">
+                <div class="flex flex-col md:flex-row justify-between items-start mb-5 border-b border-stone-300 pb-4">
+                    <div>
+                        <h2 class="section-title mb-1">7-Day Creek Outlook</h2>
+                        <p id="weather-summary" class="text-base italic text-stone-600">Loading your mountain forecast...</p>
                     </div>
-
-                    <!-- Police -->
-                    <div class="parchment rounded-xl p-5 border-l-4 border-blue-700 shadow">
-                        <div class="flex items-start gap-3">
-                            <img src="webpic/policon.png" alt="Police" class="w-12 h-12 object-contain flex-shrink-0">
-                            <div>
-                                <p class="font-black text-blue-800 text-sm uppercase tracking-wide mb-1">Closest Police Station</p>
-                                <p class="font-bold text-stone-800 text-base">Blue Ridge Police Dept.</p>
-                                <p class="text-stone-600 text-sm">301 Church Street</p>
-                                <p class="text-stone-600 text-sm">Blue Ridge, GA 30513</p>
-                                <div class="flex gap-3 mt-2 flex-wrap">
-                                    <a href="tel:7066323451" class="inline-flex items-center gap-1 bg-blue-700 hover:bg-blue-800 text-white font-black text-xs px-4 py-2 rounded-full transition">&#128222; (706) 632-3451</a>
-                                    <a href="tel:911" class="inline-flex items-center gap-1 bg-stone-800 hover:bg-black text-white font-black text-xs px-4 py-2 rounded-full transition">&#128680; Call 911</a>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="text-right hidden md:block mt-2">
+                        <p class="text-xs uppercase tracking-widest font-bold text-stone-500">Blue Ridge, GA</p>
+                        <p id="current-temp-large" class="text-4xl font-serif text-stone-800">--&deg;F</p>
                     </div>
-
+                </div>
+                <div id="forecast-7day" class="grid grid-cols-4 sm:grid-cols-7 gap-2"></div>
+                <div class="mt-5 pt-4 border-t border-stone-300 grid grid-cols-4 gap-4 text-center">
+                    <div><p class="text-[10px] uppercase tracking-widest font-bold text-stone-500">Humidity</p><p id="stat-humidity" class="text-base font-serif text-stone-800">--%</p></div>
+                    <div><p class="text-[10px] uppercase tracking-widest font-bold text-stone-500">Wind</p><p id="stat-wind" class="text-base font-serif text-stone-800">-- mph</p></div>
+                    <div><p class="text-[10px] uppercase tracking-widest font-bold text-stone-500">UV Index</p><p id="stat-uv" class="text-base font-serif text-stone-800">--</p></div>
+                    <div><p class="text-[10px] uppercase tracking-widest font-bold text-stone-500">Sunset</p><p id="stat-sunset" class="text-base font-serif text-stone-800">--:--</p></div>
                 </div>
             </div>
+        </div>
 
-        </div><!-- end tab-directions -->
+        <!-- ==================== TAB 9: EMERGENCY ==================== -->
+        <div id="tab-emergency" class="tab-panel space-y-5">
+            <div class="text-center mb-2">
+                <h2 class="text-3xl font-bold text-red-700 uppercase tracking-wide font-serif">&#128680; Emergency Contacts</h2>
+                <p class="text-stone-500 italic text-sm mt-1">We hope you never need this tab. But here it is.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <!-- 911 callout -->
+                <div class="md:col-span-2 bg-red-900 text-white p-5 rounded-xl text-center shadow-xl">
+                    <p class="text-4xl font-black tracking-widest mb-1">911</p>
+                    <p class="text-sm font-bold opacity-90">Works in the area even when cell data is weak. Call first, ask questions later.</p>
+                </div>
+
+                <!-- Hosts -->
+                <div class="parchment rounded-xl p-5 border-l-4 border-[#A45D41] shadow">
+                    <p class="font-black text-[#A45D41] text-sm uppercase tracking-wide mb-3">Your Hosts</p>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-stone-800">Lance</span>
+                            <a href="tel:7705499358" class="inline-flex items-center gap-1 bg-[#A45D41] hover:bg-stone-800 text-white font-black text-xs px-4 py-2 rounded-full transition">&#128222; 770.549.9358</a>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-stone-800">Heather</span>
+                            <a href="tel:6789933617" class="inline-flex items-center gap-1 bg-[#A45D41] hover:bg-stone-800 text-white font-black text-xs px-4 py-2 rounded-full transition">&#128222; 678.993.3617</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hospital -->
+                <div class="parchment rounded-xl p-5 border-l-4 border-red-600 shadow">
+                    <div class="flex items-start gap-3">
+                        <img src="webpic/hospicon.png" alt="Hospital" class="w-12 h-12 object-contain flex-shrink-0">
+                        <div>
+                            <p class="font-black text-red-700 text-sm uppercase tracking-wide mb-1">Closest Hospital &mdash; ~31 min</p>
+                            <p class="font-bold text-stone-800 text-base">Fannin Regional Hospital</p>
+                            <p class="text-stone-600 text-sm">2855 Old Hwy 5 North, Blue Ridge, GA 30513</p>
+                            <div class="flex gap-3 mt-2 flex-wrap">
+                                <a href="tel:7066323711" class="inline-flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white font-black text-xs px-4 py-2 rounded-full transition">&#128222; (706) 632-3711</a>
+                                <a href="tel:911" class="inline-flex items-center gap-1 bg-stone-800 hover:bg-black text-white font-black text-xs px-4 py-2 rounded-full transition">&#128680; Call 911</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Police -->
+                <div class="parchment rounded-xl p-5 border-l-4 border-blue-700 shadow">
+                    <div class="flex items-start gap-3">
+                        <img src="webpic/policon.png" alt="Police" class="w-12 h-12 object-contain flex-shrink-0">
+                        <div>
+                            <p class="font-black text-blue-800 text-sm uppercase tracking-wide mb-1">Closest Police Station</p>
+                            <p class="font-bold text-stone-800 text-base">Blue Ridge Police Dept.</p>
+                            <p class="text-stone-600 text-sm">301 Church Street, Blue Ridge, GA 30513</p>
+                            <div class="flex gap-3 mt-2 flex-wrap">
+                                <a href="tel:7066323451" class="inline-flex items-center gap-1 bg-blue-700 hover:bg-blue-800 text-white font-black text-xs px-4 py-2 rounded-full transition">&#128222; (706) 632-3451</a>
+                                <a href="tel:911" class="inline-flex items-center gap-1 bg-stone-800 hover:bg-black text-white font-black text-xs px-4 py-2 rounded-full transition">&#128680; Call 911</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Poison Control -->
+                <div class="parchment rounded-xl p-5 border-l-4 border-amber-600 shadow">
+                    <p class="font-black text-amber-700 text-sm uppercase tracking-wide mb-1">Poison Control</p>
+                    <p class="font-bold text-stone-800">National Poison Control Center</p>
+                    <div class="mt-2">
+                        <a href="tel:18002221222" class="inline-flex items-center gap-1 bg-amber-600 hover:bg-amber-700 text-white font-black text-xs px-4 py-2 rounded-full transition">&#128222; 1-800-222-1222</a>
+                    </div>
+                </div>
+
+                <!-- Burn bans -->
+                <div class="parchment rounded-xl p-5 border-l-4 border-orange-700 shadow">
+                    <p class="font-black text-orange-800 text-sm uppercase tracking-wide mb-1">Fannin County Burn Bans</p>
+                    <p class="text-stone-700 text-sm">Before using the outdoor firepit, check for active burn bans. Call Fannin County Emergency Management or check <a href="https://gaepd.georgia.gov" target="_blank" class="text-orange-700 font-bold underline hover:text-orange-900">gaepd.georgia.gov</a> for current conditions.</p>
+                    <div class="mt-2">
+                        <a href="tel:7066323366" class="inline-flex items-center gap-1 bg-orange-700 hover:bg-orange-800 text-white font-black text-xs px-4 py-2 rounded-full transition">&#128222; Fannin Co. Sheriff: (706) 632-3366</a>
+                    </div>
+                </div>
+
+            </div>
+        </div><!-- end tab-emergency -->
 
     </div><!-- end hub-body -->
 </div><!-- end max-w container -->
