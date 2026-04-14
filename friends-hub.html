@@ -1115,47 +1115,88 @@
     </div><!-- end hub-body -->
 </div><!-- end max-w container -->
 
-<!-- Sender.net Pre-Arrival Form -->
+<!-- Pre-Arrival Concierge Form -->
 <section class="max-w-4xl mx-auto my-12 px-4">
-    <div class="dark-card rounded-2xl shadow-2xl overflow-hidden" style="border: 1px solid rgba(212,163,115,0.35);">
+    <div class="parchment rounded-2xl shadow-2xl border-t-8 border-[#A45D41] overflow-hidden">
 
         <!-- Header -->
-        <div class="px-7 pt-7 pb-5" style="border-bottom: 1px solid rgba(212,163,115,0.2);">
+        <div class="px-7 pt-7 pb-5 border-b border-stone-200">
             <div class="flex items-center gap-3 mb-2">
                 <span class="text-2xl">&#9993;</span>
-                <h3 class="text-2xl font-serif font-bold text-[#d4a373]" style="font-variant:small-caps;">Pre-Arrival Concierge</h3>
+                <h3 class="text-3xl text-[#A45D41] italic" style="font-variant:small-caps;">Pre-Arrival Concierge</h3>
             </div>
-            <p class="text-stone-400 text-sm leading-relaxed">Let us know you're coming! Drop your arrival details and any special requests — we'll make sure everything is ready when you get here.</p>
+            <p class="text-stone-500 text-sm leading-relaxed">Let us know you're coming! Drop your arrival details and any special requests — we'll make sure everything is ready when you pull up.</p>
         </div>
 
         <!-- Form -->
-        <div class="px-7 py-6">
-            <div style="text-align: left" class="sender-form-field" data-sender-form-id="azpgVr"></div>
-        </div>
+        <form id="pre-arrival-form" action="https://formspree.io/f/mzdjnprj" method="POST" class="px-7 py-6 space-y-5">
+            <input type="hidden" name="form_type" value="Pre-Arrival Concierge">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Your Name</label>
+                    <input type="text" name="name" placeholder="Jane Smith" class="maint-input" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Email</label>
+                    <input type="email" name="email" placeholder="jane@email.com" class="maint-input" required>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Arrival Date</label>
+                    <input type="date" name="arrival_date" class="maint-input" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Departure Date</label>
+                    <input type="date" name="departure_date" class="maint-input" required>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Number of Guests</label>
+                    <select name="guest_count" class="maint-input" required>
+                        <option value="">How many folks?</option>
+                        <option>1</option><option>2</option><option>3</option><option>4</option>
+                        <option>5</option><option>6</option><option>7</option><option>8</option>
+                        <option>9</option><option>10</option><option>11</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Approximate Arrival Time</label>
+                    <input type="text" name="arrival_time" placeholder="e.g. 3pm, late evening..." class="maint-input">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-2">What are y'all hoping to do?</label>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm">
+                    <label class="flex items-center gap-2 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="activities[]" value="Hiking" class="w-4 h-4 accent-[#A45D41]"> &#127956; Hiking</label>
+                    <label class="flex items-center gap-2 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="activities[]" value="Fishing" class="w-4 h-4 accent-[#A45D41]"> &#129400; Fishing</label>
+                    <label class="flex items-center gap-2 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="activities[]" value="Hot Tub" class="w-4 h-4 accent-[#A45D41]"> &#9832; Hot Tub</label>
+                    <label class="flex items-center gap-2 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="activities[]" value="Downtown Blue Ridge" class="w-4 h-4 accent-[#A45D41]"> &#127978; Downtown BR</label>
+                    <label class="flex items-center gap-2 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="activities[]" value="Just relaxing" class="w-4 h-4 accent-[#A45D41]"> &#128564; Just Relaxing</label>
+                    <label class="flex items-center gap-2 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="activities[]" value="Family fun" class="w-4 h-4 accent-[#A45D41]"> &#128106; Family Fun</label>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Special Requests or Questions</label>
+                <textarea name="message" rows="3" placeholder="Celebrating something? Need gear? Anything we should know before you arrive?" class="maint-input"></textarea>
+            </div>
+
+            <!-- Submit states -->
+            <button type="submit" id="pre-arrival-submit" class="w-full bg-[#A45D41] text-white font-black py-4 rounded-xl hover:bg-[#8b4a32] transition shadow-lg uppercase tracking-widest text-sm">
+                &#9993; Send Pre-Arrival Info
+            </button>
+            <p id="pre-arrival-sending" class="hidden text-center text-stone-500 text-sm italic">Sending... hang tight &#128522;</p>
+            <p id="pre-arrival-error" class="hidden text-center text-red-600 text-sm font-bold">Something went wrong — try texting Lance at 770.549.9358</p>
+        </form>
 
     </div>
 </section>
-<script>
-  (function (s, e, n, d, er) {
-    s['Sender'] = er;
-    s[er] = s[er] || function () {
-      (s[er].q = s[er].q || []).push(arguments)
-    }, s[er].l = 1 * new Date();
-    s[er].on = function(event, callback) {
-      s[er].listeners = s[er].listeners || {};
-      (s[er].listeners[event] = s[er].listeners[event] || []).push(callback);
-    };
-    var a = e.createElement(n),
-        m = e.getElementsByTagName(n)[0];
-    a.async = 1;
-    a.src = d;
-    m.parentNode.insertBefore(a, m)
-  })(window, document, 'script', 'https://cdn.sender.net/accounts_resources/universal.js', 'sender');
-  sender('fc2e284fbf4182')
-  sender('on', 'form:submit', function() {
-    setTimeout(function() { window.location.href = '/welcome-you.html'; }, 900);
-  })
-</script>
 
 <div id="footer-placeholder"></div>
 <script src="footer.js"></script>
