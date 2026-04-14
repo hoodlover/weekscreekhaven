@@ -126,6 +126,36 @@
 
         /* Confetti canvas */
         #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 300; display: none; }
+
+        /* Sender.net form overrides */
+        .sender-form-field .sender-form-container { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
+        .sender-form-field input[type="email"],
+        .sender-form-field input[type="text"],
+        .sender-form-field input[type="tel"] {
+            background: rgba(255,255,255,0.08) !important;
+            border: 1px solid rgba(212,163,115,0.35) !important;
+            border-radius: 0.5rem !important;
+            color: #f4eee0 !important;
+            font-family: 'Montserrat', sans-serif !important;
+            padding: 0.7rem 1rem !important;
+        }
+        .sender-form-field input::placeholder { color: rgba(244,238,224,0.35) !important; }
+        .sender-form-field input:focus { border-color: #d4a373 !important; outline: none !important; }
+        .sender-form-field label { color: #d4a373 !important; font-size: 0.75rem !important; font-weight: 700 !important; text-transform: uppercase !important; letter-spacing: 0.1em !important; font-family: 'Montserrat', sans-serif !important; }
+        .sender-form-field button[type="submit"] {
+            background: #A45D41 !important;
+            border: none !important;
+            border-radius: 2rem !important;
+            color: #fff !important;
+            font-family: 'Montserrat', sans-serif !important;
+            font-weight: 800 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.1em !important;
+            padding: 0.75rem 2rem !important;
+            transition: background 0.2s !important;
+            cursor: pointer !important;
+        }
+        .sender-form-field button[type="submit"]:hover { background: #8b4a32 !important; }
     </style>
 </head>
 <body>
