@@ -265,15 +265,40 @@
     <input type="email" name="email" placeholder="*Email Address" required 
         class="border-b-2 border-stone-800 p-2 text-stone-900 placeholder-stone-600 focus:border-green-800 outline-none parchment">
     
-    <input type="text" name="arrival" placeholder="Arrival Date" onfocus="(this.type='date')" 
+    <input type="text" name="arrival" placeholder="Arrival — mm/dd/yy"
         class="border-b-2 border-stone-800 p-2 text-stone-900 placeholder-stone-600 focus:border-green-800 outline-none parchment">
-    
-    <input type="text" name="departure" placeholder="Departure Date" onfocus="(this.type='date')" 
+
+    <input type="text" name="departure" placeholder="Departure — mm/dd/yy"
         class="border-b-2 border-stone-800 p-2 text-stone-900 placeholder-stone-600 focus:border-green-800 outline-none parchment">
-    
-    <textarea name="message" placeholder="Message or Number of guests..." rows="3" 
+
+    <textarea name="message" placeholder="Message or Number of guests..." rows="3"
         class="md:col-span-2 border-b-2 border-stone-800 p-2 text-stone-900 placeholder-stone-600 focus:border-green-800 outline-none parchment"></textarea>
-    
+
+    <!-- How well do you know us -->
+    <div class="md:col-span-2">
+        <p class="text-xs font-bold uppercase tracking-widest text-stone-600 mb-3">How well do you know the folks whose cabin info you just requested?</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+            <label class="flex items-center gap-3 bg-stone-100 hover:bg-stone-200 transition p-3 rounded cursor-pointer text-stone-800">
+                <input type="radio" name="relationship" value="Not really — who are you again?" class="accent-green-800"> Not really... who are you again?
+            </label>
+            <label class="flex items-center gap-3 bg-stone-100 hover:bg-stone-200 transition p-3 rounded cursor-pointer text-stone-800">
+                <input type="radio" name="relationship" value="Yup — we're family" class="accent-green-800"> Yup — we're family
+            </label>
+            <label class="flex items-center gap-3 bg-stone-100 hover:bg-stone-200 transition p-3 rounded cursor-pointer text-stone-800">
+                <input type="radio" name="relationship" value="Yup — lifelong friends" class="accent-green-800"> Yup — lifelong friends
+            </label>
+            <label class="flex items-center gap-3 bg-stone-100 hover:bg-stone-200 transition p-3 rounded cursor-pointer text-stone-800">
+                <input type="radio" name="relationship" value="Yup — but they don't know me yet" class="accent-green-800"> Yup — but they don't know me yet
+            </label>
+            <label class="flex items-center gap-3 bg-stone-100 hover:bg-stone-200 transition p-3 rounded cursor-pointer text-stone-800">
+                <input type="radio" name="relationship" value="We've spoken here and there" class="accent-green-800"> We've spoken here and there
+            </label>
+            <label class="flex items-center gap-3 bg-stone-100 hover:bg-stone-200 transition p-3 rounded cursor-pointer text-stone-800">
+                <input type="radio" name="relationship" value="Other" class="accent-green-800"> Other
+            </label>
+        </div>
+    </div>
+
     <button type="submit" id="inquiry-submit" class="md:col-span-2 bg-green-800 text-white font-bold py-4 rounded hover:bg-green-900 transition shadow-lg text-sm uppercase tracking-widest mt-6">Send Inquiry</button>
     <p id="inquiry-sending" class="md:col-span-2 hidden text-center text-stone-500 text-sm italic">Sending... hang tight</p>
     <p id="inquiry-error" class="md:col-span-2 hidden text-center text-red-600 text-sm font-bold">Something went wrong — try emailing us directly.</p>
