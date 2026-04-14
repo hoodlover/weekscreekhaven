@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>We Got It! | Weeks Creek Haven</title>
+    <link rel="icon" type="image/webp" href="webpic/Weeks_Creek_Haven_Favicon.webp">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400;1,700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Montserrat', sans-serif; color: #3d3128; background-color: #1a1512; background-image: linear-gradient(rgba(0,0,0,0.18), rgba(0,0,0,0.18)), url('webpic/lightbardwood..webp'); background-attachment: fixed; background-size: cover; min-height: 100vh; }
+        h1, h2, h3, h4 { font-family: 'Crimson Text', serif; font-weight: 700; }
+        .extra-heavy-shadow { text-shadow: 3px 3px 6px rgba(0,0,0,1), 0px 0px 25px rgba(0,0,0,1), 0px 0px 10px rgba(0,0,0,0.8); }
+        .heavy-shadow { text-shadow: 2px 2px 8px rgba(0,0,0,0.7); }
+        .parchment { background-color: rgba(244,238,224,0.96); border: 1px solid #dcd3bd; color: #3d3128; }
+        .dark-card { background-color: rgba(26,21,18,0.85); border: 1px solid rgba(212,163,115,0.25); color: #f4eee0; backdrop-filter: blur(6px); }
+        #mobile-menu { background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('webpic/railroad-tie-texture.webp'); background-size: cover; }
+        .wood-btn:hover { transform: scale(1.05); }
+        .logo-link { position: relative; display: inline-block; }
+        .logo-link .hover-img { position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s ease-in-out; z-index: 2; }
+        .logo-link:hover .hover-img { opacity: 1; }
+        .logo-link .normal-img { opacity: 1; transition: none; }
+
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 300; }
+
+        @keyframes pulse-ring { 0%{transform:scale(0.85);opacity:0.8} 70%{transform:scale(1.25);opacity:0} 100%{transform:scale(1.25);opacity:0} }
+        .pulse-ring { animation: pulse-ring 2s ease-out infinite; }
+
+        @keyframes bounce { 0%,100%{transform:translateY(0)} 40%{transform:translateY(-14px)} 60%{transform:translateY(-7px)} }
+        .bounce { animation: bounce 1.4s ease-in-out infinite; display:inline-block; }
+
+        @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+        .fade-up   { animation: fadeUp 0.7s ease forwards; }
+        .fade-up-2 { animation: fadeUp 0.7s 0.15s ease forwards; opacity:0; }
+        .fade-up-3 { animation: fadeUp 0.7s 0.3s  ease forwards; opacity:0; }
+        .fade-up-4 { animation: fadeUp 0.7s 0.45s ease forwards; opacity:0; }
+        .fade-up-5 { animation: fadeUp 0.7s 0.6s  ease forwards; opacity:0; }
+
+        /* Dotted progress line */
+        .timeline { display: flex; flex-direction: column; gap: 0; }
+        .tl-item { display: flex; align-items: flex-start; gap: 1rem; }
+        .tl-dot { width: 12px; height: 12px; border-radius: 50%; background: #A45D41; flex-shrink: 0; margin-top: 4px; }
+        .tl-line { width: 2px; background: rgba(164,93,65,0.25); flex-shrink: 0; min-height: 28px; margin-left: 5px; }
+    </style>
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+<script src="nav.js"></script>
+<canvas id="confetti-canvas"></canvas>
+
+<main class="max-w-2xl mx-auto px-4 pt-36 pb-20">
+
+    <!-- Icon + headline -->
+    <div class="text-center mb-10 fade-up">
+        <div class="relative inline-flex items-center justify-center mb-6">
+            <div class="pulse-ring absolute w-24 h-24 rounded-full border-4 border-[#A45D41] opacity-50"></div>
+            <div class="w-20 h-20 rounded-full bg-[#A45D41] flex items-center justify-center shadow-2xl">
+                <span class="bounce text-3xl">&#128233;</span>
+            </div>
+        </div>
+        <h1 class="text-5xl md:text-6xl font-bold text-[#f4eee0] extra-heavy-shadow mb-3" style="font-variant:small-caps;">We Got Your Note!</h1>
+        <p class="text-xl italic text-[#d4a373] heavy-shadow">Someone at Weeks Creek Haven will be in touch.</p>
+        <div class="h-1 w-24 bg-[#A45D41] mx-auto mt-5"></div>
+    </div>
+
+    <!-- Cabin image -->
+    <div class="rounded-2xl overflow-hidden shadow-2xl mb-8 fade-up-2" style="border: 2px solid rgba(212,163,115,0.3);">
+        <img src="gallery/MAIN.webp" alt="Weeks Creek Haven" class="w-full object-cover" style="max-height:280px; object-position: center 40%;">
+    </div>
+
+    <!-- Message card -->
+    <div class="parchment rounded-2xl p-8 shadow-2xl mb-8 fade-up-3 border-t-8 border-[#A45D41]">
+        <h2 class="text-3xl text-[#A45D41] mb-4 italic">Your Inquiry Is In Good Hands</h2>
+        <p class="text-stone-600 leading-relaxed mb-4">Lance or Heather will get back to you — probably pretty quickly, because honestly they're always excited when someone reaches out about the cabin. They may not reply the moment you hit send, but they will get back to you.</p>
+        <p class="text-stone-600 leading-relaxed">In the meantime, feel free to poke around the site. Check out the gallery, read up on what's nearby, or just enjoy the fact that a mountain cabin trip might actually be happening.</p>
+
+        <div class="mt-6 bg-stone-100 rounded-xl p-4 border border-stone-200">
+            <p class="text-xs font-black uppercase tracking-widest text-stone-500 mb-2">Prefer to just call?</p>
+            <div class="flex flex-wrap gap-4">
+                <a href="tel:7705499358" class="text-[#A45D41] font-black hover:underline">Lance — 770.549.9358</a>
+                <span class="text-stone-300">|</span>
+                <a href="tel:6789933617" class="text-[#A45D41] font-black hover:underline">Heather — 678.993.3617</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- What happens next -->
+    <div class="dark-card rounded-2xl p-7 mb-8 fade-up-4">
+        <h3 class="text-xl font-serif font-bold text-[#d4a373] mb-5" style="font-variant:small-caps;">What Happens Next</h3>
+        <div class="timeline">
+            <div class="tl-item">
+                <div>
+                    <div class="tl-dot"></div>
+                    <div class="tl-line"></div>
+                </div>
+                <div class="pb-5">
+                    <p class="font-black text-white text-sm">Your inquiry lands in Lance's inbox</p>
+                    <p class="text-stone-400 text-xs mt-0.5">Along with a notification to his phone. He's probably already seen it.</p>
+                </div>
+            </div>
+            <div class="tl-item">
+                <div>
+                    <div class="tl-dot"></div>
+                    <div class="tl-line"></div>
+                </div>
+                <div class="pb-5">
+                    <p class="font-black text-white text-sm">They check the calendar for your dates</p>
+                    <p class="text-stone-400 text-xs mt-0.5">If it's available, great. If not, they'll let you know what's open nearby.</p>
+                </div>
+            </div>
+            <div class="tl-item">
+                <div>
+                    <div class="tl-dot"></div>
+                    <div class="tl-line"></div>
+                </div>
+                <div class="pb-5">
+                    <p class="font-black text-white text-sm">They get back to you with the details</p>
+                    <p class="text-stone-400 text-xs mt-0.5">Rates, availability, whatever questions you have — all answered.</p>
+                </div>
+            </div>
+            <div class="tl-item">
+                <div>
+                    <div class="tl-dot" style="background:#4a9b6f;"></div>
+                </div>
+                <div>
+                    <p class="font-black text-[#4a9b6f] text-sm">You end up at the cabin</p>
+                    <p class="text-stone-400 text-xs mt-0.5">Creek sounds. Hot tub. 98 inches of mountain TV. Not bad.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Explore while you wait -->
+    <div class="fade-up-5">
+        <p class="text-center text-stone-400 text-xs uppercase tracking-widest mb-4">While you wait, explore the cabin</p>
+        <div class="grid grid-cols-3 gap-3 mb-10">
+            <a href="gallery.html" class="group parchment rounded-xl overflow-hidden shadow text-center hover:shadow-lg transition">
+                <img src="gallery/MAIN.webp" alt="Gallery" class="w-full h-20 object-cover group-hover:scale-105 transition-transform duration-300">
+                <p class="text-xs font-black uppercase tracking-wide text-stone-700 group-hover:text-[#A45D41] transition py-2 px-1">Gallery</p>
+            </a>
+            <a href="things-to-do.html" class="group parchment rounded-xl overflow-hidden shadow text-center hover:shadow-lg transition">
+                <img src="webpic/hiking.webp" alt="Things To Do" class="w-full h-20 object-cover group-hover:scale-105 transition-transform duration-300">
+                <p class="text-xs font-black uppercase tracking-wide text-stone-700 group-hover:text-[#A45D41] transition py-2 px-1">Things To Do</p>
+            </a>
+            <a href="need-to-know.html" class="group parchment rounded-xl overflow-hidden shadow text-center hover:shadow-lg transition">
+                <img src="webpic/toknow.webp" alt="Need to Know" class="w-full h-20 object-cover group-hover:scale-105 transition-transform duration-300">
+                <p class="text-xs font-black uppercase tracking-wide text-stone-700 group-hover:text-[#A45D41] transition py-2 px-1">Need to Know</p>
+            </a>
+        </div>
+    </div>
+
+    <!-- CTAs -->
+    <div class="fade-up-5 flex flex-wrap justify-center gap-4">
+        <a href="index.html" class="bg-[#A45D41] hover:bg-[#8b4a32] text-white font-black text-sm uppercase tracking-widest px-8 py-3 rounded-full transition shadow-lg">Back to Main Site</a>
+        <a href="gallery.html" class="border-2 border-[#d4a373] text-[#d4a373] hover:bg-[#d4a373] hover:text-[#1a1512] font-black text-sm uppercase tracking-widest px-8 py-3 rounded-full transition">See the Gallery</a>
+    </div>
+
+    <div class="text-center mt-14 fade-up-5">
+        <p class="text-[#d4a373] font-serif italic text-xl heavy-shadow">Talk soon,</p>
+        <p class="text-[#f4eee0] font-black text-lg extra-heavy-shadow mt-1">Lance &amp; Heather</p>
+        <p class="text-stone-500 text-xs mt-1 uppercase tracking-widest">H &amp; L Havens, LLC &bull; 421 Weeks Creek Rd &bull; Blue Ridge, GA</p>
+    </div>
+
+</main>
+
+<div id="footer-placeholder"></div>
+<script src="footer.js"></script>
+<script>
+window.addEventListener('load', function() {
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    const colors = ['#A45D41','#d4a373','#4a9b6f','#f4eee0','#fbbf24','#34d399','#60a5fa'];
+    const pieces = Array.from({length: 160}, (_, i) => {
+        const fromLeft = i < 80;
+        const angle = fromLeft ? (Math.random()*70-20)*Math.PI/180 : (Math.random()*70+110)*Math.PI/180;
+        const speed = 8 + Math.random()*9;
+        return { x: fromLeft?0:canvas.width, y: canvas.height*(0.3+Math.random()*0.5), w:7+Math.random()*8, h:12+Math.random()*9, color:colors[Math.floor(Math.random()*colors.length)], rot:Math.random()*360, vx:Math.cos(angle)*speed, vy:Math.sin(angle)*speed-4, vy_add:0.32, vr:(Math.random()-0.5)*8 };
+    });
+    let frame = 0;
+    function draw() {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        pieces.forEach(p => { ctx.save(); ctx.translate(p.x+p.w/2,p.y+p.h/2); ctx.rotate(p.rot*Math.PI/180); ctx.fillStyle=p.color; ctx.globalAlpha=Math.max(0,1-frame/200); ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx.restore(); p.x+=p.vx; p.y+=p.vy; p.vy+=p.vy_add; p.rot+=p.vr; });
+        frame++;
+        if (frame<220) requestAnimationFrame(draw);
+        else ctx.clearRect(0,0,canvas.width,canvas.height);
+    }
+    draw();
+});
+document.addEventListener("contextmenu", function(e){ e.preventDefault(); });
+</script>
+</body>
+</html>
