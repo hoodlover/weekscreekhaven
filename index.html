@@ -274,7 +274,9 @@
     <textarea name="message" placeholder="Message or Number of guests..." rows="3" 
         class="md:col-span-2 border-b-2 border-stone-800 p-2 text-stone-900 placeholder-stone-600 focus:border-green-800 outline-none parchment"></textarea>
     
-    <button type="submit" class="md:col-span-2 bg-green-800 text-white font-bold py-4 rounded hover:bg-green-900 transition shadow-lg text-sm uppercase tracking-widest mt-6">Send Inquiry</button>
+    <button type="submit" id="inquiry-submit" class="md:col-span-2 bg-green-800 text-white font-bold py-4 rounded hover:bg-green-900 transition shadow-lg text-sm uppercase tracking-widest mt-6">Send Inquiry</button>
+    <p id="inquiry-sending" class="md:col-span-2 hidden text-center text-stone-500 text-sm italic">Sending... hang tight</p>
+    <p id="inquiry-error" class="md:col-span-2 hidden text-center text-red-600 text-sm font-bold">Something went wrong — try emailing us directly.</p>
 </form>
             </div>
 
