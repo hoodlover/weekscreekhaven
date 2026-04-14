@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Got It! | Weeks Creek Haven</title>
+    <link rel="icon" type="image/webp" href="webpic/Weeks_Creek_Haven_Favicon.webp">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400;1,700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Montserrat', sans-serif; color: #3d3128; background-color: #1a1512; background-image: linear-gradient(rgba(0,0,0,0.18), rgba(0,0,0,0.18)), url('webpic/lightbardwood..webp'); background-attachment: fixed; background-size: cover; min-height: 100vh; }
+        h1, h2, h3, h4 { font-family: 'Crimson Text', serif; font-weight: 700; }
+        .extra-heavy-shadow { text-shadow: 3px 3px 6px rgba(0,0,0,1), 0px 0px 25px rgba(0,0,0,1), 0px 0px 10px rgba(0,0,0,0.8); }
+        .heavy-shadow { text-shadow: 2px 2px 8px rgba(0,0,0,0.7); }
+        .parchment { background-color: rgba(244,238,224,0.96); border: 1px solid #dcd3bd; color: #3d3128; }
+        .dark-card { background-color: rgba(26,21,18,0.85); border: 1px solid rgba(212,163,115,0.25); color: #f4eee0; backdrop-filter: blur(6px); }
+        #mobile-menu { background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('webpic/railroad-tie-texture.webp'); background-size: cover; }
+        .wood-btn:hover { transform: scale(1.05); }
+        .logo-link { position: relative; display: inline-block; }
+        .logo-link .hover-img { position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s ease-in-out; z-index: 2; }
+        .logo-link:hover .hover-img { opacity: 1; }
+        .logo-link .normal-img { opacity: 1; transition: none; }
+        @keyframes pulse-ring { 0%{transform:scale(0.85);opacity:0.8} 70%{transform:scale(1.25);opacity:0} 100%{transform:scale(1.25);opacity:0} }
+        .pulse-ring { animation: pulse-ring 2s ease-out infinite; }
+        @keyframes wrench-wobble { 0%,100%{transform:rotate(-12deg)} 50%{transform:rotate(12deg)} }
+        .wrench { animation: wrench-wobble 1.2s ease-in-out infinite; display: inline-block; }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+        .fade-up  { animation: fadeUp 0.7s ease forwards; }
+        .fade-up-2 { animation: fadeUp 0.7s 0.15s ease forwards; opacity:0; }
+        .fade-up-3 { animation: fadeUp 0.7s 0.3s ease forwards; opacity:0; }
+        .fade-up-4 { animation: fadeUp 0.7s 0.45s ease forwards; opacity:0; }
+    </style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+<script src="nav.js"></script>
+
+<main class="max-w-2xl mx-auto px-4 pt-36 pb-20">
+
+    <!-- Icon + title -->
+    <div class="text-center mb-10 fade-up">
+        <div class="relative inline-flex items-center justify-center mb-6">
+            <div class="pulse-ring absolute w-24 h-24 rounded-full border-4 border-orange-700 opacity-50"></div>
+            <div class="w-20 h-20 rounded-full bg-orange-800 flex items-center justify-center shadow-2xl">
+                <span class="wrench text-3xl">&#128295;</span>
+            </div>
+        </div>
+        <h1 class="text-5xl md:text-6xl font-bold text-[#f4eee0] extra-heavy-shadow mb-3" style="font-variant:small-caps;">Got It — On It.</h1>
+        <p class="text-xl italic text-orange-300 heavy-shadow">Lance has been notified of your report.</p>
+        <div class="h-1 w-24 bg-orange-800 mx-auto mt-5"></div>
+    </div>
+
+    <!-- Message card -->
+    <div class="parchment rounded-2xl p-8 shadow-2xl mb-8 fade-up-2 border-t-8 border-orange-800">
+        <h2 class="text-3xl text-orange-900 mb-4 italic">Your Report Was Received</h2>
+        <p class="text-stone-600 leading-relaxed mb-4">We got your maintenance report and we genuinely appreciate you taking the time to let us know. That's what makes Weeks Creek Haven great — guests like you who look out for the place.</p>
+        <p class="text-stone-600 leading-relaxed">Lance will take a look and get it squared away before the next visit. If anything was urgent, go ahead and text him directly.</p>
+        <div class="mt-5 bg-orange-50 border border-orange-200 rounded-xl p-4 text-center">
+            <p class="text-xs font-black uppercase tracking-widest text-orange-800 mb-1">Need it fixed right now?</p>
+            <a href="tel:7705499358" class="text-orange-900 font-black text-lg hover:underline">Text Lance: 770.549.9358</a>
+        </div>
+    </div>
+
+    <!-- What happens next -->
+    <div class="fade-up-3">
+        <h3 class="text-2xl text-[#f4eee0] extra-heavy-shadow mb-4 text-center" style="font-variant:small-caps;">What Happens Next</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+            <div class="dark-card rounded-xl p-5 text-center">
+                <div class="text-3xl mb-3">&#128269;</div>
+                <p class="font-black text-orange-300 text-sm uppercase tracking-wide mb-1">Lance Reviews It</p>
+                <p class="text-stone-400 text-xs leading-relaxed">He'll check your report and prioritize the fix.</p>
+            </div>
+            <div class="dark-card rounded-xl p-5 text-center">
+                <div class="text-3xl mb-3">&#128296;</div>
+                <p class="font-black text-orange-300 text-sm uppercase tracking-wide mb-1">Gets Fixed</p>
+                <p class="text-stone-400 text-xs leading-relaxed">Either before your stay ends or before the next guests arrive.</p>
+            </div>
+            <div class="dark-card rounded-xl p-5 text-center">
+                <div class="text-3xl mb-3">&#127968;</div>
+                <p class="font-black text-orange-300 text-sm uppercase tracking-wide mb-1">Haven Stays Great</p>
+                <p class="text-stone-400 text-xs leading-relaxed">You helped keep the cabin in top shape. Seriously, thank you.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTAs -->
+    <div class="fade-up-4 flex flex-wrap justify-center gap-4">
+        <a href="friends-hub.html" class="bg-[#A45D41] hover:bg-[#8b4a32] text-white font-black text-sm uppercase tracking-widest px-8 py-3 rounded-full transition shadow-lg">Back to Friends Hub</a>
+        <a href="index.html" class="text-stone-400 hover:text-stone-200 font-bold text-sm uppercase tracking-widest px-6 py-3 rounded-full transition">Main Site</a>
+    </div>
+
+    <div class="text-center mt-14 fade-up-4">
+        <p class="text-[#d4a373] font-serif italic text-xl heavy-shadow">Thanks for having our back,</p>
+        <p class="text-[#f4eee0] font-black text-lg extra-heavy-shadow mt-1">Lance &amp; Heather</p>
+    </div>
+
+</main>
+
+<div id="footer-placeholder"></div>
+<script src="footer.js"></script>
+<script>document.addEventListener("contextmenu", function(e){ e.preventDefault(); });</script>
+</body>
+</html>
