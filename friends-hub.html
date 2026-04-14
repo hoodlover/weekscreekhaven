@@ -1225,6 +1225,43 @@
 
 <script>
 // ============================
+// FETCH FORM HELPER
+// ============================
+function fetchForm(formId, submitId, sendingId, errorId, redirectUrl) {
+    const form = document.getElementById(formId);
+    if (!form) return;
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById(submitId);
+        const sending = document.getElementById(sendingId);
+        const error = document.getElementById(errorId);
+        btn.classList.add('hidden');
+        sending.classList.remove('hidden');
+        error.classList.add('hidden');
+        try {
+            const data = {};
+            new FormData(form).forEach((val, key) => {
+                if (data[key]) { data[key] = [].concat(data[key], val); } else { data[key] = val; }
+            });
+            const res = await fetch(form.action, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }
+            });
+            if (res.ok) { window.location.href = redirectUrl; }
+            else { throw new Error('bad response'); }
+        } catch(err) {
+            sending.classList.add('hidden');
+            btn.classList.remove('hidden');
+            error.classList.remove('hidden');
+        }
+    });
+}
+fetchForm('checkout-form',    'checkout-submit',    'checkout-sending',    'checkout-error',    '/thank-you-departure.html');
+fetchForm('guestbook-form',   'guestbook-submit',   'guestbook-sending',   'guestbook-error',   '/thank-you-guestbook.html');
+fetchForm('maintenance-form', 'maintenance-submit', 'maintenance-sending', 'maintenance-error', '/thank-you-maintenance.html');
+
+// ============================
 // PRE-ARRIVAL FORM — fetch submit + redirect
 // ============================
 const preArrivalForm = document.getElementById('pre-arrival-form');
