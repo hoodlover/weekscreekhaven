@@ -1203,6 +1203,38 @@
 
 <script>
 // ============================
+// PRE-ARRIVAL FORM — fetch submit + redirect
+// ============================
+const preArrivalForm = document.getElementById('pre-arrival-form');
+if (preArrivalForm) {
+    preArrivalForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('pre-arrival-submit');
+        const sending = document.getElementById('pre-arrival-sending');
+        const error = document.getElementById('pre-arrival-error');
+        btn.classList.add('hidden');
+        sending.classList.remove('hidden');
+        error.classList.add('hidden');
+        try {
+            const res = await fetch(preArrivalForm.action, {
+                method: 'POST',
+                body: new FormData(preArrivalForm),
+                headers: { 'Accept': 'application/json' }
+            });
+            if (res.ok) {
+                window.location.href = '/welcome-you.html';
+            } else {
+                throw new Error('bad response');
+            }
+        } catch(err) {
+            sending.classList.add('hidden');
+            btn.classList.remove('hidden');
+            error.classList.remove('hidden');
+        }
+    });
+}
+
+// ============================
 // TAB SWITCHING
 // ============================
 function switchTab(name, btn) {
