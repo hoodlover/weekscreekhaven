@@ -1145,17 +1145,6 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Arrival Date</label>
-                    <input type="date" name="arrival_date" class="maint-input" required>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Departure Date</label>
-                    <input type="date" name="departure_date" class="maint-input" required>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
                     <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Number of Guests</label>
                     <select name="guest_count" class="maint-input" required>
                         <option value="">How many folks?</option>
@@ -1165,21 +1154,48 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Approximate Arrival Time</label>
-                    <input type="text" name="arrival_time" placeholder="e.g. 3pm, late evening..." class="maint-input">
+                    <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">What time are you arriving?</label>
+                    <input type="text" name="arrival_time" placeholder="Morning, afternoon, late... whatever" class="maint-input">
+                    <p class="text-xs text-stone-400 italic mt-1">No pressure — arrive or stay any time you want. Seriously.</p>
                 </div>
             </div>
 
             <div>
-                <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-2">What are y'all hoping to do?</label>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm">
-                    <label class="flex items-center gap-2 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="activities[]" value="Hiking" class="w-4 h-4 accent-[#A45D41]"> &#127956; Hiking</label>
-                    <label class="flex items-center gap-2 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="activities[]" value="Fishing" class="w-4 h-4 accent-[#A45D41]"> &#129400; Fishing</label>
-                    <label class="flex items-center gap-2 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="activities[]" value="Hot Tub" class="w-4 h-4 accent-[#A45D41]"> &#9832; Hot Tub</label>
-                    <label class="flex items-center gap-2 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="activities[]" value="Downtown Blue Ridge" class="w-4 h-4 accent-[#A45D41]"> &#127978; Downtown BR</label>
-                    <label class="flex items-center gap-2 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="activities[]" value="Just relaxing" class="w-4 h-4 accent-[#A45D41]"> &#128564; Just Relaxing</label>
-                    <label class="flex items-center gap-2 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="activities[]" value="Family fun" class="w-4 h-4 accent-[#A45D41]"> &#128106; Family Fun</label>
+                <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">What time are you heading out?</label>
+                <input type="text" name="departure_time" placeholder="Whenever you're ready — no rush" class="maint-input">
+                <p class="text-xs text-stone-400 italic mt-1">We really don't care. Stay as long as you like, leave when you feel like it.</p>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-2">When you hear "I'm bored" — check the activity binder by the fireplace, or browse these:</label>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
+                    <a href="hub-adventures.html#hiking" target="_blank" class="group relative rounded-xl overflow-hidden shadow border border-stone-200 hover:border-[#A45D41] transition">
+                        <img src="webpic/hiking.webp" alt="Hiking" class="w-full h-20 object-cover group-hover:scale-105 transition-transform duration-300">
+                        <div class="bg-stone-100 group-hover:bg-[#A45D41] transition px-2 py-1.5 text-center">
+                            <span class="text-xs font-black uppercase tracking-wide text-stone-700 group-hover:text-white transition">Hiking</span>
+                        </div>
+                    </a>
+                    <a href="hub-adventures.html#fishing" target="_blank" class="group relative rounded-xl overflow-hidden shadow border border-stone-200 hover:border-[#A45D41] transition">
+                        <img src="webpic/fishing.webp" alt="Fishing" class="w-full h-20 object-cover group-hover:scale-105 transition-transform duration-300">
+                        <div class="bg-stone-100 group-hover:bg-[#A45D41] transition px-2 py-1.5 text-center">
+                            <span class="text-xs font-black uppercase tracking-wide text-stone-700 group-hover:text-white transition">Fishing</span>
+                        </div>
+                    </a>
+                    <a href="hub-adventures.html#dining" target="_blank" class="group relative rounded-xl overflow-hidden shadow border border-stone-200 hover:border-[#A45D41] transition">
+                        <img src="webpic/foodshop.webp" alt="Eat & Shop" class="w-full h-20 object-cover group-hover:scale-105 transition-transform duration-300">
+                        <div class="bg-stone-100 group-hover:bg-[#A45D41] transition px-2 py-1.5 text-center">
+                            <span class="text-xs font-black uppercase tracking-wide text-stone-700 group-hover:text-white transition">Eat &amp; Shop</span>
+                        </div>
+                    </a>
+                    <a href="hub-adventures.html#family" target="_blank" class="group relative rounded-xl overflow-hidden shadow border border-stone-200 hover:border-[#A45D41] transition">
+                        <img src="webpic/familyfun.webp" alt="Family Fun" class="w-full h-20 object-cover group-hover:scale-105 transition-transform duration-300">
+                        <div class="bg-stone-100 group-hover:bg-[#A45D41] transition px-2 py-1.5 text-center">
+                            <span class="text-xs font-black uppercase tracking-wide text-stone-700 group-hover:text-white transition">Family Fun</span>
+                        </div>
+                    </a>
                 </div>
+                <p class="text-xs text-stone-400 italic mb-1">Is there something else you were hoping to do? Like a drive-in theatre, maybe?</p>
+                <input type="text" name="activity_question" placeholder="Something specific on your list?" class="maint-input text-sm">
             </div>
 
             <div>
@@ -1189,7 +1205,7 @@
 
             <!-- Submit states -->
             <button type="submit" id="pre-arrival-submit" class="w-full bg-[#A45D41] text-white font-black py-4 rounded-xl hover:bg-[#8b4a32] transition shadow-lg uppercase tracking-widest text-sm">
-                &#9993; Send Pre-Arrival Info
+                Send Pre-Arrival Info
             </button>
             <p id="pre-arrival-sending" class="hidden text-center text-stone-500 text-sm italic">Sending... hang tight &#128522;</p>
             <p id="pre-arrival-error" class="hidden text-center text-red-600 text-sm font-bold">Something went wrong — try texting Lance at 770.549.9358</p>
