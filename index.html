@@ -187,66 +187,77 @@
 </section>
 	
 <section id="rules" class="py-16 md:py-24 px-4 md:px-6 relative overflow-hidden bg-rules-wood">
-    <div class="absolute inset-0 bg-stone-900/40 z-0"></div>
+    <div class="absolute inset-0 bg-stone-900/60 z-0"></div>
 
-    <div class="max-w-4xl mx-auto relative z-10">
-        <h2 class="text-4xl md:text-6xl text-center mb-12 md:mb-16 text-white tracking-tight font-serif extra-heavy-shadow font-bold uppercase">
-            House Rules & Info
-        </h2>
-        
-        <div class="space-y-6">
-            <details class="group parchment rounded-xl shadow-2xl overflow-hidden border-l-8 border-green-900/30 transition-all duration-300">
-                <summary class="w-full p-6 md:p-8 font-serif text-xl md:text-2xl font-bold flex justify-between items-center cursor-pointer hover:bg-white/50 transition-colors text-stone-900 outline-none select-none">
-                    <span class="tracking-wide">Occupancy & Safety</span>
-                    <div class="relative w-8 h-8 flex items-center justify-center bg-green-900/10 rounded-full group-open:rotate-45 transition-transform duration-300">
-                        <span class="absolute w-4 h-0.5 bg-green-900"></span>
-                        <span class="absolute w-0.5 h-4 bg-green-900"></span>
-                    </div>
-                </summary>
-                <div class="px-8 pb-4 text-stone-800 text-lg leading-relaxed border-t border-stone-300/50 pt-6">
-                    <p>Maximum 11 guests. No pets allowed. No smoking on premises. No parties or events. Ensure children are attended around fireplaces and the hot tub at all times.</p>
-                </div>
-            </details>
+    <div class="max-w-5xl mx-auto relative z-10">
 
-            <details class="group parchment rounded-xl shadow-2xl overflow-hidden border-l-8 border-green-900/30 transition-all duration-300">
-                <summary class="w-full p-6 md:p-8 font-serif text-xl md:text-2xl font-bold flex justify-between items-center cursor-pointer hover:bg-white/50 transition-colors text-stone-900 outline-none select-none">
-                    <span class="tracking-wide">Checkout & Cleanliness</span>
-                    <div class="relative w-8 h-8 flex items-center justify-center bg-green-900/10 rounded-full group-open:rotate-45 transition-transform duration-300">
-                        <span class="absolute w-4 h-0.5 bg-green-900"></span>
-                        <span class="absolute w-0.5 h-4 bg-green-900"></span>
-                    </div>
-                </summary>
-                <div class="px-8 pb-4 text-stone-800 text-lg leading-relaxed border-t border-stone-300/50 pt-6">
-                    <p>Excess mess left at checkout will result in a $250+ fine. Please notify us immediately if anything breaks so we can have it ready for the next guest!</p>
-                </div>
-            </details>
-
-            <details class="group parchment rounded-xl shadow-2xl overflow-hidden border-l-8 border-green-900/30 transition-all duration-300">
-                <summary class="w-full p-6 md:p-8 font-serif text-xl md:text-2xl font-bold flex justify-between items-center cursor-pointer hover:bg-white/50 transition-colors text-stone-900 outline-none select-none">
-                    <span class="tracking-wide">Hot Tub Time</span>
-                    <div class="relative w-8 h-8 flex items-center justify-center bg-green-900/10 rounded-full group-open:rotate-45 transition-transform duration-300">
-                        <span class="absolute w-4 h-0.5 bg-green-900"></span>
-                        <span class="absolute w-0.5 h-4 bg-green-900"></span>
-                    </div>
-                </summary>
-                <div class="px-8 pb-4 border-t border-stone-300/50 pt-6">
-                    <img src="info/HotTub.webp" alt="Hot Tub Times" class="rounded-lg shadow-xl mx-auto w-full max-w-md border-4 border-[#4a4747]">
-                </div>
-            </details>
-
-            <details class="group parchment rounded-xl shadow-2xl overflow-hidden border-l-8 border-green-900/30 transition-all duration-300">
-                <summary class="w-full p-6 md:p-8 font-serif text-xl md:text-2xl font-bold flex justify-between items-center cursor-pointer hover:bg-white/50 transition-colors text-stone-900 outline-none select-none">
-                    <span class="tracking-wide">Gig Wi-Fi, Firewood & BBQ</span>
-                    <div class="relative w-8 h-8 flex items-center justify-center bg-green-900/10 rounded-full group-open:rotate-45 transition-transform duration-300">
-                        <span class="absolute w-4 h-0.5 bg-green-900"></span>
-                        <span class="absolute w-0.5 h-4 bg-green-900"></span>
-                    </div>
-                </summary>
-                <div class="px-8 pb-4 text-stone-800 text-lg leading-relaxed border-t border-stone-300/50 pt-6">
-                    <p>Gig Fiber Wi-Fi is available throughout the cabin (Password: creeklife). Please bring your own local firewood and charcoal for the BBQ.</p>
-                </div>
-            </details>
+        <div class="text-center mb-12">
+            <h2 class="text-4xl md:text-6xl text-white tracking-tight font-serif extra-heavy-shadow font-bold uppercase mb-3">
+                Good to Know
+            </h2>
+            <p class="text-stone-300 font-serif italic text-xl md:text-2xl extra-heavy-shadow">The short version: treat the Haven like it's yours — because for a few days, it is.</p>
         </div>
+
+        <!-- Top row: 2 photo cards -->
+        <div class="grid md:grid-cols-2 gap-6 mb-6">
+
+            <!-- Sleeps 11 -->
+            <div class="relative rounded-2xl overflow-hidden shadow-2xl group" style="min-height: 260px;">
+                <img src="gallery/Layout of the main living space from the loft.webp" alt="Main living space" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-6">
+                    <p class="text-xs font-black uppercase tracking-widest text-[#d4a373] mb-1">Occupancy</p>
+                    <h3 class="text-2xl font-bold text-white font-serif mb-2" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.9);">Sleeps Up to 11</h3>
+                    <p class="text-stone-300 text-sm leading-relaxed">Four bedrooms, plenty of space. No pets, no smoking, no events or parties. Kids near the fireplace and hot tub need a watchful eye.</p>
+                </div>
+            </div>
+
+            <!-- Hot tub -->
+            <div class="relative rounded-2xl overflow-hidden shadow-2xl group" style="min-height: 260px;">
+                <img src="gallery/Hot tub on the ground-level deck. Rested mind and rested body.webp" alt="Hot tub" class="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-6">
+                    <p class="text-xs font-black uppercase tracking-widest text-[#d4a373] mb-1">Hot Tub</p>
+                    <h3 class="text-2xl font-bold text-white font-serif mb-2" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.9);">Always Ready for You</h3>
+                    <p class="text-stone-300 text-sm leading-relaxed">Heated and waiting. Shower before getting in. No glassware in the tub. The full hot tub guide is in the Friends Hub.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom row: 3 info cards -->
+        <div class="grid md:grid-cols-3 gap-6 mb-6">
+
+            <!-- Checkout -->
+            <div class="bg-black/50 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-xl">
+                <img src="gallery/One of the easier driveways in the mountain-cabin world.webp" alt="Driveway" class="w-full h-32 object-cover rounded-xl mb-4 shadow">
+                <p class="text-xs font-black uppercase tracking-widest text-[#d4a373] mb-1">Checkout</p>
+                <h3 class="text-lg font-bold text-white font-serif mb-2">Leave It Like You Found It</h3>
+                <p class="text-stone-300 text-sm leading-relaxed">Take out your trash, run the dishwasher, strip the beds. Excessive mess means a $250+ cleaning fee. If something broke, just tell us — we won't bite.</p>
+            </div>
+
+            <!-- Wi-Fi -->
+            <div class="bg-black/50 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-xl">
+                <img src="gallery/Inside 1.webp" alt="Inside the cabin" class="w-full h-32 object-cover rounded-xl mb-4 shadow">
+                <p class="text-xs font-black uppercase tracking-widest text-[#d4a373] mb-1">Wi-Fi</p>
+                <h3 class="text-lg font-bold text-white font-serif mb-2">1 Gig Fiber — Seriously</h3>
+                <p class="text-stone-300 text-sm leading-relaxed">Stream, work, video call your dog sitter — the WiFi can handle it. Password is in the Friends Hub for guests.</p>
+            </div>
+
+            <!-- Firewood & BBQ -->
+            <div class="bg-black/50 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-xl">
+                <img src="gallery/Steps from the front door. The sound of the stream will flood your ears right away.webp" alt="Outside the cabin" class="w-full h-32 object-cover rounded-xl mb-4 shadow">
+                <p class="text-xs font-black uppercase tracking-widest text-[#d4a373] mb-1">Fire & BBQ</p>
+                <h3 class="text-lg font-bold text-white font-serif mb-2">BYOF — Bring Your Own Firewood</h3>
+                <p class="text-stone-600 text-sm leading-relaxed" style="color: rgb(214,211,208);">Pick up a bundle locally on the way in. Same goes for charcoal for the grill. Fire pit + fireplace are both ready to go.</p>
+            </div>
+        </div>
+
+        <!-- Hot tub info graphic -->
+        <div class="bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-xl text-center">
+            <p class="text-xs font-black uppercase tracking-widest text-[#d4a373] mb-3">Hot Tub Reference Card</p>
+            <img src="info/HotTub.webp" alt="Hot Tub Guide" class="rounded-xl shadow-2xl mx-auto w-full max-w-lg border-2 border-white/10">
+        </div>
+
     </div>
 </section>
 
