@@ -1152,6 +1152,9 @@
     m.parentNode.insertBefore(a, m)
   })(window, document, 'script', 'https://cdn.sender.net/accounts_resources/universal.js', 'sender');
   sender('fc2e284fbf4182')
+  sender('on', 'form:submit', function() {
+    setTimeout(function() { window.location.href = '/welcome-you.html'; }, 900);
+  })
 </script>
 
 <div id="footer-placeholder"></div>
