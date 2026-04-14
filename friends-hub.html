@@ -1156,14 +1156,14 @@
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">What time are you arriving?</label>
                     <input type="text" name="arrival_time" placeholder="Morning, afternoon, late... whatever" class="maint-input">
-                    <p class="text-xs text-stone-400 italic mt-1">No pressure — arrive or stay any time you want. Seriously.</p>
+                    <p class="text-xs text-stone-700 italic mt-1">No pressure — arrive or stay any time you want. Seriously.</p>
                 </div>
             </div>
 
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">What time are you heading out?</label>
                 <input type="text" name="departure_time" placeholder="Whenever you're ready — no rush" class="maint-input">
-                <p class="text-xs text-stone-400 italic mt-1">We really don't care. Stay as long as you like, leave when you feel like it.</p>
+                <p class="text-xs text-stone-700 italic mt-1">We really don't care. Stay as long as you like, leave when you feel like it.</p>
             </div>
 
             <div>
@@ -1194,7 +1194,7 @@
                         </div>
                     </a>
                 </div>
-                <p class="text-xs text-stone-400 italic mb-1">Is there something else you were hoping to do? Like a drive-in theatre, maybe?</p>
+                <p class="text-xs text-stone-700 italic mb-1">Is there something else you were hoping to do? Like a drive-in theatre, maybe?</p>
                 <input type="text" name="activity_question" placeholder="Something specific on your list?" class="maint-input text-sm">
             </div>
 
@@ -1232,17 +1232,32 @@ if (preArrivalForm) {
         sending.classList.remove('hidden');
         error.classList.add('hidden');
         try {
+            // Build a plain object from form fields
+            const data = {};
+            new FormData(preArrivalForm).forEach((val, key) => {
+                if (data[key]) {
+                    data[key] = [].concat(data[key], val);
+                } else {
+                    data[key] = val;
+                }
+            });
             const res = await fetch(preArrivalForm.action, {
                 method: 'POST',
-                body: new FormData(preArrivalForm),
-                headers: { 'Accept': 'application/json' }
+                body: JSON.stringify(data),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
             });
+            const json = await res.json().catch(() => ({}));
+            console.log('Formspree response:', res.status, json);
             if (res.ok) {
                 window.location.href = '/welcome-you.html';
             } else {
-                throw new Error('bad response');
+                throw new Error(json.error || 'bad response');
             }
         } catch(err) {
+            console.error('Pre-arrival submit error:', err);
             sending.classList.add('hidden');
             btn.classList.remove('hidden');
             error.classList.remove('hidden');
