@@ -441,7 +441,7 @@ window.addEventListener('DOMContentLoaded', updateHomeWeather);
             const data = {};
             new FormData(form).forEach((val, key) => { if (data[key]) { data[key] = [].concat(data[key], val); } else { data[key] = val; } });
             const res = await fetch(form.action, { method: 'POST', body: JSON.stringify(data), headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } });
-            if (res.ok) { window.location.href = '/thank-you.html'; }
+            if (res.ok) { window.location.href = '/thank-you-inquiry.html'; }
             else { throw new Error(); }
         } catch(err) {
             sending.classList.add('hidden'); btn.classList.remove('hidden'); error.classList.remove('hidden');
