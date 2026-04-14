@@ -806,7 +806,9 @@
                         <textarea name="description" rows="4" placeholder="Be as specific as possible (e.g. 'The third lightbulb from the left in the kitchen is flickering and judging me')." class="maint-input" required></textarea>
                         <p class="mt-2 text-xs text-stone-500 italic">&ldquo;If it&rsquo;s urgent (water leak, no heat, etc.), please text Lance immediately at 770.549.9358!&rdquo;</p>
                     </div>
-                    <button type="submit" class="w-full bg-orange-900 text-white font-bold py-4 rounded hover:bg-black transition shadow-lg uppercase tracking-widest">Send Maintenance Report</button>
+                    <button type="submit" id="maintenance-submit" class="w-full bg-orange-900 text-white font-bold py-4 rounded hover:bg-black transition shadow-lg uppercase tracking-widest">Send Maintenance Report</button>
+                    <p id="maintenance-sending" class="hidden text-center text-stone-500 text-sm italic">Sending... hang tight</p>
+                    <p id="maintenance-error" class="hidden text-center text-red-600 text-sm font-bold">Something went wrong — try texting Lance at 770.549.9358</p>
                 </form>
             </div>
         </div>
