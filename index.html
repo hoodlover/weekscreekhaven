@@ -470,6 +470,12 @@ data.daily.slice(0, 3).forEach((day, i) => {
 window.addEventListener('DOMContentLoaded', updateHomeWeather);
 </script>
 
+<script>
+    // Hero zoom-out on load
+    window.addEventListener('load', function() {
+        document.getElementById('hero-bg').classList.add('loaded');
+    });
+</script>
 <script>document.addEventListener("contextmenu", function(e){ e.preventDefault(); });</script>
 <script>
 (function() {
