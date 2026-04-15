@@ -1345,13 +1345,40 @@ if (preArrivalForm) {
 // ============================
 // TAB SWITCHING
 // ============================
+const TAB_ORDER = ['checkin','scoop','provisions','checkout','guestbook','maintenance','directions','weather','emergency'];
+
 function switchTab(name, btn) {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('tab-' + name).classList.add('active');
-    btn.classList.add('active');
+    if (btn) btn.classList.add('active');
+    else document.querySelector(`.tab-btn[onclick*="'${name}'"]`)?.classList.add('active');
     if (name === 'weather') loadWeather();
 }
+
+// ============================
+// SWIPE TO CHANGE TAB
+// ============================
+(function() {
+    let startX = 0, startY = 0;
+    const main = document.getElementById('main-content') || document.body;
+    main.addEventListener('touchstart', e => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+    }, { passive: true });
+    main.addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].clientX - startX;
+        const dy = e.changedTouches[0].clientY - startY;
+        if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return; // not a horizontal swipe
+        const active = document.querySelector('.tab-panel.active');
+        if (!active) return;
+        const cur = TAB_ORDER.indexOf(active.id.replace('tab-',''));
+        const next = dx < 0 ? cur + 1 : cur - 1;
+        if (next < 0 || next >= TAB_ORDER.length) return;
+        switchTab(TAB_ORDER[next], null);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, { passive: true });
+})();
 
 // ============================
 // LIGHTBOX
