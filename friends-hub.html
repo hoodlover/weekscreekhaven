@@ -1351,8 +1351,11 @@ function switchTab(name, btn) {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('tab-' + name).classList.add('active');
-    if (btn) btn.classList.add('active');
-    else document.querySelector(`.tab-btn[onclick*="'${name}'"]`)?.classList.add('active');
+    const activeBtn = btn || document.querySelector(`.tab-btn[onclick*="'${name}'"]`);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+        activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
     if (name === 'weather') loadWeather();
 }
 
