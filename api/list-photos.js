@@ -9,6 +9,7 @@ export default async function handler(request, response) {
     });
     
     // Send the list of image URLs back to your gallery page
+    response.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate');
     return response.status(200).json(blobs);
   } catch (error) {
     return response.status(500).json({ error: error.message });
