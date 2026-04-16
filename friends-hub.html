@@ -1759,7 +1759,7 @@ function reaskInstall() {
     }
 }
 
-// On iOS (Safari) — show the manual hint
+// On iOS (Safari) — show the manual hint inside the banner
 const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
 const isInStandaloneMode = ('standalone' in window.navigator) && window.navigator.standalone;
 if (isIOS && !isInStandaloneMode) {
@@ -1767,11 +1767,25 @@ if (isIOS && !isInStandaloneMode) {
     if (hint) hint.style.display = 'block';
 }
 
-// Hide the whole PWA section if already running as installed app
-if (window.matchMedia('(display-mode: standalone)').matches || isInStandaloneMode) {
-    const section = document.getElementById('pwa-section');
-    if (section) section.style.display = 'none';
+// Show PWA banner once (skip if already installed or previously dismissed)
+function dismissPWABanner() {
+    const banner = document.getElementById('pwa-banner');
+    if (banner) {
+        banner.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+        banner.style.transform = 'translateY(100%)';
+        banner.style.opacity = '0';
+        setTimeout(() => { banner.style.display = 'none'; }, 300);
+    }
+    localStorage.setItem('pwa-banner-dismissed', '1');
 }
+
+(function showPWABannerOnce() {
+    if (window.matchMedia('(display-mode: standalone)').matches || isInStandaloneMode) return;
+    if (localStorage.getItem('pwa-banner-dismissed')) return;
+    const banner = document.getElementById('pwa-banner');
+    if (!banner) return;
+    banner.style.display = 'block';
+})();
 </script>
 </body>
 </html>
