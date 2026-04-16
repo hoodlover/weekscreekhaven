@@ -1737,6 +1737,7 @@ function installPWA() {
     deferredInstallPrompt.userChoice.then(choice => {
         if (choice.outcome === 'accepted') {
             showToast('📲 Friends Hub installed! Find it on your home screen.', 4000);
+            dismissPWABanner();
         }
         deferredInstallPrompt = null;
         const row = document.getElementById('pwa-install-row');
