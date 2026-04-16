@@ -493,7 +493,11 @@ function switchTab(name, btn) {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('tab-' + name).classList.add('active');
-    btn.classList.add('active');
+    const activeBtn = btn || document.querySelector(`.tab-btn[onclick*="'${name}'"]`);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+        activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
 }
 function openLightbox(src) {
     document.getElementById('lightbox-img').src = src;
