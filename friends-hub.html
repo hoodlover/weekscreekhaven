@@ -1364,10 +1364,6 @@ function switchTab(name, btn) {
         const next = dx < 0 ? cur + 1 : cur - 1;
         if (next < 0 || next >= TAB_ORDER.length) return;
         switchTab(TAB_ORDER[next], null);
-        const tabBar = document.getElementById('tab-bar');
-        const navHeight = 80; // matches the fixed nav bar height
-        const top = tabBar ? tabBar.getBoundingClientRect().top + window.scrollY - navHeight : 0;
-        window.scrollTo({ top, behavior: 'smooth' });
     }, { passive: true });
 })();
 
