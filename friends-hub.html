@@ -156,6 +156,24 @@
             cursor: pointer !important;
         }
         .sender-form-field button[type="submit"]:hover { background: #8b4a32 !important; }
+
+        /* PWA banner */
+        @keyframes pwa-slide-up {
+            from { transform: translateY(100%); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+        }
+        @keyframes pwa-glow {
+            0%, 100% { box-shadow: 0 -4px 20px rgba(164,93,65,0.25); }
+            50%       { box-shadow: 0 -4px 40px rgba(164,93,65,0.75); }
+        }
+        #pwa-banner {
+            display: none;
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            z-index: 999;
+            animation: pwa-slide-up 0.45s cubic-bezier(0.22,1,0.36,1) forwards,
+                       pwa-glow 0.7s ease 0.45s 3;
+        }
     </style>
 </head>
 <body>
