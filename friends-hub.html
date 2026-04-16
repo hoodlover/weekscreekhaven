@@ -1430,12 +1430,12 @@ async function loadWeather() {
             const date = new Date(day.dt * 1000);
             const dayName = i === 0 ? 'Today' : date.toLocaleDateString('en-US', { weekday: 'short' });
             const monthDay = date.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
-            container.innerHTML += `<div class="flex flex-col items-center p-2 bg-stone-100/50 rounded border border-stone-200">
-                <p class="text-[10px] font-bold uppercase text-[#4a4747]">${dayName}</p>
-                <p class="text-[9px] text-stone-500 mb-1">${monthDay}</p>
-                <img src="https://openweathermap.org/img/wn/${day.weather[0].icon}.png" class="w-8 h-8">
-                <div class="text-xs font-bold text-stone-800">${Math.round(day.temp.max)}° <span class="text-stone-400 font-normal">/ ${Math.round(day.temp.min)}°</span></div>
-                <p class="text-[9px] text-[#4a4747] mt-1 font-bold">${Math.round(day.pop * 100)}% Rain</p>
+            container.innerHTML += `<div class="flex flex-col items-center p-2 bg-stone-100 rounded border border-stone-200 shadow-sm">
+                <p class="text-[13px] font-bold uppercase text-stone-700 leading-none">${dayName}</p>
+                <p class="text-[9px] text-stone-400 mb-1">${monthDay}</p>
+                <img src="https://openweathermap.org/img/wn/${day.weather[0].icon}.png" class="w-9 h-9 drop-shadow">
+                <p class="text-sm font-bold text-stone-800 leading-none mt-1">${Math.round(day.temp.max)}° <span class="text-stone-400 font-normal">/ ${Math.round(day.temp.min)}°</span></p>
+                <p class="text-[15px] text-green-600 font-bold mt-1 uppercase tracking-tight leading-none">${Math.round(day.pop * 100)}% Rain</p>
             </div>`;
         });
         document.getElementById('weather-section').classList.remove('opacity-0');
