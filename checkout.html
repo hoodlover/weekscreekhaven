@@ -65,6 +65,28 @@
         }
         .input-style:focus { border-color: #A45D41; }
 
+        /* Star rating */
+        .star-row { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 4px; }
+        .star-row input[type="radio"] { display: none; }
+        .star-row label { font-size: 2.2rem; color: #d1cebd; cursor: pointer; transition: color 0.12s; line-height: 1; }
+        .star-row input[type="radio"]:checked ~ label,
+        .star-row label:hover,
+        .star-row label:hover ~ label { color: #f59e0b; }
+
+        /* Mini star rating (aspect rows) */
+        .mini-star-row { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 2px; }
+        .mini-star-row input[type="radio"] { display: none; }
+        .mini-star-row label { font-size: 1.4rem; color: #d1cebd; cursor: pointer; transition: color 0.12s; line-height: 1; }
+        .mini-star-row input[type="radio"]:checked ~ label,
+        .mini-star-row label:hover,
+        .mini-star-row label:hover ~ label { color: #f59e0b; }
+
+        /* Survey choice pills */
+        .survey-pill input[type="radio"] { display: none; }
+        .survey-pill label { display: inline-block; padding: 0.45rem 1.1rem; border-radius: 2rem; border: 1.5px solid #d1cebd; background: #f9f7f2; color: #5a4a3a; font-size: 0.78rem; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+        .survey-pill input[type="radio"]:checked + label { background: #A45D41; border-color: #A45D41; color: #fff; }
+        .survey-pill label:hover { border-color: #A45D41; color: #A45D41; }
+
         .logo-link:hover .wood-btn { transform: scale(1.0) !important; }
         .logo-link { position: relative; display: inline-block; }
         
