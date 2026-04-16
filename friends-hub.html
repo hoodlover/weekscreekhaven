@@ -803,6 +803,161 @@
                             <p class="text-stone-600 text-xs leading-relaxed">Grab the guest book off the shelf by the robovac and leave your mark. It takes 2 minutes and future guests will love reading it. Your story belongs in there.</p>
                         </div>
                     </div>
+                    <!-- ===== EXIT SURVEY ===== -->
+                    <div class="bg-stone-50 border border-stone-200 rounded-xl p-5 space-y-6 mt-2">
+                        <div class="border-b border-stone-200 pb-3">
+                            <h3 class="text-2xl font-serif italic text-[#A45D41] mb-1">The Debrief &#128373;</h3>
+                            <p class="text-stone-500 text-xs font-serif italic">Be honest. We can take it. Probably.</p>
+                            <p class="text-xs text-stone-400 mt-1">60 seconds. No wrong answers. (Well, one star is technically a wrong answer.)</p>
+                        </div>
+                        <!-- Overall star rating -->
+                        <div>
+                            <label class="block text-sm font-bold text-stone-700 mb-1">Overall &mdash; the big one &#127775;</label>
+                            <p class="text-xs text-stone-400 italic mb-2">This is the one Lance checks first. No pressure.</p>
+                            <div class="star-row">
+                                <input type="radio" name="rating_overall" id="hos5" value="5"><label for="hos5">★</label>
+                                <input type="radio" name="rating_overall" id="hos4" value="4"><label for="hos4">★</label>
+                                <input type="radio" name="rating_overall" id="hos3" value="3"><label for="hos3">★</label>
+                                <input type="radio" name="rating_overall" id="hos2" value="2"><label for="hos2">★</label>
+                                <input type="radio" name="rating_overall" id="hos1" value="1"><label for="hos1">★</label>
+                            </div>
+                        </div>
+                        <!-- Aspect mini-ratings -->
+                        <div>
+                            <label class="block text-sm font-bold text-stone-700 mb-1">The Details</label>
+                            <p class="text-xs text-stone-400 italic mb-3">Go ahead, judge us. We're emotionally prepared.</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div class="bg-white rounded-lg px-4 py-3 border border-stone-200">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-bold text-stone-700">Cleanliness</span>
+                                        <div class="mini-star-row">
+                                            <input type="radio" name="rating_clean" id="hcl5" value="5"><label for="hcl5">★</label>
+                                            <input type="radio" name="rating_clean" id="hcl4" value="4"><label for="hcl4">★</label>
+                                            <input type="radio" name="rating_clean" id="hcl3" value="3"><label for="hcl3">★</label>
+                                            <input type="radio" name="rating_clean" id="hcl2" value="2"><label for="hcl2">★</label>
+                                            <input type="radio" name="rating_clean" id="hcl1" value="1"><label for="hcl1">★</label>
+                                        </div>
+                                    </div>
+                                    <p class="text-[10px] text-stone-400 italic mt-1">Heather cleaned it. Lance watched.</p>
+                                </div>
+                                <div class="bg-white rounded-lg px-4 py-3 border border-stone-200">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-bold text-stone-700">Cabin Amenities</span>
+                                        <div class="mini-star-row">
+                                            <input type="radio" name="rating_amenities" id="ham5" value="5"><label for="ham5">★</label>
+                                            <input type="radio" name="rating_amenities" id="ham4" value="4"><label for="ham4">★</label>
+                                            <input type="radio" name="rating_amenities" id="ham3" value="3"><label for="ham3">★</label>
+                                            <input type="radio" name="rating_amenities" id="ham2" value="2"><label for="ham2">★</label>
+                                            <input type="radio" name="rating_amenities" id="ham1" value="1"><label for="ham1">★</label>
+                                        </div>
+                                    </div>
+                                    <p class="text-[10px] text-stone-400 italic mt-1">The stuff that makes "roughing it" feel like a lie.</p>
+                                </div>
+                                <div class="bg-white rounded-lg px-4 py-3 border border-stone-200">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-bold text-stone-700">Hot Tub &#9832;</span>
+                                        <div class="mini-star-row">
+                                            <input type="radio" name="rating_hottub" id="hht5" value="5"><label for="hht5">★</label>
+                                            <input type="radio" name="rating_hottub" id="hht4" value="4"><label for="hht4">★</label>
+                                            <input type="radio" name="rating_hottub" id="hht3" value="3"><label for="hht3">★</label>
+                                            <input type="radio" name="rating_hottub" id="hht2" value="2"><label for="hht2">★</label>
+                                            <input type="radio" name="rating_hottub" id="hht1" value="1"><label for="hht1">★</label>
+                                        </div>
+                                    </div>
+                                    <p class="text-[10px] text-stone-400 italic mt-1">If you got wrinkly, it did its job.</p>
+                                </div>
+                                <div class="bg-white rounded-lg px-4 py-3 border border-stone-200">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-bold text-stone-700">Comfort &amp; Sleep</span>
+                                        <div class="mini-star-row">
+                                            <input type="radio" name="rating_comfort" id="hco5" value="5"><label for="hco5">★</label>
+                                            <input type="radio" name="rating_comfort" id="hco4" value="4"><label for="hco4">★</label>
+                                            <input type="radio" name="rating_comfort" id="hco3" value="3"><label for="hco3">★</label>
+                                            <input type="radio" name="rating_comfort" id="hco2" value="2"><label for="hco2">★</label>
+                                            <input type="radio" name="rating_comfort" id="hco1" value="1"><label for="hco1">★</label>
+                                        </div>
+                                    </div>
+                                    <p class="text-[10px] text-stone-400 italic mt-1">Did the creek lull you or keep you up? Both are valid.</p>
+                                </div>
+                                <div class="bg-white rounded-lg px-4 py-3 border border-stone-200">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-bold text-stone-700">The Creek &amp; Setting</span>
+                                        <div class="mini-star-row">
+                                            <input type="radio" name="rating_setting" id="hse5" value="5"><label for="hse5">★</label>
+                                            <input type="radio" name="rating_setting" id="hse4" value="4"><label for="hse4">★</label>
+                                            <input type="radio" name="rating_setting" id="hse3" value="3"><label for="hse3">★</label>
+                                            <input type="radio" name="rating_setting" id="hse2" value="2"><label for="hse2">★</label>
+                                            <input type="radio" name="rating_setting" id="hse1" value="1"><label for="hse1">★</label>
+                                        </div>
+                                    </div>
+                                    <p class="text-[10px] text-stone-400 italic mt-1">The part you'll describe to literally everyone for a month.</p>
+                                </div>
+                                <div class="bg-white rounded-lg px-4 py-3 border border-stone-200">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-bold text-stone-700">Host Communication</span>
+                                        <div class="mini-star-row">
+                                            <input type="radio" name="rating_host" id="hho5" value="5"><label for="hho5">★</label>
+                                            <input type="radio" name="rating_host" id="hho4" value="4"><label for="hho4">★</label>
+                                            <input type="radio" name="rating_host" id="hho3" value="3"><label for="hho3">★</label>
+                                            <input type="radio" name="rating_host" id="hho2" value="2"><label for="hho2">★</label>
+                                            <input type="radio" name="rating_host" id="hho1" value="1"><label for="hho1">★</label>
+                                        </div>
+                                    </div>
+                                    <p class="text-[10px] text-stone-400 italic mt-1">Were we helpful, or just enthusiastic? (Lance suspects both.)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Activities -->
+                        <div>
+                            <label class="block text-sm font-bold text-stone-700 mb-1">What did you actually do? &#128064;</label>
+                            <p class="text-xs text-stone-400 italic mb-2">"Just relaxed" is a completely legitimate and underrated life choice.</p>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Hiking" class="accent-[#A45D41]"> &#9650; Hiking</label>
+                                <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Trout Fishing" class="accent-[#A45D41]"> &#127907; Trout Fishing</label>
+                                <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Hot Tub" class="accent-[#A45D41]"> &#9832; Hot Tub</label>
+                                <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Tubing / Kayaking" class="accent-[#A45D41]"> &#128676; Tubing</label>
+                                <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Downtown Blue Ridge" class="accent-[#A45D41]"> &#127978; Downtown</label>
+                                <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Firepit / S'mores" class="accent-[#A45D41]"> &#128293; Firepit</label>
+                                <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Waterfalls" class="accent-[#A45D41]"> &#128167; Waterfalls</label>
+                                <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Board Games / Cards" class="accent-[#A45D41]"> &#127921; Games</label>
+                                <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Just Relaxed" class="accent-[#A45D41]"> &#129397; Nothing</label>
+                            </div>
+                        </div>
+                        <!-- Improve -->
+                        <div>
+                            <label class="block text-sm font-bold text-stone-700 mb-1">What could we do better? &#128064;</label>
+                            <p class="text-xs text-stone-400 italic mb-2">Honest feedback is a gift. Lance reads every word. Heather reads it after and sighs.</p>
+                            <textarea name="survey_improve" rows="2" class="maint-input text-sm" placeholder="Don't hold back. We're adults. Mostly."></textarea>
+                        </div>
+                        <!-- Return visit -->
+                        <div>
+                            <label class="block text-sm font-bold text-stone-700 mb-1">Planning to come back? &#128197;</label>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="survey-pill"><input type="radio" name="return_visit" id="hrv1" value="Already texted Lance"><label for="hrv1">&#128248; Already texted Lance</label></span>
+                                <span class="survey-pill"><input type="radio" name="return_visit" id="hrv2" value="Definitely"><label for="hrv2">&#9989; Definitely</label></span>
+                                <span class="survey-pill"><input type="radio" name="return_visit" id="hrv3" value="Probably"><label for="hrv3">&#128578; Probably</label></span>
+                                <span class="survey-pill"><input type="radio" name="return_visit" id="hrv4" value="Ask me after I unpack"><label for="hrv4">&#129300; Ask me after I unpack</label></span>
+                                <span class="survey-pill"><input type="radio" name="return_visit" id="hrv5" value="Unlikely"><label for="hrv5">&#128546; Unlikely</label></span>
+                            </div>
+                        </div>
+                        <!-- Recommend -->
+                        <div>
+                            <label class="block text-sm font-bold text-stone-700 mb-1">Would you send your people here? &#128587;</label>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="survey-pill"><input type="radio" name="recommend" id="hrec1" value="Already bragging about it"><label for="hrec1">&#128293; Already bragging</label></span>
+                                <span class="survey-pill"><input type="radio" name="recommend" id="hrec2" value="Yes, for sure"><label for="hrec2">&#128077; Yes, for sure</label></span>
+                                <span class="survey-pill"><input type="radio" name="recommend" id="hrec3" value="Maybe — I want to keep it secret"><label for="hrec3">&#129323; Keep it secret</label></span>
+                                <span class="survey-pill"><input type="radio" name="recommend" id="hrec4" value="Probably not"><label for="hrec4">&#128547; Probably not</label></span>
+                            </div>
+                        </div>
+                        <!-- Final word -->
+                        <div>
+                            <label class="block text-sm font-bold text-stone-700 mb-1">Last words? &#127908;</label>
+                            <textarea name="survey_notes" rows="2" class="maint-input text-sm" placeholder="The creek still has me. I'm not okay. (In the best way.)"></textarea>
+                        </div>
+                    </div>
+                    <!-- ===== END EXIT SURVEY ===== -->
+
                     <button type="submit" id="checkout-submit" class="w-full bg-green-900 text-white font-bold py-3 rounded hover:bg-black transition shadow-lg uppercase tracking-widest text-sm">Send Checkout Report</button>
                     <p id="checkout-sending" class="hidden text-center text-stone-500 text-sm italic">Sending... hang tight</p>
                     <p id="checkout-error" class="hidden text-center text-red-600 text-sm font-bold">Something went wrong — try texting Lance at 770.549.9358</p>
