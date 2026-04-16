@@ -282,6 +282,156 @@
                 </div>
             </div>
 
+            <hr class="border-stone-200 my-2">
+
+            <!-- ===== EXIT SURVEY ===== -->
+            <div class="bg-stone-50 border border-stone-200 rounded-xl p-6 md:p-8 space-y-7">
+
+                <div class="border-b border-stone-200 pb-4">
+                    <h2 class="text-3xl font-serif italic text-[#A45D41] mb-1">How Was Your Stay?</h2>
+                    <p class="text-xs text-stone-500 font-bold uppercase tracking-widest">Quick exit survey &mdash; takes about 60 seconds</p>
+                </div>
+
+                <!-- Overall star rating -->
+                <div>
+                    <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-3">Overall Experience</label>
+                    <div class="star-row">
+                        <input type="radio" name="rating_overall" id="os5" value="5"><label for="os5">★</label>
+                        <input type="radio" name="rating_overall" id="os4" value="4"><label for="os4">★</label>
+                        <input type="radio" name="rating_overall" id="os3" value="3"><label for="os3">★</label>
+                        <input type="radio" name="rating_overall" id="os2" value="2"><label for="os2">★</label>
+                        <input type="radio" name="rating_overall" id="os1" value="1"><label for="os1">★</label>
+                    </div>
+                </div>
+
+                <!-- Aspect mini-ratings -->
+                <div>
+                    <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-4">Rate the Details</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+                        <div class="flex items-center justify-between bg-white rounded-lg px-4 py-3 border border-stone-200">
+                            <span class="text-sm font-bold text-stone-700">Cleanliness</span>
+                            <div class="mini-star-row">
+                                <input type="radio" name="rating_clean" id="cl5" value="5"><label for="cl5">★</label>
+                                <input type="radio" name="rating_clean" id="cl4" value="4"><label for="cl4">★</label>
+                                <input type="radio" name="rating_clean" id="cl3" value="3"><label for="cl3">★</label>
+                                <input type="radio" name="rating_clean" id="cl2" value="2"><label for="cl2">★</label>
+                                <input type="radio" name="rating_clean" id="cl1" value="1"><label for="cl1">★</label>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between bg-white rounded-lg px-4 py-3 border border-stone-200">
+                            <span class="text-sm font-bold text-stone-700">Cabin Amenities</span>
+                            <div class="mini-star-row">
+                                <input type="radio" name="rating_amenities" id="am5" value="5"><label for="am5">★</label>
+                                <input type="radio" name="rating_amenities" id="am4" value="4"><label for="am4">★</label>
+                                <input type="radio" name="rating_amenities" id="am3" value="3"><label for="am3">★</label>
+                                <input type="radio" name="rating_amenities" id="am2" value="2"><label for="am2">★</label>
+                                <input type="radio" name="rating_amenities" id="am1" value="1"><label for="am1">★</label>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between bg-white rounded-lg px-4 py-3 border border-stone-200">
+                            <span class="text-sm font-bold text-stone-700">Hot Tub</span>
+                            <div class="mini-star-row">
+                                <input type="radio" name="rating_hottub" id="ht5" value="5"><label for="ht5">★</label>
+                                <input type="radio" name="rating_hottub" id="ht4" value="4"><label for="ht4">★</label>
+                                <input type="radio" name="rating_hottub" id="ht3" value="3"><label for="ht3">★</label>
+                                <input type="radio" name="rating_hottub" id="ht2" value="2"><label for="ht2">★</label>
+                                <input type="radio" name="rating_hottub" id="ht1" value="1"><label for="ht1">★</label>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between bg-white rounded-lg px-4 py-3 border border-stone-200">
+                            <span class="text-sm font-bold text-stone-700">Comfort &amp; Sleep</span>
+                            <div class="mini-star-row">
+                                <input type="radio" name="rating_comfort" id="co5" value="5"><label for="co5">★</label>
+                                <input type="radio" name="rating_comfort" id="co4" value="4"><label for="co4">★</label>
+                                <input type="radio" name="rating_comfort" id="co3" value="3"><label for="co3">★</label>
+                                <input type="radio" name="rating_comfort" id="co2" value="2"><label for="co2">★</label>
+                                <input type="radio" name="rating_comfort" id="co1" value="1"><label for="co1">★</label>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between bg-white rounded-lg px-4 py-3 border border-stone-200">
+                            <span class="text-sm font-bold text-stone-700">The Creek &amp; Setting</span>
+                            <div class="mini-star-row">
+                                <input type="radio" name="rating_setting" id="se5" value="5"><label for="se5">★</label>
+                                <input type="radio" name="rating_setting" id="se4" value="4"><label for="se4">★</label>
+                                <input type="radio" name="rating_setting" id="se3" value="3"><label for="se3">★</label>
+                                <input type="radio" name="rating_setting" id="se2" value="2"><label for="se2">★</label>
+                                <input type="radio" name="rating_setting" id="se1" value="1"><label for="se1">★</label>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between bg-white rounded-lg px-4 py-3 border border-stone-200">
+                            <span class="text-sm font-bold text-stone-700">Host Communication</span>
+                            <div class="mini-star-row">
+                                <input type="radio" name="rating_host" id="ho5" value="5"><label for="ho5">★</label>
+                                <input type="radio" name="rating_host" id="ho4" value="4"><label for="ho4">★</label>
+                                <input type="radio" name="rating_host" id="ho3" value="3"><label for="ho3">★</label>
+                                <input type="radio" name="rating_host" id="ho2" value="2"><label for="ho2">★</label>
+                                <input type="radio" name="rating_host" id="ho1" value="1"><label for="ho1">★</label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- What activities did you enjoy? -->
+                <div>
+                    <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-3">What did you do? <span class="normal-case font-normal text-stone-400">(check all that apply)</span></label>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Hiking" class="accent-[#A45D41]"> Hiking</label>
+                        <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Trout Fishing" class="accent-[#A45D41]"> Trout Fishing</label>
+                        <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Hot Tub" class="accent-[#A45D41]"> Hot Tub</label>
+                        <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Tubing / Kayaking" class="accent-[#A45D41]"> Tubing / Kayaking</label>
+                        <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Downtown Blue Ridge" class="accent-[#A45D41]"> Downtown Blue Ridge</label>
+                        <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Firepit / S'mores" class="accent-[#A45D41]"> Firepit / S'mores</label>
+                        <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Waterfalls" class="accent-[#A45D41]"> Waterfalls</label>
+                        <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Board Games / Cards" class="accent-[#A45D41]"> Board Games / Cards</label>
+                        <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Just Relaxed" class="accent-[#A45D41]"> Just Relaxed</label>
+                    </div>
+                </div>
+
+                <!-- What could be better -->
+                <div>
+                    <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-2">Anything we could do better?</label>
+                    <textarea name="survey_improve" rows="3" class="w-full p-3 input-style text-sm font-sans" placeholder="Honest feedback is a gift. We actually read this."></textarea>
+                </div>
+
+                <!-- Coming back -->
+                <div>
+                    <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-3">Planning to come back?</label>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="survey-pill"><input type="radio" name="return_visit" id="rv1" value="Already booked"><label for="rv1">&#128197; Already booked</label></span>
+                        <span class="survey-pill"><input type="radio" name="return_visit" id="rv2" value="Definitely"><label for="rv2">&#9989; Definitely</label></span>
+                        <span class="survey-pill"><input type="radio" name="return_visit" id="rv3" value="Probably"><label for="rv3">&#128578; Probably</label></span>
+                        <span class="survey-pill"><input type="radio" name="return_visit" id="rv4" value="Not sure"><label for="rv4">&#129300; Not sure</label></span>
+                        <span class="survey-pill"><input type="radio" name="return_visit" id="rv5" value="Unlikely"><label for="rv5">&#128546; Unlikely</label></span>
+                    </div>
+                </div>
+
+                <!-- Recommend -->
+                <div>
+                    <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-3">Would you recommend Weeks Creek Haven to family or friends?</label>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="survey-pill"><input type="radio" name="recommend" id="rec1" value="Without hesitation"><label for="rec1">&#128293; Without hesitation</label></span>
+                        <span class="survey-pill"><input type="radio" name="recommend" id="rec2" value="Yes"><label for="rec2">&#128077; Yes</label></span>
+                        <span class="survey-pill"><input type="radio" name="recommend" id="rec3" value="Maybe"><label for="rec3">&#129335; Maybe</label></span>
+                        <span class="survey-pill"><input type="radio" name="recommend" id="rec4" value="Probably not"><label for="rec4">&#128547; Probably not</label></span>
+                    </div>
+                </div>
+
+                <!-- Final note -->
+                <div>
+                    <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-2">Anything else you want us to know?</label>
+                    <textarea name="survey_notes" rows="2" class="w-full p-3 input-style text-sm font-sans" placeholder="A shoutout, a suggestion, a funny story from the trip..."></textarea>
+                </div>
+
+            </div>
+            <!-- ===== END EXIT SURVEY ===== -->
+
             <div class="text-center pt-8 border-t border-stone-200">
                 <button type="submit" class="logo-link group relative focus:outline-none inline-block">
                     <img src="buttons/submit.webp" loading="lazy" alt="Submit" class="wood-btn normal-img h-20 w-auto shadow-xl rounded-lg">
