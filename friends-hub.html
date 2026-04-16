@@ -230,52 +230,36 @@
     <p class="egg-hint mt-1">psst... try the konami code</p>
 </header>
 
-<!-- PWA Section: Why Install + Install Button -->
-<div id="pwa-section" class="max-w-5xl mx-auto px-4 mb-4">
-    <div class="dark-card rounded-2xl px-6 py-5">
-        <!-- Header row -->
-        <div class="flex items-center gap-3 mb-4">
-            <img src="webpic/wpaicon.png" alt="Install App" class="w-10 h-10 object-contain flex-shrink-0">
-            <div>
-                <p class="font-black text-[#d4a373] text-base uppercase tracking-wide leading-tight">Install Friends Hub on Your Phone</p>
-                <p class="text-stone-400 text-xs mt-0.5">Works like an app — no App Store needed</p>
+<!-- PWA Banner: slides up once, click × to dismiss -->
+<div id="pwa-banner">
+    <div class="dark-card border-t-2 px-5 py-4 shadow-2xl" style="border-color:rgba(164,93,65,0.6);">
+        <div class="max-w-2xl mx-auto">
+            <!-- Title row + dismiss -->
+            <div class="flex items-center gap-3 mb-3">
+                <img src="webpic/wpaicon.png" alt="Install App" class="w-9 h-9 object-contain flex-shrink-0">
+                <div class="flex-1">
+                    <p class="font-black text-[#d4a373] text-sm uppercase tracking-wide leading-tight">Install Friends Hub on Your Phone</p>
+                    <p class="text-stone-400 text-xs mt-0.5">Works like an app — offline-ready, no App Store needed</p>
+                </div>
+                <button onclick="dismissPWABanner()" class="text-stone-400 hover:text-white text-3xl leading-none font-light flex-shrink-0 ml-1" aria-label="Dismiss">&times;</button>
             </div>
-        </div>
-        <!-- Why install — benefit bullets -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
-            <div class="flex items-start gap-2">
-                <span class="text-[#d4a373] font-black mt-0.5">&#9679;</span>
-                <p class="text-stone-300 text-sm"><strong class="text-white">Works without WiFi or cell service</strong> — door codes, directions, checkout list, and all the hiking, fishing, and dining info are saved to your phone after one visit online.</p>
+            <!-- Install button row -->
+            <div id="pwa-install-row" class="flex flex-wrap gap-3 items-center">
+                <button onclick="installPWA()" class="bg-[#A45D41] hover:bg-[#8b4a32] text-white font-black text-sm uppercase tracking-widest px-5 py-2.5 rounded-full transition">&#10133; Add to Home Screen</button>
+                <span class="text-stone-500 text-xs">Your browser is ready — tap to install.</span>
             </div>
-            <div class="flex items-start gap-2">
-                <span class="text-[#d4a373] font-black mt-0.5">&#9679;</span>
-                <p class="text-stone-300 text-sm"><strong class="text-white">Opens instantly from your home screen</strong> — no browser, no typing a URL, just one tap like any other app.</p>
+            <!-- iOS manual hint -->
+            <div id="ios-pwa-hint" style="display:none;" class="mt-3">
+                <div class="bg-stone-800/60 rounded-xl px-4 py-3 border border-stone-700">
+                    <p class="text-white font-black text-sm mb-1">On iPhone / iPad (Safari):</p>
+                    <p class="text-stone-300 text-sm">Tap the <strong class="text-white">&#9633; Share</strong> button, scroll down, choose <strong class="text-white">"Add to Home Screen"</strong>, then tap <strong class="text-white">Add</strong>.</p>
+                </div>
             </div>
-            <div class="flex items-start gap-2">
-                <span class="text-[#d4a373] font-black mt-0.5">&#9679;</span>
-                <p class="text-stone-300 text-sm"><strong class="text-white">No storage bloat</strong> — tiny footprint, no download required, nothing from the App Store.</p>
+            <!-- Re-ask row -->
+            <div id="pwa-reask-row" class="flex flex-wrap gap-3 items-center mt-3" style="display:none;">
+                <button onclick="reaskInstall()" class="border border-[#A45D41] text-[#d4a373] hover:bg-[#A45D41] hover:text-white font-black text-xs uppercase tracking-widest px-5 py-2.5 rounded-full transition">Didn't get a prompt? Try again</button>
+                <span class="text-stone-500 text-xs italic">Already installed? You're all set &#10003;</span>
             </div>
-            <div class="flex items-start gap-2">
-                <span class="text-[#d4a373] font-black mt-0.5">&#9679;</span>
-                <p class="text-stone-300 text-sm"><strong class="text-white">Cell service at the cabin is sketchy</strong> — Weeks Creek Rd drops signal fast. Having this saved means you're never stuck.</p>
-            </div>
-        </div>
-        <!-- Install buttons — Android / Chrome auto-prompt -->
-        <div id="pwa-install-row" class="flex flex-wrap gap-3 items-center">
-            <button onclick="installPWA()" class="bg-[#A45D41] hover:bg-[#8b4a32] text-white font-black text-sm uppercase tracking-widest px-6 py-3 rounded-full transition">&#10133; Add to Home Screen</button>
-            <span class="text-stone-500 text-xs">Your browser is ready to install it right now.</span>
-        </div>
-        <!-- iOS manual instructions -->
-        <div id="ios-pwa-hint" style="display:none;">
-            <div class="bg-stone-800/60 rounded-xl px-4 py-3 border border-stone-700">
-                <p class="text-white font-black text-sm mb-1">On iPhone / iPad (Safari):</p>
-                <p class="text-stone-300 text-sm">Tap the <strong class="text-white">&#9633; Share</strong> button at the bottom of the screen, then scroll down and choose <strong class="text-white">"Add to Home Screen"</strong> — then tap <strong class="text-white">Add</strong> in the top corner.</p>
-            </div>
-        </div>
-        <!-- Fallback: already installed or dismissed — show a soft re-prompt button -->
-        <div id="pwa-reask-row" class="flex flex-wrap gap-3 items-center" style="display:none;">
-            <button onclick="reaskInstall()" class="border border-[#A45D41] text-[#d4a373] hover:bg-[#A45D41] hover:text-white font-black text-xs uppercase tracking-widest px-5 py-2.5 rounded-full transition">Didn't get a prompt? Try again</button>
-            <span class="text-stone-500 text-xs italic">If you already installed it, you're all set &#10003;</span>
         </div>
     </div>
 </div>
