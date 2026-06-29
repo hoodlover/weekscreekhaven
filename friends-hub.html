@@ -177,6 +177,97 @@
         }
         .sender-form-field button[type="submit"]:hover { background: #8b4a32 !important; }
 
+        /* ===== PASSCODE GATE ===== */
+        #passcode-gate {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(10, 8, 6, 0.96);
+            background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('webpic/lightbardwood.webp');
+            background-size: cover;
+            background-position: center;
+        }
+        #passcode-gate .gate-card {
+            background-color: rgba(244, 238, 224, 0.97);
+            border: 1px solid #dcd3bd;
+            border-top: 6px solid #A45D41;
+            border-radius: 1rem;
+            padding: 2.25rem 2rem;
+            max-width: 22rem;
+            width: calc(100% - 2rem);
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.7);
+        }
+        #passcode-gate h2 {
+            font-family: 'Crimson Text', serif;
+            font-style: italic;
+            color: #A45D41;
+            font-size: 2rem;
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+        }
+        #passcode-gate p.gate-sub {
+            color: #5a4a3a;
+            font-size: 0.85rem;
+            margin-bottom: 1.25rem;
+        }
+        #passcode-input {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 0.6rem;
+            text-align: center;
+            width: 100%;
+            padding: 0.75rem 0.5rem;
+            border: 2px solid #dcd3bd;
+            border-radius: 0.6rem;
+            background: #fff;
+            color: #3d3128;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        #passcode-input:focus { border-color: #A45D41; }
+        #passcode-input.shake { animation: gate-shake 0.45s; border-color: #b91c1c; }
+        @keyframes gate-shake {
+            0%,100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-6px); }
+            80% { transform: translateX(6px); }
+        }
+        #passcode-submit {
+            margin-top: 1rem;
+            background: #A45D41;
+            color: #fff;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-size: 0.8rem;
+            padding: 0.85rem 1.5rem;
+            border-radius: 2rem;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        #passcode-submit:hover { background: #8b4a32; }
+        #passcode-error {
+            margin-top: 0.75rem;
+            color: #b91c1c;
+            font-size: 0.8rem;
+            font-weight: 700;
+            min-height: 1rem;
+        }
+        .gate-hint {
+            color: #8b7d6a;
+            font-size: 0.7rem;
+            font-style: italic;
+            margin-top: 1rem;
+        }
+
         /* PWA banner */
         @keyframes pwa-slide-up {
             from { transform: translateY(100%); opacity: 0; }
@@ -197,6 +288,72 @@
     </style>
 </head>
 <body>
+
+<!-- ===== PASSCODE GATE ===== -->
+<div id="passcode-gate" role="dialog" aria-modal="true" aria-labelledby="gate-title">
+    <div class="gate-card">
+        <h2 id="gate-title">Weeks Creek Haven</h2>
+        <p class="gate-sub">Enter your 4-digit guest passcode to continue.</p>
+        <input id="passcode-input" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" autofocus>
+        <button id="passcode-submit" type="button" onclick="checkPasscode()">Unlock</button>
+        <p id="passcode-error"></p>
+        <p class="gate-hint">Hosts: Lance &amp; Heather &mdash; need help? Text 770.549.9358</p>
+    </div>
+</div>
+<script>
+    // Run BEFORE the rest of the page to avoid a flash of unlocked content.
+    (function() {
+        // Map each guest passcode to their welcome page.
+        // To add more guests later, add another entry here.
+        window.GUEST_CODES = {
+            '3220': 'sh-vip.html'   // Scott & Haley
+        };
+
+        // If they previously unlocked on this device, skip the gate.
+        var savedCode = localStorage.getItem('friends-hub-code');
+        if (savedCode && window.GUEST_CODES[savedCode]) {
+            document.getElementById('passcode-gate').style.display = 'none';
+        } else {
+            // Keep the page from scrolling underneath the gate
+            document.documentElement.style.overflow = 'hidden';
+        }
+    })();
+
+    function checkPasscode() {
+        var input = document.getElementById('passcode-input');
+        var err = document.getElementById('passcode-error');
+        var code = (input.value || '').trim();
+        if (window.GUEST_CODES[code]) {
+            localStorage.setItem('friends-hub-code', code);
+            err.textContent = '';
+            // Send them to their personalized welcome page
+            window.location.href = window.GUEST_CODES[code];
+            return;
+        }
+        // Wrong code
+        err.textContent = 'That code doesn’t match — try again.';
+        input.classList.remove('shake');
+        // Re-trigger the shake animation
+        void input.offsetWidth;
+        input.classList.add('shake');
+        input.select();
+    }
+
+    // Submit on Enter
+    document.addEventListener('DOMContentLoaded', function() {
+        var input = document.getElementById('passcode-input');
+        if (!input) return;
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') { e.preventDefault(); checkPasscode(); }
+        });
+        // Only allow digits
+        input.addEventListener('input', function() {
+            input.value = input.value.replace(/[^0-9]/g, '').slice(0, 4);
+            if (input.value.length === 4) checkPasscode();
+        });
+        input.focus();
+    });
+</script>
 
 <div id="nav-placeholder"></div>
 <script src="nav.js"></script>
