@@ -294,59 +294,65 @@
     <div class="gate-card">
         <h2 id="gate-title">Weeks Creek Haven</h2>
         <p class="gate-sub">Enter your 4-digit guest passcode to continue.</p>
-        <input id="passcode-input" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off">
+        <input id="passcode-input" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" autofocus>
         <button id="passcode-submit" type="button" onclick="checkPasscode()">Unlock</button>
         <p id="passcode-error"></p>
         <p class="gate-hint">Hosts: Lance &amp; Heather &mdash; need help? Text 770.549.9358</p>
     </div>
 </div>
 <script>
-    window.GUEST_CODES = {
-        '3220': 'sh-vip.html'   // Scott & Haley
-    };
-
+    // Run BEFORE the rest of the page to avoid a flash of unlocked content.
     (function() {
+        // Map each guest passcode to their welcome page.
+        // To add more guests later, add another entry here.
+        window.GUEST_CODES = {
+            '3220': 'sh-vip.html'   // Scott & Haley
+        };
+
+        // If they previously unlocked on this device, skip the gate.
         var savedCode = localStorage.getItem('friends-hub-code');
-        var gate = document.getElementById('passcode-gate');
         if (savedCode && window.GUEST_CODES[savedCode]) {
-            // Already unlocked on this device — remove the gate entirely so
-            // its hidden input can't steal focus from the page's forms.
-            gate.parentNode.removeChild(gate);
+            document.getElementById('passcode-gate').style.display = 'none';
+        } else {
+            // Keep the page from scrolling underneath the gate
+            document.documentElement.style.overflow = 'hidden';
+        }
+    })();
+
+    function checkPasscode() {
+        var input = document.getElementById('passcode-input');
+        var err = document.getElementById('passcode-error');
+        var code = (input.value || '').trim();
+        if (window.GUEST_CODES[code]) {
+            localStorage.setItem('friends-hub-code', code);
+            err.textContent = '';
+            // Send them to their personalized welcome page
+            window.location.href = window.GUEST_CODES[code];
             return;
         }
-        document.documentElement.style.overflow = 'hidden';
+        // Wrong code
+        err.textContent = 'That code doesn’t match — try again.';
+        input.classList.remove('shake');
+        // Re-trigger the shake animation
+        void input.offsetWidth;
+        input.classList.add('shake');
+        input.select();
+    }
 
-        function checkPasscode() {
-            var input = document.getElementById('passcode-input');
-            var err = document.getElementById('passcode-error');
-            var code = (input.value || '').trim();
-            if (window.GUEST_CODES[code]) {
-                localStorage.setItem('friends-hub-code', code);
-                err.textContent = '';
-                window.location.href = window.GUEST_CODES[code];
-                return;
-            }
-            err.textContent = 'That code doesn’t match — try again.';
-            input.classList.remove('shake');
-            void input.offsetWidth;
-            input.classList.add('shake');
-            input.select();
-        }
-        window.checkPasscode = checkPasscode;
-
-        document.addEventListener('DOMContentLoaded', function() {
-            var input = document.getElementById('passcode-input');
-            if (!input) return;
-            input.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') { e.preventDefault(); checkPasscode(); }
-            });
-            input.addEventListener('input', function() {
-                var cleaned = input.value.replace(/[^0-9]/g, '').slice(0, 4);
-                if (cleaned !== input.value) input.value = cleaned;
-            });
-            input.focus();
+    // Submit on Enter
+    document.addEventListener('DOMContentLoaded', function() {
+        var input = document.getElementById('passcode-input');
+        if (!input) return;
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') { e.preventDefault(); checkPasscode(); }
         });
-    })();
+        // Only allow digits
+        input.addEventListener('input', function() {
+            input.value = input.value.replace(/[^0-9]/g, '').slice(0, 4);
+            if (input.value.length === 4) checkPasscode();
+        });
+        input.focus();
+    });
 </script>
 
 <div id="nav-placeholder"></div>
