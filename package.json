@@ -1,8 +1,11 @@
 {
   "name": "weeks-creek-haven",
-  "version": "1.0.0",
+  "version": "25.925.1082",
   "type": "module",
   "dependencies": {
     "@vercel/blob": "latest"
+  },
+  "scripts": {
+    "version:update": "node scripts/update-version.mjs"
   }
 }

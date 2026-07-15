@@ -1,0 +1,8 @@
+{
+  "version": "25.925.1082",
+  "format": "days.hours.commits",
+  "distinctCommitDays": 25,
+  "estimatedBuildHours": 925,
+  "totalCommits": 1082,
+  "estimateMethod": "Starts at 45 minutes per commit, then adjusts upward for larger changes and commit gaps that suggest longer sessions."
+}
