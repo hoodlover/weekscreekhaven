@@ -59,36 +59,61 @@ function parseHistory() {
 }
 
 function estimateHours(commits) {
-  let hours = 0;
-  let previousTime = null;
+  const commitsByDay = new Map();
 
   for (const commit of commits) {
-    const changedLines = commit.insertions + commit.deletions;
-    const changedFiles = commit.files;
-    const commitTime = new Date(commit.date).getTime();
-
-    hours += 0.75;
-
-    if (changedLines > 150 || changedFiles > 8) hours += 0.25;
-    if (changedLines > 600 || changedFiles > 25) hours += 0.5;
-    if (changedLines > 2000 || changedFiles > 60) hours += 1;
-
-    if (previousTime !== null) {
-      const gapHours = (commitTime - previousTime) / 36e5;
-      if (gapHours > 1 && gapHours <= 4) hours += Math.min(gapHours * 0.3, 1);
-      if (gapHours > 4 && gapHours <= 12) hours += 0.75;
-    }
-
-    previousTime = commitTime;
+    const day = commit.date.slice(0, 10);
+    if (!commitsByDay.has(day)) commitsByDay.set(day, []);
+    commitsByDay.get(day).push(commit);
   }
 
-  return Math.max(1, Math.round(hours));
+  let totalHours = 0;
+
+  for (const dayCommits of commitsByDay.values()) {
+    let dailyHours = 0;
+    let session = [];
+
+    const closeSession = () => {
+      if (session.length === 0) return;
+
+      const firstTime = new Date(session[0].date).getTime();
+      const lastTime = new Date(session.at(-1).date).getTime();
+      const spanHours = (lastTime - firstTime) / 36e5;
+      const changedLines = session.reduce((sum, commit) => sum + commit.insertions + commit.deletions, 0);
+      const changedFiles = session.reduce((sum, commit) => sum + commit.files, 0);
+
+      let sessionHours = Math.max(0.75, spanHours + 0.5);
+
+      if (changedLines > 750 || changedFiles > 25) sessionHours += 0.75;
+      if (changedLines > 2500 || changedFiles > 75) sessionHours += 1.25;
+
+      dailyHours += sessionHours;
+      session = [];
+    };
+
+    for (const commit of dayCommits) {
+      const previous = session.at(-1);
+      if (previous) {
+        const gapHours = (new Date(commit.date).getTime() - new Date(previous.date).getTime()) / 36e5;
+        if (gapHours > 1.5) closeSession();
+      }
+
+      session.push(commit);
+    }
+
+    closeSession();
+
+    totalHours += Math.min(dailyHours, 10);
+  }
+
+  return Math.max(1, Math.round(totalHours));
 }
 
 const commits = parseHistory();
 const distinctDays = new Set(commits.map((commit) => commit.date.slice(0, 10))).size;
 const totalCommits = commits.length;
 const estimatedBuildHours = estimateHours(commits);
+const rawCommitHoursAt45Minutes = Math.round(totalCommits * 0.75);
 const version = `${distinctDays}.${estimatedBuildHours}.${totalCommits}`;
 
 const packagePath = join(root, 'package.json');
@@ -116,8 +141,11 @@ writeJson(buildVersionPath, {
   distinctCommitDays: distinctDays,
   estimatedBuildHours,
   totalCommits,
+  rawCommitHoursAt45Minutes,
   estimateMethod:
-    'Starts at 45 minutes per commit, then adjusts upward for larger changes and commit gaps that suggest longer sessions.',
+    'Groups commit bursts into work sessions, starts each session at 45 minutes, adds time for session span and larger changes, and caps any single day at 10 hours.',
+  interpretationNote:
+    'This repository has many auto-save/upload commits, so build hours are interpreted from clustered work sessions instead of treating every commit as a separate 45-minute work block.',
 });
 
 console.log(version);

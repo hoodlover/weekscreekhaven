@@ -1,8 +1,10 @@
 {
-  "version": "25.925.1082",
+  "version": "25.158.1083",
   "format": "days.hours.commits",
   "distinctCommitDays": 25,
-  "estimatedBuildHours": 925,
-  "totalCommits": 1082,
-  "estimateMethod": "Starts at 45 minutes per commit, then adjusts upward for larger changes and commit gaps that suggest longer sessions."
+  "estimatedBuildHours": 158,
+  "totalCommits": 1083,
+  "rawCommitHoursAt45Minutes": 812,
+  "estimateMethod": "Groups commit bursts into work sessions, starts each session at 45 minutes, adds time for session span and larger changes, and caps any single day at 10 hours.",
+  "interpretationNote": "This repository has many auto-save/upload commits, so build hours are interpreted from clustered work sessions instead of treating every commit as a separate 45-minute work block."
 }
