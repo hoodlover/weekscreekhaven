@@ -24,9 +24,15 @@ export default async function handler(request, response) {
       const action = text(request.body?.action, 30);
       if (action === 'edit-block') {
         const blockId = text(request.body?.blockId, 80);
-        const block = (await getBookingCalendar()).blocks.find((item) => item.id === blockId);
+        const calendar = await getBookingCalendar();
+        const block = calendar.blocks.find((item) => item.id === blockId);
         if (!block) return json(response, 404, { error: 'Calendar block not found.' });
-        await appendBookingRecord({ type: 'block_updated', blockId, changes: { label: text(request.body?.name, 100) || block.label, note: text(request.body?.note, 240) }, createdAt });
+        const arrival = date(request.body?.arrival);
+        const departure = date(request.body?.departure);
+        if (!arrival || !departure || departure <= arrival) return json(response, 400, { error: 'Choose a valid start and checkout date.' });
+        const conflicts = unavailableRanges(calendar).filter((range) => range.id !== blockId);
+        if (conflicts.some((range) => rangesOverlap({ arrival, departure }, range))) return json(response, 409, { error: 'Those dates overlap another reservation, booking, or owner block.' });
+        await appendBookingRecord({ type: 'block_updated', blockId, changes: { label: text(request.body?.name, 100) || block.label, note: text(request.body?.note, 240), arrival, departure }, createdAt });
         return json(response, 200, { ok: true });
       }
       if (action === 'remove-block') {
@@ -34,10 +40,20 @@ export default async function handler(request, response) {
         return json(response, 200, { ok: true });
       }
       const bookingId = text(request.body?.bookingId, 80);
-      const booking = (await getBookingCalendar()).bookings.find((item) => item.id === bookingId);
+      const calendar = await getBookingCalendar();
+      const booking = calendar.bookings.find((item) => item.id === bookingId);
       if (!booking) return json(response, 404, { error: 'Booking request not found.' });
       if (action === 'edit-booking') {
-        await appendBookingRecord({ type: 'status', bookingId, changes: { name: text(request.body?.name, 100) || booking.name, calendarNote: text(request.body?.note, 240) }, createdAt });
+        const arrival = date(request.body?.arrival);
+        const departure = date(request.body?.departure);
+        if (!arrival || !departure || departure <= arrival) return json(response, 400, { error: 'Choose a valid arrival and checkout date.' });
+        const choiceIndex = booking.status === 'pending' ? (Number(request.body?.dateChoice) === 2 ? 1 : 0) : (Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0);
+        const dateChoices = (booking.dateChoices || []).map((choice) => ({ ...choice }));
+        if (!dateChoices[choiceIndex]) return json(response, 400, { error: 'That date choice could not be found.' });
+        const conflicts = unavailableRanges(calendar).filter((range) => range.bookingId !== booking.id);
+        if (conflicts.some((range) => rangesOverlap({ arrival, departure }, range))) return json(response, 409, { error: 'Those dates overlap another reservation, booking, or owner block.' });
+        dateChoices[choiceIndex] = { arrival, departure };
+        await appendBookingRecord({ type: 'status', bookingId, changes: { name: text(request.body?.name, 100) || booking.name, calendarNote: text(request.body?.note, 240), dateChoices }, createdAt });
         return json(response, 200, { ok: true });
       }
       if (action === 'reserve-request') {
