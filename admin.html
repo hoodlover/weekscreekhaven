@@ -197,7 +197,10 @@
     }
 
     function render() {
-      const active = state.invites.filter((item) => !item.revokedAt && (!item.expiresAt || new Date(item.expiresAt) > new Date()));
+      const now = new Date();
+      const isInactive = (item) => Boolean(item.revokedAt || (item.expiresAt && new Date(item.expiresAt) <= now));
+      const orderedInvites = [...state.invites].sort((first,second) => Number(isInactive(first))-Number(isInactive(second)) || String(second.createdAt).localeCompare(String(first.createdAt)));
+      const active = orderedInvites.filter((item) => !isInactive(item));
       $('active-count').textContent = active.length;
       $('visit-count').textContent = state.access.length;
       $('recent-count').textContent = state.access.filter((item) => Date.now() - new Date(item.accessedAt) < 7*864e5).length;
@@ -206,13 +209,13 @@
       $('booking-badge').textContent=pendingCount; $('booking-badge').hidden=!pendingCount;
       $('activity-badge').textContent=unreadActivity; $('activity-badge').hidden=!unreadActivity;
       document.title=(pendingCount+unreadActivity)?`(${pendingCount+unreadActivity}) Haven Guest Access | Admin`:'Haven Guest Access | Admin';
-      $('invite-list').innerHTML = state.invites.length ? state.invites.map((invite) => {
-        const inactive = invite.revokedAt || (invite.expiresAt && new Date(invite.expiresAt) < new Date());
+      $('invite-list').innerHTML = orderedInvites.length ? orderedInvites.map((invite) => {
+        const inactive = isInactive(invite);
         const emailButton = invite.recipientEmail ? `<button class="copy" data-email-invite="${escapeHtml(invite.id)}">Email</button>` : '';
         return `<article class="invite"><div><h3>${escapeHtml(invite.label)} <span class="badge ${inactive?'off':''}">${inactive?'inactive':'active'}</span></h3><div class="meta">Created ${formatDate(invite.createdAt)}${invite.recipientEmail?`<br>${escapeHtml(invite.recipientEmail)}`:''}${invite.expiresAt?`<br>Expires ${formatDate(invite.expiresAt)}`:''}<br>${invite.accessCount} recorded entr${invite.accessCount===1?'y':'ies'}${invite.notes?` &middot; ${escapeHtml(invite.notes)}`:''}</div></div><div class="passcode"><code>${escapeHtml(invite.passcode)}</code><button class="copy" data-copy="${escapeHtml(invite.passcode)}">Copy</button>${emailButton}</div>${inactive?'<span></span>':`<button class="danger" data-revoke="${escapeHtml(invite.id)}">Revoke</button>`}</article>`;
       }).join('') : '<div class="empty">No invites yet. Create the first one on the left.</div>';
       [...document.querySelectorAll('#invite-list .invite')].forEach((card,index) => {
-        const photos = state.invites[index]?.photos || [];
+        const photos = orderedInvites[index]?.photos || [];
         if (!photos.length) return;
         const strip = document.createElement('div'); strip.className='invite-photos';
         for (const photo of photos) { const img=document.createElement('img'); img.src=`/api/invite-photo?photoId=${encodeURIComponent(photo.id)}`; img.alt=''; strip.appendChild(img); }
