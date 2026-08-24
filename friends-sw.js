@@ -1,4 +1,4 @@
-const CACHE_NAME = 'friends-hub-v9';
+const CACHE_NAME = 'friends-hub-v10';
 
 const PRECACHE_URLS = [
   '/friends-hub.html',
@@ -129,6 +129,23 @@ self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   if (url.pathname.startsWith('/api/')) return;
   if (url.hostname === 'formspree.io') return;
+
+  // Always confirm online access with the server before using an offline Hub copy.
+  // A previously authorized device may still use its cached guide when the network is unavailable.
+  if (url.pathname === '/friends-hub.html' || url.pathname === '/friends-hub') {
+    event.respondWith(
+      fetch(event.request)
+        .then(res => {
+          if (res && res.status === 200 && !res.redirected) {
+            const clone = res.clone();
+            caches.open(CACHE_NAME).then(c => c.put('/friends-hub.html', clone));
+          }
+          return res;
+        })
+        .catch(() => caches.match('/friends-hub.html'))
+    );
+    return;
+  }
 
   // For CDN resources (tailwind, google fonts, weather icons) — network first, fall back to cache
   if (url.hostname !== self.location.hostname) {

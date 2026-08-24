@@ -3,7 +3,8 @@
   "version": "25.158.1083",
   "type": "module",
   "dependencies": {
-    "@vercel/blob": "latest"
+    "@vercel/blob": "latest",
+    "@vercel/functions": "^3.9.5"
   },
   "scripts": {
     "version:update": "node scripts/update-version.mjs"

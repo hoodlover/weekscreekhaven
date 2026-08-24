@@ -115,17 +115,20 @@
         <div id="gate" class="parchment p-8 md:p-14 rounded-2xl shadow-2xl text-center max-w-md w-full border-t-8 border-green-900">
             <h1 class="text-5xl mb-3 font-serif italic text-green-900">Oh, You Got the Code?</h1>
             <p class="mb-2 text-stone-700 font-bold italic text-base">"Well then. Someone out there likes you."</p>
-            <p class="mb-8 text-stone-500 text-sm">Type it in below and let&rsquo;s get this party started. Lance did mean to send it to you.</p>
+            <p class="mb-8 text-stone-500 text-sm">Enter your name and invitation code below. Lance did mean to send it to you.</p>
 
-            <input type="password" id="passInput" placeholder="Your secret code" autofocus
+            <input type="text" id="visitorName" placeholder="Your name" autocomplete="name" autofocus
+                   class="w-full p-4 border-2 border-stone-300 rounded-lg mb-3 focus:border-green-800 outline-none text-center text-base">
+
+            <input type="password" id="passInput" placeholder="Your invitation code" autocomplete="one-time-code"
                    onkeydown="if(event.key === 'Enter') { event.preventDefault(); checkPass(); }"
                    class="w-full p-4 border-2 border-stone-300 rounded-lg mb-4 focus:border-green-800 outline-none text-center text-xl tracking-widest">
 
-            <button type="button" onclick="checkPass()" class="w-full bg-green-900 text-white font-bold py-4 rounded-lg hover:bg-black transition shadow-lg uppercase tracking-widest">
+            <button id="unlockButton" type="button" onclick="checkPass()" class="w-full bg-green-900 text-white font-bold py-4 rounded-lg hover:bg-black transition shadow-lg uppercase tracking-widest disabled:opacity-60">
                 Unlock Haven
             </button>
 
-            <p id="error" class="text-red-600 mt-6 font-bold hidden">Access Denied Sucker. Try again!</p>
+            <p id="error" class="text-red-700 mt-6 font-bold hidden" role="alert"></p>
 
             <!-- PWA install nudge -->
             <div class="mt-6 bg-stone-800 text-white rounded-xl p-4 text-left">
@@ -139,67 +142,35 @@
             </div>
         </div>
 
-        <div id="portalContent" style="display:none;" class="parchment p-10 max-w-4xl mx-auto rounded-xl shadow-xl mt-40 mb-12">
-            <h2 class="text-4xl text-green-900 mb-4">Welcome, Family &amp; Mates!</h2>
-            <p class="text-lg">You&rsquo;ve unlocked the inner circle guide for Weeks Creek Haven.</p>
-            <hr class="my-6 border-stone-300">
-            <ul class="list-disc list-inside space-y-2">
-                <li>Wifi Password: creeklife</li>
-                <li>Back Door Code: <b>222246</b></li>
-            </ul>
-            <div class="mt-6 bg-stone-800 text-white rounded-xl p-5">
-                <p class="font-black text-[#d4a373] text-sm uppercase tracking-widest mb-2">&#128241; Don&rsquo;t forget &mdash; add Friends Hub to your phone</p>
-                <p class="text-sm leading-relaxed text-stone-300">Head to <strong class="text-white">friends-hub.html</strong> and add it to your home screen. It works offline &mdash; door codes, directions, the hot tub guide &mdash; all still there when you&rsquo;ve got no cell service on Weeks Creek Rd.</p>
-                <a href="friends-hub.html" class="inline-block mt-3 bg-[#A45D41] hover:bg-stone-600 text-white font-black text-xs uppercase tracking-widest px-5 py-2 rounded-full transition">Go to Friends Hub &rarr;</a>
-            </div>
-            <button onclick="location.reload()" class="mt-8 text-sm text-stone-500 underline">Lock Vault</button>
-        </div>
     </div>
 
 <script>
-    function checkPass() {
-            const passInput = document.getElementById('passInput');
-            const pass = passInput.value.trim().toLowerCase();
-            const errorMsg = document.getElementById('error');
-            const gate = document.getElementById('gate');
-            const portalContent = document.getElementById('portalContent');
-            const container = document.getElementById('main-container');
-
-            const passwordMap = {
-                "creeklife": "reveal",           
-                "family": "contact.html",              
-                "havenvip": "welcomefam.html",      
-                "creek": "contact.html",         
-                "admin421": "friends-hub.html",
-                "reeves": "cr-vip.html",
-                "clean": "cleaningchecklist.html",
-                "team": "cleaningchecklist.html",
-                "cl": "friends-hub.html",
-                "rachael": "dylanvip.html"
-            };
-
-            if (passwordMap[pass]) {
-                if (passwordMap[pass] === "reveal") {
-                    gate.style.display = 'none';
-                    portalContent.style.display = 'block';
-                    container.classList.remove('flex', 'items-center', 'justify-center');
-                } else {
-                    window.location.href = passwordMap[pass];
-                }
-            } else {
-                // REDIRECT ON WRONG PASSWORD
-                window.location.href = "contact.html";
-                
-                /* Optional: If you want them to see the error message 
-                   for a second before redirecting, use this instead:
-                   
-                   errorMsg.classList.remove('hidden');
-                   setTimeout(() => {
-                       window.location.href = "contact.html";
-                   }, 1000); 
-                */
-            }
+    async function checkPass() {
+        const passInput = document.getElementById('passInput');
+        const visitorName = document.getElementById('visitorName');
+        const errorMsg = document.getElementById('error');
+        const button = document.getElementById('unlockButton');
+        errorMsg.classList.add('hidden');
+        button.disabled = true;
+        button.textContent = 'Checking invite...';
+        try {
+            const response = await fetch('/api/invite-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ visitorName: visitorName.value, passcode: passInput.value })
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(data.error || 'We could not check that invite. Please try again.');
+            window.location.href = data.destination || '/friends-hub.html';
+        } catch (error) {
+            errorMsg.textContent = error.message;
+            errorMsg.classList.remove('hidden');
+            passInput.select();
+        } finally {
+            button.disabled = false;
+            button.textContent = 'Unlock Haven';
         }
+    }
 
     // Basic toggle for mobile navigation
     const menuBtn = document.getElementById('mobile-menu-button');
@@ -210,6 +181,5 @@
         });
     }
 </script>
-<script>document.addEventListener("contextmenu", function(e){ e.preventDefault(); });</script>
 </body>
 </html>
