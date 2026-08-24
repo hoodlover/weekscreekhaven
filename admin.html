@@ -64,6 +64,11 @@
     .created { margin-top:16px; padding:16px; border-radius:11px; background:#ecf4ed; border:1px solid #bed2c1; }
     .created code { display:block; margin:9px 0; font-size:1rem; text-align:center; }
     .created button { width:100%; }
+    .photo-picker { border:1px dashed #bda989; background:#faf6ee; padding:13px; border-radius:10px; }
+    .photo-picker input { border:0; padding:0; background:transparent; font-size:.75rem; }
+    .photo-preview,.invite-photos { display:flex; gap:7px; margin-top:9px; flex-wrap:wrap; }
+    .photo-preview img,.invite-photos img { width:58px; height:58px; object-fit:cover; border-radius:8px; border:1px solid #d6c8b5; }
+    .upload-note { font-size:.68rem; color:var(--muted); line-height:1.4; margin:7px 0 0; }
     @media (max-width:800px) { .main-grid { grid-template-columns:1fr; } .create { position:static; } .invite { grid-template-columns:1fr; gap:9px; } .stats { grid-template-columns:1fr 1fr; } .stats .stat:last-child { grid-column:1/-1; } .section-head { align-items:flex-start; flex-direction:column; } }
   </style>
 </head>
@@ -102,13 +107,21 @@
           <p class="helper">The site makes a strong passcode for you. Send it with the guest-access link.</p>
           <label for="invite-label">Who is it for?</label>
           <input id="invite-label" placeholder="The Smith family" maxlength="80" required>
+          <label for="welcome-message">Personal welcome (optional)</label>
+          <textarea id="welcome-message" rows="4" maxlength="500" placeholder="We can&rsquo;t wait for y&rsquo;all to unplug, settle in, and enjoy the creek..."></textarea>
+          <label for="invite-photos">Welcome photos (optional)</label>
+          <div class="photo-picker">
+            <input id="invite-photos" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+            <p class="upload-note">Choose up to three photos. Large phone photos are resized automatically.</p>
+            <div id="photo-preview" class="photo-preview"></div>
+          </div>
           <label for="expires">Expires (optional)</label>
           <input id="expires" type="date">
           <label for="max-uses">Entry limit (optional)</label>
           <input id="max-uses" type="number" min="0" max="999" placeholder="Unlimited">
           <label for="notes">Private note (optional)</label>
           <textarea id="notes" rows="3" maxlength="240" placeholder="Labor Day weekend"></textarea>
-          <button class="primary" style="width:100%;margin-top:18px">Create invite</button>
+          <button id="create-submit" class="primary" style="width:100%;margin-top:18px">Create invite</button>
           <div id="create-error" class="error" hidden></div>
           <div id="created" class="created" hidden>
             <strong>Invite ready</strong>
@@ -161,6 +174,13 @@
         const inactive = invite.revokedAt || (invite.expiresAt && new Date(invite.expiresAt) < new Date());
         return `<article class="invite"><div><h3>${escapeHtml(invite.label)} <span class="badge ${inactive?'off':''}">${inactive?'inactive':'active'}</span></h3><div class="meta">Created ${formatDate(invite.createdAt)}${invite.expiresAt?`<br>Expires ${formatDate(invite.expiresAt)}`:''}<br>${invite.accessCount} recorded entr${invite.accessCount===1?'y':'ies'}${invite.notes?` · ${escapeHtml(invite.notes)}`:''}</div></div><div class="passcode"><code>${escapeHtml(invite.passcode)}</code><button class="copy" data-copy="${escapeHtml(invite.passcode)}">Copy</button></div>${inactive?'<span></span>':`<button class="danger" data-revoke="${escapeHtml(invite.id)}">Revoke</button>`}</article>`;
       }).join('') : '<div class="empty">No invites yet. Create the first one on the left.</div>';
+      [...document.querySelectorAll('#invite-list .invite')].forEach((card,index) => {
+        const photos = state.invites[index]?.photos || [];
+        if (!photos.length) return;
+        const strip = document.createElement('div'); strip.className='invite-photos';
+        for (const photo of photos) { const img=document.createElement('img'); img.src=`/api/invite-photo?photoId=${encodeURIComponent(photo.id)}`; img.alt=''; strip.appendChild(img); }
+        card.firstElementChild.appendChild(strip);
+      });
       $('activity-list').innerHTML = state.access.length ? state.access.map((entry) => `<article class="activity"><div><strong>${escapeHtml(entry.visitorName)}</strong><div class="meta">${escapeHtml(entry.inviteLabel)} · ${device(entry.userAgent)} · device ${escapeHtml(entry.ipHash)}</div></div><time>${formatDate(entry.accessedAt)}</time></article>`).join('') : '<div class="empty">Guest entries will appear here.</div>';
     }
 
@@ -169,13 +189,49 @@
       try { await request('/api/admin-login',{method:'POST',body:JSON.stringify({password:$('admin-password').value})}); $('admin-password').value=''; await load(); }
       catch(error) { $('login-error').textContent=error.message; $('login-error').hidden=false; }
     });
+    function photoDataUrl(blob) {
+      return new Promise((resolve,reject) => { const reader=new FileReader(); reader.onload=()=>resolve(reader.result); reader.onerror=reject; reader.readAsDataURL(blob); });
+    }
+    async function preparePhoto(file) {
+      const url = URL.createObjectURL(file);
+      try {
+        const image = new Image();
+        await new Promise((resolve,reject) => { image.onload=resolve; image.onerror=reject; image.src=url; });
+        const scale = Math.min(1, 1400 / Math.max(image.naturalWidth,image.naturalHeight));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1,Math.round(image.naturalWidth*scale)); canvas.height = Math.max(1,Math.round(image.naturalHeight*scale));
+        canvas.getContext('2d').drawImage(image,0,0,canvas.width,canvas.height);
+        let blob = await new Promise((resolve) => canvas.toBlob(resolve,'image/jpeg',.8));
+        if (!blob) throw new Error('That photo format could not be converted.');
+        if (blob.size > 2.7*1024*1024) blob = await new Promise((resolve) => canvas.toBlob(resolve,'image/jpeg',.58));
+        return { contentType:'image/jpeg', data:await photoDataUrl(blob) };
+      } finally { URL.revokeObjectURL(url); }
+    }
+    $('invite-photos').addEventListener('change', () => {
+      const files = [...$('invite-photos').files];
+      $('photo-preview').innerHTML = '';
+      $('create-error').hidden = true;
+      if (files.length > 3) { $('invite-photos').value=''; $('create-error').textContent='Choose no more than three photos.'; $('create-error').hidden=false; return; }
+      for (const file of files) { const img=document.createElement('img'); img.src=URL.createObjectURL(file); img.alt='Selected welcome photo'; img.onload=()=>URL.revokeObjectURL(img.src); $('photo-preview').appendChild(img); }
+    });
     $('invite-form').addEventListener('submit', async (event) => {
       event.preventDefault(); $('create-error').hidden=true; $('created').hidden=true;
+      const files = [...$('invite-photos').files];
+      const submit = $('create-submit');
+      let createdInvite = null;
       try {
+        submit.disabled=true; submit.textContent='Creating invite...';
         const expiration = $('expires').value ? new Date(`${$('expires').value}T23:59:59`).toISOString() : null;
-        const data = await request('/api/admin-invites',{method:'POST',body:JSON.stringify({label:$('invite-label').value,expiresAt:expiration,maxUses:$('max-uses').value,notes:$('notes').value})});
-        state.newInvite=data.invite; $('new-code').textContent=data.invite.passcode; $('created').hidden=false; event.target.reset(); await load();
-      } catch(error) { $('create-error').textContent=error.message; $('create-error').hidden=false; }
+        const data = await request('/api/admin-invites',{method:'POST',body:JSON.stringify({label:$('invite-label').value,welcomeMessage:$('welcome-message').value,expiresAt:expiration,maxUses:$('max-uses').value,notes:$('notes').value})});
+        createdInvite=data.invite;
+        for (let index=0;index<files.length;index++) {
+          submit.textContent=`Uploading photo ${index+1} of ${files.length}...`;
+          const prepared=await preparePhoto(files[index]);
+          await request('/api/admin-photo-upload',{method:'POST',body:JSON.stringify({inviteId:data.invite.id,...prepared})});
+        }
+        state.newInvite=data.invite; $('new-code').textContent=data.invite.passcode; event.target.reset(); $('photo-preview').innerHTML=''; await load(); $('created').hidden=false;
+      } catch(error) { $('create-error').textContent=createdInvite?`The invite was created, but a photo failed: ${error.message}`:error.message; $('create-error').hidden=false; }
+      finally { submit.disabled=false; submit.textContent='Create invite'; }
     });
     $('invite-list').addEventListener('click', async (event) => {
       const copy = event.target.closest('[data-copy]'); if(copy) { await navigator.clipboard.writeText(copy.dataset.copy); copy.textContent='Copied'; setTimeout(()=>copy.textContent='Copy',1200); }

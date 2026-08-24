@@ -7,7 +7,10 @@ function safeText(value, max = 120) {
 
 function presentInvite(invite) {
   const { hash: _hash, salt: _salt, ...safeInvite } = invite;
-  return safeInvite;
+  return {
+    ...safeInvite,
+    photos: (safeInvite.photos || []).map(({ id, createdAt }) => ({ id, createdAt })),
+  };
 }
 
 export default async function handler(request, response) {
@@ -31,7 +34,10 @@ export default async function handler(request, response) {
       const expiresAt = request.body?.expiresAt ? new Date(request.body.expiresAt).toISOString() : null;
       const invite = {
         id: crypto.randomUUID(), label, passcode, ...passcodeHash, createdAt, expiresAt,
-        notes: safeText(request.body?.notes, 240), maxUses: Math.max(0, Math.min(999, Number(request.body?.maxUses) || 0)),
+        notes: safeText(request.body?.notes, 240),
+        welcomeMessage: safeText(request.body?.welcomeMessage, 500),
+        photos: [],
+        maxUses: Math.max(0, Math.min(999, Number(request.body?.maxUses) || 0)),
       };
       await appendInviteRecord({ type: 'created', createdAt, invite });
       return json(response, 201, { invite: presentInvite(invite) });

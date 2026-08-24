@@ -50,5 +50,5 @@ export default async function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/friends-hub', '/friends-hub.html'],
+  matcher: ['/friends-hub', '/friends-hub.html', '/welcome-friends', '/welcome-friends.html'],
 };

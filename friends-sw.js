@@ -1,4 +1,4 @@
-const CACHE_NAME = 'friends-hub-v10';
+const CACHE_NAME = 'friends-hub-v11';
 
 const PRECACHE_URLS = [
   '/friends-hub.html',
@@ -132,7 +132,8 @@ self.addEventListener('fetch', event => {
 
   // Always confirm online access with the server before using an offline Hub copy.
   // A previously authorized device may still use its cached guide when the network is unavailable.
-  if (url.pathname === '/friends-hub.html' || url.pathname === '/friends-hub') {
+  if (url.pathname === '/friends-hub.html' || url.pathname === '/friends-hub' ||
+      url.pathname === '/welcome-friends.html' || url.pathname === '/welcome-friends') {
     event.respondWith(
       fetch(event.request)
         .then(res => {

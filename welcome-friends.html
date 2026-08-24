@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Your Welcome | Weeks Creek Haven</title>
+  <link rel="icon" type="image/webp" href="webpic/Weeks_Creek_Haven_Favicon.webp">
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,600;0,700;1,600&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --cream:#f4eee0; --paper:#fffaf0; --pine:#173a2c; --rust:#a45d41; --ink:#342920; --muted:#74685e; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; font-family:Montserrat,sans-serif; color:var(--ink); background:#17130f url('webpic/lightbardwood.webp') center/cover fixed; }
+    body::before { content:""; position:fixed; inset:0; background:linear-gradient(135deg,rgba(5,12,8,.78),rgba(34,21,14,.55)); z-index:-1; }
+    main { width:min(1040px,calc(100% - 28px)); margin:auto; padding:34px 0 60px; }
+    .brand { display:flex; justify-content:center; align-items:center; gap:12px; color:var(--cream); margin-bottom:24px; text-transform:uppercase; letter-spacing:.17em; font-size:.7rem; font-weight:800; }
+    .brand img { width:48px; height:48px; object-fit:cover; border-radius:50%; border:2px solid rgba(255,255,255,.55); }
+    .card { overflow:hidden; background:rgba(255,250,240,.97); border:1px solid rgba(255,255,255,.32); border-radius:24px; box-shadow:0 25px 70px rgba(0,0,0,.48); }
+    .photos { display:grid; min-height:340px; background:#2a211b; }
+    .photos.count-1 { grid-template-columns:1fr; }
+    .photos.count-2 { grid-template-columns:1fr 1fr; }
+    .photos.count-3 { grid-template-columns:1.25fr .75fr; grid-template-rows:1fr 1fr; }
+    .photos.count-3 img:first-child { grid-row:1/3; }
+    .photos img { width:100%; height:100%; min-height:170px; object-fit:cover; display:block; border:1px solid rgba(255,255,255,.1); }
+    .welcome { padding:clamp(28px,5vw,58px); text-align:center; }
+    .eyebrow { color:var(--rust); font-size:.7rem; text-transform:uppercase; letter-spacing:.22em; font-weight:800; margin-bottom:10px; }
+    h1 { margin:0; color:var(--pine); font:italic 700 clamp(2.8rem,8vw,5.7rem)/.93 'Crimson Text',serif; }
+    h2 { margin:12px 0 0; color:#5d4a3d; font:600 clamp(1.2rem,3vw,1.8rem)/1.2 'Crimson Text',serif; }
+    .message { max-width:700px; margin:24px auto; white-space:pre-line; color:var(--muted); font-size:clamp(.95rem,2vw,1.1rem); line-height:1.75; }
+    .rule { width:80px; height:3px; background:var(--rust); margin:23px auto; }
+    .enter { display:inline-block; text-decoration:none; background:var(--pine); color:white; padding:15px 27px; border-radius:999px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; font-size:.78rem; box-shadow:0 10px 24px rgba(23,58,44,.25); }
+    .enter:hover { background:#0b251a; transform:translateY(-1px); }
+    .aside { display:block; color:#8d8178; font-size:.72rem; margin-top:14px; }
+    .loading { min-height:70vh; display:grid; place-items:center; color:var(--cream); text-align:center; font-family:'Crimson Text',serif; font-size:1.5rem; }
+    .error { max-width:520px; margin:15vh auto; padding:35px; border-radius:18px; background:var(--paper); text-align:center; }
+    .error h1 { font-size:2.5rem; }
+    @media (max-width:650px) { main { padding-top:18px; } .photos { min-height:260px; } .photos.count-3 { grid-template-columns:1fr 1fr; grid-template-rows:220px 125px; } .photos.count-3 img:first-child { grid-column:1/3; grid-row:auto; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="brand"><img src="webpic/Weeks_Creek_Haven_Favicon.webp" alt=""><span>Weeks Creek Haven</span></div>
+    <div id="loading" class="loading">Getting your welcome ready...</div>
+    <article id="welcome-card" class="card" hidden>
+      <div id="photos" class="photos"></div>
+      <div class="welcome">
+        <div class="eyebrow">Someone up here is glad you came</div>
+        <h1 id="visitor-heading">Welcome</h1>
+        <h2 id="invite-label"></h2>
+        <div class="rule"></div>
+        <p id="message" class="message"></p>
+        <a class="enter" href="/friends-hub.html">Enter the Friends Hub &rarr;</a>
+        <span class="aside">Cabin details, directions, Wi-Fi, hot tub guide, and everything else await.</span>
+      </div>
+    </article>
+    <section id="error" class="error" hidden>
+      <h1>Let&rsquo;s try that again.</h1>
+      <p id="error-message"></p>
+      <a class="enter" href="/important-info.html">Return to invite sign-in</a>
+    </section>
+  </main>
+  <script>
+    const escapeText = (value) => String(value || '').trim();
+    async function loadWelcome() {
+      try {
+        const response = await fetch('/api/invite-profile', { cache:'no-store' });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || 'Your invitation could not be loaded.');
+        document.getElementById('visitor-heading').textContent = `Welcome, ${escapeText(data.visitorName)}.`;
+        document.getElementById('invite-label').textContent = escapeText(data.inviteLabel);
+        document.getElementById('message').textContent = escapeText(data.welcomeMessage) || `We made this welcome just for ${escapeText(data.inviteLabel)}. Settle in, breathe out, and make yourselves at home.`;
+        const photos = data.photos || [];
+        const photoBox = document.getElementById('photos');
+        photoBox.className = `photos count-${Math.max(1, photos.length)}`;
+        if (photos.length) {
+          photoBox.innerHTML = photos.map((photo,index) => `<img src="/api/invite-photo?photoId=${encodeURIComponent(photo.id)}" alt="Welcome photo ${index + 1}">`).join('');
+        } else {
+          photoBox.innerHTML = '<img src="gallery/creek-listening-spot.webp" alt="Weeks Creek Haven stream and bridge">';
+        }
+        document.getElementById('loading').hidden = true;
+        document.getElementById('welcome-card').hidden = false;
+      } catch (error) {
+        document.getElementById('loading').hidden = true;
+        document.getElementById('error-message').textContent = error.message;
+        document.getElementById('error').hidden = false;
+      }
+    }
+    loadWelcome();
+  </script>
+</body>
+</html>

@@ -78,6 +78,10 @@ export async function getInvites() {
     if (record.type === 'revoked' && invites.has(record.inviteId)) {
       invites.get(record.inviteId).revokedAt = record.createdAt;
     }
+    if (record.type === 'photo_added' && invites.has(record.inviteId)) {
+      const invite = invites.get(record.inviteId);
+      invite.photos = [...(invite.photos || []), record.photo].slice(0, 3);
+    }
   }
   return [...invites.values()].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
@@ -85,4 +89,26 @@ export async function getInvites() {
 export async function getAccessRecords() {
   const records = await readRecords(ACCESS_PREFIX);
   return records.sort((a, b) => b.accessedAt.localeCompare(a.accessedAt));
+}
+
+export async function uploadInvitePhoto(inviteId, buffer, contentType) {
+  ensureConfigured();
+  const extension = contentType === 'image/png' ? 'png' : contentType === 'image/webp' ? 'webp' : 'jpg';
+  const id = crypto.randomUUID();
+  const pathname = `invite-photos/${inviteId}/${id}.${extension}`;
+  await put(pathname, buffer, {
+    access: access(),
+    token: token(),
+    contentType,
+    addRandomSuffix: false,
+    cacheControlMaxAge: 3600,
+  });
+  const photo = { id, pathname, contentType, createdAt: new Date().toISOString() };
+  await appendInviteRecord({ type: 'photo_added', inviteId, photo, createdAt: photo.createdAt });
+  return photo;
+}
+
+export async function getInvitePhoto(pathname) {
+  ensureConfigured();
+  return get(pathname, { access: access(), token: token() });
 }

@@ -116,6 +116,10 @@ export function requireAdmin(request) {
   return verifySession(parseCookies(request)[ADMIN_COOKIE], 'admin');
 }
 
+export function requireInvite(request) {
+  return verifySession(parseCookies(request)[INVITE_COOKIE], 'invite');
+}
+
 export function json(response, status, body, extraHeaders = {}) {
   response.status(status);
   for (const [name, value] of Object.entries(extraHeaders)) response.setHeader(name, value);

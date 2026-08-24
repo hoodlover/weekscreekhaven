@@ -37,7 +37,7 @@ export default async function handler(request, response) {
     });
     const maxAge = 7 * 24 * 60 * 60;
     const session = createSession({ role: 'invite', inviteId: invite.id, visitorName }, maxAge);
-    return json(response, 200, { ok: true, destination: '/friends-hub.html' }, {
+    return json(response, 200, { ok: true, destination: '/welcome-friends.html' }, {
       'Set-Cookie': cookieHeader(INVITE_COOKIE, session, maxAge),
       'Cache-Control': 'no-store',
     });
