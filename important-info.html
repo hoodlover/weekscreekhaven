@@ -124,9 +124,13 @@
             <input type="text" id="visitorName" placeholder="Your name" autocomplete="name" autofocus
                    class="w-full p-4 border-2 border-stone-300 rounded-lg mb-3 focus:border-green-800 outline-none text-center text-base">
 
-            <input type="password" id="passInput" placeholder="Your invitation code" autocomplete="one-time-code"
-                   onkeydown="if(event.key === 'Enter') { event.preventDefault(); checkPass(); }"
-                   class="w-full p-4 border-2 border-stone-300 rounded-lg mb-4 focus:border-green-800 outline-none text-center text-xl tracking-widest">
+            <div class="flex items-stretch mb-4 rounded-lg border-2 border-stone-300 overflow-hidden bg-white focus-within:border-green-800">
+                <span class="flex items-center px-4 bg-stone-100 border-r border-stone-300 text-green-900 font-black text-xl tracking-wider">WCH-</span>
+                <input type="text" id="passInput" placeholder="8 letters & numbers" autocomplete="one-time-code" maxlength="8"
+                       oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'').replace(/^WCH/,'')"
+                       onkeydown="if(event.key === 'Enter') { event.preventDefault(); checkPass(); }"
+                       class="min-w-0 flex-1 p-4 outline-none text-center text-xl tracking-widest text-stone-800 uppercase">
+            </div>
 
             <button id="unlockButton" type="button" onclick="checkPass()" class="w-full bg-green-900 text-white font-bold py-4 rounded-lg hover:bg-black transition shadow-lg uppercase tracking-widest disabled:opacity-60">
                 Unlock Haven
@@ -161,7 +165,7 @@
             const response = await fetch('/api/invite-login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ visitorName: visitorName.value, passcode: passInput.value })
+                body: JSON.stringify({ visitorName: visitorName.value, passcode: `WCH-${passInput.value}` })
             });
             const data = await response.json().catch(() => ({}));
             if (!response.ok) throw new Error(data.error || 'We could not check that invite. Please try again.');

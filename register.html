@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Request a Stay | Weeks Creek Haven</title>
+  <meta name="description" content="Request two possible dates for a private stay at Weeks Creek Haven in Blue Ridge, Georgia.">
+  <link rel="icon" type="image/webp" href="webpic/Weeks_Creek_Haven_Favicon.webp">
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,600;0,700;1,600&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --pine:#173f2b; --rust:#a45d41; --cream:#f4eee0; --ink:#332820; --muted:#74685e; --line:#d9cfbf; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); font-family:Montserrat,sans-serif; background:#15110e url('webpic/barn.webp') center/cover fixed; }
+    a { color:inherit; }
+    .page { min-height:100vh; background:linear-gradient(90deg,rgba(15,12,9,.88),rgba(15,12,9,.35) 45%,rgba(15,12,9,.82)); padding:26px 16px 70px; }
+    .top { width:min(1120px,100%); margin:0 auto 24px; display:flex; justify-content:space-between; align-items:center; gap:15px; color:white; }
+    .brand { display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; font-size:.75rem; }
+    .brand img { width:48px; height:48px; border-radius:50%; border:2px solid rgba(255,255,255,.5); }
+    .home { text-decoration:none; border:1px solid rgba(255,255,255,.5); padding:10px 16px; border-radius:999px; font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:.1em; }
+    .layout { width:min(1120px,100%); margin:auto; display:grid; grid-template-columns:minmax(0,.85fr) minmax(520px,1.15fr); gap:24px; align-items:start; }
+    .intro { color:white; padding:42px 20px 20px 0; position:sticky; top:20px; }
+    .eyebrow { color:#e3b27f; text-transform:uppercase; letter-spacing:.22em; font-weight:800; font-size:.68rem; }
+    h1,h2,h3 { font-family:'Crimson Text',serif; margin:0; }
+    h1 { font-size:clamp(3.4rem,7vw,6.3rem); line-height:.83; margin:16px 0 24px; text-shadow:0 5px 24px #000; }
+    .intro>p { max-width:530px; line-height:1.7; color:#eee6dc; font-size:1rem; }
+    .steps { margin-top:28px; display:grid; gap:11px; }
+    .step { display:flex; gap:12px; align-items:flex-start; font-size:.78rem; line-height:1.55; color:#e7ddd2; }
+    .step b { display:grid; place-items:center; flex:0 0 27px; height:27px; border-radius:50%; background:var(--rust); color:white; }
+    .card { background:rgba(255,253,248,.98); border-radius:22px; padding:32px; border-top:9px solid var(--pine); box-shadow:0 24px 70px rgba(0,0,0,.45); }
+    .card h2 { font-size:2.25rem; color:var(--pine); }
+    .helper { color:var(--muted); line-height:1.55; font-size:.82rem; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+    label { display:block; font-size:.67rem; text-transform:uppercase; letter-spacing:.11em; font-weight:800; margin-top:15px; }
+    input,select,textarea { width:100%; margin-top:7px; padding:13px 14px; border:1px solid #cfc4b4; border-radius:9px; background:white; color:var(--ink); font:inherit; outline:none; }
+    input:focus,select:focus,textarea:focus { border-color:var(--rust); box-shadow:0 0 0 3px rgba(164,93,65,.13); }
+    fieldset { border:1px solid var(--line); border-radius:13px; padding:15px; margin:18px 0 0; }
+    legend { padding:0 8px; color:var(--pine); font-family:'Crimson Text',serif; font-size:1.25rem; font-weight:700; }
+    .choice { background:#f6f0e6; }
+    .check { display:flex; align-items:flex-start; gap:9px; margin-top:17px; text-transform:none; letter-spacing:0; line-height:1.5; color:var(--muted); font-weight:600; }
+    .check input { width:auto; margin:3px 0 0; accent-color:var(--pine); }
+    .honeypot { position:absolute; left:-9999px; }
+    button { width:100%; margin-top:20px; padding:15px 20px; border:0; border-radius:999px; background:var(--pine); color:white; font:800 .8rem Montserrat,sans-serif; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; box-shadow:0 8px 18px rgba(23,63,43,.25); }
+    button:disabled { opacity:.6; cursor:wait; }
+    .message { padding:13px; border-radius:9px; margin-top:14px; line-height:1.5; font-size:.82rem; font-weight:700; }
+    .error { background:#fff0f0; color:#8a2f2f; }
+    .success { background:#e8f2e9; color:#255b39; }
+    .fine { border-top:1px solid var(--line); margin-top:22px; padding-top:17px; font-size:.69rem; line-height:1.6; color:var(--muted); }
+    @media(max-width:850px) { .layout { grid-template-columns:1fr; } .intro { position:static; padding:20px 8px; } .intro h1 { max-width:650px; } }
+    @media(max-width:560px) { .grid { grid-template-columns:1fr; gap:0; } .card { padding:24px 18px; } .page { padding-inline:10px; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="top"><div class="brand"><img src="webpic/Weeks_Creek_Haven_Favicon.webp" alt="">Weeks Creek Haven</div><a class="home" href="/index.html">Home</a></header>
+    <main class="layout">
+      <section class="intro">
+        <div class="eyebrow">Private cabin stays &middot; Blue Ridge, Georgia</div>
+        <h1>Pick two.<br>We&rsquo;ll find<br>the one.</h1>
+        <p>Send us your first and second choice. We&rsquo;ll check the cabin calendar, confirm pricing, and email you personally before anything is charged.</p>
+        <div class="steps">
+          <div class="step"><b>1</b><span>Request two possible date ranges.</span></div>
+          <div class="step"><b>2</b><span>We review availability and send the approved dates and total.</span></div>
+          <div class="step"><b>3</b><span>Pay securely online to finalize the reservation.</span></div>
+        </div>
+      </section>
+
+      <form id="booking-form" class="card">
+        <div class="eyebrow">Stay request</div>
+        <h2>Tell us what might work</h2>
+        <p class="helper">Both date choices are required. This form requests a stay; it does not reserve dates or charge you.</p>
+        <div class="grid">
+          <label>Full name<input name="name" autocomplete="name" maxlength="100" required></label>
+          <label>Email address<input name="email" type="email" autocomplete="email" maxlength="160" required></label>
+          <label>Phone (optional)<input name="phone" type="tel" autocomplete="tel" maxlength="40"></label>
+          <label>Number of guests<select name="guests" required><option value="">Choose</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></label>
+        </div>
+        <fieldset class="choice"><legend>First choice</legend><div class="grid"><label>Arrival<input name="arrival1" type="date" required></label><label>Departure<input name="departure1" type="date" required></label></div></fieldset>
+        <fieldset class="choice"><legend>Second choice</legend><div class="grid"><label>Arrival<input name="arrival2" type="date" required></label><label>Departure<input name="departure2" type="date" required></label></div></fieldset>
+        <div class="grid">
+          <label>How do you know us?<select name="relationship"><option value="">Choose one</option><option>Family</option><option>Friend</option><option>Friend of a friend</option><option>Previous guest</option><option>Found the cabin online</option><option>Other</option></select></label>
+          <label>Reference (optional)<input name="reference" maxlength="160" placeholder="Who sent you our way?"></label>
+        </div>
+        <label>Anything we should know?<textarea name="notes" rows="4" maxlength="800" placeholder="Trip occasion, questions, accessibility needs, or a quick hello..."></textarea></label>
+        <label class="check"><input name="acknowledgement" type="checkbox" required><span>I understand this is a request, not a reservation. Dates and pricing are confirmed by email, and payment plus a rental agreement may be required to finalize the stay.</span></label>
+        <label class="honeypot">Website<input name="website" tabindex="-1" autocomplete="off"></label>
+        <button id="submit" type="submit">Send my date choices</button>
+        <div id="form-message" class="message" hidden role="status"></div>
+        <p class="fine">Rates will be itemized before payment and may include nightly charges, cleaning, applicable lodging taxes, and a refundable damage deposit. Cancellation terms and house rules will be provided before you commit.</p>
+      </form>
+    </main>
+  </div>
+  <script>
+    const form=document.getElementById('booking-form'); const button=document.getElementById('submit'); const message=document.getElementById('form-message');
+    const today=new Date(); today.setHours(0,0,0,0); const minimum=today.toISOString().slice(0,10);
+    document.querySelectorAll('input[type="date"]').forEach((input)=>input.min=minimum);
+    for (const pair of [['arrival1','departure1'],['arrival2','departure2']]) {
+      const arrival=form.elements[pair[0]], departure=form.elements[pair[1]];
+      arrival.addEventListener('change',()=>{ departure.min=arrival.value || minimum; if(departure.value && departure.value<=arrival.value) departure.value=''; });
+    }
+    form.addEventListener('submit',async(event)=>{
+      event.preventDefault(); button.disabled=true; button.textContent='Sending request...'; message.hidden=true;
+      const payload=Object.fromEntries(new FormData(form));
+      try {
+        const response=await fetch('/api/booking-requests',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+        const data=await response.json().catch(()=>({})); if(!response.ok) throw new Error(data.error || 'We could not send your request.');
+        form.reset(); message.className='message success'; message.textContent=data.confirmationSent?'Your request is in. Check your email for confirmation.':'Your request is in. We’ll email you after we review the dates.'; message.hidden=false;
+      } catch(error) { message.className='message error'; message.textContent=error.message; message.hidden=false; }
+      finally { button.disabled=false; button.textContent='Send my date choices'; }
+    });
+  </script>
+</body>
+</html>

@@ -70,6 +70,17 @@
     .photo-preview,.invite-photos { display:flex; gap:7px; margin-top:9px; flex-wrap:wrap; }
     .photo-preview img,.invite-photos img { width:58px; height:58px; object-fit:cover; border-radius:8px; border:1px solid #d6c8b5; }
     .upload-note { font-size:.68rem; color:var(--muted); line-height:1.4; margin:7px 0 0; }
+    .checkline { display:flex; align-items:flex-start; gap:9px; margin:10px 0 0; font-size:.72rem; font-weight:600; letter-spacing:0; text-transform:none; line-height:1.45; color:var(--muted); }
+    .checkline input { width:auto; margin-top:2px; accent-color:var(--pine); }
+    .booking { padding:18px 0; border-bottom:1px solid #e9e1d5; }
+    .booking:last-child { border-bottom:0; }
+    .booking-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+    .booking-dates { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:12px 0; }
+    .date-choice { padding:10px; background:#f5efe5; border-radius:8px; font-size:.75rem; line-height:1.5; }
+    .booking-actions { display:flex; align-items:end; gap:8px; flex-wrap:wrap; }
+    .booking-actions label { margin:0; flex:1; min-width:110px; }
+    .booking-actions input,.booking-actions select { margin-top:6px; }
+    .status-pending { background:#fff0cc; color:#76530c; } .status-approved { background:#e0efe5; color:#276141; } .status-declined { background:#f2dddd; color:#842e2e; }
     @media (max-width:800px) { .main-grid { grid-template-columns:1fr; } .create { position:static; } .invite { grid-template-columns:1fr; gap:9px; } .stats { grid-template-columns:1fr 1fr; } .stats .stat:last-child { grid-column:1/-1; } .section-head { align-items:flex-start; flex-direction:column; } }
   </style>
 </head>
@@ -112,6 +123,9 @@
           <p class="helper">The site makes a strong passcode for you. Send it with the guest-access link.</p>
           <label for="invite-label">Who is it for?</label>
           <input id="invite-label" placeholder="The Smith family" maxlength="80" required>
+          <label for="recipient-email">Guest email (optional)</label>
+          <input id="recipient-email" type="email" placeholder="friend@example.com" autocomplete="off" maxlength="160">
+          <label class="checkline"><input id="send-invite-email" type="checkbox" checked> Email the invitation as soon as it is created</label>
           <label for="welcome-message">Personal welcome (optional)</label>
           <textarea id="welcome-message" rows="5" maxlength="500">Welcome to Weeks Creek Haven! We&rsquo;re so glad you&rsquo;re here. Make yourselves at home, slow down, listen to the creek, and enjoy your time in the mountains. We hope this place feels like your own little getaway while you&rsquo;re here.</textarea>
           <label for="invite-photos">Welcome photos (optional)</label>
@@ -137,16 +151,17 @@
         <section class="panel content">
           <div class="section-head">
             <div><div class="eyebrow">At a glance</div><h2>Invites &amp; activity</h2></div>
-            <div class="tabs"><button class="tab active" data-tab="invites">Invites</button><button class="tab" data-tab="activity">Activity</button></div>
+            <div class="tabs"><button class="tab active" data-tab="invites">Invites</button><button class="tab" data-tab="bookings">Bookings</button><button class="tab" data-tab="activity">Activity</button></div>
           </div>
           <div id="panel-invites" class="tab-panel active"><div id="invite-list"></div></div>
+          <div id="panel-bookings" class="tab-panel"><div id="booking-list"></div></div>
           <div id="panel-activity" class="tab-panel"><div id="activity-list"></div></div>
         </section>
       </div>
     </section>
   </main>
   <script>
-    const state = { invites: [], access: [], newInvite: null };
+    const state = { invites: [], access: [], bookings: [], newInvite: null };
     const $ = (id) => document.getElementById(id);
     const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
     const formatDate = (value) => value ? new Intl.DateTimeFormat(undefined,{dateStyle:'medium',timeStyle:'short'}).format(new Date(value)) : 'Never';
@@ -161,8 +176,9 @@
 
     async function load() {
       try {
-        const data = await request('/api/admin-invites');
+        const [data, bookingData] = await Promise.all([request('/api/admin-invites'), request('/api/admin-bookings')]);
         state.invites = data.invites; state.access = data.access;
+        state.bookings = bookingData.bookings || [];
         $('login').style.display = 'none'; $('dashboard').style.display = 'block'; $('open-hub').hidden = false; $('logout').hidden = false;
         render();
       } catch (error) {
@@ -177,7 +193,8 @@
       $('recent-count').textContent = state.access.filter((item) => Date.now() - new Date(item.accessedAt) < 7*864e5).length;
       $('invite-list').innerHTML = state.invites.length ? state.invites.map((invite) => {
         const inactive = invite.revokedAt || (invite.expiresAt && new Date(invite.expiresAt) < new Date());
-        return `<article class="invite"><div><h3>${escapeHtml(invite.label)} <span class="badge ${inactive?'off':''}">${inactive?'inactive':'active'}</span></h3><div class="meta">Created ${formatDate(invite.createdAt)}${invite.expiresAt?`<br>Expires ${formatDate(invite.expiresAt)}`:''}<br>${invite.accessCount} recorded entr${invite.accessCount===1?'y':'ies'}${invite.notes?` · ${escapeHtml(invite.notes)}`:''}</div></div><div class="passcode"><code>${escapeHtml(invite.passcode)}</code><button class="copy" data-copy="${escapeHtml(invite.passcode)}">Copy</button></div>${inactive?'<span></span>':`<button class="danger" data-revoke="${escapeHtml(invite.id)}">Revoke</button>`}</article>`;
+        const emailButton = invite.recipientEmail ? `<button class="copy" data-email-invite="${escapeHtml(invite.id)}">Email</button>` : '';
+        return `<article class="invite"><div><h3>${escapeHtml(invite.label)} <span class="badge ${inactive?'off':''}">${inactive?'inactive':'active'}</span></h3><div class="meta">Created ${formatDate(invite.createdAt)}${invite.recipientEmail?`<br>${escapeHtml(invite.recipientEmail)}`:''}${invite.expiresAt?`<br>Expires ${formatDate(invite.expiresAt)}`:''}<br>${invite.accessCount} recorded entr${invite.accessCount===1?'y':'ies'}${invite.notes?` &middot; ${escapeHtml(invite.notes)}`:''}</div></div><div class="passcode"><code>${escapeHtml(invite.passcode)}</code><button class="copy" data-copy="${escapeHtml(invite.passcode)}">Copy</button>${emailButton}</div>${inactive?'<span></span>':`<button class="danger" data-revoke="${escapeHtml(invite.id)}">Revoke</button>`}</article>`;
       }).join('') : '<div class="empty">No invites yet. Create the first one on the left.</div>';
       [...document.querySelectorAll('#invite-list .invite')].forEach((card,index) => {
         const photos = state.invites[index]?.photos || [];
@@ -187,6 +204,11 @@
         card.firstElementChild.appendChild(strip);
       });
       $('activity-list').innerHTML = state.access.length ? state.access.map((entry) => `<article class="activity"><div><strong>${escapeHtml(entry.visitorName)}</strong><div class="meta">${escapeHtml(entry.inviteLabel)} · ${device(entry.userAgent)} · device ${escapeHtml(entry.ipHash)}</div></div><time>${formatDate(entry.accessedAt)}</time></article>`).join('') : '<div class="empty">Guest entries will appear here.</div>';
+      $('booking-list').innerHTML = state.bookings.length ? state.bookings.map((booking) => {
+        const dates = booking.dateChoices || [];
+        const status = booking.status || 'pending';
+        return `<article class="booking"><div class="booking-head"><div><h3>${escapeHtml(booking.name)}</h3><div class="meta">${escapeHtml(booking.email)}${booking.phone?` &middot; ${escapeHtml(booking.phone)}`:''}<br>${booking.guests} guest${booking.guests===1?'':'s'}${booking.relationship?` &middot; ${escapeHtml(booking.relationship)}`:''}${booking.reference?`<br>Reference: ${escapeHtml(booking.reference)}`:''}</div></div><span class="badge status-${escapeHtml(status)}">${escapeHtml(status)}</span></div><div class="booking-dates">${dates.map((date,index)=>`<div class="date-choice"><strong>Choice ${index+1}</strong><br>${escapeHtml(date.arrival)} to ${escapeHtml(date.departure)}</div>`).join('')}</div>${booking.notes?`<div class="meta">${escapeHtml(booking.notes)}</div>`:''}${status==='pending'?`<div class="booking-actions"><label>Approve dates<select data-booking-choice><option value="1">Choice 1</option><option value="2">Choice 2</option></select></label><label>Total to collect<input data-booking-amount type="number" min="1" step="0.01" placeholder="$ total"></label><button class="primary" data-approve-booking="${escapeHtml(booking.id)}">Approve &amp; email payment</button><button class="danger" data-decline-booking="${escapeHtml(booking.id)}">Decline</button></div>`:booking.paymentUrl?`<p class="meta"><a href="${escapeHtml(booking.paymentUrl)}" target="_blank" rel="noopener">Open Square payment link</a></p>`:''}</article>`;
+      }).join('') : '<div class="empty">New registration requests will appear here.</div>';
     }
 
     $('login-form').addEventListener('submit', async (event) => {
@@ -227,20 +249,43 @@
       try {
         submit.disabled=true; submit.textContent='Creating invite...';
         const expiration = $('expires').value ? new Date(`${$('expires').value}T23:59:59`).toISOString() : null;
-        const data = await request('/api/admin-invites',{method:'POST',body:JSON.stringify({label:$('invite-label').value,welcomeMessage:$('welcome-message').value,expiresAt:expiration,maxUses:$('max-uses').value,notes:$('notes').value})});
+        const recipientEmail = $('recipient-email').value.trim();
+        const shouldEmail = recipientEmail && $('send-invite-email').checked;
+        const data = await request('/api/admin-invites',{method:'POST',body:JSON.stringify({label:$('invite-label').value,recipientEmail,welcomeMessage:$('welcome-message').value,expiresAt:expiration,maxUses:$('max-uses').value,notes:$('notes').value})});
         createdInvite=data.invite;
         for (let index=0;index<files.length;index++) {
           submit.textContent=`Uploading photo ${index+1} of ${files.length}...`;
           const prepared=await preparePhoto(files[index]);
           await request('/api/admin-photo-upload',{method:'POST',body:JSON.stringify({inviteId:data.invite.id,...prepared})});
         }
+        if (shouldEmail) {
+          submit.textContent='Sending invitation...';
+          await request('/api/admin-send-invite',{method:'POST',body:JSON.stringify({inviteId:data.invite.id,recipientEmail})});
+        }
         state.newInvite=data.invite; $('new-code').textContent=data.invite.passcode; event.target.reset(); $('photo-preview').innerHTML=''; await load(); $('created').hidden=false;
-      } catch(error) { $('create-error').textContent=createdInvite?`The invite was created, but a photo failed: ${error.message}`:error.message; $('create-error').hidden=false; }
+        $('created').querySelector('strong').textContent = shouldEmail ? 'Invite ready and emailed' : 'Invite ready';
+      } catch(error) {
+        if (createdInvite) { state.newInvite=createdInvite; $('new-code').textContent=createdInvite.passcode; $('created').querySelector('strong').textContent='Invite created'; $('created').hidden=false; await load().catch(()=>{}); }
+        $('create-error').textContent=createdInvite?`The invite was created, but the last step failed: ${error.message}`:error.message; $('create-error').hidden=false;
+      }
       finally { submit.disabled=false; submit.textContent='Create invite'; }
     });
     $('invite-list').addEventListener('click', async (event) => {
       const copy = event.target.closest('[data-copy]'); if(copy) { await navigator.clipboard.writeText(copy.dataset.copy); copy.textContent='Copied'; setTimeout(()=>copy.textContent='Copy',1200); }
+      const emailInvite = event.target.closest('[data-email-invite]'); if(emailInvite) { emailInvite.disabled=true; try { await request('/api/admin-send-invite',{method:'POST',body:JSON.stringify({inviteId:emailInvite.dataset.emailInvite})}); emailInvite.textContent='Sent'; } catch(error) { alert(error.message); emailInvite.textContent='Email'; } finally { emailInvite.disabled=false; } }
       const revoke = event.target.closest('[data-revoke]'); if(revoke && confirm('Revoke this invite? It will stop working immediately.')) { await request('/api/admin-invites',{method:'PATCH',body:JSON.stringify({inviteId:revoke.dataset.revoke})}); await load(); }
+    });
+    $('booking-list').addEventListener('click', async (event) => {
+      const approve = event.target.closest('[data-approve-booking]');
+      if (approve) {
+        const actions=approve.closest('.booking-actions'); const amount=actions.querySelector('[data-booking-amount]').value; const dateChoice=actions.querySelector('[data-booking-choice]').value;
+        if (!amount) { alert('Enter the total amount to collect first.'); return; }
+        approve.disabled=true; approve.textContent='Creating payment...';
+        try { await request('/api/admin-bookings',{method:'PATCH',body:JSON.stringify({action:'approve',bookingId:approve.dataset.approveBooking,amount,dateChoice})}); await load(); }
+        catch(error) { alert(error.message); approve.disabled=false; approve.textContent='Approve & email payment'; }
+      }
+      const decline=event.target.closest('[data-decline-booking]');
+      if (decline && confirm('Decline both date choices and email the guest?')) { decline.disabled=true; try { await request('/api/admin-bookings',{method:'PATCH',body:JSON.stringify({action:'decline',bookingId:decline.dataset.declineBooking})}); await load(); } catch(error) { alert(error.message); decline.disabled=false; } }
     });
     $('copy-invite').addEventListener('click', async () => {
       if(!state.newInvite) return;

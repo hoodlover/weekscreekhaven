@@ -5,6 +5,11 @@ function safeText(value, max = 120) {
   return String(value || '').trim().slice(0, max);
 }
 
+function safeEmail(value) {
+  const email = safeText(value, 160).toLowerCase();
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : '';
+}
+
 function presentInvite(invite) {
   const { hash: _hash, salt: _salt, ...safeInvite } = invite;
   return {
@@ -35,6 +40,7 @@ export default async function handler(request, response) {
       const invite = {
         id: crypto.randomUUID(), label, passcode, ...passcodeHash, createdAt, expiresAt,
         notes: safeText(request.body?.notes, 240),
+        recipientEmail: safeEmail(request.body?.recipientEmail),
         welcomeMessage: safeText(request.body?.welcomeMessage, 500),
         photos: [],
         maxUses: Math.max(0, Math.min(999, Number(request.body?.maxUses) || 0)),
