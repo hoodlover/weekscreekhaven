@@ -39,6 +39,7 @@
     .day-number { font-size:.72rem; font-weight:800; margin-bottom:5px; }
     .event { display:block; width:100%; border:0; text-align:left; border-radius:5px; margin:3px 0; padding:5px 6px; font-size:.6rem; line-height:1.25; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#251d17; }
     .event.request { background:var(--request); } .event.reserved { background:var(--reserved); color:#102b39; } .event.booked { background:var(--booked); color:white; } .event.blocked { background:var(--blocked); color:white; }
+    .event.checkout { background:transparent; color:var(--muted); border:1px dashed currentColor; }
     .sidebar { display:grid; gap:15px; }
     .side-panel { padding:20px; }
     .side-panel h3 { color:var(--pine); font-size:1.55rem; }
@@ -103,8 +104,8 @@
     function render(){
       $('month-title').textContent=new Intl.DateTimeFormat(undefined,{month:'long',year:'numeric'}).format(state.month);
       const start=new Date(state.month); start.setDate(1-start.getDay()); const all=events(); const today=key(new Date()); let html='';
-      for(let index=0;index<42;index++){ const date=new Date(start); date.setDate(start.getDate()+index); const dateKey=key(date); const outside=date.getMonth()!==state.month.getMonth(); const dayEvents=all.filter(event=>dateKey>=event.arrival&&dateKey<event.departure);
-        html+=`<div class="day ${outside?'outside':''} ${dateKey===today?'today':''}"><div class="day-number">${date.getDate()}</div>${dayEvents.map(event=>`<div class="event ${event.type}" title="${esc(event.label)}">${esc(event.label)}</div>`).join('')}</div>`;
+      for(let index=0;index<42;index++){ const date=new Date(start); date.setDate(start.getDate()+index); const dateKey=key(date); const outside=date.getMonth()!==state.month.getMonth(); const dayEvents=all.filter(event=>dateKey>=event.arrival&&dateKey<=event.departure);
+        html+=`<div class="day ${outside?'outside':''} ${dateKey===today?'today':''}"><div class="day-number">${date.getDate()}</div>${dayEvents.map(event=>{ const checkout=dateKey===event.departure; return `<div class="event ${event.type} ${checkout?'checkout':''}" title="${esc(event.label)}${checkout?' checkout':''}">${checkout?'Checkout · ':''}${esc(event.label)}</div>`; }).join('')}</div>`;
       }
       $('calendar').innerHTML=html;
       const upcoming=all.filter(event=>event.departure>=today).sort((a,b)=>a.arrival.localeCompare(b.arrival));
