@@ -53,6 +53,7 @@ export async function getBookingCalendar() {
       Object.assign(requests.get(record.bookingId), record.changes);
     }
     if (record.type === 'block_created') blocks.set(record.block.id, record.block);
+    if (record.type === 'block_updated' && blocks.has(record.blockId)) Object.assign(blocks.get(record.blockId), record.changes);
     if (record.type === 'block_removed') blocks.delete(record.blockId);
   }
   return {
