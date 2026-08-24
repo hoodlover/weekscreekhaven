@@ -1,4 +1,4 @@
-import { appendBookingRecord, getBookingRequests } from '../_lib/booking-store.js';
+import { appendBookingRecord, getBookingCalendar, getBookingRequests, rangesOverlap, unavailableRanges } from '../_lib/booking-store.js';
 import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
 import { json, requireAdmin } from '../_lib/security.js';
 import { createSquarePaymentLink } from '../_lib/square.js';
@@ -19,10 +19,13 @@ export default async function handler(request, response) {
       const amountCents = Math.round(Number(request.body?.amount) * 100);
       const approvedChoice = Number(request.body?.dateChoice) === 2 ? 1 : 0;
       if (!Number.isInteger(amountCents) || amountCents < 100) return json(response, 400, { error: 'Enter the total amount to collect.' });
+      const requestedDates = booking.dateChoices?.[approvedChoice];
+      const conflicts = unavailableRanges(await getBookingCalendar()).filter((range) => range.bookingId !== booking.id);
+      if (!requestedDates || conflicts.some((range) => rangesOverlap(requestedDates, range))) return json(response, 409, { error: 'Those dates are no longer available. Choose the other date option or update the calendar.' });
       const payment = await createSquarePaymentLink({ bookingId: booking.id, guestName: booking.name, email: booking.email, amountCents });
-      const changes = { status: 'approved', approvedAt: createdAt, approvedChoice, amountCents, paymentUrl: payment.url, squarePaymentLinkId: payment.id, squareOrderId: payment.orderId };
+      const changes = { status: 'reserved', approvedAt: createdAt, approvedChoice, amountCents, paymentUrl: payment.url, squarePaymentLinkId: payment.id, squareOrderId: payment.orderId };
       await appendBookingRecord({ type: 'status', bookingId: booking.id, changes, createdAt });
-      const dates = booking.dateChoices[approvedChoice];
+      const dates = requestedDates;
       const safeName = escapeEmailHtml(booking.name);
       await sendEmail({
         to: booking.email, toName: booking.name, subject: 'Your Weeks Creek Haven dates are approved',

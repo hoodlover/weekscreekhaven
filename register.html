@@ -36,6 +36,7 @@
     fieldset { border:1px solid var(--line); border-radius:13px; padding:15px; margin:18px 0 0; }
     legend { padding:0 8px; color:var(--pine); font-family:'Crimson Text',serif; font-size:1.25rem; font-weight:700; }
     .choice { background:#f6f0e6; }
+    .choice.unavailable { border-color:#a33b35; background:#fff0f0; box-shadow:0 0 0 3px #a33b351a; }
     .check { display:flex; align-items:flex-start; gap:9px; margin-top:17px; text-transform:none; letter-spacing:0; line-height:1.5; color:var(--muted); font-weight:600; }
     .check input { width:auto; margin:3px 0 0; accent-color:var(--pine); }
     .honeypot { position:absolute; left:-9999px; }
@@ -74,8 +75,8 @@
           <label>Phone (optional)<input name="phone" type="tel" autocomplete="tel" maxlength="40"></label>
           <label>Number of guests<select name="guests" required><option value="">Choose</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></label>
         </div>
-        <fieldset class="choice"><legend>First choice</legend><div class="grid"><label>Arrival<input name="arrival1" type="date" required></label><label>Departure<input name="departure1" type="date" required></label></div></fieldset>
-        <fieldset class="choice"><legend>Second choice</legend><div class="grid"><label>Arrival<input name="arrival2" type="date" required></label><label>Departure<input name="departure2" type="date" required></label></div></fieldset>
+        <fieldset id="choice-1" class="choice"><legend>First choice</legend><div class="grid"><label>Arrival<input name="arrival1" type="date" required></label><label>Departure<input name="departure1" type="date" required></label></div></fieldset>
+        <fieldset id="choice-2" class="choice"><legend>Second choice</legend><div class="grid"><label>Arrival<input name="arrival2" type="date" required></label><label>Departure<input name="departure2" type="date" required></label></div></fieldset>
         <div class="grid">
           <label>How do you know us?<select name="relationship"><option value="">Choose one</option><option>Family</option><option>Friend</option><option>Friend of a friend</option><option>Previous guest</option><option>Found the cabin online</option><option>Other</option></select></label>
           <label>Reference (optional)<input name="reference" maxlength="160" placeholder="Who sent you our way?"></label>
@@ -98,13 +99,13 @@
       arrival.addEventListener('change',()=>{ departure.min=arrival.value || minimum; if(departure.value && departure.value<=arrival.value) departure.value=''; });
     }
     form.addEventListener('submit',async(event)=>{
-      event.preventDefault(); button.disabled=true; button.textContent='Sending request...'; message.hidden=true;
+      event.preventDefault(); button.disabled=true; button.textContent='Sending request...'; message.hidden=true; document.querySelectorAll('.choice').forEach((choice)=>choice.classList.remove('unavailable'));
       const payload=Object.fromEntries(new FormData(form));
       try {
         const response=await fetch('/api/booking-requests',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-        const data=await response.json().catch(()=>({})); if(!response.ok) throw new Error(data.error || 'We could not send your request.');
+        const data=await response.json().catch(()=>({})); if(!response.ok) { const error=new Error(data.error || 'We could not send your request.'); error.unavailableChoices=data.unavailableChoices; throw error; }
         form.reset(); message.className='message success'; message.textContent=data.confirmationSent?'Your request is in. Check your email for confirmation.':'Your request is in. We’ll email you after we review the dates.'; message.hidden=false;
-      } catch(error) { message.className='message error'; message.textContent=error.message; message.hidden=false; }
+      } catch(error) { if(Array.isArray(error.unavailableChoices)) error.unavailableChoices.forEach((blocked,index)=>{ if(blocked) document.getElementById(`choice-${index+1}`).classList.add('unavailable'); }); message.className='message error'; message.textContent=error.message; message.hidden=false; }
       finally { button.disabled=false; button.textContent='Send my date choices'; }
     });
   </script>

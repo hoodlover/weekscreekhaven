@@ -27,7 +27,7 @@ export async function appendBookingRecord(record) {
   return record;
 }
 
-export async function getBookingRequests() {
+async function getRecords() {
   ensureConfigured();
   const records = [];
   let cursor;
@@ -40,13 +40,41 @@ export async function getBookingRequests() {
     cursor = page.hasMore ? page.cursor : undefined;
   } while (cursor);
 
-  records.sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)));
+  return records.sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)));
+}
+
+export async function getBookingCalendar() {
+  const records = await getRecords();
   const requests = new Map();
+  const blocks = new Map();
   for (const record of records) {
     if (record.type === 'requested') requests.set(record.booking.id, record.booking);
     if (record.type === 'status' && requests.has(record.bookingId)) {
       Object.assign(requests.get(record.bookingId), record.changes);
     }
+    if (record.type === 'block_created') blocks.set(record.block.id, record.block);
+    if (record.type === 'block_removed') blocks.delete(record.blockId);
   }
-  return [...requests.values()].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  return {
+    bookings: [...requests.values()].sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
+    blocks: [...blocks.values()].sort((a, b) => a.arrival.localeCompare(b.arrival)),
+  };
+}
+
+export async function getBookingRequests() {
+  return (await getBookingCalendar()).bookings;
+}
+
+export function rangesOverlap(first, second) {
+  return first.arrival < second.departure && second.arrival < first.departure;
+}
+
+export function unavailableRanges(calendar) {
+  const bookingRanges = calendar.bookings.flatMap((booking) => {
+    const status = booking.status === 'approved' ? 'reserved' : booking.status;
+    if (!['reserved', 'booked'].includes(status)) return [];
+    const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0];
+    return dates ? [{ ...dates, type: status, label: booking.name, bookingId: booking.id }] : [];
+  });
+  return [...bookingRanges, ...calendar.blocks.map((block) => ({ ...block, type: 'blocked' }))];
 }

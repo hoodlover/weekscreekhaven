@@ -80,7 +80,7 @@
     .booking-actions { display:flex; align-items:end; gap:8px; flex-wrap:wrap; }
     .booking-actions label { margin:0; flex:1; min-width:110px; }
     .booking-actions input,.booking-actions select { margin-top:6px; }
-    .status-pending { background:#fff0cc; color:#76530c; } .status-approved { background:#e0efe5; color:#276141; } .status-declined { background:#f2dddd; color:#842e2e; }
+    .status-pending { background:#fff0cc; color:#76530c; } .status-approved,.status-reserved { background:#dceaf4; color:#285b79; } .status-booked { background:#e0efe5; color:#276141; } .status-declined,.status-cancelled { background:#f2dddd; color:#842e2e; }
     @media (max-width:800px) { .main-grid { grid-template-columns:1fr; } .create { position:static; } .invite { grid-template-columns:1fr; gap:9px; } .stats { grid-template-columns:1fr 1fr; } .stats .stat:last-child { grid-column:1/-1; } .section-head { align-items:flex-start; flex-direction:column; } }
   </style>
 </head>
@@ -93,6 +93,7 @@
       </div>
       <div class="top-actions">
         <a href="/index.html" class="ghost" style="text-decoration:none">Home</a>
+        <a id="open-calendar" href="/calendar.html" class="ghost" style="text-decoration:none" hidden>Calendar</a>
         <a id="open-hub" href="/friends-hub.html" class="ghost" style="text-decoration:none" hidden>Open Friends Hub</a>
         <button id="logout" class="ghost" hidden>Sign out</button>
       </div>
@@ -150,7 +151,7 @@
         </form>
         <section class="panel content">
           <div class="section-head">
-            <div><div class="eyebrow">At a glance</div><h2>Invites &amp; activity</h2></div>
+            <div><div class="eyebrow">At a glance</div><h2>Invites, bookings &amp; activity</h2></div>
             <div class="tabs"><button class="tab active" data-tab="invites">Invites</button><button class="tab" data-tab="bookings">Bookings</button><button class="tab" data-tab="activity">Activity</button></div>
           </div>
           <div id="panel-invites" class="tab-panel active"><div id="invite-list"></div></div>
@@ -179,7 +180,7 @@
         const [data, bookingData] = await Promise.all([request('/api/admin-invites'), request('/api/admin-bookings')]);
         state.invites = data.invites; state.access = data.access;
         state.bookings = bookingData.bookings || [];
-        $('login').style.display = 'none'; $('dashboard').style.display = 'block'; $('open-hub').hidden = false; $('logout').hidden = false;
+        $('login').style.display = 'none'; $('dashboard').style.display = 'block'; $('open-calendar').hidden = false; $('open-hub').hidden = false; $('logout').hidden = false;
         render();
       } catch (error) {
         if (error.status !== 401) { $('login-error').textContent = error.message; $('login-error').hidden = false; }

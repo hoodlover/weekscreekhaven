@@ -1,4 +1,4 @@
-import { appendBookingRecord } from '../_lib/booking-store.js';
+import { appendBookingRecord, getBookingCalendar, rangesOverlap, unavailableRanges } from '../_lib/booking-store.js';
 import { emailConfigured, escapeEmailHtml, sendEmail } from '../_lib/email.js';
 import { json } from '../_lib/security.js';
 
@@ -31,6 +31,12 @@ export default async function handler(request, response) {
     const today = new Date().toISOString().slice(0, 10);
     if (first.arrival < today || second.arrival < today) return json(response, 400, { error: 'Arrival dates must be in the future.' });
     if (first.arrival === second.arrival && first.departure === second.departure) return json(response, 400, { error: 'Please give us two different date choices.' });
+    const unavailable = unavailableRanges(await getBookingCalendar());
+    const unavailableChoices = [first, second].map((choice) => unavailable.some((range) => rangesOverlap(choice, range)));
+    if (unavailableChoices.some(Boolean)) {
+      const choices = unavailableChoices.map((blocked, index) => blocked ? `choice ${index + 1}` : '').filter(Boolean).join(' and ');
+      return json(response, 409, { error: `Your ${choices} overlaps dates that are already reserved. Please choose another option.`, unavailableChoices });
+    }
     const createdAt = new Date().toISOString();
     const booking = {
       id: crypto.randomUUID(), status: 'pending', createdAt, name, email,
