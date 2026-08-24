@@ -1,6 +1,7 @@
 import { next } from '@vercel/functions';
 
-const COOKIE_NAME = 'wch_invite';
+const INVITE_COOKIE = 'wch_invite';
+const ADMIN_COOKIE = 'wch_admin';
 const encoder = new TextEncoder();
 
 function cookieValue(request, name) {
@@ -17,7 +18,7 @@ function fromBase64url(value) {
   return Uint8Array.from(atob(base64), (character) => character.charCodeAt(0));
 }
 
-async function validInviteSession(token) {
+async function validSession(token, expectedRole) {
   try {
     const secret = process.env.SESSION_SECRET;
     if (!secret || secret.length < 32 || !token) return null;
@@ -26,14 +27,16 @@ async function validInviteSession(token) {
     const valid = await crypto.subtle.verify('HMAC', key, fromBase64url(signature || ''), encoder.encode(body));
     if (!valid) return null;
     const payload = JSON.parse(new TextDecoder().decode(fromBase64url(body)));
-    return payload.role === 'invite' && payload.exp > Math.floor(Date.now() / 1000) ? payload : null;
+    return payload.role === expectedRole && payload.exp > Math.floor(Date.now() / 1000) ? payload : null;
   } catch {
     return null;
   }
 }
 
 export default async function middleware(request) {
-  const session = await validInviteSession(cookieValue(request, COOKIE_NAME));
+  const adminSession = await validSession(cookieValue(request, ADMIN_COOKIE), 'admin');
+  if (adminSession) return next();
+  const session = await validSession(cookieValue(request, INVITE_COOKIE), 'invite');
   if (session) {
     const statusUrl = new URL('/api/invite-status', request.url);
     statusUrl.searchParams.set('inviteId', session.inviteId);
