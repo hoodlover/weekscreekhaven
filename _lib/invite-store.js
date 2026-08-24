@@ -9,7 +9,7 @@ function token() {
 }
 
 function access() {
-  return process.env.INVITE_BLOB_ACCESS === 'private' ? 'private' : 'public';
+  return process.env.INVITE_BLOB_ACCESS === 'public' ? 'public' : 'private';
 }
 
 function ensureConfigured() {
