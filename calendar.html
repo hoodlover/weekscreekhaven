@@ -37,7 +37,9 @@
     .day.outside { background:#f1ece3; color:#aaa096; }
     .day.today { box-shadow:inset 0 0 0 2px var(--pine); }
     .day-number { font-size:.72rem; font-weight:800; margin-bottom:5px; }
-    .event { display:block; width:100%; border:0; text-align:left; border-radius:5px; margin:3px 0; padding:5px 6px; font-size:.6rem; line-height:1.25; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#251d17; }
+    .event { display:block; width:100%; border:0; text-align:left; border-radius:5px; margin:3px 0; padding:5px 6px; font-size:.6rem; line-height:1.25; font-weight:800; overflow:hidden; color:#251d17; }
+    .event-main,.event-note { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .event-note { margin-top:2px; font-size:.56rem; font-weight:600; opacity:.82; }
     .event.request { background:var(--request); } .event.reserved { background:var(--reserved); color:#102b39; } .event.booked { background:var(--booked); color:white; } .event.blocked { background:var(--blocked); color:white; }
     .event.checkout { background:transparent; color:var(--muted); border:1px dashed currentColor; }
     .sidebar { display:grid; gap:15px; }
@@ -54,6 +56,7 @@
     .item { border:1px solid var(--line); border-left:5px solid var(--blocked); border-radius:8px; padding:10px; font-size:.7rem; line-height:1.45; }
     .item.request { border-left-color:var(--request); } .item.reserved { border-left-color:var(--reserved); } .item.booked { border-left-color:var(--booked); }
     .item strong { display:block; font-size:.76rem; }
+    .item-note { display:block; color:var(--muted); font-style:italic; margin:3px 0; }
     .item-actions { display:flex; gap:6px; margin-top:7px; }
     .item-actions button { border:1px solid var(--line); background:white; border-radius:6px; padding:6px 7px; font-size:.58rem; font-weight:800; text-transform:uppercase; }
     .item-actions .danger { color:var(--danger); }
@@ -111,11 +114,11 @@
       $('month-title').textContent=new Intl.DateTimeFormat(undefined,{month:'long',year:'numeric'}).format(state.month);
       const start=new Date(state.month); start.setDate(1-start.getDay()); const all=events(); const today=key(new Date()); let html='';
       for(let index=0;index<42;index++){ const date=new Date(start); date.setDate(start.getDate()+index); const dateKey=key(date); const outside=date.getMonth()!==state.month.getMonth(); const dayEvents=all.filter(event=>dateKey>=event.arrival&&dateKey<=event.departure);
-        html+=`<div class="day ${outside?'outside':''} ${dateKey===today?'today':''}"><div class="day-number">${date.getDate()}</div>${dayEvents.map(event=>{ const checkout=dateKey===event.departure; return `<div class="event ${event.type} ${checkout?'checkout':''}" title="${esc(event.label)}${checkout?' checkout':''}">${checkout?'Checkout · ':''}${esc(event.label)}</div>`; }).join('')}</div>`;
+        html+=`<div class="day ${outside?'outside':''} ${dateKey===today?'today':''}"><div class="day-number">${date.getDate()}</div>${dayEvents.map(event=>{ const checkout=dateKey===event.departure; const title=`${event.name}${event.type==='request'?` · choice ${event.dateChoice}`:''}`; return `<div class="event ${event.type} ${checkout?'checkout':''}" title="${esc(title)}${event.note?` · ${esc(event.note)}`:''}${checkout?' checkout':''}"><span class="event-main">${checkout?'Checkout · ':''}${esc(title)}</span>${event.note?`<small class="event-note">${esc(event.note)}</small>`:''}</div>`; }).join('')}</div>`;
       }
       $('calendar').innerHTML=html;
       const upcoming=all.filter(event=>event.departure>=today).sort((a,b)=>a.arrival.localeCompare(b.arrival));
-      $('item-list').innerHTML=upcoming.length?upcoming.map(event=>`<article class="item ${event.type}"><strong>${esc(event.label)}</strong>${esc(event.arrival)} to ${esc(event.departure)}<div class="item-actions"><button data-edit-kind="${event.type==='blocked'?'block':'booking'}" data-edit-id="${esc(event.blockId||event.bookingId)}" data-edit-name="${esc(event.name)}" data-edit-note="${esc(event.note)}">Edit</button>${event.type==='request'?`<button data-reserve="${esc(event.bookingId)}" data-choice="${event.dateChoice}">Reserve this choice</button>`:''}${event.type==='reserved'?`<button data-booked="${esc(event.bookingId)}">Mark booked</button><button class="danger" data-cancel="${esc(event.bookingId)}">Cancel</button>`:''}${event.type==='booked'?`<button class="danger" data-cancel="${esc(event.bookingId)}">Cancel</button>`:''}${event.type==='blocked'?`<button class="danger" data-remove-block="${esc(event.blockId)}">Remove block</button>`:''}</div></article>`).join(''):'<p class="helper">Nothing upcoming yet.</p>';
+      $('item-list').innerHTML=upcoming.length?upcoming.map(event=>`<article class="item ${event.type}"><strong>${esc(event.name)}${event.type==='request'?` · choice ${event.dateChoice}`:''}</strong>${event.note?`<span class="item-note">${esc(event.note)}</span>`:''}${esc(event.arrival)} to ${esc(event.departure)}<div class="item-actions"><button data-edit-kind="${event.type==='blocked'?'block':'booking'}" data-edit-id="${esc(event.blockId||event.bookingId)}" data-edit-name="${esc(event.name)}" data-edit-note="${esc(event.note)}">Edit</button>${event.type==='request'?`<button data-reserve="${esc(event.bookingId)}" data-choice="${event.dateChoice}">Reserve this choice</button>`:''}${event.type==='reserved'?`<button data-booked="${esc(event.bookingId)}">Mark booked</button><button class="danger" data-cancel="${esc(event.bookingId)}">Cancel</button>`:''}${event.type==='booked'?`<button class="danger" data-cancel="${esc(event.bookingId)}">Cancel</button>`:''}${event.type==='blocked'?`<button class="danger" data-remove-block="${esc(event.blockId)}">Remove block</button>`:''}</div></article>`).join(''):'<p class="helper">Nothing upcoming yet.</p>';
     }
     async function load(){ const data=await request('/api/admin-calendar'); state.bookings=data.bookings||[]; state.blocks=data.blocks||[]; render(); }
     $('previous').onclick=()=>{ state.month=new Date(state.month.getFullYear(),state.month.getMonth()-1,1); render(); };
