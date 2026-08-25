@@ -47,6 +47,8 @@ export async function getBookingCalendar() {
   const records = await getRecords();
   const requests = new Map();
   const blocks = new Map();
+  const rates = new Map();
+  let defaultNightlyRateCents = 0;
   for (const record of records) {
     if (record.type === 'requested') requests.set(record.booking.id, record.booking);
     if (record.type === 'status' && requests.has(record.bookingId)) {
@@ -55,10 +57,15 @@ export async function getBookingCalendar() {
     if (record.type === 'block_created') blocks.set(record.block.id, record.block);
     if (record.type === 'block_updated' && blocks.has(record.blockId)) Object.assign(blocks.get(record.blockId), record.changes);
     if (record.type === 'block_removed') blocks.delete(record.blockId);
+    if (record.type === 'rate_default') defaultNightlyRateCents = Number(record.amountCents) || 0;
+    if (record.type === 'rate_created') rates.set(record.rate.id, record.rate);
+    if (record.type === 'rate_removed') rates.delete(record.rateId);
   }
   return {
     bookings: [...requests.values()].sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
     blocks: [...blocks.values()].sort((a, b) => a.arrival.localeCompare(b.arrival)),
+    defaultNightlyRateCents,
+    rates: [...rates.values()].sort((a, b) => a.arrival.localeCompare(b.arrival)),
   };
 }
 

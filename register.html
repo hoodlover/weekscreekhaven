@@ -16,6 +16,7 @@
     .top { width:min(1120px,100%); margin:0 auto 24px; display:flex; justify-content:space-between; align-items:center; gap:15px; color:white; }
     .brand { display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; font-size:.75rem; }
     .brand img { width:48px; height:48px; border-radius:50%; border:2px solid rgba(255,255,255,.5); }
+    .top-actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
     .home { text-decoration:none; border:1px solid rgba(255,255,255,.5); padding:10px 16px; border-radius:999px; font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:.1em; }
     .layout { width:min(1120px,100%); margin:auto; display:grid; grid-template-columns:minmax(0,.85fr) minmax(520px,1.15fr); gap:24px; align-items:start; }
     .intro { color:white; padding:42px 20px 20px 0; position:sticky; top:20px; }
@@ -52,12 +53,13 @@
 </head>
 <body>
   <div class="page">
-    <header class="top"><div class="brand"><img src="webpic/Weeks_Creek_Haven_Favicon.webp" alt="">Weeks Creek Haven</div><a class="home" href="/index.html">Home</a></header>
+    <header class="top"><div class="brand"><img src="webpic/Weeks_Creek_Haven_Favicon.webp" alt="">Weeks Creek Haven</div><div class="top-actions"><a class="home" href="/availability.html">View calendar</a><a class="home" href="/index.html">Home</a></div></header>
     <main class="layout">
       <section class="intro">
         <div class="eyebrow">Private cabin stays &middot; Blue Ridge, Georgia</div>
         <h1>Pick two.<br>We&rsquo;ll find<br>the one.</h1>
         <p>Send us your first and second choice. We&rsquo;ll check the cabin calendar, confirm pricing, and email you personally before anything is charged.</p>
+        <p><a class="home" href="/availability.html">See available dates &amp; nightly rates</a></p>
         <div class="steps">
           <div class="step"><b>1</b><span>Request two possible date ranges.</span></div>
           <div class="step"><b>2</b><span>We review availability and send the approved dates and total.</span></div>

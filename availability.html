@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Availability & Rates | Weeks Creek Haven</title>
+  <meta name="description" content="View available dates and nightly rates for a private stay at Weeks Creek Haven in Blue Ridge, Georgia.">
+  <link rel="icon" type="image/webp" href="webpic/Weeks_Creek_Haven_Favicon.webp">
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@600;700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --pine:#173f2b; --rust:#a45d41; --cream:#f4eee0; --paper:#fffdf8; --ink:#332820; --muted:#74685e; --line:#ddd2c2; --open:#e6f0e7; --closed:#e9e3db; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; color:var(--ink); font-family:Montserrat,sans-serif; background:#15110e url('webpic/barn.webp') center/cover fixed; }
+    a { color:inherit; }
+    .page { min-height:100vh; background:linear-gradient(rgba(15,12,9,.72),rgba(15,12,9,.86)); padding:22px 14px 60px; }
+    .top,.shell { width:min(1180px,100%); margin:auto; }
+    .top { display:flex; justify-content:space-between; align-items:center; gap:16px; color:white; margin-bottom:20px; }
+    .brand { display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; font-size:.75rem; }
+    .brand img { width:48px; height:48px; border-radius:50%; border:2px solid #ffffff77; }
+    .top-actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+    .top-actions a { text-decoration:none; border:1px solid #ffffff66; background:#0003; padding:9px 14px; border-radius:999px; font-size:.66rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
+    .panel { background:rgba(255,253,248,.98); border-top:8px solid var(--pine); border-radius:22px; padding:28px; box-shadow:0 24px 70px #0008; }
+    .head { display:flex; align-items:end; justify-content:space-between; gap:20px; margin-bottom:22px; }
+    .eyebrow { color:var(--rust); text-transform:uppercase; letter-spacing:.2em; font-size:.65rem; font-weight:800; }
+    h1,h2 { font-family:'Crimson Text',serif; margin:0; }
+    h1 { color:var(--pine); font-size:clamp(2.7rem,6vw,5rem); line-height:.9; margin-top:7px; }
+    .intro { max-width:580px; color:var(--muted); line-height:1.55; font-size:.8rem; margin:12px 0 0; }
+    .month-actions { display:flex; align-items:center; gap:7px; }
+    button,.cta { border:1px solid var(--line); background:white; color:var(--ink); border-radius:999px; padding:10px 14px; font:800 .68rem Montserrat,sans-serif; text-transform:uppercase; letter-spacing:.07em; cursor:pointer; }
+    .cta { display:inline-block; text-decoration:none; color:white; background:var(--pine); border-color:var(--pine); }
+    .calendar-title { display:flex; justify-content:space-between; align-items:center; gap:15px; margin-bottom:12px; }
+    .calendar-title h2 { color:var(--pine); font-size:2.1rem; }
+    .weekdays,.calendar { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); }
+    .weekdays div { padding:9px; text-align:center; color:var(--muted); font-size:.62rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+    .day { min-height:112px; padding:9px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); background:white; }
+    .day:nth-child(7n+1) { border-left:1px solid var(--line); }
+    .day:nth-child(-n+7) { border-top:1px solid var(--line); }
+    .day.outside,.day.past { background:#f0ebe3; color:#aaa096; }
+    .day.unavailable { background:var(--closed); color:#7f746a; }
+    .day.available { background:var(--open); }
+    .day.today { box-shadow:inset 0 0 0 2px var(--rust); }
+    .number { font-size:.72rem; font-weight:800; }
+    .rate { display:block; color:var(--pine); font-family:'Crimson Text',serif; font-size:1.16rem; font-weight:700; margin-top:16px; }
+    .night { display:block; color:var(--muted); font-size:.55rem; font-weight:700; margin-top:1px; }
+    .unavailable .rate { color:#796d64; font-family:Montserrat,sans-serif; font-size:.59rem; text-transform:uppercase; letter-spacing:.05em; }
+    .legend { display:flex; gap:18px; flex-wrap:wrap; margin:18px 0; color:var(--muted); font-size:.68rem; }
+    .key { display:flex; align-items:center; gap:7px; }
+    .swatch { width:14px; height:14px; border:1px solid var(--line); border-radius:4px; }
+    .foot { display:flex; align-items:center; justify-content:space-between; gap:20px; border-top:1px solid var(--line); padding-top:18px; }
+    .foot p { color:var(--muted); font-size:.7rem; line-height:1.5; margin:0; max-width:720px; }
+    .message { padding:30px; text-align:center; color:#8a2f2f; font-weight:700; }
+    @media(max-width:720px) { .panel { padding:18px 10px; } .head { align-items:flex-start; flex-direction:column; } .day { min-height:76px; padding:6px; } .rate { font-size:.9rem; margin-top:9px; } .night { display:none; } .unavailable .rate { font-size:.49rem; } .foot { align-items:flex-start; flex-direction:column; } .weekdays div { padding:6px 2px; font-size:.53rem; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="top"><div class="brand"><img src="webpic/Weeks_Creek_Haven_Favicon.webp" alt="">Weeks Creek Haven</div><nav class="top-actions"><a href="/register.html">Request a stay</a><a href="/index.html">Home</a></nav></header>
+    <main class="shell panel">
+      <div class="head"><div><div class="eyebrow">Private stays &middot; Blue Ridge, Georgia</div><h1>Availability &amp; rates</h1><p class="intro">Browse open nights, then send us two date choices. Availability can change until your reservation deposit is paid.</p></div><a class="cta" href="/register.html">Request dates</a></div>
+      <div class="calendar-title"><h2 id="month-title"></h2><div class="month-actions"><button id="previous" aria-label="Previous month">&larr;</button><button id="today">Today</button><button id="next" aria-label="Next month">&rarr;</button></div></div>
+      <div class="weekdays"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>
+      <div id="calendar" class="calendar" aria-live="polite"></div>
+      <div class="legend"><span class="key"><i class="swatch" style="background:var(--open)"></i>Available</span><span class="key"><i class="swatch" style="background:var(--closed)"></i>Unavailable</span><span class="key"><i class="swatch" style="background:#f0ebe3"></i>Past or outside this month</span></div>
+      <div class="foot"><p>Displayed amounts are nightly base rates. Your final quote may also include cleaning, applicable lodging taxes, and any agreed deposit. Checkout dates can also be arrival dates for another stay.</p><a class="cta" href="/register.html">Send two choices</a></div>
+    </main>
+  </div>
+  <script>
+    const state={unavailable:[],rates:[],defaultNightlyRateCents:0,month:new Date(new Date().getFullYear(),new Date().getMonth(),1)};
+    const $=(id)=>document.getElementById(id);
+    const key=(date)=>`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+    const todayKey=key(new Date());
+    const money=(cents)=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(cents/100);
+    function nightlyRate(dateKey){ const match=state.rates.filter(rate=>dateKey>=rate.arrival&&dateKey<rate.departure).at(-1); return match?.amountCents||state.defaultNightlyRateCents; }
+    function isUnavailable(dateKey){ return state.unavailable.some(range=>dateKey>=range.arrival&&dateKey<range.departure); }
+    function render(){
+      $('month-title').textContent=new Intl.DateTimeFormat(undefined,{month:'long',year:'numeric'}).format(state.month);
+      const start=new Date(state.month); start.setDate(1-start.getDay()); let html='';
+      for(let index=0;index<42;index++){
+        const date=new Date(start); date.setDate(start.getDate()+index); const dateKey=key(date); const outside=date.getMonth()!==state.month.getMonth(); const past=dateKey<todayKey; const unavailable=!outside&&!past&&isUnavailable(dateKey); const available=!outside&&!past&&!unavailable; const rate=available?nightlyRate(dateKey):0;
+        html+=`<div class="day ${outside?'outside':''} ${past?'past':''} ${unavailable?'unavailable':''} ${available?'available':''} ${dateKey===todayKey?'today':''}"><span class="number">${date.getDate()}</span>${unavailable?'<span class="rate">Unavailable</span>':available?`<span class="rate">${rate?money(rate):'Ask us'}</span><span class="night">per night</span>`:''}</div>`;
+      }
+      $('calendar').innerHTML=html;
+    }
+    $('previous').onclick=()=>{ state.month=new Date(state.month.getFullYear(),state.month.getMonth()-1,1); render(); };
+    $('next').onclick=()=>{ state.month=new Date(state.month.getFullYear(),state.month.getMonth()+1,1); render(); };
+    $('today').onclick=()=>{ const now=new Date(); state.month=new Date(now.getFullYear(),now.getMonth(),1); render(); };
+    fetch('/api/availability').then(async(response)=>{ const data=await response.json(); if(!response.ok)throw new Error(data.error||'Availability could not be loaded.'); Object.assign(state,data); render(); }).catch(error=>{ $('calendar').innerHTML=`<div class="message" style="grid-column:1/-1">${error.message}</div>`; });
+  </script>
+</body>
+</html>

@@ -1,5 +1,7 @@
 import { appendBookingRecord, getBookingCalendar, rangesOverlap, unavailableRanges } from '../_lib/booking-store.js';
+import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
 import { json, requireAdmin } from '../_lib/security.js';
+import { cancelSquareInvoice } from '../_lib/square.js';
 
 const text = (value, max = 120) => String(value || '').trim().slice(0, max);
 const date = (value) => /^\d{4}-\d{2}-\d{2}$/.test(String(value || '')) ? String(value) : '';
@@ -22,6 +24,28 @@ export default async function handler(request, response) {
     }
     if (request.method === 'PATCH') {
       const action = text(request.body?.action, 30);
+      if (action === 'set-default-rate') {
+        const amountCents = Math.round(Number(request.body?.amount) * 100);
+        if (!Number.isInteger(amountCents) || amountCents < 0) return json(response, 400, { error: 'Enter a valid nightly rate.' });
+        await appendBookingRecord({ type: 'rate_default', amountCents, createdAt });
+        return json(response, 200, { ok: true });
+      }
+      if (action === 'add-rate') {
+        const arrival = date(request.body?.arrival);
+        const departure = date(request.body?.departure);
+        const amountCents = Math.round(Number(request.body?.amount) * 100);
+        if (!arrival || !departure || departure <= arrival) return json(response, 400, { error: 'Choose a valid rate start and end date.' });
+        if (!Number.isInteger(amountCents) || amountCents < 100) return json(response, 400, { error: 'Enter the nightly amount for this date range.' });
+        const calendar = await getBookingCalendar();
+        if ((calendar.rates || []).some((rate) => rangesOverlap({ arrival, departure }, rate))) return json(response, 409, { error: 'That range overlaps another special rate. Remove the old rate first.' });
+        const rate = { id: crypto.randomUUID(), arrival, departure, amountCents, createdAt };
+        await appendBookingRecord({ type: 'rate_created', rate, createdAt });
+        return json(response, 200, { rate });
+      }
+      if (action === 'remove-rate') {
+        await appendBookingRecord({ type: 'rate_removed', rateId: text(request.body?.rateId, 80), createdAt });
+        return json(response, 200, { ok: true });
+      }
       if (action === 'edit-block') {
         const blockId = text(request.body?.blockId, 80);
         const calendar = await getBookingCalendar();
@@ -69,8 +93,23 @@ export default async function handler(request, response) {
         return json(response, 200, { ok: true });
       }
       if (action === 'cancel-booking') {
+        if (booking.squareInvoiceId) await cancelSquareInvoice(booking.squareInvoiceId);
         await appendBookingRecord({ type: 'status', bookingId, changes: { status: 'cancelled', cancelledAt: createdAt }, createdAt });
-        return json(response, 200, { ok: true });
+        const choice = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0];
+        try {
+          await sendEmail({
+            to: booking.email,
+            toName: booking.name,
+            subject: 'Your Weeks Creek Haven reservation was cancelled',
+            text: `Hi ${booking.name},\n\nYour Weeks Creek Haven reservation${choice ? ` from ${choice.arrival} to ${choice.departure}` : ''} has been cancelled. Those dates are no longer being held for you.\n\nIf a payment or refund needs attention, we will follow up separately. If this was unexpected or you would like to request different dates, please reply to this email and we will help.`,
+            html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Reservation cancelled</h1><p>Hi ${escapeEmailHtml(booking.name)},</p><p>Your Weeks Creek Haven reservation${choice ? ` for <strong>${choice.arrival} through ${choice.departure}</strong>` : ''} has been cancelled. Those dates are no longer being held for you.</p><p>If a payment or refund needs attention, we will follow up separately. If this was unexpected or you would like to request different dates, please reply to this email and we will help.</p></div>`,
+          });
+          await appendBookingRecord({ type: 'status', bookingId, changes: { cancellationEmailSentAt: new Date().toISOString() }, createdAt: new Date().toISOString() });
+          return json(response, 200, { ok: true, cancellationEmailSent: true });
+        } catch (emailError) {
+          console.error(emailError);
+          return json(response, 200, { ok: true, cancellationEmailSent: false, warning: 'The booking was cancelled, but the guest email could not be delivered.' });
+        }
       }
       return json(response, 400, { error: 'Unknown calendar action.' });
     }
