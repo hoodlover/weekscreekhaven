@@ -4,7 +4,9 @@ export function squareConfigured() {
 
 export async function createSquarePaymentLink({ bookingId, guestName, email, amountCents }) {
   if (!squareConfigured()) throw new Error('Square is not connected yet.');
-  const response = await fetch('https://connect.squareup.com/v2/online-checkout/payment-links', {
+  const environment = String(process.env.SQUARE_ENVIRONMENT || 'production').toLowerCase();
+  const baseUrl = environment === 'sandbox' ? 'https://connect.squareupsandbox.com' : 'https://connect.squareup.com';
+  const response = await fetch(`${baseUrl}/v2/online-checkout/payment-links`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${process.env.SQUARE_ACCESS_TOKEN}`,
