@@ -4,8 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Availability & Rates | Weeks Creek Haven</title>
+  <link rel="icon" href="/webpic/weeks-creek-haven-favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/webpic/weeks-creek-haven-favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/webpic/weeks-creek-haven-favicon-16.png">
   <meta name="description" content="View available dates and nightly rates for a private stay at Weeks Creek Haven in Blue Ridge, Georgia.">
-  <link rel="icon" type="image/png" href="webpic/pwa-logo-192.png">
   <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@600;700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root { --pine:#173f2b; --rust:#a45d41; --cream:#f4eee0; --paper:#fffdf8; --ink:#332820; --muted:#74685e; --line:#ddd2c2; --open:#e6f0e7; --closed:#e9e3db; }
@@ -42,6 +44,8 @@
     .day.unavailable { background:var(--closed); color:#7f746a; }
     .day.available { background:var(--open); cursor:grab; transition:background .12s ease,box-shadow .12s ease,transform .12s ease; }
     .day.available:hover { background:#d7e8da; box-shadow:inset 0 0 0 2px #6a9a76; }
+    .day.package { background:#f8e4c7; box-shadow:inset 0 4px 0 #b96f45; }
+    .day.package.package-end { box-shadow:inset 0 4px 0 #b96f45,inset -4px 0 0 #b96f45; }
     .day.selected { position:relative; z-index:1; background:#c9dfce; box-shadow:inset 0 0 0 2px var(--pine); }
     .day.selection-start,.day.selection-end { background:var(--pine); color:white; }
     .day.selection-start .rate,.day.selection-end .rate,.day.selection-start .night,.day.selection-end .night { color:white; }
@@ -50,6 +54,8 @@
     .rate { display:block; color:var(--pine); font-family:'Crimson Text',serif; font-size:1.16rem; font-weight:700; margin-top:16px; }
     .night { display:block; color:var(--muted); font-size:.55rem; font-weight:700; margin-top:1px; }
     .unavailable .rate { color:#796d64; font-family:Montserrat,sans-serif; font-size:.59rem; text-transform:uppercase; letter-spacing:.05em; }
+    .package .rate { color:#7b3f28; }
+    .package .night { color:#7b3f28; text-transform:uppercase; letter-spacing:.04em; }
     .legend { display:flex; gap:18px; flex-wrap:wrap; margin:18px 0; color:var(--muted); font-size:.68rem; }
     .key { display:flex; align-items:center; gap:7px; }
     .swatch { width:14px; height:14px; border:1px solid var(--line); border-radius:4px; }
@@ -61,6 +67,7 @@
     .selection-actions { display:flex; align-items:center; gap:8px; flex:0 0 auto; }
     .selection-actions button { background:transparent; }
     .selection-error { margin:15px 0; padding:12px 14px; border-radius:10px; background:#fff0f0; color:#8a2f2f; font-size:.72rem; font-weight:700; }
+    .bottom-month-actions { display:flex; justify-content:center; margin:18px 0 4px; }
     .message { padding:30px; text-align:center; color:#8a2f2f; font-weight:700; }
     @media(max-width:720px) { .panel { padding:18px 10px; } .head { align-items:flex-start; flex-direction:column; } .day { min-height:76px; padding:6px; } .rate { font-size:.9rem; margin-top:9px; } .night { display:none; } .unavailable .rate { font-size:.49rem; } .foot,.selection-bar { align-items:flex-start; flex-direction:column; } .selection-actions { width:100%; } .selection-actions .cta { flex:1; text-align:center; } .weekdays div { padding:6px 2px; font-size:.53rem; } }
   </style>
@@ -73,10 +80,11 @@
       <div class="calendar-title"><h2 id="month-title"></h2><div class="month-actions"><button id="previous" aria-label="Previous month">&larr;</button><button id="today">Today</button><button id="next" aria-label="Next month">&rarr;</button></div></div>
       <div class="weekdays"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>
       <div id="calendar" class="calendar" aria-live="polite"></div>
+      <div class="bottom-month-actions"><div class="month-actions"><button id="previous-bottom" aria-label="Previous month">&larr;</button><button id="today-bottom">Today</button><button id="next-bottom" aria-label="Next month">&rarr;</button></div></div>
       <div id="selection-error" class="selection-error" hidden role="alert"></div>
       <div id="selection-bar" class="selection-bar" hidden aria-live="polite"><div><strong id="selection-title"></strong><span id="selection-details"></span></div><div class="selection-actions"><button id="clear-selection" type="button">Clear</button><a id="request-selected" class="cta" href="/register.html">Request selected dates</a></div></div>
-      <div class="legend"><span class="key"><i class="swatch" style="background:var(--open)"></i>Available</span><span class="key"><i class="swatch" style="background:var(--closed)"></i>Unavailable</span><span class="key"><i class="swatch" style="background:#f0ebe3"></i>Past or outside this month</span></div>
-      <div class="foot"><p><strong>Two-night minimum.</strong> Displayed amounts are nightly base rates. Your final quote may also include cleaning, applicable lodging taxes, and any agreed deposit. Checkout dates can also be arrival dates for another stay.</p><a class="cta" href="/register.html">Request dates</a></div>
+      <div class="legend"><span class="key"><i class="swatch" style="background:var(--open)"></i>Available</span><span class="key"><i class="swatch" style="background:#f8e4c7"></i>Package total</span><span class="key"><i class="swatch" style="background:var(--closed)"></i>Unavailable</span><span class="key"><i class="swatch" style="background:#f0ebe3"></i>Past</span></div>
+      <div class="foot"><p><strong>Two-night minimum.</strong> Nightly prices say “per night”; weekend and other package prices show one total for the complete arrival-through-checkout stay. Your final quote may also include cleaning, applicable lodging taxes, and any agreed deposit.</p><a class="cta" href="/register.html">Request dates</a></div>
     </main>
   </div>
   <script>
@@ -88,38 +96,46 @@
     const daysBetween=(arrival,departure)=>Math.round((Date.parse(`${departure}T00:00:00Z`)-Date.parse(`${arrival}T00:00:00Z`))/86400000);
     const friendlyDate=(value)=>new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric',year:'numeric'}).format(new Date(`${value}T12:00:00`));
     const money=(cents)=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(cents/100);
-    function nightlyRate(dateKey){ const match=state.rates.filter(rate=>dateKey>=rate.arrival&&dateKey<rate.departure).at(-1); return match?.amountCents||state.defaultNightlyRateCents; }
+    function priceDetails(dateKey){
+      const packageRate=state.rates.filter(rate=>rate.pricingMode==='total'&&dateKey>=rate.arrival&&dateKey<=rate.departure).at(-1);
+      if(packageRate)return {amountCents:packageRate.totalCents||packageRate.amountCents*(packageRate.nightCount||daysBetween(packageRate.arrival,packageRate.departure)),detail:dateKey===packageRate.departure?'package checkout':'complete stay total',package:true,end:dateKey===packageRate.departure};
+      const nightly=state.rates.filter(rate=>dateKey>=rate.arrival&&dateKey<rate.departure).at(-1);
+      return {amountCents:nightly?.amountCents||state.defaultNightlyRateCents,detail:'per night',package:false,end:false};
+    }
     function isUnavailable(dateKey){ return state.unavailable.some(range=>dateKey>=range.arrival&&dateKey<range.departure); }
     function render(){
       $('month-title').textContent=new Intl.DateTimeFormat(undefined,{month:'long',year:'numeric'}).format(state.month);
       const start=new Date(state.month); start.setDate(1-start.getDay()); let html='';
       for(let index=0;index<42;index++){
-        const date=new Date(start); date.setDate(start.getDate()+index); const dateKey=key(date); const outside=date.getMonth()!==state.month.getMonth(); const past=dateKey<todayKey; const unavailable=!outside&&!past&&isUnavailable(dateKey); const available=!outside&&!past&&!unavailable; const rate=available?nightlyRate(dateKey):0;
-        html+=`<div class="day ${outside?'outside':''} ${past?'past':''} ${unavailable?'unavailable':''} ${available?'available':''} ${dateKey===todayKey?'today':''}" data-date="${dateKey}" ${available?'data-selectable="true"':''}><span class="number">${date.getDate()}</span>${unavailable?'<span class="rate">Unavailable</span>':available?`<span class="rate">${rate?money(rate):'Ask us'}</span><span class="night">per night</span>`:''}</div>`;
+        const date=new Date(start); date.setDate(start.getDate()+index); const dateKey=key(date); const outside=date.getMonth()!==state.month.getMonth(); const past=dateKey<todayKey; const unavailable=!past&&isUnavailable(dateKey); const available=!past&&!unavailable; const price=available?priceDetails(dateKey):null;
+        html+=`<div class="day ${outside?'outside':''} ${past?'past':''} ${unavailable?'unavailable':''} ${available?'available':''} ${price?.package?'package':''} ${price?.end?'package-end':''} ${dateKey===todayKey?'today':''}" data-date="${dateKey}" ${available?'data-selectable="true"':''}><span class="number">${date.getDate()}</span>${unavailable?'<span class="rate">Unavailable</span>':available?`<span class="rate">${price.amountCents?money(price.amountCents):'Ask us'}</span><span class="night">${price.amountCents?price.detail:'contact us'}</span>`:''}</div>`;
       }
       $('calendar').innerHTML=html;
       paintSelection();
     }
     function clearSelection(){ state.selection=null; dragging=false; dragStart=dragCurrent=null; $('calendar').classList.remove('selecting'); $('selection-bar').hidden=true; $('selection-error').hidden=true; document.querySelectorAll('.selected,.selection-start,.selection-end').forEach(day=>day.classList.remove('selected','selection-start','selection-end')); }
-    function selectionIsAvailable(first,last){ for(let date=first;date<=last;date=addDays(date,1)){ if(!$('calendar').querySelector(`[data-date="${date}"][data-selectable]`))return false; } return true; }
+    function selectionIsAvailable(first,departure){ for(let date=first;date<departure;date=addDays(date,1)){ if(!$('calendar').querySelector(`[data-date="${date}"][data-selectable]`))return false; } return Boolean($('calendar').querySelector(`[data-date="${departure}"]`)); }
     function paintSelection(){
       const selection=dragging&&dragStart&&dragCurrent?{first:dragStart<dragCurrent?dragStart:dragCurrent,last:dragStart<dragCurrent?dragCurrent:dragStart}:state.selection;
       document.querySelectorAll('[data-date]').forEach(day=>{ const selected=selection&&day.dataset.date>=selection.first&&day.dataset.date<=selection.last; day.classList.toggle('selected',Boolean(selected)); day.classList.toggle('selection-start',Boolean(selected&&day.dataset.date===selection.first)); day.classList.toggle('selection-end',Boolean(selected&&day.dataset.date===selection.last)); });
     }
     function finishSelection(){
       if(!dragging)return; dragging=false; $('calendar').classList.remove('selecting');
-      const first=dragStart<dragCurrent?dragStart:dragCurrent,last=dragStart<dragCurrent?dragCurrent:dragStart,departure=addDays(last,1),nightCount=daysBetween(first,departure);
-      if(nightCount<2||!selectionIsAvailable(first,last)){ state.selection=null; paintSelection(); $('selection-bar').hidden=true; $('selection-error').textContent=nightCount<2?'Choose at least two available nights.':'That range crosses an unavailable date. Please choose only consecutive available nights.'; $('selection-error').hidden=false; return; }
-      state.selection={first,last,departure}; $('selection-error').hidden=true; $('selection-title').textContent=`${friendlyDate(first)} – ${friendlyDate(departure)}`; $('selection-details').textContent=`${nightCount} nights · checkout ${friendlyDate(departure)}`; $('request-selected').href=`/register.html?arrival1=${encodeURIComponent(first)}&departure1=${encodeURIComponent(departure)}`; $('selection-bar').hidden=false; paintSelection();
+      const first=dragStart<dragCurrent?dragStart:dragCurrent,departure=dragStart<dragCurrent?dragCurrent:dragStart,nightCount=daysBetween(first,departure);
+      if(nightCount<2||!selectionIsAvailable(first,departure)){ state.selection=null; paintSelection(); $('selection-bar').hidden=true; $('selection-error').textContent=nightCount<2?'Choose arrival through checkout for at least two nights (three calendar dates).':'That range crosses an unavailable night. Please choose consecutive available nights.'; $('selection-error').hidden=false; return; }
+      state.selection={first,last:departure,departure}; $('selection-error').hidden=true; $('selection-title').textContent=`${friendlyDate(first)} – ${friendlyDate(departure)}`; $('selection-details').textContent=`${nightCount} nights · the last highlighted day is checkout`; $('request-selected').href=`/register.html?arrival1=${encodeURIComponent(first)}&departure1=${encodeURIComponent(departure)}`; $('selection-bar').hidden=false; paintSelection();
     }
     let dragStart=null,dragCurrent=null,dragging=false;
     $('calendar').addEventListener('pointerdown',(event)=>{ const day=event.target.closest('[data-selectable]'); if(!day||event.button!==0)return; dragStart=dragCurrent=day.dataset.date; dragging=true; state.selection=null; $('selection-bar').hidden=true; $('selection-error').hidden=true; $('calendar').classList.add('selecting'); paintSelection(); event.preventDefault(); });
     $('calendar').addEventListener('pointermove',(event)=>{ if(!dragging)return; const day=document.elementFromPoint(event.clientX,event.clientY)?.closest('[data-date]'); if(day&&day.dataset.date!==dragCurrent){ dragCurrent=day.dataset.date; paintSelection(); } });
     window.addEventListener('pointerup',finishSelection);
     $('clear-selection').onclick=clearSelection;
-    $('previous').onclick=()=>{ clearSelection(); state.month=new Date(state.month.getFullYear(),state.month.getMonth()-1,1); render(); };
-    $('next').onclick=()=>{ clearSelection(); state.month=new Date(state.month.getFullYear(),state.month.getMonth()+1,1); render(); };
-    $('today').onclick=()=>{ clearSelection(); const now=new Date(); state.month=new Date(now.getFullYear(),now.getMonth(),1); render(); };
+    const previousMonth=()=>{ clearSelection(); state.month=new Date(state.month.getFullYear(),state.month.getMonth()-1,1); render(); };
+    const nextMonth=()=>{ clearSelection(); state.month=new Date(state.month.getFullYear(),state.month.getMonth()+1,1); render(); };
+    const currentMonth=()=>{ clearSelection(); const now=new Date(); state.month=new Date(now.getFullYear(),now.getMonth(),1); render(); };
+    $('previous').onclick=$('previous-bottom').onclick=previousMonth;
+    $('next').onclick=$('next-bottom').onclick=nextMonth;
+    $('today').onclick=$('today-bottom').onclick=currentMonth;
     fetch('/api/availability').then(async(response)=>{ const data=await response.json(); if(!response.ok)throw new Error(data.error||'Availability could not be loaded.'); Object.assign(state,data); render(); }).catch(error=>{ $('calendar').innerHTML=`<div class="message" style="grid-column:1/-1">${error.message}</div>`; });
   </script>
 </body>

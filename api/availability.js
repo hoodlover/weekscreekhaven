@@ -8,7 +8,7 @@ export default async function handler(request, response) {
     return json(response, 200, {
       unavailable: unavailableRanges(calendar).map(({ arrival, departure }) => ({ arrival, departure })),
       defaultNightlyRateCents: calendar.defaultNightlyRateCents || 0,
-      rates: (calendar.rates || []).map(({ arrival, departure, amountCents }) => ({ arrival, departure, amountCents })),
+      rates: (calendar.rates || []).map(({ arrival, departure, amountCents, pricingMode, totalCents, nightCount }) => ({ arrival, departure, amountCents, pricingMode, totalCents, nightCount })),
       updatedAt: new Date().toISOString(),
     }, { 'Cache-Control': 'public, max-age=0, s-maxage=60, stale-while-revalidate=300' });
   } catch (error) {
