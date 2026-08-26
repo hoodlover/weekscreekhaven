@@ -73,6 +73,13 @@
     .upload-note { font-size:.68rem; color:var(--muted); line-height:1.4; margin:7px 0 0; }
     .checkline { display:flex; align-items:flex-start; gap:9px; margin:10px 0 0; font-size:.72rem; font-weight:600; letter-spacing:0; text-transform:none; line-height:1.45; color:var(--muted); }
     .checkline input { width:auto; margin-top:2px; accent-color:var(--pine); }
+    .stay-options { display:grid; gap:9px; margin-top:9px; }
+    .stay-option { position:relative; border:1px solid var(--line); border-radius:10px; background:#f8f3ea; padding:11px; }
+    .stay-option-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .stay-option label { margin-top:8px; font-size:.61rem; }
+    .stay-option input { padding:10px; font-size:.72rem; }
+    .remove-option { position:absolute; right:8px; top:7px; border:0; background:transparent; color:var(--danger); font-weight:800; font-size:.65rem; }
+    .add-option { width:100%; margin-top:9px; border:1px dashed #bda989; background:#faf6ee; color:var(--rust); border-radius:9px; padding:10px; font-weight:800; font-size:.68rem; text-transform:uppercase; letter-spacing:.07em; }
     .booking { padding:18px 0; border-bottom:1px solid #e9e1d5; }
     .booking:last-child { border-bottom:0; }
     .booking-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
@@ -81,7 +88,7 @@
     .booking-actions { display:flex; align-items:end; gap:8px; flex-wrap:wrap; }
     .booking-actions label { margin:0; flex:1; min-width:110px; }
     .booking-actions input,.booking-actions select { margin-top:6px; }
-    .status-pending { background:#fff0cc; color:#76530c; } .status-approved,.status-reserved { background:#dceaf4; color:#285b79; } .status-booked { background:#e0efe5; color:#276141; } .status-declined,.status-cancelled { background:#f2dddd; color:#842e2e; }
+    .status-pending { background:#fff0cc; color:#76530c; } .status-offered { background:#f3e3bf; color:#76530c; } .status-approved,.status-reserved { background:#dceaf4; color:#285b79; } .status-booked { background:#e0efe5; color:#276141; } .status-declined,.status-cancelled { background:#f2dddd; color:#842e2e; }
     @media (max-width:800px) { .main-grid { grid-template-columns:1fr; } .create { position:static; } .invite { grid-template-columns:1fr; gap:9px; } .stats { grid-template-columns:1fr 1fr; } .stats .stat:last-child { grid-column:1/-1; } .section-head { align-items:flex-start; flex-direction:column; } }
   </style>
 </head>
@@ -129,6 +136,10 @@
           <label for="recipient-email">Guest email (optional)</label>
           <input id="recipient-email" type="email" placeholder="friend@example.com" autocomplete="off" maxlength="160">
           <label class="checkline"><input id="send-invite-email" type="checkbox" checked> Email the invitation as soon as it is created</label>
+          <label>Stay choices (optional)</label>
+          <p class="helper">Offer up to three date choices. Each can have its own cost and choose-by date. Offered dates are held until selected or expired.</p>
+          <div id="stay-options" class="stay-options"></div>
+          <button id="add-stay-option" type="button" class="add-option">+ Add another date choice</button>
           <label for="welcome-message">Personal welcome (optional)</label>
           <textarea id="welcome-message" rows="5" maxlength="500">Welcome to Weeks Creek Haven! We&rsquo;re so glad you&rsquo;re here. Make yourselves at home, slow down, listen to the creek, and enjoy your time in the mountains. We hope this place feels like your own little getaway while you&rsquo;re here.</textarea>
           <label for="invite-photos">Welcome photos (optional)</label>
@@ -168,6 +179,7 @@
     const $ = (id) => document.getElementById(id);
     const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
     const formatDate = (value) => value ? new Intl.DateTimeFormat(undefined,{dateStyle:'medium',timeStyle:'short'}).format(new Date(value)) : 'Never';
+    const formatStayDate = (value) => value ? new Intl.DateTimeFormat(undefined,{dateStyle:'medium'}).format(new Date(`${value}T12:00:00`)) : '';
     const device = (ua) => /iPhone|iPad/i.test(ua) ? 'Apple mobile device' : /Android/i.test(ua) ? 'Android device' : /Macintosh/i.test(ua) ? 'Mac' : /Windows/i.test(ua) ? 'Windows computer' : 'Web browser';
 
     async function request(url, options = {}) {
@@ -212,7 +224,8 @@
       $('invite-list').innerHTML = orderedInvites.length ? orderedInvites.map((invite) => {
         const inactive = isInactive(invite);
         const emailButton = invite.recipientEmail ? `<button class="copy" data-email-invite="${escapeHtml(invite.id)}">Email</button>` : '';
-        return `<article class="invite"><div><h3>${escapeHtml(invite.label)} <span class="badge ${inactive?'off':''}">${inactive?'inactive':'active'}</span></h3><div class="meta">Created ${formatDate(invite.createdAt)}${invite.recipientEmail?`<br>${escapeHtml(invite.recipientEmail)}`:''}${invite.expiresAt?`<br>Expires ${formatDate(invite.expiresAt)}`:''}<br>${invite.accessCount} recorded entr${invite.accessCount===1?'y':'ies'}${invite.notes?` &middot; ${escapeHtml(invite.notes)}`:''}</div></div><div class="passcode"><code>${escapeHtml(invite.passcode)}</code><button class="copy" data-copy="${escapeHtml(invite.passcode)}">Copy</button>${emailButton}</div>${inactive?'<span></span>':`<button class="danger" data-revoke="${escapeHtml(invite.id)}">Revoke</button>`}</article>`;
+        const stayDetails=(invite.stayOptions||[]).map((option,index)=>`<br>Option ${index+1}: ${formatStayDate(option.arrival)}–${formatStayDate(option.departure)}${option.costCents?` · $${(option.costCents/100).toFixed(2)}`:''}${option.expiresOn?` · choose by ${formatStayDate(option.expiresOn)}`:''}${invite.selectedStayChoice===index?' · SELECTED':''}`).join('');
+        return `<article class="invite"><div><h3>${escapeHtml(invite.label)} <span class="badge ${inactive?'off':''}">${inactive?'inactive':'active'}</span></h3><div class="meta">Created ${formatDate(invite.createdAt)}${invite.recipientEmail?`<br>${escapeHtml(invite.recipientEmail)}`:''}${invite.expiresAt?`<br>Invite expires ${formatDate(invite.expiresAt)}`:''}${stayDetails}<br>${invite.accessCount} recorded entr${invite.accessCount===1?'y':'ies'}${invite.notes?` &middot; ${escapeHtml(invite.notes)}`:''}</div></div><div class="passcode"><code>${escapeHtml(invite.passcode)}</code><button class="copy" data-copy="${escapeHtml(invite.passcode)}">Copy</button>${emailButton}</div>${inactive?'<span></span>':`<button class="danger" data-revoke="${escapeHtml(invite.id)}">Revoke</button>`}</article>`;
       }).join('') : '<div class="empty">No invites yet. Create the first one on the left.</div>';
       [...document.querySelectorAll('#invite-list .invite')].forEach((card,index) => {
         const photos = orderedInvites[index]?.photos || [];
@@ -226,7 +239,7 @@
         const dates = booking.dateChoices || [];
         const status = booking.status || 'pending';
         const paymentSummary = booking.squareInvoiceId ? `<p class="meta"><strong>Total:</strong> $${(booking.amountCents/100).toFixed(2)} &middot; <strong>Non-refundable deposit:</strong> $${(booking.depositAmountCents/100).toFixed(2)}${booking.balanceAmountCents?`<br><strong>Remaining balance:</strong> $${(booking.balanceAmountCents/100).toFixed(2)} due ${escapeHtml(booking.balanceDueDate)}`:''}<br><a href="${escapeHtml(booking.paymentUrl)}" target="_blank" rel="noopener">Open Square invoice</a></p>` : booking.paymentUrl ? `<p class="meta"><a href="${escapeHtml(booking.paymentUrl)}" target="_blank" rel="noopener">Open original Square payment link</a></p>` : '';
-        return `<article class="booking"><div class="booking-head"><div><h3>${escapeHtml(booking.name)}</h3><div class="meta">${escapeHtml(booking.email)}${booking.phone?` &middot; ${escapeHtml(booking.phone)}`:''}<br>${booking.guests} guest${booking.guests===1?'':'s'}${booking.relationship?` &middot; ${escapeHtml(booking.relationship)}`:''}${booking.reference?`<br>Reference: ${escapeHtml(booking.reference)}`:''}</div></div><span class="badge status-${escapeHtml(status)}">${escapeHtml(status)}</span></div><div class="booking-dates">${dates.map((date,index)=>`<div class="date-choice"><strong>Choice ${index+1}</strong><br>${escapeHtml(date.arrival)} to ${escapeHtml(date.departure)}</div>`).join('')}</div>${booking.notes?`<div class="meta">${escapeHtml(booking.notes)}</div>`:''}${status==='pending'?`<div class="booking-actions"><label>Approve dates<select data-booking-choice><option value="1">Choice 1</option><option value="2">Choice 2</option></select></label><label>Total stay price<input data-booking-amount type="number" min="100" step="0.01" placeholder="$ total"></label><button class="primary" data-approve-booking="${escapeHtml(booking.id)}">Approve &amp; send $100 deposit invoice</button><button class="danger" data-decline-booking="${escapeHtml(booking.id)}">Decline</button></div>`:paymentSummary}</article>`;
+        return `<article class="booking"><div class="booking-head"><div><h3>${escapeHtml(booking.name)}</h3><div class="meta">${escapeHtml(booking.email)}${booking.phone?` &middot; ${escapeHtml(booking.phone)}`:''}<br>${booking.guests} guest${booking.guests===1?'':'s'}${booking.relationship?` &middot; ${escapeHtml(booking.relationship)}`:''}${booking.reference?`<br>Reference: ${escapeHtml(booking.reference)}`:''}</div></div><span class="badge status-${escapeHtml(status)}">${escapeHtml(status)}</span></div><div class="booking-dates">${dates.map((date,index)=>`<div class="date-choice"><strong>${booking.source==='direct-invite'?'Offered option':'Choice'} ${index+1}</strong><br>${escapeHtml(date.arrival)} to ${escapeHtml(date.departure)}${date.amountCents?`<br>$${(date.amountCents/100).toFixed(2)}`:''}${date.expiresOn?`<br>Choose by ${escapeHtml(date.expiresOn)}`:''}</div>`).join('')}</div>${booking.notes?`<div class="meta">${escapeHtml(booking.notes)}</div>`:''}${status==='offered'?'<p class="meta"><strong>Waiting for the invitee to choose.</strong> All unexpired options are temporarily held.</p>':status==='pending'?`<div class="booking-actions"><label>Approve dates<select data-booking-choice>${dates.map((_,index)=>`<option value="${index+1}">Choice ${index+1}</option>`).join('')}</select></label><label>Total stay price<input data-booking-amount type="number" min="100" step="0.01" placeholder="$ total"></label><button class="primary" data-approve-booking="${escapeHtml(booking.id)}">Approve &amp; send $100 deposit invoice</button><button class="danger" data-decline-booking="${escapeHtml(booking.id)}">Decline</button></div>`:paymentSummary}</article>`;
       }).join('') : '<div class="empty">New registration requests will appear here.</div>';
     }
 
@@ -253,6 +266,21 @@
         return { contentType:'image/jpeg', data:await photoDataUrl(blob) };
       } finally { URL.revokeObjectURL(url); }
     }
+    const todayKey=()=>new Date().toISOString().slice(0,10);
+    const nextDay=(value)=>{ const date=new Date(`${value}T12:00:00`); date.setDate(date.getDate()+1); return date.toISOString().slice(0,10); };
+    function addStayOption(values={}) {
+      if(document.querySelectorAll('.stay-option').length>=3)return;
+      const index=document.querySelectorAll('.stay-option').length+1;
+      const box=document.createElement('div'); box.className='stay-option';
+      box.innerHTML=`${index>1?'<button type="button" class="remove-option">Remove</button>':''}<strong>Option ${index}</strong><div class="stay-option-grid"><label>Arrival<input data-stay-arrival type="date" min="${todayKey()}" value="${escapeHtml(values.arrival||'')}"></label><label>Checkout<input data-stay-departure type="date" min="${todayKey()}" value="${escapeHtml(values.departure||'')}"></label><label>Total cost<input data-stay-cost type="number" min="0" step="0.01" placeholder="Optional" value="${escapeHtml(values.cost||'')}"></label><label>Choose by<input data-stay-expires type="date" min="${todayKey()}" value="${escapeHtml(values.expiresOn||'')}"></label></div>`;
+      const arrival=box.querySelector('[data-stay-arrival]'),departure=box.querySelector('[data-stay-departure]');
+      arrival.addEventListener('change',()=>{ departure.min=arrival.value?nextDay(arrival.value):todayKey(); if(arrival.value&&(!departure.value||departure.value<=arrival.value))departure.value=nextDay(arrival.value); });
+      box.querySelector('.remove-option')?.addEventListener('click',()=>{ box.remove(); [...document.querySelectorAll('.stay-option>strong')].forEach((title,i)=>title.textContent=`Option ${i+1}`); $('add-stay-option').hidden=false; });
+      $('stay-options').appendChild(box); $('add-stay-option').hidden=document.querySelectorAll('.stay-option').length>=3;
+    }
+    function resetStayOptions(){ $('stay-options').innerHTML=''; $('add-stay-option').hidden=false; addStayOption(); }
+    $('add-stay-option').addEventListener('click',()=>addStayOption());
+    resetStayOptions();
     $('invite-photos').addEventListener('change', () => {
       const files = [...$('invite-photos').files];
       $('photo-preview').innerHTML = '';
@@ -270,7 +298,8 @@
         const expiration = $('expires').value ? new Date(`${$('expires').value}T23:59:59`).toISOString() : null;
         const recipientEmail = $('recipient-email').value.trim();
         const shouldEmail = recipientEmail && $('send-invite-email').checked;
-        const data = await request('/api/admin-invites',{method:'POST',body:JSON.stringify({label:$('invite-label').value,recipientEmail,welcomeMessage:$('welcome-message').value,expiresAt:expiration,maxUses:$('max-uses').value,notes:$('notes').value})});
+        const stayOptions=[...document.querySelectorAll('.stay-option')].map((box)=>({arrival:box.querySelector('[data-stay-arrival]').value,departure:box.querySelector('[data-stay-departure]').value,cost:box.querySelector('[data-stay-cost]').value,expiresOn:box.querySelector('[data-stay-expires]').value}));
+        const data = await request('/api/admin-invites',{method:'POST',body:JSON.stringify({label:$('invite-label').value,recipientEmail,welcomeMessage:$('welcome-message').value,expiresAt:expiration,maxUses:$('max-uses').value,notes:$('notes').value,stayOptions})});
         createdInvite=data.invite;
         for (let index=0;index<files.length;index++) {
           submit.textContent=`Uploading photo ${index+1} of ${files.length}...`;
@@ -281,7 +310,7 @@
           submit.textContent='Sending invitation...';
           await request('/api/admin-send-invite',{method:'POST',body:JSON.stringify({inviteId:data.invite.id,recipientEmail})});
         }
-        state.newInvite=data.invite; $('new-code').textContent=data.invite.passcode; event.target.reset(); $('photo-preview').innerHTML=''; await load(); $('created').hidden=false;
+        state.newInvite=data.invite; $('new-code').textContent=data.invite.passcode; event.target.reset(); resetStayOptions(); $('photo-preview').innerHTML=''; await load(); $('created').hidden=false;
         $('created').querySelector('strong').textContent = shouldEmail ? 'Invite ready and emailed' : 'Invite ready';
       } catch(error) {
         if (createdInvite) { state.newInvite=createdInvite; $('new-code').textContent=createdInvite.passcode; $('created').querySelector('strong').textContent='Invite created'; $('created').hidden=false; await load().catch(()=>{}); }
@@ -292,7 +321,7 @@
     $('invite-list').addEventListener('click', async (event) => {
       const copy = event.target.closest('[data-copy]'); if(copy) { await navigator.clipboard.writeText(copy.dataset.copy); copy.textContent='Copied'; setTimeout(()=>copy.textContent='Copy',1200); }
       const emailInvite = event.target.closest('[data-email-invite]'); if(emailInvite) { emailInvite.disabled=true; try { await request('/api/admin-send-invite',{method:'POST',body:JSON.stringify({inviteId:emailInvite.dataset.emailInvite})}); emailInvite.textContent='Sent'; } catch(error) { alert(error.message); emailInvite.textContent='Email'; } finally { emailInvite.disabled=false; } }
-      const revoke = event.target.closest('[data-revoke]'); if(revoke && confirm('Revoke this invite? It will stop working immediately.')) { await request('/api/admin-invites',{method:'PATCH',body:JSON.stringify({inviteId:revoke.dataset.revoke})}); await load(); }
+      const revoke = event.target.closest('[data-revoke]'); if(revoke && confirm('Revoke this passcode? Unselected date offers will be released, but an already selected stay will remain reserved.')) { await request('/api/admin-invites',{method:'PATCH',body:JSON.stringify({inviteId:revoke.dataset.revoke})}); await load(); }
     });
     $('booking-list').addEventListener('click', async (event) => {
       const approve = event.target.closest('[data-approve-booking]');
@@ -308,7 +337,8 @@
     });
     $('copy-invite').addEventListener('click', async () => {
       if(!state.newInvite) return;
-      const message = `You’re invited to the Weeks Creek Haven Friends Hub.\n\nOpen: ${location.origin}/important-info.html\nPasscode: ${state.newInvite.passcode}\n\nEnter your name and this code to unlock the cabin guide.`;
+      const options=(state.newInvite.stayOptions||[]).map((option,index)=>`Option ${index+1}: ${formatStayDate(option.arrival)} to ${formatStayDate(option.departure)}${option.costCents?` · $${(option.costCents/100).toFixed(2)}`:''}${option.expiresOn?` · choose by ${formatStayDate(option.expiresOn)} or this option will be released`:''}`).join('\n');
+      const message = `You’re invited to the Weeks Creek Haven Friends Hub.${options?`\n\nStay choices:\n${options}\n\nEach deadline applies only to that option. If it expires, that date is freed for others while your other unexpired choices stay available. Choosing one releases the rest.`:''}\n\nOpen: ${location.origin}/important-info.html\nPasscode: ${state.newInvite.passcode}\n\nEnter your name and this code to unlock the cabin guide${options?' and choose your stay':''}.`;
       await navigator.clipboard.writeText(message); $('copy-invite').textContent='Message copied'; setTimeout(()=>$('copy-invite').textContent='Copy message',1400);
     });
     document.querySelector('.tabs').addEventListener('click',(event)=>{ const tab=event.target.closest('[data-tab]'); if(!tab)return; document.querySelectorAll('.tab,.tab-panel').forEach(el=>el.classList.remove('active')); tab.classList.add('active'); $(`panel-${tab.dataset.tab}`).classList.add('active'); if(tab.dataset.tab==='activity'){ try{localStorage.setItem('wch_seen_activity',new Date().toISOString());}catch{} render(); } });

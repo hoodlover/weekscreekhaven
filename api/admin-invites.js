@@ -1,4 +1,5 @@
 import { appendInviteRecord, getAccessRecords, getInvites } from '../_lib/invite-store.js';
+import { appendBookingRecord, getBookingCalendar, rangesOverlap, unavailableRanges } from '../_lib/booking-store.js';
 import { generatePasscode, hashPasscode, json, requireAdmin } from '../_lib/security.js';
 
 function safeText(value, max = 120) {
@@ -10,22 +11,47 @@ function safeEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : '';
 }
 
-function presentInvite(invite) {
+function safeDate(value) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(String(value || '')) ? String(value) : '';
+}
+
+function easternToday() {
+  const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${values.year}-${values.month}-${values.day}`;
+}
+
+function presentInvite(invite, booking = null) {
   const { hash: _hash, salt: _salt, ...safeInvite } = invite;
   return {
     ...safeInvite,
+    selectedStayChoice: booking && ['reserved', 'booked'].includes(booking.status) ? booking.approvedChoice : null,
+    stayStatus: booking?.status || null,
     photos: (safeInvite.photos || []).map(({ id, createdAt }) => ({ id, createdAt })),
   };
+}
+
+function stayOptions(body) {
+  const supplied = Array.isArray(body?.stayOptions) ? body.stayOptions.slice(0, 3) : [];
+  const legacy = body?.stayArrival || body?.stayDeparture || body?.stayCost ? [{ arrival: body.stayArrival, departure: body.stayDeparture, cost: body.stayCost }] : [];
+  return (supplied.length ? supplied : legacy).filter((option) => option?.arrival || option?.departure || String(option?.cost || '').trim()).map((option) => {
+    const arrival = safeDate(option.arrival);
+    const departure = safeDate(option.departure);
+    const suppliedCost = String(option.cost || '').trim();
+    const costCents = suppliedCost ? Math.round(Number(suppliedCost) * 100) : 0;
+    return { arrival, departure, costCents, suppliedCost, expiresOn: safeDate(option.expiresOn) || null };
+  });
 }
 
 export default async function handler(request, response) {
   if (!requireAdmin(request)) return json(response, 401, { error: 'Please sign in as the site owner.' });
   try {
     if (request.method === 'GET') {
-      const [invites, access] = await Promise.all([getInvites(), getAccessRecords()]);
+      const [invites, access, calendar] = await Promise.all([getInvites(), getAccessRecords(), getBookingCalendar()]);
       const withActivity = invites.map((invite) => {
         const inviteAccess = access.filter((entry) => entry.inviteId === invite.id);
-        return { ...presentInvite(invite), accessCount: inviteAccess.length, lastAccessAt: inviteAccess[0]?.accessedAt || null };
+        const booking = invite.bookingId ? calendar.bookings.find((item) => item.id === invite.bookingId) : null;
+        return { ...presentInvite(invite, booking), accessCount: inviteAccess.length, lastAccessAt: inviteAccess[0]?.accessedAt || null };
       });
       return json(response, 200, { invites: withActivity, access: access.slice(0, 250) }, { 'Cache-Control': 'no-store' });
     }
@@ -37,25 +63,59 @@ export default async function handler(request, response) {
       const passcodeHash = hashPasscode(passcode);
       const createdAt = new Date().toISOString();
       const expiresAt = request.body?.expiresAt ? new Date(request.body.expiresAt).toISOString() : null;
+      const options = stayOptions(request.body);
+      for (const option of options) {
+        if (!option.arrival || !option.departure || option.departure <= option.arrival) return json(response, 400, { error: 'Complete both dates for every stay option, or remove the incomplete option.' });
+        if (option.suppliedCost && (!Number.isInteger(option.costCents) || option.costCents < 0)) return json(response, 400, { error: 'Enter a valid optional cost for every stay option.' });
+        if (option.expiresOn && (option.expiresOn < easternToday() || option.expiresOn > option.arrival)) return json(response, 400, { error: 'Each choose-by date must be between today and that stay’s arrival.' });
+      }
+      for (let first = 0; first < options.length; first++) for (let second = first + 1; second < options.length; second++) {
+        if (rangesOverlap(options[first], options[second])) return json(response, 400, { error: 'The offered stay options cannot overlap each other.' });
+      }
+      if (options.length) {
+        const conflicts = unavailableRanges(await getBookingCalendar());
+        if (options.some((option) => conflicts.some((range) => rangesOverlap(option, range)))) return json(response, 409, { error: 'At least one offered stay overlaps dates that are already reserved or blocked.' });
+      }
+      const inviteId = crypto.randomUUID();
+      const bookingId = options.length ? crypto.randomUUID() : null;
       const invite = {
-        id: crypto.randomUUID(), label, passcode, ...passcodeHash, createdAt, expiresAt,
+        id: inviteId, label, passcode, ...passcodeHash, createdAt, expiresAt,
         notes: safeText(request.body?.notes, 240),
         recipientEmail: safeEmail(request.body?.recipientEmail),
         welcomeMessage: safeText(request.body?.welcomeMessage, 500),
+        stayOptions: options.map(({ arrival, departure, costCents, expiresOn }) => ({ arrival, departure, costCents, expiresOn })),
+        bookingId,
         photos: [],
         maxUses: Math.max(0, Math.min(999, Number(request.body?.maxUses) || 0)),
       };
-      await appendInviteRecord({ type: 'created', createdAt, invite });
-      return json(response, 201, { invite: presentInvite(invite) });
+      if (options.length) {
+        const booking = {
+          id: bookingId, inviteId, source: 'direct-invite', status: 'offered', createdAt,
+          name: label, email: invite.recipientEmail, phone: '', guests: 1,
+          dateChoices: options.map(({ arrival, departure, costCents, expiresOn }) => ({ arrival, departure, amountCents: costCents || undefined, expiresOn })),
+          notes: invite.notes,
+        };
+        await appendBookingRecord({ type: 'requested', createdAt, booking });
+      }
+      try {
+        await appendInviteRecord({ type: 'created', createdAt, invite });
+      } catch (error) {
+        if (bookingId) await appendBookingRecord({ type: 'status', bookingId, changes: { status: 'cancelled', cancelledAt: new Date().toISOString() }, createdAt: new Date().toISOString() }).catch(() => {});
+        throw error;
+      }
+      return json(response, 201, { invite: presentInvite(invite, options.length ? { status: 'offered' } : null) });
     }
 
     if (request.method === 'PATCH') {
       const inviteId = safeText(request.body?.inviteId, 80);
-      const invites = await getInvites();
-      if (!invites.some((invite) => invite.id === inviteId)) return json(response, 404, { error: 'Invite not found.' });
+      const [invites, calendar] = await Promise.all([getInvites(), getBookingCalendar()]);
+      const invite = invites.find((item) => item.id === inviteId);
+      if (!invite) return json(response, 404, { error: 'Invite not found.' });
       const createdAt = new Date().toISOString();
       await appendInviteRecord({ type: 'revoked', createdAt, inviteId });
-      return json(response, 200, { ok: true });
+      const booking = invite.bookingId ? calendar.bookings.find((item) => item.id === invite.bookingId) : null;
+      if (booking?.status === 'offered') await appendBookingRecord({ type: 'status', bookingId: booking.id, changes: { status: 'cancelled', cancelledAt: createdAt }, createdAt });
+      return json(response, 200, { ok: true, releasedOffers: booking?.status === 'offered' });
     }
 
     return json(response, 405, { error: 'Method not allowed.' });

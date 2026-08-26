@@ -71,21 +71,22 @@ export default async function handler(request, response) {
         const arrival = date(request.body?.arrival);
         const departure = date(request.body?.departure);
         if (!arrival || !departure || departure <= arrival) return json(response, 400, { error: 'Choose a valid arrival and checkout date.' });
-        const choiceIndex = booking.status === 'pending' ? (Number(request.body?.dateChoice) === 2 ? 1 : 0) : (Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0);
+        const requestedChoice = Math.max(0, Number(request.body?.dateChoice || 1) - 1);
+        const choiceIndex = ['pending', 'offered'].includes(booking.status) ? requestedChoice : (Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0);
         const dateChoices = (booking.dateChoices || []).map((choice) => ({ ...choice }));
         if (!dateChoices[choiceIndex]) return json(response, 400, { error: 'That date choice could not be found.' });
         const conflicts = unavailableRanges(calendar).filter((range) => range.bookingId !== booking.id);
         if (conflicts.some((range) => rangesOverlap({ arrival, departure }, range))) return json(response, 409, { error: 'Those dates overlap another reservation, booking, or owner block.' });
-        dateChoices[choiceIndex] = { arrival, departure };
+        dateChoices[choiceIndex] = { ...dateChoices[choiceIndex], arrival, departure };
         await appendBookingRecord({ type: 'status', bookingId, changes: { name: text(request.body?.name, 100) || booking.name, calendarNote: text(request.body?.note, 240), dateChoices }, createdAt });
         return json(response, 200, { ok: true });
       }
       if (action === 'reserve-request') {
-        const approvedChoice = Number(request.body?.dateChoice) === 2 ? 1 : 0;
+        const approvedChoice = Math.max(0, Number(request.body?.dateChoice || 1) - 1);
         const requestedDates = booking.dateChoices?.[approvedChoice];
         const conflicts = unavailableRanges(await getBookingCalendar()).filter((range) => range.bookingId !== booking.id);
         if (!requestedDates || conflicts.some((range) => rangesOverlap(requestedDates, range))) return json(response, 409, { error: 'Those dates are no longer available.' });
-        await appendBookingRecord({ type: 'status', bookingId, changes: { status: 'reserved', approvedChoice, reservedAt: createdAt }, createdAt });
+        await appendBookingRecord({ type: 'status', bookingId, changes: { status: 'reserved', approvedChoice, amountCents: requestedDates.amountCents || booking.amountCents, reservedAt: createdAt }, createdAt });
         return json(response, 200, { ok: true });
       }
       if (action === 'mark-booked') {

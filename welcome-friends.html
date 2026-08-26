@@ -28,6 +28,18 @@
     h1 { margin:0; color:var(--pine); font:italic 700 clamp(2.8rem,8vw,5.7rem)/.93 'Crimson Text',serif; }
     h2 { margin:12px 0 0; color:#5d4a3d; font:600 clamp(1.2rem,3vw,1.8rem)/1.2 'Crimson Text',serif; }
     .message { max-width:700px; margin:24px auto; white-space:pre-line; color:var(--muted); font-size:clamp(.95rem,2vw,1.1rem); line-height:1.75; }
+    .stay-box { max-width:760px; margin:0 auto 26px; padding:20px; border:1px solid #d7c8b4; border-radius:16px; background:#f5eddf; text-align:left; }
+    .stay-box h3 { margin:0 0 5px; color:var(--pine); font:700 1.55rem 'Crimson Text',serif; }
+    .stay-helper { margin:0 0 14px; color:var(--muted); font-size:.76rem; line-height:1.55; }
+    .stay-options { display:grid; gap:10px; }
+    .stay-option { display:grid; grid-template-columns:1fr auto; gap:14px; align-items:center; padding:14px; border-radius:11px; background:white; border:1px solid #dfd4c5; }
+    .stay-option.selected { border:2px solid var(--pine); background:#e8f0e8; }
+    .stay-option.expired { opacity:.65; background:#eee9e2; }
+    .stay-option strong { display:block; color:var(--ink); font-size:.88rem; }
+    .stay-meta { color:var(--muted); font-size:.7rem; line-height:1.5; margin-top:4px; }
+    .deadline { color:#8a2f2f; font-weight:700; }
+    .choose { border:0; border-radius:999px; background:var(--rust); color:white; padding:10px 14px; font:800 .65rem Montserrat,sans-serif; text-transform:uppercase; letter-spacing:.07em; cursor:pointer; }
+    .choose:disabled { background:#9d948c; cursor:not-allowed; }
     .rule { width:80px; height:3px; background:var(--rust); margin:23px auto; }
     .enter { display:inline-block; text-decoration:none; background:var(--pine); color:white; padding:15px 27px; border-radius:999px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; font-size:.78rem; box-shadow:0 10px 24px rgba(23,58,44,.25); }
     .enter:hover { background:#0b251a; transform:translateY(-1px); }
@@ -49,6 +61,7 @@
         <h2 id="invite-label"></h2>
         <div class="rule"></div>
         <p id="message" class="message"></p>
+        <section id="stay-box" class="stay-box" hidden><h3 id="stay-heading">Choose your stay</h3><p id="stay-helper" class="stay-helper"></p><div id="stay-options" class="stay-options"></div></section>
         <a class="enter" href="/friends-hub.html">Enter the Friends Hub &rarr;</a>
         <span class="aside">Cabin details, directions, Wi-Fi, hot tub guide, and everything else await.</span>
       </div>
@@ -62,6 +75,27 @@
   </main>
   <script>
     const escapeText = (value) => String(value || '').trim();
+    const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+    const formatStayDate = (value) => value ? new Intl.DateTimeFormat(undefined,{dateStyle:'medium'}).format(new Date(`${value}T12:00:00`)) : '';
+    async function selectStay(choice, button) {
+      if(!confirm('Choose this stay? The other offered dates will be released.'))return;
+      button.disabled=true; button.textContent='Reserving...';
+      try {
+        const response=await fetch('/api/invite-select-stay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({choice})});
+        const result=await response.json().catch(()=>({})); if(!response.ok)throw new Error(result.error||'That stay could not be selected.');
+        if(result.warning)alert(result.warning); location.reload();
+      } catch(error) { alert(error.message); button.disabled=false; button.textContent='Choose this stay'; }
+    }
+    function renderStayChoices(data) {
+      const options=data.stayOptions||[]; if(!options.length)return;
+      const selected=Number.isInteger(data.selectedStayChoice)?data.selectedStayChoice:null;
+      const box=document.getElementById('stay-box'),list=document.getElementById('stay-options'),heading=document.getElementById('stay-heading'),helper=document.getElementById('stay-helper');
+      box.hidden=false;
+      if(selected!==null){ heading.textContent='Your reserved stay'; helper.textContent='This is the stay choice on your reservation. The other offered dates have been released.'; }
+      else { heading.textContent=options.length===1?'Confirm your stay':'Choose your stay'; helper.textContent='Each option has its own deadline. If one expires, only that option is released; your other unexpired choices remain available.'; }
+      list.innerHTML=options.map((option,index)=>{ const isSelected=selected===index; const cost=option.costCents?`<div class="stay-meta">Listed cost: <strong>$${(option.costCents/100).toFixed(2)}</strong></div>`:''; const deadline=option.expiresOn?`<div class="stay-meta deadline">Choose by ${formatStayDate(option.expiresOn)}. After that, this option is freed for others.</div>`:'<div class="stay-meta">No automatic expiration for this option.</div>'; const action=isSelected?'<strong>Selected</strong>':selected!==null?'':option.expired?'<button class="choose" disabled>Expired</button>':`<button class="choose" data-choice="${index+1}">Choose this stay</button>`; return `<article class="stay-option ${isSelected?'selected':''} ${option.expired?'expired':''}"><div><strong>Option ${index+1}: ${formatStayDate(option.arrival)} to ${formatStayDate(option.departure)}</strong>${cost}${deadline}</div>${action}</article>`; }).join('');
+      list.querySelectorAll('[data-choice]').forEach((button)=>button.addEventListener('click',()=>selectStay(Number(button.dataset.choice),button)));
+    }
     async function loadWelcome() {
       try {
         const response = await fetch('/api/invite-profile', { cache:'no-store' });
@@ -70,6 +104,7 @@
         document.getElementById('visitor-heading').textContent = `Welcome, ${escapeText(data.visitorName)}.`;
         document.getElementById('invite-label').textContent = escapeText(data.inviteLabel);
         document.getElementById('message').textContent = escapeText(data.welcomeMessage) || `We made this welcome just for ${escapeText(data.inviteLabel)}. Settle in, breathe out, and make yourselves at home.`;
+        renderStayChoices(data);
         const photos = data.photos || [];
         const photoBox = document.getElementById('photos');
         photoBox.className = `photos count-${Math.max(1, photos.length)}`;

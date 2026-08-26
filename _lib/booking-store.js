@@ -78,8 +78,16 @@ export function rangesOverlap(first, second) {
 }
 
 export function unavailableRanges(calendar) {
+  const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
+  const todayValues = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  const today = `${todayValues.year}-${todayValues.month}-${todayValues.day}`;
   const bookingRanges = calendar.bookings.flatMap((booking) => {
     const status = booking.status === 'approved' ? 'reserved' : booking.status;
+    if (status === 'offered') return (booking.dateChoices || []).flatMap((dates, index) => (
+      !dates.expiresOn || dates.expiresOn >= today
+        ? [{ ...dates, type: 'reserved', label: booking.name, bookingId: booking.id, dateChoice: index + 1 }]
+        : []
+    ));
     if (!['reserved', 'booked'].includes(status)) return [];
     const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0];
     return dates ? [{ ...dates, type: status, label: booking.name, bookingId: booking.id }] : [];
