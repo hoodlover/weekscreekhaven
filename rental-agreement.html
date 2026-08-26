@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Rental Agreement | Weeks Creek Haven</title>
+  <link rel="icon" type="image/png" href="webpic/pwa-logo-192.png">
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,600;0,700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --pine:#173a2c; --rust:#a45d41; --cream:#f4eee0; --paper:#fffdf8; --ink:#332820; --muted:#74685e; --line:#d9cfbf; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:#1f1712 url('webpic/lightbardwood.webp') center/cover fixed; color:var(--ink); font-family:Montserrat,sans-serif; }
+    body::before { content:""; position:fixed; inset:0; background:rgba(18,12,8,.7); z-index:-1; }
+    main { width:min(880px,calc(100% - 28px)); margin:24px auto 60px; }
+    .brand { display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:16px; color:var(--cream); font-size:.7rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase; }
+    .brand img { width:78px; height:78px; object-fit:contain; }
+    .document { background:rgba(255,253,248,.99); border-radius:18px; box-shadow:0 25px 70px rgba(0,0,0,.5); overflow:hidden; }
+    .hero { padding:34px 42px 27px; background:linear-gradient(#fffdf8,#f4ead9); border-top:10px solid var(--pine); border-bottom:1px solid var(--line); text-align:center; }
+    .eyebrow { color:var(--rust); font-size:.68rem; font-weight:800; letter-spacing:.18em; text-transform:uppercase; }
+    h1 { margin:6px 0; color:var(--pine); font:700 clamp(2.2rem,7vw,3.6rem)/1 'Crimson Text',serif; }
+    .hero p { margin:0; color:var(--muted); line-height:1.55; }
+    .body { padding:30px 42px 42px; }
+    .summary { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:25px; }
+    .fact { padding:12px 14px; border-radius:10px; background:#f4eee2; border:1px solid #e2d7c6; }
+    .fact span { display:block; color:var(--muted); font-size:.61rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+    .fact strong { display:block; margin-top:4px; color:var(--pine); font-size:.9rem; }
+    .important { margin:0 0 24px; padding:16px 18px; background:#fff0cc; border:1px solid #e5cc8a; border-radius:11px; color:#684b10; line-height:1.6; }
+    h2 { margin:24px 0 7px; color:var(--pine); font:700 1.5rem 'Crimson Text',serif; }
+    p,li { font-size:.82rem; line-height:1.65; }
+    ol { padding-left:22px; } li { padding-left:5px; margin:0 0 8px; }
+    .signature { margin-top:30px; padding:22px; background:#f5efe5; border:1px solid var(--line); border-radius:12px; }
+    .signature label { display:block; margin:14px 0 7px; font-size:.67rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+    input[type=text] { width:100%; padding:13px 14px; border:1px solid #cbbda9; border-radius:9px; background:white; color:var(--ink); font:inherit; }
+    .check { display:flex; align-items:flex-start; gap:9px; margin:13px 0; color:var(--muted); font-size:.76rem; line-height:1.5; }
+    .check input { margin-top:3px; accent-color:var(--pine); }
+    .actions { display:flex; gap:10px; margin-top:17px; }
+    button { border:0; border-radius:999px; padding:13px 19px; font:800 .7rem Montserrat,sans-serif; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; }
+    .accept { flex:1; background:var(--pine); color:white; } .print { background:white; border:1px solid #bfae96; color:var(--rust); }
+    button:disabled { opacity:.55; cursor:wait; }
+    .message { margin-top:14px; padding:12px 14px; border-radius:9px; font-size:.78rem; line-height:1.5; }
+    .success { color:#276141; background:#e0efe5; } .error { color:#842e2e; background:#f2dddd; }
+    .legal-note { margin-top:26px; color:var(--muted); font-size:.68rem; line-height:1.55; }
+    .loading { padding:60px 30px; text-align:center; color:var(--muted); font:700 1.3rem 'Crimson Text',serif; }
+    @media(max-width:620px){.hero,.body{padding-left:20px;padding-right:20px}.summary{grid-template-columns:1fr}.actions{flex-direction:column}.brand img{width:64px;height:64px}}
+    @media print { body{background:white}.brand{color:#222}.brand img{width:55px;height:55px}.document{box-shadow:none;border:1px solid #aaa}.actions,.legal-note{display:none}main{width:100%;margin:0}.body{padding:22px 30px}.hero{padding:22px 30px}h2{break-after:avoid}.signature{break-inside:avoid} }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="brand"><img src="webpic/weeks-creek-haven-round-logo.png" alt="Weeks Creek Haven"><span>Weeks Creek Haven</span></div>
+    <article class="document">
+      <div id="loading" class="loading">Preparing your booking agreement...</div>
+      <div id="content" hidden>
+        <header class="hero"><div class="eyebrow">Short-term rental agreement</div><h1>Your Stay at the Haven</h1><p>Weeks Creek Haven · 421 Weeks Creek Rd · Blue Ridge, Georgia</p></header>
+        <div class="body">
+          <div class="summary">
+            <div class="fact"><span>Primary guest</span><strong id="guest-name"></strong></div>
+            <div class="fact"><span>Registered guests</span><strong id="guest-count"></strong></div>
+            <div class="fact"><span>Arrival</span><strong id="arrival"></strong></div>
+            <div class="fact"><span>Checkout</span><strong id="departure"></strong></div>
+            <div class="fact"><span>Stay total</span><strong id="total"></strong></div>
+            <div class="fact"><span>Agreement version</span><strong>August 25, 2026</strong></div>
+          </div>
+          <div class="important"><strong>Cancellation policy:</strong> Cancel by 11:59 p.m. Eastern Time at least two calendar days before check-in for a 100% refund of amounts paid. Cancellations made after that deadline—including the day before check-in and check-in day—receive no refund.</div>
+          <p>This Short-Term Rental Agreement (“Agreement”) is between the Weeks Creek Haven property owner or authorized manager (“Owner”) and the primary guest named above (“Guest”). By accepting electronically, Guest confirms that the reservation details are correct, agrees to conduct this transaction electronically, and accepts responsibility for everyone in the Guest’s party.</p>
+          <ol>
+            <li><h2>Reservation and payment</h2>The reservation covers only the dates and registered guest count shown above. The reservation becomes final when the required payment is made and this Agreement is accepted. Any approved discount is reflected in the stay total. Taxes, fees, or refundable deposits, if any, must be disclosed before collection.</li>
+            <li><h2>Cancellation and refunds</h2>Guest receives a 100% refund of amounts paid when cancellation notice is received by Owner no later than 11:59 p.m. Eastern Time two calendar days before the scheduled check-in date. No refund is due for a cancellation after that deadline, including the day before check-in, check-in day, late arrival, or early departure. Owner may grant a written exception or goodwill refund but is not required to do so. Payment-processor timing controls when approved refunds appear on Guest’s account.</li>
+            <li><h2>Occupancy and use</h2>The cabin is for private residential vacation use only. No parties, events, commercial activity, subletting, or unregistered overnight guests are permitted without Owner’s written approval. Occupancy may never exceed the property limit of 11 people. Guest must be an adult with legal capacity to enter this Agreement and must supervise minors.</li>
+            <li><h2>Arrival, departure, and access</h2>Guest will follow the arrival, parking, access, and checkout instructions in the welcome packet and Friends Hub. Unless Owner agrees otherwise in writing, early entry or late departure is not guaranteed. Guest will secure doors and windows when leaving and return keys or access devices as directed.</li>
+            <li><h2>House care</h2>No smoking or vaping inside the cabin. Pets are permitted only with prior written approval. Guest will keep the property reasonably clean, place trash where instructed, use plumbing and septic systems only as directed, and complete the checkout checklist. Furniture, electronics, linens, and supplies must remain at the property.</li>
+            <li><h2>Safety, creek, hot tub, fire, and wildlife</h2>Mountain terrain, steps, rocks, the creek and river, wildlife, weather, hot tub, fireplace, grill, and outdoor firepit involve inherent risks. Guest will supervise children, avoid glass near the hot tub, follow posted equipment instructions, obey burn bans, never leave fire unattended, and avoid feeding or approaching wildlife. Alcohol, medication, health conditions, and weather can increase these risks.</li>
+            <li><h2>Damage and problems</h2>Guest will promptly report unsafe conditions, damage, equipment failures, or maintenance problems and allow reasonable access for urgent repairs. Guest is responsible for the actual cost of damage, excessive cleaning, missing property, or rule violations caused by Guest or the party, beyond ordinary wear and tear. Owner will document and itemize any charge.</li>
+            <li><h2>Quiet enjoyment and neighbors</h2>Guest will respect neighboring properties, private roads, posted boundaries, and local noise requirements. Vehicles must use designated parking areas and may not block roads or neighboring access.</li>
+            <li><h2>Condition, interruptions, and remedies</h2>Guest accepts that rural utilities, internet, weather, roads, and amenities can experience interruptions. Owner will make reasonable efforts to correct material problems reported during the stay. Any discount, credit, relocation, or partial refund for a problem must be agreed to by Owner in writing; this does not limit rights that cannot lawfully be waived.</li>
+            <li><h2>Assumption of risk and liability</h2>To the extent permitted by Georgia law, Guest voluntarily assumes the ordinary risks of using the cabin, property, creek area, hot tub, fires, stairs, decks, and outdoor surroundings. Guest is responsible for personal property and travel insurance. Nothing in this Agreement releases a party from liability that cannot legally be waived, including willful misconduct or gross negligence where applicable.</li>
+            <li><h2>Default and removal</h2>A material violation of this Agreement, dangerous or unlawful conduct, unauthorized occupancy, or refusal to protect the property may result in termination of the stay as permitted by law. No refund is owed for removal caused by Guest’s material breach, subject to nonwaivable law.</li>
+            <li><h2>Electronic records; entire agreement</h2>Guest consents to electronic records and signatures and may print or save this page. This Agreement, the confirmed reservation details, written payment terms, and written house instructions form the agreement between the parties. Changes must be in writing. If one provision is unenforceable, the remainder continues. Georgia law governs, and any dispute will be brought in a court with jurisdiction in Fannin County, Georgia, unless applicable law requires otherwise.</li>
+          </ol>
+          <section class="signature">
+            <strong>Electronic acceptance</strong>
+            <p class="helper">Type your legal name exactly as your electronic signature.</p>
+            <label for="accepted-by">Full legal name</label>
+            <input id="accepted-by" type="text" maxlength="100" autocomplete="name">
+            <label class="check"><input id="accept-terms" type="checkbox"> I have read and agree to this Short-Term Rental Agreement and accept responsibility for my party.</label>
+            <label class="check"><input id="accept-electronic" type="checkbox"> I consent to use electronic records and signatures and understand that clicking “Accept agreement” is my electronic signature.</label>
+            <div class="actions"><button id="accept" class="accept" type="button">Accept agreement</button><button class="print" type="button" onclick="window.print()">Print / Save PDF</button></div>
+            <div id="message" class="message" hidden></div>
+          </section>
+          <p class="legal-note">Owner-drafted agreement template. Electronic signatures and records are generally recognized under Georgia’s Uniform Electronic Transactions Act, but the Owner should have Georgia counsel review this agreement before relying on it for a live rental program.</p>
+        </div>
+      </div>
+    </article>
+  </main>
+  <script>
+    const token=new URLSearchParams(location.search).get('token')||''; const loading=document.getElementById('loading'),content=document.getElementById('content'),message=document.getElementById('message'),accept=document.getElementById('accept');
+    const money=(cents)=>cents?new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(cents/100):'As confirmed in writing';
+    const date=(value)=>value?new Intl.DateTimeFormat('en-US',{dateStyle:'long',timeZone:'UTC'}).format(new Date(`${value}T12:00:00Z`)):'To be confirmed';
+    function show(text,type){message.textContent=text;message.className=`message ${type}`;message.hidden=false;}
+    async function request(url,options={}){const response=await fetch(url,options);const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||'Something went wrong.');return data;}
+    async function load(){try{const data=await request(`/api/agreement?token=${encodeURIComponent(token)}`);document.getElementById('guest-name').textContent=data.guestName;document.getElementById('accepted-by').value=data.guestName;document.getElementById('guest-count').textContent=`${data.guests} guest${data.guests===1?'':'s'}`;document.getElementById('arrival').textContent=date(data.arrival);document.getElementById('departure').textContent=date(data.departure);document.getElementById('total').textContent=money(data.totalCents);if(data.acceptedAt){document.getElementById('accepted-by').value=data.acceptedBy;document.getElementById('accepted-by').disabled=true;document.getElementById('accept-terms').checked=true;document.getElementById('accept-terms').disabled=true;document.getElementById('accept-electronic').checked=true;document.getElementById('accept-electronic').disabled=true;accept.disabled=true;accept.textContent='Agreement accepted';show(`Accepted electronically on ${new Date(data.acceptedAt).toLocaleString()}.`,'success');}loading.hidden=true;content.hidden=false;}catch(error){loading.textContent=error.message;loading.className='loading error';}}
+    accept.addEventListener('click',async()=>{accept.disabled=true;message.hidden=true;try{const payload={token,acceptedBy:document.getElementById('accepted-by').value,accepted:document.getElementById('accept-terms').checked,electronicConsent:document.getElementById('accept-electronic').checked};const data=await request('/api/agreement',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});accept.textContent='Agreement accepted';show(`Thank you. Your agreement was recorded on ${new Date(data.acceptedAt).toLocaleString()}. You may print or save a copy now.`,'success');}catch(error){accept.disabled=false;show(error.message,'error');}});
+    load();
+  </script>
+</body>
+</html>

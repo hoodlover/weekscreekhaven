@@ -65,6 +65,10 @@ export function normalizePasscode(passcode) {
   return String(passcode || '').trim().toUpperCase().replace(/\s+/g, '');
 }
 
+export function inviteCodeSuffix(passcode) {
+  return normalizePasscode(passcode).replace(/^WCH-/, '');
+}
+
 export function hashPasscode(passcode, salt = randomBytes(16).toString('hex')) {
   return { salt, hash: scryptSync(normalizePasscode(passcode), salt, 32).toString('hex') };
 }
@@ -114,6 +118,48 @@ export function anonymizeIp(ip) {
 
 export function requireAdmin(request) {
   return verifySession(parseCookies(request)[ADMIN_COOKIE], 'admin');
+}
+
+export function createReviewToken(bookingId, lifetimeSeconds = 180 * 86400) {
+  const body = base64url(JSON.stringify({ purpose: 'guest-review', bookingId: String(bookingId || ''), exp: Math.floor(Date.now() / 1000) + lifetimeSeconds }));
+  const signature = createHmac('sha256', sessionSecret()).update(body).digest('base64url');
+  return `${body}.${signature}`;
+}
+
+export function verifyReviewToken(token) {
+  try {
+    const [body, suppliedSignature] = String(token || '').split('.');
+    const expectedSignature = createHmac('sha256', sessionSecret()).update(body).digest('base64url');
+    const supplied = Buffer.from(suppliedSignature || '', 'base64url');
+    const expected = Buffer.from(expectedSignature, 'base64url');
+    if (supplied.length !== expected.length || !timingSafeEqual(supplied, expected)) return null;
+    const payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf8'));
+    if (payload.purpose !== 'guest-review' || !payload.bookingId || payload.exp <= Math.floor(Date.now() / 1000)) return null;
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+export function createAgreementToken(bookingId, lifetimeSeconds = 120 * 86400) {
+  const body = base64url(JSON.stringify({ purpose: 'rental-agreement', bookingId: String(bookingId || ''), exp: Math.floor(Date.now() / 1000) + lifetimeSeconds }));
+  const signature = createHmac('sha256', sessionSecret()).update(body).digest('base64url');
+  return `${body}.${signature}`;
+}
+
+export function verifyAgreementToken(token) {
+  try {
+    const [body, suppliedSignature] = String(token || '').split('.');
+    const expectedSignature = createHmac('sha256', sessionSecret()).update(body).digest('base64url');
+    const supplied = Buffer.from(suppliedSignature || '', 'base64url');
+    const expected = Buffer.from(expectedSignature, 'base64url');
+    if (supplied.length !== expected.length || !timingSafeEqual(supplied, expected)) return null;
+    const payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf8'));
+    if (payload.purpose !== 'rental-agreement' || !payload.bookingId || payload.exp <= Math.floor(Date.now() / 1000)) return null;
+    return payload;
+  } catch {
+    return null;
+  }
 }
 
 export function requireInvite(request) {

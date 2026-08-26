@@ -1,9 +1,25 @@
+function squareEnvironment() {
+  const value = String(process.env.SQUARE_ENVIRONMENT || '').trim().toLowerCase();
+  if (value === 'live') return 'production';
+  return value;
+}
+
 export function squareConfigured() {
-  return Boolean(process.env.SQUARE_ACCESS_TOKEN && process.env.SQUARE_LOCATION_ID);
+  return Boolean(process.env.SQUARE_ACCESS_TOKEN && process.env.SQUARE_LOCATION_ID && ['sandbox', 'production'].includes(squareEnvironment()));
+}
+
+export function squareStatus() {
+  const environment = squareEnvironment();
+  return {
+    configured: squareConfigured(),
+    environment: ['sandbox', 'production'].includes(environment) ? environment : 'not-set',
+    live: environment === 'production' && squareConfigured(),
+  };
 }
 
 function squareBaseUrl() {
-  const environment = String(process.env.SQUARE_ENVIRONMENT || 'production').toLowerCase();
+  const environment = squareEnvironment();
+  if (!['sandbox', 'production'].includes(environment)) throw new Error('Set SQUARE_ENVIRONMENT to sandbox or production before using Square.');
   return environment === 'sandbox' ? 'https://connect.squareupsandbox.com' : 'https://connect.squareup.com';
 }
 
@@ -45,7 +61,7 @@ function invoiceReminders(today, dueDate) {
   return reminders;
 }
 
-export async function createSquareBookingInvoice({ bookingId, guestName, email, amountCents, arrival }) {
+export async function createSquareBookingInvoice({ bookingId, guestName, email, amountCents, arrival, discountCents = 0 }) {
   if (amountCents < 10000) throw new Error('The stay total must be at least the $100 deposit.');
   const nameParts = String(guestName || 'Guest').trim().split(/\s+/);
   const familyName = nameParts.length > 1 ? nameParts.pop() : '';
@@ -105,7 +121,7 @@ export async function createSquareBookingInvoice({ bookingId, guestName, email, 
         payment_requests: paymentRequests,
         invoice_number: `WCH-${bookingId.slice(0, 8).toUpperCase()}`,
         title: 'Weeks Creek Haven private stay',
-        description: '$100 non-refundable reservation deposit. Remaining balance is due one day before arrival.',
+        description: `${discountCents ? `Includes a $${(discountCents / 100).toFixed(2)} Weeks Creek Haven discount. ` : ''}$100 reservation deposit. Cancel at least two calendar days before check-in for a full refund; no refund after that deadline. Remaining balance is due one day before arrival.`,
         sale_or_service_date: arrival,
         accepted_payment_methods: { card: true, square_gift_card: false, bank_account: false, buy_now_pay_later: false, cash_app_pay: false },
       },
@@ -124,6 +140,66 @@ export async function createSquareBookingInvoice({ bookingId, guestName, email, 
     balanceAmountCents: balanceCents,
     balanceDueDate,
   };
+}
+
+async function invoicePayments(invoiceId, fallbackOrderId) {
+  const invoiceResult = invoiceId ? await squareRequest(`/v2/invoices/${encodeURIComponent(invoiceId)}`) : {};
+  const invoice = invoiceResult.invoice || null;
+  const orderId = invoice?.order_id || fallbackOrderId;
+  if (!orderId) throw new Error('This reservation does not have a Square order to refund.');
+  const orderResult = await squareRequest(`/v2/orders/${encodeURIComponent(orderId)}`);
+  const paymentIds = [...new Set((orderResult.order?.tenders || []).map((tender) => tender.payment_id || tender.id).filter(Boolean))];
+  const payments = await Promise.all(paymentIds.map(async (paymentId) => {
+    const result = await squareRequest(`/v2/payments/${encodeURIComponent(paymentId)}`);
+    const payment = result.payment;
+    const paid = Number(payment?.amount_money?.amount) || 0;
+    const refunded = Number(payment?.refunded_money?.amount) || 0;
+    return { id: paymentId, status: payment?.status, paid, refunded, refundable: Math.max(0, paid - refunded) };
+  }));
+  return { invoice, orderId, payments };
+}
+
+export async function refundSquareBooking({ bookingId, invoiceId, orderId, amountCents, reason, operationId }) {
+  if (!operationId) throw new Error('A refund operation ID is required.');
+  let details = await invoicePayments(invoiceId, orderId);
+  if (details.invoice?.status === 'PARTIALLY_PAID') {
+    await cancelSquareInvoice(invoiceId);
+    details = await invoicePayments(invoiceId, orderId);
+  }
+  if (details.invoice && !['PAID', 'CANCELED', 'FAILED', 'REFUNDED'].includes(details.invoice.status)) {
+    throw new Error(`Square invoice status ${details.invoice.status} cannot be refunded yet.`);
+  }
+  const refundablePayments = details.payments.filter((payment) => payment.status === 'COMPLETED' && payment.refundable > 0);
+  const availableCents = refundablePayments.reduce((sum, payment) => sum + payment.refundable, 0);
+  const requestedCents = amountCents == null ? availableCents : Number(amountCents);
+  if (!Number.isInteger(requestedCents) || requestedCents < 1) throw new Error('There is no completed Square payment available to refund.');
+  if (requestedCents > availableCents) throw new Error(`Only $${(availableCents / 100).toFixed(2)} is currently available to refund.`);
+
+  let remaining = requestedCents;
+  const refunds = [];
+  for (let index = 0; index < refundablePayments.length && remaining > 0; index++) {
+    const payment = refundablePayments[index];
+    const refundAmount = Math.min(remaining, payment.refundable);
+    const result = await squareRequest('/v2/refunds', {
+      method: 'POST',
+      body: {
+        idempotency_key: `${String(operationId).slice(0, 40)}-${index}`,
+        payment_id: payment.id,
+        amount_money: { amount: refundAmount, currency: 'USD' },
+        reason: String(reason || 'Weeks Creek Haven guest adjustment').trim().slice(0, 192),
+      },
+    });
+    refunds.push({
+      id: result.refund.id,
+      paymentId: payment.id,
+      amountCents: Number(result.refund.amount_money?.amount) || refundAmount,
+      status: result.refund.status,
+      reason: result.refund.reason || reason,
+      createdAt: result.refund.created_at || new Date().toISOString(),
+    });
+    remaining -= refundAmount;
+  }
+  return { bookingId, amountCents: requestedCents, availableBeforeCents: availableCents, refunds };
 }
 
 export async function cancelSquareInvoice(invoiceId) {

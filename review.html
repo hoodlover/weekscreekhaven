@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Rate Your Stay | Weeks Creek Haven</title>
+  <link rel="icon" type="image/png" href="webpic/pwa-logo-192.png">
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,600;0,700;1,600&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --pine:#173a2c; --rust:#a45d41; --cream:#f4eee0; --paper:#fffaf0; --ink:#342920; --muted:#74685e; --gold:#d79527; --line:#d9cfbf; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; color:var(--ink); font-family:Montserrat,sans-serif; background:#251b14 url('webpic/lightbardwood.webp') center/cover fixed; }
+    body::before { content:""; position:fixed; inset:0; background:linear-gradient(135deg,rgba(9,22,15,.9),rgba(49,29,18,.7)); z-index:-1; }
+    main { width:min(760px,calc(100% - 28px)); margin:auto; padding:24px 0 60px; }
+    .brand { display:flex; justify-content:center; align-items:center; gap:12px; color:var(--cream); margin-bottom:18px; text-transform:uppercase; letter-spacing:.16em; font-size:.7rem; font-weight:800; }
+    .brand img { width:82px; height:82px; object-fit:contain; filter:drop-shadow(0 6px 12px rgba(0,0,0,.45)); }
+    .card { background:rgba(255,250,240,.98); border-radius:24px; overflow:hidden; box-shadow:0 25px 75px rgba(0,0,0,.5); border-top:10px solid var(--pine); }
+    header { padding:34px 34px 24px; text-align:center; background:linear-gradient(#fffdf7,#f7eddc); border-bottom:1px solid var(--line); }
+    .eyebrow { color:var(--rust); text-transform:uppercase; letter-spacing:.18em; font-size:.68rem; font-weight:800; }
+    h1 { margin:7px 0 8px; color:var(--pine); font:700 clamp(2.3rem,8vw,4rem)/.95 'Crimson Text',serif; }
+    header p { color:var(--muted); line-height:1.6; margin:0; }
+    form { padding:30px 34px 38px; }
+    fieldset { margin:0 0 25px; padding:0; border:0; }
+    legend,label.section-label { display:block; width:100%; margin-bottom:10px; font-size:.69rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--pine); }
+    .stars { display:flex; justify-content:center; flex-direction:row-reverse; gap:7px; }
+    .stars input { position:absolute; opacity:0; pointer-events:none; }
+    .stars label { cursor:pointer; color:#c9bdac; font-size:clamp(2.5rem,10vw,4rem); line-height:1; transition:transform .15s,color .15s; text-shadow:0 2px 0 white; }
+    .stars label:hover,.stars label:hover~label,.stars input:checked~label { color:var(--gold); transform:translateY(-2px); }
+    .rating-word { text-align:center; min-height:22px; margin-top:9px; color:var(--rust); font:700 1.15rem 'Crimson Text',serif; }
+    .category-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .category { background:#f3ebde; border:1px solid #e2d6c5; border-radius:12px; padding:12px; }
+    .category label { display:block; font-size:.7rem; font-weight:800; margin-bottom:7px; }
+    .category select,input[type=text],textarea { width:100%; padding:12px 13px; border:1px solid #cfc2af; border-radius:9px; background:white; color:var(--ink); font:inherit; outline:none; }
+    select:focus,input:focus,textarea:focus { border-color:var(--rust); box-shadow:0 0 0 3px rgba(164,93,65,.13); }
+    textarea { min-height:110px; resize:vertical; line-height:1.55; }
+    .helper { margin:-3px 0 10px; color:var(--muted); font-size:.72rem; line-height:1.5; }
+    .choice { display:flex; align-items:flex-start; gap:9px; margin:12px 0; color:var(--muted); font-size:.77rem; line-height:1.45; }
+    .choice input { margin-top:2px; accent-color:var(--pine); }
+    button { width:100%; border:0; border-radius:999px; padding:15px 22px; background:var(--pine); color:white; font:800 .76rem Montserrat,sans-serif; text-transform:uppercase; letter-spacing:.1em; cursor:pointer; }
+    button:hover { background:#0d261b; } button:disabled { opacity:.55; cursor:wait; }
+    .message { margin:0 34px 34px; padding:20px; border-radius:13px; text-align:center; line-height:1.55; }
+    .error { background:#fff0f0; color:#842e2e; border:1px solid #dfbebe; }
+    .success { background:#e9f3eb; color:#276141; border:1px solid #bed2c1; }
+    .loading { padding:55px 30px; text-align:center; color:var(--muted); font:700 1.25rem 'Crimson Text',serif; }
+    @media (max-width:600px) { header,form { padding-left:20px; padding-right:20px; } .category-grid { grid-template-columns:1fr; } .brand img { width:68px; height:68px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="brand"><img src="webpic/weeks-creek-haven-round-logo.png" alt="Weeks Creek Haven"><span>Weeks Creek Haven</span></div>
+    <section class="card">
+      <div id="loading" class="loading">Getting your review ready...</div>
+      <div id="review-content" hidden>
+        <header><div class="eyebrow">Thank you for staying with us</div><h1>How was the Haven?</h1><p id="welcome-copy">Your honest feedback helps us keep the cabin special.</p></header>
+        <form id="review-form">
+          <fieldset>
+            <legend style="text-align:center">Overall rating</legend>
+            <div class="stars" aria-label="Overall star rating">
+              <input id="star5" name="overall" type="radio" value="5" required><label for="star5" title="Excellent">★</label>
+              <input id="star4" name="overall" type="radio" value="4"><label for="star4" title="Very good">★</label>
+              <input id="star3" name="overall" type="radio" value="3"><label for="star3" title="Good">★</label>
+              <input id="star2" name="overall" type="radio" value="2"><label for="star2" title="Fair">★</label>
+              <input id="star1" name="overall" type="radio" value="1"><label for="star1" title="Poor">★</label>
+            </div>
+            <div id="rating-word" class="rating-word"></div>
+          </fieldset>
+          <fieldset><legend>Rate the details</legend><div class="category-grid">
+            <div class="category"><label for="cleanliness">Cleanliness</label><select id="cleanliness" name="cleanliness" required><option value="">Choose</option><option value="5">5 — Excellent</option><option value="4">4 — Very good</option><option value="3">3 — Good</option><option value="2">2 — Fair</option><option value="1">1 — Poor</option></select></div>
+            <div class="category"><label for="comfort">Comfort &amp; amenities</label><select id="comfort" name="comfort" required><option value="">Choose</option><option value="5">5 — Excellent</option><option value="4">4 — Very good</option><option value="3">3 — Good</option><option value="2">2 — Fair</option><option value="1">1 — Poor</option></select></div>
+            <div class="category"><label for="location">Location &amp; setting</label><select id="location" name="location" required><option value="">Choose</option><option value="5">5 — Excellent</option><option value="4">4 — Very good</option><option value="3">3 — Good</option><option value="2">2 — Fair</option><option value="1">1 — Poor</option></select></div>
+            <div class="category"><label for="communication">Communication</label><select id="communication" name="communication" required><option value="">Choose</option><option value="5">5 — Excellent</option><option value="4">4 — Very good</option><option value="3">3 — Good</option><option value="2">2 — Fair</option><option value="1">1 — Poor</option></select></div>
+          </div></fieldset>
+          <label class="section-label" for="public-comments">What did you enjoy?</label>
+          <p class="helper">Share the moments, features, or little details that stood out.</p>
+          <textarea id="public-comments" name="publicComments" maxlength="1500" placeholder="The creek, the porch, a favorite room..."></textarea>
+          <label class="section-label" for="private-comments" style="margin-top:22px">Anything we should improve?</label>
+          <p class="helper">This note is private and goes only to the owners.</p>
+          <textarea id="private-comments" name="privateComments" maxlength="1500" placeholder="Tell us candidly — we want to make it right and improve the next stay."></textarea>
+          <label class="section-label" for="display-name" style="margin-top:22px">Name shown with an approved testimonial</label>
+          <input id="display-name" name="displayName" type="text" maxlength="80">
+          <label class="choice"><input name="recommend" type="checkbox"> I would recommend Weeks Creek Haven to friends or family.</label>
+          <label class="choice"><input name="allowTestimonial" type="checkbox"> You may share my public comments as a testimonial. Private improvement notes always stay private.</label>
+          <button id="submit-review" type="submit">Send my review</button>
+        </form>
+      </div>
+      <div id="message" class="message" hidden></div>
+    </section>
+  </main>
+  <script>
+    const token=new URLSearchParams(location.search).get('token')||'';
+    const loading=document.getElementById('loading'),content=document.getElementById('review-content'),message=document.getElementById('message'),form=document.getElementById('review-form'),submit=document.getElementById('submit-review');
+    const words={1:'We’re sorry it missed the mark',2:'Thank you for being candid',3:'A good stay',4:'A wonderful stay',5:'Five-star mountain magic'};
+    document.querySelectorAll('input[name="overall"]').forEach(input=>input.addEventListener('change',()=>document.getElementById('rating-word').textContent=words[input.value]));
+    function showMessage(text,type){ loading.hidden=true; content.hidden=true; message.className=`message ${type}`; message.textContent=text; message.hidden=false; }
+    async function request(url,options={}){ const response=await fetch(url,options); const data=await response.json().catch(()=>({})); if(!response.ok)throw new Error(data.error||'Something went wrong.'); return data; }
+    async function load(){ try{ const data=await request(`/api/reviews?token=${encodeURIComponent(token)}`); if(data.submitted){showMessage('Thank you — your review has already been received.','success');return;} document.getElementById('welcome-copy').textContent=`${data.guestName}, your honest feedback helps us keep the cabin special.`; document.getElementById('display-name').value=data.guestName; loading.hidden=true; content.hidden=false; }catch(error){showMessage(error.message,'error');} }
+    form.addEventListener('submit',async(event)=>{ event.preventDefault(); submit.disabled=true; submit.textContent='Sending your review...'; const values=Object.fromEntries(new FormData(form)); const payload={token,displayName:values.displayName,overall:Number(values.overall),cleanliness:Number(values.cleanliness),comfort:Number(values.comfort),location:Number(values.location),communication:Number(values.communication),publicComments:values.publicComments,privateComments:values.privateComments,recommend:Boolean(values.recommend),allowTestimonial:Boolean(values.allowTestimonial)}; try{await request('/api/reviews',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});showMessage('Thank you! Your review went directly to the Weeks Creek Haven owners.','success');}catch(error){message.className='message error';message.textContent=error.message;message.hidden=false;content.hidden=false;}finally{submit.disabled=false;submit.textContent='Send my review';}});
+    load();
+  </script>
+</body>
+</html>

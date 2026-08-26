@@ -88,6 +88,19 @@
     .booking-actions { display:flex; align-items:end; gap:8px; flex-wrap:wrap; }
     .booking-actions label { margin:0; flex:1; min-width:110px; }
     .booking-actions input,.booking-actions select { margin-top:6px; }
+    .square-status { margin:14px 0 4px; padding:10px 12px; border-radius:9px; background:#f5efe5; color:var(--muted); font-size:.72rem; font-weight:700; }
+    .square-status.live { background:#e0efe5; color:#276141; } .square-status.sandbox { background:#fff0cc; color:#76530c; } .square-status.off { background:#f2dddd; color:#842e2e; }
+    .booking-tools { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:12px; }
+    .refund-box { width:100%; margin-top:10px; padding:10px 12px; border:1px solid #dfc9b9; border-radius:10px; background:#fff9f3; }
+    .refund-box summary { cursor:pointer; color:var(--rust); font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; }
+    .refund-grid { display:grid; grid-template-columns:160px 1fr; gap:8px; align-items:end; margin-top:10px; }
+    .refund-grid label { margin:0; } .refund-grid input { margin-top:6px; }
+    .refund-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:9px; }
+    .review { padding:17px 0; border-bottom:1px solid #e9e1d5; } .review:last-child { border-bottom:0; }
+    .review-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+    .stars-inline { color:#d79527; letter-spacing:.08em; font-size:1.15rem; white-space:nowrap; }
+    .review blockquote { margin:11px 0 0; padding:11px 13px; background:#f5efe5; border-left:4px solid var(--rust); border-radius:0 8px 8px 0; font:600 1rem/1.5 'Crimson Text',serif; }
+    .private-note { margin-top:8px; padding:10px 12px; background:#fff0cc; border-radius:8px; color:#76530c; font-size:.75rem; line-height:1.5; }
     .status-pending { background:#fff0cc; color:#76530c; } .status-offered { background:#f3e3bf; color:#76530c; } .status-approved,.status-reserved { background:#dceaf4; color:#285b79; } .status-booked { background:#e0efe5; color:#276141; } .status-declined,.status-cancelled { background:#f2dddd; color:#842e2e; }
     @media (max-width:800px) { .main-grid { grid-template-columns:1fr; } .create { position:static; } .invite { grid-template-columns:1fr; gap:9px; } .stats { grid-template-columns:1fr 1fr; } .stats .stat:last-child { grid-column:1/-1; } .section-head { align-items:flex-start; flex-direction:column; } }
   </style>
@@ -165,21 +178,23 @@
         <section class="panel content">
           <div class="section-head">
             <div><div class="eyebrow">At a glance</div><h2>Invites, bookings &amp; activity</h2></div>
-            <div class="tabs"><button class="tab active" data-tab="invites">Invites</button><button class="tab" data-tab="bookings">Bookings <span id="booking-badge" class="count-badge" hidden></span></button><button class="tab" data-tab="activity">Activity <span id="activity-badge" class="count-badge" hidden></span></button></div>
+            <div class="tabs"><button class="tab active" data-tab="invites">Invites</button><button class="tab" data-tab="bookings">Bookings <span id="booking-badge" class="count-badge" hidden></span></button><button class="tab" data-tab="reviews">Reviews <span id="review-badge" class="count-badge" hidden></span></button><button class="tab" data-tab="activity">Activity <span id="activity-badge" class="count-badge" hidden></span></button></div>
           </div>
           <div id="panel-invites" class="tab-panel active"><div id="invite-list"></div></div>
-          <div id="panel-bookings" class="tab-panel"><div id="booking-list"></div></div>
+          <div id="panel-bookings" class="tab-panel"><div id="square-status" class="square-status"></div><div id="booking-list"></div></div>
+          <div id="panel-reviews" class="tab-panel"><div id="review-list"></div></div>
           <div id="panel-activity" class="tab-panel"><div id="activity-list"></div></div>
         </section>
       </div>
     </section>
   </main>
   <script>
-    const state = { invites: [], access: [], bookings: [], knownBookingIds: new Set(), knownAccessIds: new Set(), initialized: false, newInvite: null };
+    const state = { invites: [], access: [], bookings: [], reviews: [], square: {}, knownBookingIds: new Set(), knownAccessIds: new Set(), initialized: false, newInvite: null };
     const $ = (id) => document.getElementById(id);
     const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
     const formatDate = (value) => value ? new Intl.DateTimeFormat(undefined,{dateStyle:'medium',timeStyle:'short'}).format(new Date(value)) : 'Never';
     const formatStayDate = (value) => value ? new Intl.DateTimeFormat(undefined,{dateStyle:'medium'}).format(new Date(`${value}T12:00:00`)) : '';
+    const codeSuffix = (value) => String(value || '').replace(/^WCH-/i,'');
     const device = (ua) => /iPhone|iPad/i.test(ua) ? 'Apple mobile device' : /Android/i.test(ua) ? 'Android device' : /Macintosh/i.test(ua) ? 'Mac' : /Windows/i.test(ua) ? 'Windows computer' : 'Web browser';
 
     async function request(url, options = {}) {
@@ -196,10 +211,11 @@
 
     async function load(notify = false) {
       try {
-        const [data, bookingData] = await Promise.all([request('/api/admin-invites'), request('/api/admin-bookings')]);
+        const [data, bookingData, reviewData] = await Promise.all([request('/api/admin-invites'), request('/api/admin-bookings'), request('/api/admin-reviews')]);
         if (notify && state.initialized) sendBrowserAlert((bookingData.bookings||[]).filter(item=>!state.knownBookingIds.has(item.id)),(data.access||[]).filter(item=>!state.knownAccessIds.has(item.id)));
         state.invites = data.invites; state.access = data.access;
         state.bookings = bookingData.bookings || [];
+        state.reviews = reviewData.reviews || []; state.square = bookingData.square || {};
         state.knownBookingIds = new Set(state.bookings.map(item=>item.id)); state.knownAccessIds = new Set(state.access.map(item=>item.id)); state.initialized=true;
         $('login').style.display = 'none'; $('dashboard').style.display = 'block'; $('open-calendar').hidden = false; $('open-hub').hidden = false; $('enable-alerts').hidden=false; $('logout').hidden = false; updateAlertButton();
         render();
@@ -217,15 +233,17 @@
       $('visit-count').textContent = state.access.length;
       $('recent-count').textContent = state.access.filter((item) => Date.now() - new Date(item.accessedAt) < 7*864e5).length;
       const pendingCount=state.bookings.filter(item=>(item.status||'pending')==='pending').length;
+      const recentReviews=state.reviews.filter(item=>Date.now()-new Date(item.createdAt)<7*864e5).length;
       const unreadActivity=state.access.filter(item=>item.accessedAt>seenActivityAt()).length;
       $('booking-badge').textContent=pendingCount; $('booking-badge').hidden=!pendingCount;
+      $('review-badge').textContent=recentReviews; $('review-badge').hidden=!recentReviews;
       $('activity-badge').textContent=unreadActivity; $('activity-badge').hidden=!unreadActivity;
       document.title=(pendingCount+unreadActivity)?`(${pendingCount+unreadActivity}) Haven Guest Access | Admin`:'Haven Guest Access | Admin';
       $('invite-list').innerHTML = orderedInvites.length ? orderedInvites.map((invite) => {
         const inactive = isInactive(invite);
         const emailButton = invite.recipientEmail ? `<button class="copy" data-email-invite="${escapeHtml(invite.id)}">Email</button>` : '';
         const stayDetails=(invite.stayOptions||[]).map((option,index)=>`<br>Option ${index+1}: ${formatStayDate(option.arrival)}–${formatStayDate(option.departure)}${option.costCents?` · $${(option.costCents/100).toFixed(2)}`:''}${option.expiresOn?` · choose by ${formatStayDate(option.expiresOn)}`:''}${invite.selectedStayChoice===index?' · SELECTED':''}`).join('');
-        return `<article class="invite"><div><h3>${escapeHtml(invite.label)} <span class="badge ${inactive?'off':''}">${inactive?'inactive':'active'}</span></h3><div class="meta">Created ${formatDate(invite.createdAt)}${invite.recipientEmail?`<br>${escapeHtml(invite.recipientEmail)}`:''}${invite.expiresAt?`<br>Invite expires ${formatDate(invite.expiresAt)}`:''}${stayDetails}<br>${invite.accessCount} recorded entr${invite.accessCount===1?'y':'ies'}${invite.notes?` &middot; ${escapeHtml(invite.notes)}`:''}</div></div><div class="passcode"><code>${escapeHtml(invite.passcode)}</code><button class="copy" data-copy="${escapeHtml(invite.passcode)}">Copy</button>${emailButton}</div>${inactive?'<span></span>':`<button class="danger" data-revoke="${escapeHtml(invite.id)}">Revoke</button>`}</article>`;
+        return `<article class="invite"><div><h3>${escapeHtml(invite.label)} <span class="badge ${inactive?'off':''}">${inactive?'inactive':'active'}</span></h3><div class="meta">Created ${formatDate(invite.createdAt)}${invite.recipientEmail?`<br>${escapeHtml(invite.recipientEmail)}`:''}${invite.expiresAt?`<br>Invite expires ${formatDate(invite.expiresAt)}`:''}${stayDetails}<br>${invite.accessCount} recorded entr${invite.accessCount===1?'y':'ies'}${invite.notes?` &middot; ${escapeHtml(invite.notes)}`:''}</div></div><div class="passcode"><code>${escapeHtml(invite.passcode)}</code><button class="copy" data-copy="${escapeHtml(codeSuffix(invite.passcode))}">Copy</button>${emailButton}</div>${inactive?'<span></span>':`<button class="danger" data-revoke="${escapeHtml(invite.id)}">Revoke</button>`}</article>`;
       }).join('') : '<div class="empty">No invites yet. Create the first one on the left.</div>';
       [...document.querySelectorAll('#invite-list .invite')].forEach((card,index) => {
         const photos = orderedInvites[index]?.photos || [];
@@ -235,12 +253,18 @@
         card.firstElementChild.appendChild(strip);
       });
       $('activity-list').innerHTML = state.access.length ? state.access.map((entry) => `<article class="activity"><div><strong>${escapeHtml(entry.visitorName)}</strong><div class="meta">${escapeHtml(entry.inviteLabel)} · ${device(entry.userAgent)} · device ${escapeHtml(entry.ipHash)}</div></div><time>${formatDate(entry.accessedAt)}</time></article>`).join('') : '<div class="empty">Guest entries will appear here.</div>';
+      $('square-status').className=`square-status ${state.square.live?'live':state.square.environment==='sandbox'?'sandbox':'off'}`;
+      $('square-status').textContent=state.square.live?'Square is configured for LIVE payments. Refund buttons affect real guest payments.':state.square.environment==='sandbox'?'Square is in SANDBOX mode. No real money moves.':'Square is not ready. Set a valid environment, access token, and location.';
       $('booking-list').innerHTML = state.bookings.length ? state.bookings.map((booking) => {
         const dates = booking.dateChoices || [];
         const status = booking.status || 'pending';
-        const paymentSummary = booking.squareInvoiceId ? `<p class="meta"><strong>Total:</strong> $${(booking.amountCents/100).toFixed(2)} &middot; <strong>Non-refundable deposit:</strong> $${(booking.depositAmountCents/100).toFixed(2)}${booking.balanceAmountCents?`<br><strong>Remaining balance:</strong> $${(booking.balanceAmountCents/100).toFixed(2)} due ${escapeHtml(booking.balanceDueDate)}`:''}<br><a href="${escapeHtml(booking.paymentUrl)}" target="_blank" rel="noopener">Open Square invoice</a></p>` : booking.paymentUrl ? `<p class="meta"><a href="${escapeHtml(booking.paymentUrl)}" target="_blank" rel="noopener">Open original Square payment link</a></p>` : '';
-        return `<article class="booking"><div class="booking-head"><div><h3>${escapeHtml(booking.name)}</h3><div class="meta">${escapeHtml(booking.email)}${booking.phone?` &middot; ${escapeHtml(booking.phone)}`:''}<br>${booking.guests} guest${booking.guests===1?'':'s'}${booking.relationship?` &middot; ${escapeHtml(booking.relationship)}`:''}${booking.reference?`<br>Reference: ${escapeHtml(booking.reference)}`:''}</div></div><span class="badge status-${escapeHtml(status)}">${escapeHtml(status)}</span></div><div class="booking-dates">${dates.map((date,index)=>`<div class="date-choice"><strong>${booking.source==='direct-invite'?'Offered option':'Choice'} ${index+1}</strong><br>${escapeHtml(date.arrival)} to ${escapeHtml(date.departure)}${date.amountCents?`<br>$${(date.amountCents/100).toFixed(2)}`:''}${date.expiresOn?`<br>Choose by ${escapeHtml(date.expiresOn)}`:''}</div>`).join('')}</div>${booking.notes?`<div class="meta">${escapeHtml(booking.notes)}</div>`:''}${status==='offered'?'<p class="meta"><strong>Waiting for the invitee to choose.</strong> All unexpired options are temporarily held.</p>':status==='pending'?`<div class="booking-actions"><label>Approve dates<select data-booking-choice>${dates.map((_,index)=>`<option value="${index+1}">Choice ${index+1}</option>`).join('')}</select></label><label>Total stay price<input data-booking-amount type="number" min="100" step="0.01" placeholder="$ total"></label><button class="primary" data-approve-booking="${escapeHtml(booking.id)}">Approve &amp; send $100 deposit invoice</button><button class="danger" data-decline-booking="${escapeHtml(booking.id)}">Decline</button></div>`:paymentSummary}</article>`;
+        const refundTotal=(booking.refunds||[]).reduce((sum,item)=>sum+(Number(item.amountCents)||0),0);
+        const paymentSummary = booking.squareInvoiceId ? `<p class="meta">${booking.discountAmountCents?`<strong>Original:</strong> $${(booking.originalAmountCents/100).toFixed(2)} &middot; <strong>Discount:</strong> −$${(booking.discountAmountCents/100).toFixed(2)}<br>`:''}<strong>Total:</strong> $${(booking.amountCents/100).toFixed(2)} &middot; <strong>Deposit:</strong> $${(booking.depositAmountCents/100).toFixed(2)}${booking.balanceAmountCents?`<br><strong>Remaining balance:</strong> $${(booking.balanceAmountCents/100).toFixed(2)} due ${escapeHtml(booking.balanceDueDate)}`:''}${refundTotal?`<br><strong>Refunded:</strong> $${(refundTotal/100).toFixed(2)}`:''}<br><a href="${escapeHtml(booking.paymentUrl)}" target="_blank" rel="noopener">Open Square invoice</a></p>` : booking.paymentUrl ? `<p class="meta"><a href="${escapeHtml(booking.paymentUrl)}" target="_blank" rel="noopener">Open original Square payment link</a></p>` : '';
+        const guestTools=!['pending','declined','cancelled','offered'].includes(status)?`<div class="booking-tools"><button class="copy" data-send-review="${escapeHtml(booking.id)}">${booking.reviewRequestedAt?'Send review request again':'Send review request'}</button>${booking.agreementAcceptedAt?`<span class="badge">Agreement accepted ${escapeHtml(formatDate(booking.agreementAcceptedAt))}</span>`:'<span class="badge off">Agreement pending</span>'}</div>`:'';
+        const refundTools=booking.squareInvoiceId?`<details class="refund-box"><summary>Refund or guest-problem credit</summary><div class="refund-grid"><label>Partial amount<input data-refund-amount type="number" min="0.01" step="0.01" placeholder="Blank = full refund"></label><label>Reason<input data-refund-reason maxlength="192" placeholder="Example: hot tub unavailable"></label></div><div class="refund-actions"><button class="danger" data-refund-booking="${escapeHtml(booking.id)}" data-refund-kind="partial">Issue entered amount</button><button class="danger" data-refund-booking="${escapeHtml(booking.id)}" data-refund-kind="full">Refund all available</button></div><p class="helper">Square returns funds to the original payment method. This cannot be undone here.</p></details>`:'';
+        return `<article class="booking"><div class="booking-head"><div><h3>${escapeHtml(booking.name)}</h3><div class="meta">${escapeHtml(booking.email)}${booking.phone?` &middot; ${escapeHtml(booking.phone)}`:''}<br>${booking.guests} guest${booking.guests===1?'':'s'}${booking.relationship?` &middot; ${escapeHtml(booking.relationship)}`:''}${booking.reference?`<br>Reference: ${escapeHtml(booking.reference)}`:''}</div></div><span class="badge status-${escapeHtml(status)}">${escapeHtml(status)}</span></div><div class="booking-dates">${dates.map((date,index)=>`<div class="date-choice"><strong>${booking.source==='direct-invite'?'Offered option':'Choice'} ${index+1}</strong><br>${escapeHtml(date.arrival)} to ${escapeHtml(date.departure)}${date.amountCents?`<br>$${(date.amountCents/100).toFixed(2)}`:''}${date.expiresOn?`<br>Choose by ${escapeHtml(date.expiresOn)}`:''}</div>`).join('')}</div>${booking.notes?`<div class="meta">${escapeHtml(booking.notes)}</div>`:''}${status==='offered'?'<p class="meta"><strong>Waiting for the invitee to choose.</strong> All unexpired options are temporarily held.</p>':status==='pending'?`<div class="booking-actions"><label>Approve dates<select data-booking-choice>${dates.map((_,index)=>`<option value="${index+1}">Choice ${index+1}</option>`).join('')}</select></label><label>Base stay price<input data-booking-amount type="number" min="100" step="0.01" placeholder="$ total"></label><label>Discount<input data-booking-discount type="number" min="0" step="0.01" placeholder="Optional"></label><button class="primary" data-approve-booking="${escapeHtml(booking.id)}">Approve &amp; send booking packet</button><button class="danger" data-decline-booking="${escapeHtml(booking.id)}">Decline</button></div>`:`${paymentSummary}${guestTools}${refundTools}`}</article>`;
       }).join('') : '<div class="empty">New registration requests will appear here.</div>';
+      $('review-list').innerHTML=state.reviews.length?state.reviews.map((review)=>`<article class="review"><div class="review-head"><div><strong>${escapeHtml(review.displayName||review.guestName)}</strong><div class="meta">Submitted ${formatDate(review.createdAt)}${review.allowTestimonial?' &middot; testimonial approved':''}${review.recommend?' &middot; recommends the Haven':''}</div></div><div class="stars-inline" aria-label="${review.overall} out of 5 stars">${'★'.repeat(review.overall)}${'☆'.repeat(5-review.overall)}</div></div><div class="meta">Cleanliness ${review.cleanliness||'—'}/5 &middot; Comfort ${review.comfort||'—'}/5 &middot; Location ${review.location||'—'}/5 &middot; Communication ${review.communication||'—'}/5</div>${review.publicComments?`<blockquote>${escapeHtml(review.publicComments)}</blockquote>`:''}${review.privateComments?`<div class="private-note"><strong>Private improvement note:</strong><br>${escapeHtml(review.privateComments)}</div>`:''}</article>`).join(''):'<div class="empty">Guest reviews will appear here.</div>';
     }
 
     $('login-form').addEventListener('submit', async (event) => {
@@ -326,19 +350,23 @@
     $('booking-list').addEventListener('click', async (event) => {
       const approve = event.target.closest('[data-approve-booking]');
       if (approve) {
-        const actions=approve.closest('.booking-actions'); const amount=actions.querySelector('[data-booking-amount]').value; const dateChoice=actions.querySelector('[data-booking-choice]').value;
+        const actions=approve.closest('.booking-actions'); const amount=actions.querySelector('[data-booking-amount]').value; const discount=actions.querySelector('[data-booking-discount]').value; const dateChoice=actions.querySelector('[data-booking-choice]').value;
         if (!amount) { alert('Enter the total amount to collect first.'); return; }
         approve.disabled=true; approve.textContent='Creating invoice...';
-        try { await request('/api/admin-bookings',{method:'PATCH',body:JSON.stringify({action:'approve',bookingId:approve.dataset.approveBooking,amount,dateChoice})}); await load(); }
-        catch(error) { alert(error.message); approve.disabled=false; approve.textContent='Approve & send $100 deposit invoice'; }
+        try { await request('/api/admin-bookings',{method:'PATCH',body:JSON.stringify({action:'approve',bookingId:approve.dataset.approveBooking,amount,discount,dateChoice})}); await load(); }
+        catch(error) { alert(error.message); approve.disabled=false; approve.textContent='Approve & send booking packet'; }
       }
       const decline=event.target.closest('[data-decline-booking]');
       if (decline && confirm('Decline both date choices and email the guest?')) { decline.disabled=true; try { await request('/api/admin-bookings',{method:'PATCH',body:JSON.stringify({action:'decline',bookingId:decline.dataset.declineBooking})}); await load(); } catch(error) { alert(error.message); decline.disabled=false; } }
+      const review=event.target.closest('[data-send-review]');
+      if(review){review.disabled=true;review.textContent='Sending...';try{await request('/api/admin-bookings',{method:'PATCH',body:JSON.stringify({action:'send-review',bookingId:review.dataset.sendReview})});await load();}catch(error){alert(error.message);review.disabled=false;review.textContent='Send review request';}}
+      const refund=event.target.closest('[data-refund-booking]');
+      if(refund){const box=refund.closest('.refund-box');const reason=box.querySelector('[data-refund-reason]').value.trim();const amountInput=box.querySelector('[data-refund-amount]');const amount=refund.dataset.refundKind==='full'?'':amountInput.value;if(!reason){alert('Add a reason for the refund or guest credit.');return;}if(refund.dataset.refundKind==='partial'&&!amount){alert('Enter the partial refund amount.');return;}const label=amount?`$${Number(amount).toFixed(2)}`:'ALL available Square payments';if(!confirm(`Issue a ${label} refund to this guest? Square refunds cannot be undone here.`))return;refund.disabled=true;refund.textContent='Issuing refund...';try{const operationId=crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(16).slice(2)}`;await request('/api/admin-refunds',{method:'POST',body:JSON.stringify({bookingId:refund.dataset.refundBooking,amount,reason,operationId})});alert('Square accepted the refund. The guest receipt email was sent.');await load();}catch(error){alert(error.message);refund.disabled=false;refund.textContent=refund.dataset.refundKind==='full'?'Refund all available':'Issue entered amount';}}
     });
     $('copy-invite').addEventListener('click', async () => {
       if(!state.newInvite) return;
       const options=(state.newInvite.stayOptions||[]).map((option,index)=>`Option ${index+1}: ${formatStayDate(option.arrival)} to ${formatStayDate(option.departure)}${option.costCents?` · $${(option.costCents/100).toFixed(2)}`:''}${option.expiresOn?` · choose by ${formatStayDate(option.expiresOn)} or this option will be released`:''}`).join('\n');
-      const message = `You’re invited to the Weeks Creek Haven Friends Hub.${options?`\n\nStay choices:\n${options}\n\nEach deadline applies only to that option. If it expires, that date is freed for others while your other unexpired choices stay available. Choosing one releases the rest.`:''}\n\nOpen: ${location.origin}/important-info.html\nPasscode: ${state.newInvite.passcode}\n\nEnter your name and this code to unlock the cabin guide${options?' and choose your stay':''}.`;
+      const message = `You’re invited to the Weeks Creek Haven Friends Hub.${options?`\n\nStay choices:\n${options}\n\nEach deadline applies only to that option. If it expires, that date is freed for others while your other unexpired choices stay available. Choosing one releases the rest.`:''}\n\nOpen: ${location.origin}/important-info.html\nPasscode: ${codeSuffix(state.newInvite.passcode)}\n\nThe sign-in page already supplies WCH-. Enter your name and these 8 characters to unlock the cabin guide${options?' and choose your stay':''}.`;
       await navigator.clipboard.writeText(message); $('copy-invite').textContent='Message copied'; setTimeout(()=>$('copy-invite').textContent='Copy message',1400);
     });
     document.querySelector('.tabs').addEventListener('click',(event)=>{ const tab=event.target.closest('[data-tab]'); if(!tab)return; document.querySelectorAll('.tab,.tab-panel').forEach(el=>el.classList.remove('active')); tab.classList.add('active'); $(`panel-${tab.dataset.tab}`).classList.add('active'); if(tab.dataset.tab==='activity'){ try{localStorage.setItem('wch_seen_activity',new Date().toISOString());}catch{} render(); } });

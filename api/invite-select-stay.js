@@ -1,7 +1,7 @@
 import { appendBookingRecord, getBookingCalendar } from '../_lib/booking-store.js';
 import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
 import { getInvites } from '../_lib/invite-store.js';
-import { json, requireInvite } from '../_lib/security.js';
+import { createAgreementToken, json, requireInvite } from '../_lib/security.js';
 
 function easternToday() {
   const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
@@ -38,12 +38,13 @@ export default async function handler(request, response) {
     const costText = option.amountCents ? ` The listed cost is $${(option.amountCents / 100).toFixed(2)}.` : '';
     const safeName = escapeEmailHtml(invite.label);
     const safeDates = `${formatDate(option.arrival)} through ${formatDate(option.departure)}`;
+    const agreementUrl = `https://www.weekscreekhaven.com/rental-agreement.html?token=${encodeURIComponent(createAgreementToken(booking.id))}`;
     const guestEmail = invite.recipientEmail;
     const emailTasks = [];
     if (guestEmail) emailTasks.push(sendEmail({
       to: guestEmail, toName: invite.label, subject: 'Your Weeks Creek Haven stay choice is reserved',
-      text: `Hi ${invite.label},\n\nYou chose ${safeDates}.${costText} We released the other offered dates. We will follow up with any remaining payment or stay details.`,
-      html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Your stay choice is reserved</h1><p>Hi ${safeName},</p><p>You chose <strong>${safeDates}</strong>.</p>${option.amountCents ? `<p>Listed cost: <strong>$${(option.amountCents / 100).toFixed(2)}</strong></p>` : ''}<p>We released the other offered dates. We will follow up with any remaining payment or stay details.</p></div>`,
+      text: `Hi ${invite.label},\n\nYou chose ${safeDates}.${costText} We released the other offered dates.\n\nReview and accept your rental agreement: ${agreementUrl}\n\nCancellation policy: cancel at least two calendar days before check-in for a 100% refund. No refund is available after that deadline, including the day before check-in. We will follow up with any remaining payment or stay details.`,
+      html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Your stay choice is reserved</h1><p>Hi ${safeName},</p><p>You chose <strong>${safeDates}</strong>.</p>${option.amountCents ? `<p>Listed cost: <strong>$${(option.amountCents / 100).toFixed(2)}</strong></p>` : ''}<p><a href="${agreementUrl}" style="display:inline-block;background:#a45d41;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Review rental agreement</a></p><p style="background:#fff0cc;padding:12px;border-radius:8px"><strong>Cancellation policy:</strong> Cancel at least two calendar days before check-in for a 100% refund. No refund is available after that deadline, including the day before check-in.</p><p>We released the other offered dates. We will follow up with any remaining payment or stay details.</p></div>`,
     }));
     if (process.env.OWNER_EMAIL) emailTasks.push(sendEmail({
       to: process.env.OWNER_EMAIL, toName: 'Lance', subject: `${invite.label} chose their Weeks Creek Haven dates`,
