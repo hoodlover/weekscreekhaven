@@ -58,10 +58,10 @@
       <section class="intro">
         <div class="eyebrow">Private cabin stays &middot; Blue Ridge, Georgia</div>
         <h1>Pick two.<br>We&rsquo;ll find<br>the one.</h1>
-        <p>Send us your first and second choice. We&rsquo;ll check the cabin calendar, confirm pricing, and email you personally before anything is charged.</p>
+        <p>Send us the dates you want. Add a second choice if you have one, and we&rsquo;ll check the cabin calendar, confirm pricing, and email you personally before anything is charged.</p>
         <p><a class="home" href="/availability.html">See available dates &amp; nightly rates</a></p>
         <div class="steps">
-          <div class="step"><b>1</b><span>Request two possible date ranges.</span></div>
+          <div class="step"><b>1</b><span>Request one date range, or add an optional second choice.</span></div>
           <div class="step"><b>2</b><span>We review availability and send the approved dates and total.</span></div>
           <div class="step"><b>3</b><span>Pay securely online to finalize the reservation.</span></div>
         </div>
@@ -70,7 +70,7 @@
       <form id="booking-form" class="card">
         <div class="eyebrow">Stay request</div>
         <h2>Tell us what might work</h2>
-        <p class="helper">Both date choices are required. This form requests a stay; it does not reserve dates or charge you.</p>
+        <p class="helper">Your first date choice is required. Add a second choice only if another date could work. This form does not reserve dates or charge you.</p>
         <div class="grid">
           <label>Full name<input name="name" autocomplete="name" maxlength="100" required></label>
           <label>Email address<input name="email" type="email" autocomplete="email" maxlength="160" required></label>
@@ -78,7 +78,7 @@
           <label>Number of guests<select name="guests" required><option value="">Choose</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></label>
         </div>
         <fieldset id="choice-1" class="choice"><legend>First choice</legend><div class="grid"><label>Arrival<input name="arrival1" type="date" required></label><label>Departure<input name="departure1" type="date" required></label></div></fieldset>
-        <fieldset id="choice-2" class="choice"><legend>Second choice</legend><div class="grid"><label>Arrival<input name="arrival2" type="date" required></label><label>Departure<input name="departure2" type="date" required></label></div></fieldset>
+        <fieldset id="choice-2" class="choice"><legend>Second choice <small>(optional)</small></legend><div class="grid"><label>Arrival<input name="arrival2" type="date"></label><label>Departure<input name="departure2" type="date"></label></div></fieldset>
         <div class="grid">
           <label>How do you know us?<select name="relationship"><option value="">Choose one</option><option>Family</option><option>Friend</option><option>Friend of a friend</option><option>Previous guest</option><option>Found the cabin online</option><option>Other</option></select></label>
           <label>Reference (optional)<input name="reference" maxlength="160" placeholder="Who sent you our way?"></label>

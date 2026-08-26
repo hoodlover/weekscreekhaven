@@ -25,14 +25,16 @@ export default async function handler(request, response) {
     if (!first.arrival || !first.departure || first.departure <= first.arrival) {
       return json(response, 400, { error: 'Choose a valid first arrival and departure.' });
     }
-    if (!second.arrival || !second.departure || second.departure <= second.arrival) {
-      return json(response, 400, { error: 'Choose a valid second arrival and departure.' });
+    const hasSecondChoice = Boolean(second.arrival || second.departure);
+    if (hasSecondChoice && (!second.arrival || !second.departure || second.departure <= second.arrival)) {
+      return json(response, 400, { error: 'Complete both dates for your optional second choice.' });
     }
     const today = new Date().toISOString().slice(0, 10);
-    if (first.arrival < today || second.arrival < today) return json(response, 400, { error: 'Arrival dates must be in the future.' });
-    if (first.arrival === second.arrival && first.departure === second.departure) return json(response, 400, { error: 'Please give us two different date choices.' });
+    if (first.arrival < today || (hasSecondChoice && second.arrival < today)) return json(response, 400, { error: 'Arrival dates must be in the future.' });
+    if (hasSecondChoice && first.arrival === second.arrival && first.departure === second.departure) return json(response, 400, { error: 'Please give us two different date choices.' });
     const unavailable = unavailableRanges(await getBookingCalendar());
-    const unavailableChoices = [first, second].map((choice) => unavailable.some((range) => rangesOverlap(choice, range)));
+    const dateChoices = hasSecondChoice ? [first, second] : [first];
+    const unavailableChoices = dateChoices.map((choice) => unavailable.some((range) => rangesOverlap(choice, range)));
     if (unavailableChoices.some(Boolean)) {
       const choices = unavailableChoices.map((blocked, index) => blocked ? `choice ${index + 1}` : '').filter(Boolean).join(' and ');
       return json(response, 409, { error: `Your ${choices} overlaps dates that are already reserved. Please choose another option.`, unavailableChoices });
@@ -41,7 +43,7 @@ export default async function handler(request, response) {
     const booking = {
       id: crypto.randomUUID(), status: 'pending', createdAt, name, email,
       phone: text(request.body?.phone, 40), guests: Math.max(1, Math.min(11, Number(request.body?.guests) || 1)),
-      dateChoices: [first, second], relationship: text(request.body?.relationship, 160),
+      dateChoices, relationship: text(request.body?.relationship, 160),
       reference: text(request.body?.reference, 160), notes: text(request.body?.notes, 800),
     };
     await appendBookingRecord({ type: 'requested', createdAt, booking });
@@ -51,15 +53,15 @@ export default async function handler(request, response) {
       try {
         await sendEmail({
           to: email, toName: name, subject: 'We received your Weeks Creek Haven date request',
-          text: `Hi ${name},\n\nWe received both of your preferred date choices for Weeks Creek Haven. This is a request, not a confirmed reservation. We’ll review the calendar and get back to you with availability, pricing, and next steps.\n\nThank you!`,
-          html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">We got your request</h1><p>Hi ${safeName},</p><p>We received both of your preferred date choices for Weeks Creek Haven.</p><p><strong>This is a request, not a confirmed reservation.</strong> We’ll review the calendar and get back to you with availability, pricing, and next steps.</p><p>Thanks for thinking of the Haven!</p></div>`,
+          text: `Hi ${name},\n\nWe received your preferred date${hasSecondChoice ? ' choices' : ' choice'} for Weeks Creek Haven. This is a request, not a confirmed reservation. We’ll review the calendar and get back to you with availability, pricing, and next steps.\n\nThank you!`,
+          html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">We got your request</h1><p>Hi ${safeName},</p><p>We received your preferred date${hasSecondChoice ? ' choices' : ' choice'} for Weeks Creek Haven.</p><p><strong>This is a request, not a confirmed reservation.</strong> We’ll review the calendar and get back to you with availability, pricing, and next steps.</p><p>Thanks for thinking of the Haven!</p></div>`,
         });
         confirmationSent = true;
         if (process.env.OWNER_EMAIL) {
           await sendEmail({
             to: process.env.OWNER_EMAIL, toName: 'Lance', subject: `New cabin request from ${name}`,
-            text: `${name} requested ${first.arrival} to ${first.departure}, or ${second.arrival} to ${second.departure}. Review it in the Admin Hub.`,
-            html: `<p><strong>${safeName}</strong> submitted a new cabin request.</p><p>Choice 1: ${first.arrival} to ${first.departure}<br>Choice 2: ${second.arrival} to ${second.departure}</p><p><a href="https://www.weekscreekhaven.com/admin.html">Review in the Admin Hub</a></p>`,
+            text: `${name} requested ${first.arrival} to ${first.departure}${hasSecondChoice ? `, or ${second.arrival} to ${second.departure}` : ''}. Review it in the Admin Hub.`,
+            html: `<p><strong>${safeName}</strong> submitted a new cabin request.</p><p>Choice 1: ${first.arrival} to ${first.departure}${hasSecondChoice ? `<br>Choice 2: ${second.arrival} to ${second.departure}` : ''}</p><p><a href="https://www.weekscreekhaven.com/admin.html">Review in the Admin Hub</a></p>`,
           });
         }
       } catch (emailError) {
