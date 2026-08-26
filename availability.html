@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Availability & Rates | Weeks Creek Haven</title>
   <meta name="description" content="View available dates and nightly rates for a private stay at Weeks Creek Haven in Blue Ridge, Georgia.">
-  <link rel="icon" type="image/webp" href="webpic/Weeks_Creek_Haven_Favicon.webp">
+  <link rel="icon" type="image/png" href="webpic/pwa-logo-192.png">
   <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@600;700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root { --pine:#173f2b; --rust:#a45d41; --cream:#f4eee0; --paper:#fffdf8; --ink:#332820; --muted:#74685e; --line:#ddd2c2; --open:#e6f0e7; --closed:#e9e3db; }
@@ -16,7 +16,7 @@
     .top,.shell { width:min(1180px,100%); margin:auto; }
     .top { display:flex; justify-content:space-between; align-items:center; gap:16px; color:white; margin-bottom:20px; }
     .brand { display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; font-size:.75rem; }
-    .brand img { width:48px; height:48px; border-radius:50%; border:2px solid #ffffff77; }
+    .brand img { width:72px; height:72px; object-fit:contain; }
     .top-actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
     .top-actions a { text-decoration:none; border:1px solid #ffffff66; background:#0003; padding:9px 14px; border-radius:999px; font-size:.66rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
     .panel { background:rgba(255,253,248,.98); border-top:8px solid var(--pine); border-radius:22px; padding:28px; box-shadow:0 24px 70px #0008; }
@@ -25,6 +25,7 @@
     h1,h2 { font-family:'Crimson Text',serif; margin:0; }
     h1 { color:var(--pine); font-size:clamp(2.7rem,6vw,5rem); line-height:.9; margin-top:7px; }
     .intro { max-width:580px; color:var(--muted); line-height:1.55; font-size:.8rem; margin:12px 0 0; }
+    .minimum { display:inline-flex; align-items:center; margin-top:12px; padding:8px 13px; border-radius:999px; background:#e3eee5; color:var(--pine); font-size:.68rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
     .month-actions { display:flex; align-items:center; gap:7px; }
     button,.cta { border:1px solid var(--line); background:white; color:var(--ink); border-radius:999px; padding:10px 14px; font:800 .68rem Montserrat,sans-serif; text-transform:uppercase; letter-spacing:.07em; cursor:pointer; }
     .cta { display:inline-block; text-decoration:none; color:white; background:var(--pine); border-color:var(--pine); }
@@ -54,14 +55,14 @@
 </head>
 <body>
   <div class="page">
-    <header class="top"><div class="brand"><img src="webpic/Weeks_Creek_Haven_Favicon.webp" alt="">Weeks Creek Haven</div><nav class="top-actions"><a href="/register.html">Request a stay</a><a href="/index.html">Home</a></nav></header>
+    <header class="top"><div class="brand"><img src="webpic/weeks-creek-haven-round-logo.png" alt="Weeks Creek Haven">Weeks Creek Haven</div><nav class="top-actions"><a href="/register.html">Request a stay</a><a href="/index.html">Home</a></nav></header>
     <main class="shell panel">
-      <div class="head"><div><div class="eyebrow">Private stays &middot; Blue Ridge, Georgia</div><h1>Availability &amp; rates</h1><p class="intro">Browse open nights, then send us two date choices. Availability can change until your reservation deposit is paid.</p></div><a class="cta" href="/register.html">Request dates</a></div>
+      <div class="head"><div><div class="eyebrow">Private stays &middot; Blue Ridge, Georgia</div><h1>Availability &amp; rates</h1><div class="minimum">Minimum stay: 2 nights</div><p class="intro">Browse open nights, then send us one date choice—or a second option if you have one. Availability can change until your reservation deposit is paid.</p></div><a class="cta" href="/register.html">Request dates</a></div>
       <div class="calendar-title"><h2 id="month-title"></h2><div class="month-actions"><button id="previous" aria-label="Previous month">&larr;</button><button id="today">Today</button><button id="next" aria-label="Next month">&rarr;</button></div></div>
       <div class="weekdays"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>
       <div id="calendar" class="calendar" aria-live="polite"></div>
       <div class="legend"><span class="key"><i class="swatch" style="background:var(--open)"></i>Available</span><span class="key"><i class="swatch" style="background:var(--closed)"></i>Unavailable</span><span class="key"><i class="swatch" style="background:#f0ebe3"></i>Past or outside this month</span></div>
-      <div class="foot"><p>Displayed amounts are nightly base rates. Your final quote may also include cleaning, applicable lodging taxes, and any agreed deposit. Checkout dates can also be arrival dates for another stay.</p><a class="cta" href="/register.html">Send two choices</a></div>
+      <div class="foot"><p><strong>Two-night minimum.</strong> Displayed amounts are nightly base rates. Your final quote may also include cleaning, applicable lodging taxes, and any agreed deposit. Checkout dates can also be arrival dates for another stay.</p><a class="cta" href="/register.html">Request dates</a></div>
     </main>
   </div>
   <script>

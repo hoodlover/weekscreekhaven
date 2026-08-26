@@ -5,6 +5,7 @@ import { cancelSquareInvoice } from '../_lib/square.js';
 
 const text = (value, max = 120) => String(value || '').trim().slice(0, max);
 const date = (value) => /^\d{4}-\d{2}-\d{2}$/.test(String(value || '')) ? String(value) : '';
+const nights = (arrival, departure) => Math.round((Date.parse(`${departure}T00:00:00Z`) - Date.parse(`${arrival}T00:00:00Z`)) / 86400000);
 
 export default async function handler(request, response) {
   if (!requireAdmin(request)) return json(response, 401, { error: 'Please sign in as the site owner.' });
@@ -33,12 +34,16 @@ export default async function handler(request, response) {
       if (action === 'add-rate') {
         const arrival = date(request.body?.arrival);
         const departure = date(request.body?.departure);
-        const amountCents = Math.round(Number(request.body?.amount) * 100);
+        const pricingMode = request.body?.pricingMode === 'total' ? 'total' : 'nightly';
+        const enteredCents = Math.round(Number(request.body?.amount) * 100);
+        const nightCount = nights(arrival, departure);
+        const amountCents = pricingMode === 'total' && nightCount > 0 ? Math.round(enteredCents / nightCount) : enteredCents;
         if (!arrival || !departure || departure <= arrival) return json(response, 400, { error: 'Choose a valid rate start and end date.' });
-        if (!Number.isInteger(amountCents) || amountCents < 100) return json(response, 400, { error: 'Enter the nightly amount for this date range.' });
+        if (nightCount < 2) return json(response, 400, { error: 'Select at least two nights.' });
+        if (!Number.isInteger(enteredCents) || enteredCents < 100) return json(response, 400, { error: `Enter the ${pricingMode === 'total' ? 'total stay' : 'nightly'} amount for this date range.` });
         const calendar = await getBookingCalendar();
         if ((calendar.rates || []).some((rate) => rangesOverlap({ arrival, departure }, rate))) return json(response, 409, { error: 'That range overlaps another special rate. Remove the old rate first.' });
-        const rate = { id: crypto.randomUUID(), arrival, departure, amountCents, createdAt };
+        const rate = { id: crypto.randomUUID(), arrival, departure, amountCents, pricingMode, totalCents: pricingMode === 'total' ? enteredCents : null, nightCount, createdAt };
         await appendBookingRecord({ type: 'rate_created', rate, createdAt });
         return json(response, 200, { rate });
       }

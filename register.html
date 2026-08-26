@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Request a Stay | Weeks Creek Haven</title>
-  <meta name="description" content="Request two possible dates for a private stay at Weeks Creek Haven in Blue Ridge, Georgia.">
-  <link rel="icon" type="image/webp" href="webpic/Weeks_Creek_Haven_Favicon.webp">
+  <meta name="description" content="Request one or two possible date ranges for a private stay at Weeks Creek Haven in Blue Ridge, Georgia.">
+  <link rel="icon" type="image/png" href="webpic/pwa-logo-192.png">
   <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,600;0,700;1,600&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root { --pine:#173f2b; --rust:#a45d41; --cream:#f4eee0; --ink:#332820; --muted:#74685e; --line:#d9cfbf; }
@@ -15,7 +15,7 @@
     .page { min-height:100vh; background:linear-gradient(90deg,rgba(15,12,9,.88),rgba(15,12,9,.35) 45%,rgba(15,12,9,.82)); padding:26px 16px 70px; }
     .top { width:min(1120px,100%); margin:0 auto 24px; display:flex; justify-content:space-between; align-items:center; gap:15px; color:white; }
     .brand { display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; font-size:.75rem; }
-    .brand img { width:48px; height:48px; border-radius:50%; border:2px solid rgba(255,255,255,.5); }
+    .brand img { width:72px; height:72px; object-fit:contain; }
     .top-actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
     .home { text-decoration:none; border:1px solid rgba(255,255,255,.5); padding:10px 16px; border-radius:999px; font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:.1em; }
     .layout { width:min(1120px,100%); margin:auto; display:grid; grid-template-columns:minmax(0,.85fr) minmax(520px,1.15fr); gap:24px; align-items:start; }
@@ -30,6 +30,7 @@
     .card { background:rgba(255,253,248,.98); border-radius:22px; padding:32px; border-top:9px solid var(--pine); box-shadow:0 24px 70px rgba(0,0,0,.45); }
     .card h2 { font-size:2.25rem; color:var(--pine); }
     .helper { color:var(--muted); line-height:1.55; font-size:.82rem; }
+    .minimum { display:inline-flex; align-items:center; gap:7px; margin:10px 0 2px; padding:8px 12px; border-radius:999px; background:#e7efe8; color:var(--pine); font-size:.7rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
     .grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
     label { display:block; font-size:.67rem; text-transform:uppercase; letter-spacing:.11em; font-weight:800; margin-top:15px; }
     input,select,textarea { width:100%; margin-top:7px; padding:13px 14px; border:1px solid #cfc4b4; border-radius:9px; background:white; color:var(--ink); font:inherit; outline:none; }
@@ -53,7 +54,7 @@
 </head>
 <body>
   <div class="page">
-    <header class="top"><div class="brand"><img src="webpic/Weeks_Creek_Haven_Favicon.webp" alt="">Weeks Creek Haven</div><div class="top-actions"><a class="home" href="/availability.html">View calendar</a><a class="home" href="/index.html">Home</a></div></header>
+    <header class="top"><div class="brand"><img src="webpic/weeks-creek-haven-round-logo.png" alt="Weeks Creek Haven">Weeks Creek Haven</div><div class="top-actions"><a class="home" href="/availability.html">View calendar</a><a class="home" href="/index.html">Home</a></div></header>
     <main class="layout">
       <section class="intro">
         <div class="eyebrow">Private cabin stays &middot; Blue Ridge, Georgia</div>
@@ -70,7 +71,8 @@
       <form id="booking-form" class="card">
         <div class="eyebrow">Stay request</div>
         <h2>Tell us what might work</h2>
-        <p class="helper">Your first date choice is required. Add a second choice only if another date could work. This form does not reserve dates or charge you.</p>
+        <div class="minimum">Minimum stay: 2 nights</div>
+        <p class="helper">Your first date choice is required. Add a second choice only if another date could work. Every choice must include at least two nights. This form does not reserve dates or charge you.</p>
         <div class="grid">
           <label>Full name<input name="name" autocomplete="name" maxlength="100" required></label>
           <label>Email address<input name="email" type="email" autocomplete="email" maxlength="160" required></label>
@@ -95,11 +97,11 @@
   <script>
     const form=document.getElementById('booking-form'); const button=document.getElementById('submit'); const message=document.getElementById('form-message');
     const today=new Date(); today.setHours(0,0,0,0); const minimum=today.toISOString().slice(0,10);
-    const nextDay=(value)=>{ const date=new Date(`${value}T12:00:00`); date.setDate(date.getDate()+1); return date.toISOString().slice(0,10); };
+    const addDays=(value,days)=>{ const date=new Date(`${value}T12:00:00`); date.setDate(date.getDate()+days); return date.toISOString().slice(0,10); };
     document.querySelectorAll('input[type="date"]').forEach((input)=>input.min=minimum);
     for (const pair of [['arrival1','departure1'],['arrival2','departure2']]) {
       const arrival=form.elements[pair[0]], departure=form.elements[pair[1]];
-      arrival.addEventListener('change',()=>{ departure.min=arrival.value ? nextDay(arrival.value) : minimum; if(arrival.value && (!departure.value || departure.value<=arrival.value)) departure.value=nextDay(arrival.value); });
+      arrival.addEventListener('change',()=>{ const firstCheckout=arrival.value ? addDays(arrival.value,2) : minimum; departure.min=firstCheckout; if(arrival.value && (!departure.value || departure.value<firstCheckout)) departure.value=firstCheckout; });
     }
     form.addEventListener('submit',async(event)=>{
       event.preventDefault(); button.disabled=true; button.textContent='Sending request...'; message.hidden=true; document.querySelectorAll('.choice').forEach((choice)=>choice.classList.remove('unavailable'));
@@ -107,7 +109,7 @@
       try {
         const response=await fetch('/api/booking-requests',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
         const data=await response.json().catch(()=>({})); if(!response.ok) { const error=new Error(data.error || 'We could not send your request.'); error.unavailableChoices=data.unavailableChoices; throw error; }
-        form.reset(); message.className='message success'; message.textContent=data.confirmationSent?'Your request is in. Check your email for confirmation.':'Your request is in. We’ll email you after we review the dates.'; message.hidden=false;
+        form.reset(); form.elements.departure1.min=minimum; form.elements.departure2.min=minimum; message.className='message success'; message.textContent=data.confirmationSent?'Your request is in. Check your email for confirmation.':'Your request is in. We’ll email you after we review the dates.'; message.hidden=false;
       } catch(error) { if(Array.isArray(error.unavailableChoices)) error.unavailableChoices.forEach((blocked,index)=>{ if(blocked) document.getElementById(`choice-${index+1}`).classList.add('unavailable'); }); message.className='message error'; message.textContent=error.message; message.hidden=false; }
       finally { button.disabled=false; button.textContent='Send my date choices'; }
     });

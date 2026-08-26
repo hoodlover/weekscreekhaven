@@ -13,6 +13,10 @@ function dateChoice(request, number) {
   return { arrival: isoDate(request.body?.[`arrival${number}`]), departure: isoDate(request.body?.[`departure${number}`]) };
 }
 
+function nights(choice) {
+  return Math.round((Date.parse(`${choice.departure}T00:00:00Z`) - Date.parse(`${choice.arrival}T00:00:00Z`)) / 86400000);
+}
+
 export default async function handler(request, response) {
   if (request.method !== 'POST') return json(response, 405, { error: 'Method not allowed.' });
   try {
@@ -25,10 +29,12 @@ export default async function handler(request, response) {
     if (!first.arrival || !first.departure || first.departure <= first.arrival) {
       return json(response, 400, { error: 'Choose a valid first arrival and departure.' });
     }
+    if (nights(first) < 2) return json(response, 400, { error: 'Weeks Creek Haven has a two-night minimum stay.' });
     const hasSecondChoice = Boolean(second.arrival || second.departure);
     if (hasSecondChoice && (!second.arrival || !second.departure || second.departure <= second.arrival)) {
       return json(response, 400, { error: 'Complete both dates for your optional second choice.' });
     }
+    if (hasSecondChoice && nights(second) < 2) return json(response, 400, { error: 'Every date choice must be at least two nights.' });
     const today = new Date().toISOString().slice(0, 10);
     if (first.arrival < today || (hasSecondChoice && second.arrival < today)) return json(response, 400, { error: 'Arrival dates must be in the future.' });
     if (hasSecondChoice && first.arrival === second.arrival && first.departure === second.departure) return json(response, 400, { error: 'Please give us two different date choices.' });

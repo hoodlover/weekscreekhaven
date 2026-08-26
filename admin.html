@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex,nofollow">
   <title>Haven Guest Access | Admin</title>
-  <link rel="icon" type="image/webp" href="webpic/Weeks_Creek_Haven_Favicon.webp">
+  <link rel="icon" type="image/png" href="webpic/pwa-logo-192.png">
   <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,600;0,700;1,600&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root { --ink:#332820; --pine:#183c2d; --rust:#a45d41; --cream:#f4eee0; --paper:#fffdf8; --muted:#74685e; --line:#ded4c5; --danger:#8a2f2f; }
@@ -17,7 +17,7 @@
     .topbar { display:flex; align-items:center; justify-content:space-between; gap:20px; color:white; margin-bottom:24px; }
     .top-actions { display:flex; align-items:center; justify-content:flex-end; gap:8px; flex-wrap:wrap; }
     .brand { display:flex; align-items:center; gap:14px; }
-    .brand img { width:58px; height:58px; object-fit:cover; border-radius:50%; border:2px solid rgba(255,255,255,.5); }
+    .brand img { width:87px; height:87px; object-fit:contain; }
     h1,h2,h3 { font-family:'Crimson Text',serif; margin:0; }
     h1 { font-size:clamp(2rem,5vw,3.5rem); line-height:.95; }
     .eyebrow { font-size:.68rem; letter-spacing:.2em; font-weight:800; text-transform:uppercase; color:#d8b48b; margin-bottom:6px; }
@@ -96,7 +96,7 @@
   <main class="shell">
     <header class="topbar">
       <div class="brand">
-        <img src="webpic/Weeks_Creek_Haven_Favicon.webp" alt="Weeks Creek Haven">
+        <img src="webpic/weeks-creek-haven-round-logo.png" alt="Weeks Creek Haven">
         <div><div class="eyebrow">Private owner tools</div><h1>Guest Access</h1></div>
       </div>
       <div class="top-actions">
@@ -137,7 +137,7 @@
           <input id="recipient-email" type="email" placeholder="friend@example.com" autocomplete="off" maxlength="160">
           <label class="checkline"><input id="send-invite-email" type="checkbox" checked> Email the invitation as soon as it is created</label>
           <label>Stay choices (optional)</label>
-          <p class="helper">Offer up to three date choices. Each can have its own cost and choose-by date. Offered dates are held until selected or expired.</p>
+          <p class="helper">Offer up to three date choices with a two-night minimum. Each can have its own cost and choose-by date. Offered dates are held until selected or expired.</p>
           <div id="stay-options" class="stay-options"></div>
           <button id="add-stay-option" type="button" class="add-option">+ Add another date choice</button>
           <label for="welcome-message">Personal welcome (optional)</label>
@@ -192,7 +192,7 @@
     const seenActivityAt = () => { try { let value=localStorage.getItem('wch_seen_activity'); if(!value){value=new Date().toISOString();localStorage.setItem('wch_seen_activity',value);} return value; } catch { return new Date().toISOString(); } };
     const alertsEnabled = () => { try { return localStorage.getItem('wch_admin_alerts') === 'on'; } catch { return false; } };
     function updateAlertButton() { $('enable-alerts').textContent = alertsEnabled() && 'Notification' in window && Notification.permission === 'granted' ? 'Alerts on' : 'Enable alerts'; }
-    function sendBrowserAlert(bookings, access) { if (!alertsEnabled() || !('Notification' in window) || Notification.permission !== 'granted' || (!bookings.length && !access.length)) return; const parts=[]; if(bookings.length)parts.push(`${bookings.length} new booking request${bookings.length===1?'':'s'}`); if(access.length)parts.push(`${access.length} new Hub entr${access.length===1?'y':'ies'}`); new Notification('Weeks Creek Haven activity',{body:parts.join(' · '),icon:'/webpic/pwa-icon-192.png'}); }
+    function sendBrowserAlert(bookings, access) { if (!alertsEnabled() || !('Notification' in window) || Notification.permission !== 'granted' || (!bookings.length && !access.length)) return; const parts=[]; if(bookings.length)parts.push(`${bookings.length} new booking request${bookings.length===1?'':'s'}`); if(access.length)parts.push(`${access.length} new Hub entr${access.length===1?'y':'ies'}`); new Notification('Weeks Creek Haven activity',{body:parts.join(' · '),icon:'/webpic/pwa-logo-192.png'}); }
 
     async function load(notify = false) {
       try {
@@ -267,14 +267,14 @@
       } finally { URL.revokeObjectURL(url); }
     }
     const todayKey=()=>new Date().toISOString().slice(0,10);
-    const nextDay=(value)=>{ const date=new Date(`${value}T12:00:00`); date.setDate(date.getDate()+1); return date.toISOString().slice(0,10); };
+    const addDays=(value,days)=>{ const date=new Date(`${value}T12:00:00`); date.setDate(date.getDate()+days); return date.toISOString().slice(0,10); };
     function addStayOption(values={}) {
       if(document.querySelectorAll('.stay-option').length>=3)return;
       const index=document.querySelectorAll('.stay-option').length+1;
       const box=document.createElement('div'); box.className='stay-option';
       box.innerHTML=`${index>1?'<button type="button" class="remove-option">Remove</button>':''}<strong>Option ${index}</strong><div class="stay-option-grid"><label>Arrival<input data-stay-arrival type="date" min="${todayKey()}" value="${escapeHtml(values.arrival||'')}"></label><label>Checkout<input data-stay-departure type="date" min="${todayKey()}" value="${escapeHtml(values.departure||'')}"></label><label>Total cost<input data-stay-cost type="number" min="0" step="0.01" placeholder="Optional" value="${escapeHtml(values.cost||'')}"></label><label>Choose by<input data-stay-expires type="date" min="${todayKey()}" value="${escapeHtml(values.expiresOn||'')}"></label></div>`;
       const arrival=box.querySelector('[data-stay-arrival]'),departure=box.querySelector('[data-stay-departure]');
-      arrival.addEventListener('change',()=>{ departure.min=arrival.value?nextDay(arrival.value):todayKey(); if(arrival.value&&(!departure.value||departure.value<=arrival.value))departure.value=nextDay(arrival.value); });
+      arrival.addEventListener('change',()=>{ const firstCheckout=arrival.value?addDays(arrival.value,2):todayKey(); departure.min=firstCheckout; if(arrival.value&&(!departure.value||departure.value<firstCheckout))departure.value=firstCheckout; });
       box.querySelector('.remove-option')?.addEventListener('click',()=>{ box.remove(); [...document.querySelectorAll('.stay-option>strong')].forEach((title,i)=>title.textContent=`Option ${i+1}`); $('add-stay-option').hidden=false; });
       $('stay-options').appendChild(box); $('add-stay-option').hidden=document.querySelectorAll('.stay-option').length>=3;
     }

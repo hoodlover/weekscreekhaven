@@ -1,4 +1,4 @@
-const CACHE_NAME = 'friends-hub-v12';
+const CACHE_NAME = 'friends-hub-v13';
 
 const PRECACHE_URLS = [
   '/friends-hub.html',
@@ -34,8 +34,9 @@ const PRECACHE_URLS = [
   '/webpic/policon.png',
   '/webpic/wpaicon.png',
   // PWA icons
-  '/webpic/pwa-icon-192.png',
-  '/webpic/pwa-icon-512.png',
+  '/webpic/pwa-logo-192.png',
+  '/webpic/pwa-logo-512.png',
+  '/webpic/weeks-creek-haven-round-logo.png',
   // checkout
   '/webpic/bidet.webp',
   '/webpic/$200.webp',
