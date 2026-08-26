@@ -142,6 +142,73 @@ export async function createSquareBookingInvoice({ bookingId, guestName, email, 
   };
 }
 
+export async function createSquareFriendInvoice({ bookingId, guestName, email, amountCents, arrival }) {
+  if (!Number.isInteger(amountCents) || amountCents < 100) throw new Error('The friend invoice total must be at least $1.00.');
+  if (!email) throw new Error('Add an email address before sending a friend invoice.');
+  const nameParts = String(guestName || 'Guest').trim().split(/\s+/);
+  const familyName = nameParts.length > 1 ? nameParts.pop() : '';
+  const givenName = nameParts.join(' ') || guestName || 'Guest';
+  const customerResult = await squareRequest('/v2/customers', {
+    method: 'POST',
+    body: {
+      idempotency_key: `wch-friend-customer-${bookingId}`,
+      given_name: givenName,
+      ...(familyName ? { family_name: familyName } : {}),
+      email_address: email,
+      reference_id: bookingId,
+    },
+  });
+  const orderResult = await squareRequest('/v2/orders', {
+    method: 'POST',
+    body: {
+      idempotency_key: `wch-friend-order-${bookingId}`,
+      order: {
+        location_id: process.env.SQUARE_LOCATION_ID,
+        reference_id: bookingId,
+        line_items: [{
+          name: `Weeks Creek Haven friends & family stay for ${guestName}`,
+          quantity: '1',
+          base_price_money: { amount: amountCents, currency: 'USD' },
+        }],
+      },
+    },
+  });
+  const invoiceResult = await squareRequest('/v2/invoices', {
+    method: 'POST',
+    body: {
+      idempotency_key: `wch-friend-invoice-${bookingId}`,
+      invoice: {
+        location_id: process.env.SQUARE_LOCATION_ID,
+        order_id: orderResult.order.id,
+        primary_recipient: { customer_id: customerResult.customer.id },
+        delivery_method: 'EMAIL',
+        payment_requests: [{
+          request_type: 'BALANCE',
+          due_date: easternDate(),
+          tipping_enabled: false,
+          automatic_payment_source: 'NONE',
+        }],
+        invoice_number: `WCHF-${bookingId.slice(0, 8).toUpperCase()}`,
+        title: 'Weeks Creek Haven friends & family stay',
+        description: 'Friends & family total due now. No reservation deposit or additional balance is required. Cancel at least two calendar days before check-in for a full refund; no refund after that deadline.',
+        sale_or_service_date: arrival,
+        accepted_payment_methods: { card: true, square_gift_card: false, bank_account: false, buy_now_pay_later: false, cash_app_pay: false },
+      },
+    },
+  });
+  const published = await squareRequest(`/v2/invoices/${encodeURIComponent(invoiceResult.invoice.id)}/publish`, {
+    method: 'POST',
+    body: { version: invoiceResult.invoice.version, idempotency_key: `wch-friend-publish-${bookingId}` },
+  });
+  return {
+    url: published.invoice.public_url,
+    invoiceId: published.invoice.id,
+    orderId: orderResult.order.id,
+    customerId: customerResult.customer.id,
+    amountCents,
+  };
+}
+
 async function invoicePayments(invoiceId, fallbackOrderId) {
   const invoiceResult = invoiceId ? await squareRequest(`/v2/invoices/${encodeURIComponent(invoiceId)}`) : {};
   const invoice = invoiceResult.invoice || null;

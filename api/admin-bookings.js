@@ -1,7 +1,7 @@
 import { appendBookingRecord, getBookingCalendar, getBookingRequests, rangesOverlap, unavailableRanges } from '../_lib/booking-store.js';
 import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
 import { createAgreementToken, createReviewToken, json, requireAdmin } from '../_lib/security.js';
-import { createSquareBookingInvoice, squareStatus } from '../_lib/square.js';
+import { createSquareBookingInvoice, createSquareFriendInvoice, squareStatus } from '../_lib/square.js';
 
 export default async function handler(request, response) {
   if (!requireAdmin(request)) return json(response, 401, { error: 'Please sign in as the site owner.' });
@@ -35,6 +35,21 @@ export default async function handler(request, response) {
         to: booking.email, toName: booking.name, subject: 'Your Weeks Creek Haven dates are approved',
         text: `Hi ${booking.name},\n\nYour requested stay from ${dates.arrival} to ${dates.departure} is available.${discountAmountCents ? ` We applied a $${(discountAmountCents / 100).toFixed(2)} discount.` : ''} The total is $${(amountCents / 100).toFixed(2)}. A $100 deposit reserves the dates, and the remaining $${(payment.balanceAmountCents / 100).toFixed(2)} is due by ${payment.balanceDueDate}.\n\nBooking packet:\nPay the Square invoice: ${payment.url}\nReview and accept the rental agreement: ${agreementUrl}\n\nCancellation policy: cancel at least two calendar days before check-in for a 100% refund. No refund is available after that deadline, including the day before check-in.\n\nYour reservation is final after the deposit is paid and the rental agreement is accepted.`,
         html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Your booking packet</h1><p>Hi ${safeName},</p><p>We approved <strong>${dates.arrival} through ${dates.departure}</strong>.</p><p>${discountAmountCents ? `Original stay price: <strong>$${(originalAmountCents / 100).toFixed(2)}</strong><br>Weeks Creek Haven discount: <strong>−$${(discountAmountCents / 100).toFixed(2)}</strong><br>` : ''}Total: <strong>$${(amountCents / 100).toFixed(2)}</strong><br>Reservation deposit due now: <strong>$100.00</strong><br>Remaining balance due ${payment.balanceDueDate}: <strong>$${(payment.balanceAmountCents / 100).toFixed(2)}</strong></p><p><a href="${payment.url}" style="display:inline-block;background:#183c2d;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold;margin:0 8px 8px 0">Open Square invoice</a><a href="${agreementUrl}" style="display:inline-block;background:#a45d41;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Review rental agreement</a></p><p style="background:#fff0cc;padding:12px;border-radius:8px"><strong>Cancellation policy:</strong> Cancel at least two calendar days before check-in for a 100% refund. No refund is available after that deadline, including the day before check-in.</p><p>Your reservation is final after the deposit is paid and the rental agreement is accepted.</p></div>`,
+      });
+      return json(response, 200, { ok: true, paymentUrl: payment.url });
+    }
+    if (action === 'send-friend-invoice') {
+      if (booking.source !== 'direct-invite' || !['reserved', 'booked'].includes(booking.status)) return json(response, 409, { error: 'Friend invoices are available after the invitee selects a stay.' });
+      if (booking.squareInvoiceId) return json(response, 409, { error: 'This stay already has a Square invoice.' });
+      if (!booking.email) return json(response, 400, { error: 'This friend invite does not have an email address.' });
+      const amountCents = Number(booking.amountCents);
+      if (!Number.isInteger(amountCents) || amountCents < 100) return json(response, 400, { error: 'The selected friend stay must have a total of at least $1.00.' });
+      const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0];
+      if (!dates) return json(response, 400, { error: 'The selected stay dates could not be found.' });
+      const payment = await createSquareFriendInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, amountCents, arrival: dates.arrival });
+      await appendBookingRecord({
+        type: 'status', bookingId: booking.id, createdAt,
+        changes: { paymentPlan: 'friend-total', paymentUrl: payment.url, squareInvoiceId: payment.invoiceId, squareOrderId: payment.orderId, squareCustomerId: payment.customerId, friendInvoiceSentAt: createdAt },
       });
       return json(response, 200, { ok: true, paymentUrl: payment.url });
     }
