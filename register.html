@@ -47,6 +47,7 @@
     .message { padding:13px; border-radius:9px; margin-top:14px; line-height:1.5; font-size:.82rem; font-weight:700; }
     .error { background:#fff0f0; color:#8a2f2f; }
     .success { background:#e8f2e9; color:#255b39; }
+    .picked { background:#e8f2e9; color:#255b39; border:1px solid #b8cdbd; }
     .fine { border-top:1px solid var(--line); margin-top:22px; padding-top:17px; font-size:.69rem; line-height:1.6; color:var(--muted); }
     @media(max-width:850px) { .layout { grid-template-columns:1fr; } .intro { position:static; padding:20px 8px; } .intro h1 { max-width:650px; } }
     @media(max-width:560px) { .grid { grid-template-columns:1fr; gap:0; } .card { padding:24px 18px; } .page { padding-inline:10px; } }
@@ -73,6 +74,7 @@
         <h2>Tell us what might work</h2>
         <div class="minimum">Minimum stay: 2 nights</div>
         <p class="helper">Your first date choice is required. Add a second choice only if another date could work. Every choice must include at least two nights. This form does not reserve dates or charge you.</p>
+        <div id="calendar-selection" class="message picked" hidden role="status"></div>
         <div class="grid">
           <label>Full name<input name="name" autocomplete="name" maxlength="100" required></label>
           <label>Email address<input name="email" type="email" autocomplete="email" maxlength="160" required></label>
@@ -98,10 +100,17 @@
     const form=document.getElementById('booking-form'); const button=document.getElementById('submit'); const message=document.getElementById('form-message');
     const today=new Date(); today.setHours(0,0,0,0); const minimum=today.toISOString().slice(0,10);
     const addDays=(value,days)=>{ const date=new Date(`${value}T12:00:00`); date.setDate(date.getDate()+days); return date.toISOString().slice(0,10); };
+    const validDate=(value)=>/^\d{4}-\d{2}-\d{2}$/.test(value||'')&&!Number.isNaN(Date.parse(`${value}T12:00:00`));
+    const friendlyDate=(value)=>new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric',year:'numeric'}).format(new Date(`${value}T12:00:00`));
     document.querySelectorAll('input[type="date"]').forEach((input)=>input.min=minimum);
     for (const pair of [['arrival1','departure1'],['arrival2','departure2']]) {
       const arrival=form.elements[pair[0]], departure=form.elements[pair[1]];
       arrival.addEventListener('change',()=>{ const firstCheckout=arrival.value ? addDays(arrival.value,2) : minimum; departure.min=firstCheckout; if(arrival.value && (!departure.value || departure.value<firstCheckout)) departure.value=firstCheckout; });
+    }
+    const selectedParams=new URLSearchParams(location.search), selectedArrival=selectedParams.get('arrival1'), selectedDeparture=selectedParams.get('departure1');
+    if(validDate(selectedArrival)&&validDate(selectedDeparture)&&selectedArrival>=minimum&&selectedDeparture>=addDays(selectedArrival,2)){
+      form.elements.arrival1.value=selectedArrival; form.elements.departure1.min=addDays(selectedArrival,2); form.elements.departure1.value=selectedDeparture;
+      const selectionNote=document.getElementById('calendar-selection'); selectionNote.textContent=`Your calendar selection was added: ${friendlyDate(selectedArrival)} through ${friendlyDate(selectedDeparture)}.`; selectionNote.hidden=false;
     }
     form.addEventListener('submit',async(event)=>{
       event.preventDefault(); button.disabled=true; button.textContent='Sending request...'; message.hidden=true; document.querySelectorAll('.choice').forEach((choice)=>choice.classList.remove('unavailable'));

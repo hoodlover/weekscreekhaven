@@ -26,19 +26,25 @@
     h1 { color:var(--pine); font-size:clamp(2.7rem,6vw,5rem); line-height:.9; margin-top:7px; }
     .intro { max-width:580px; color:var(--muted); line-height:1.55; font-size:.8rem; margin:12px 0 0; }
     .minimum { display:inline-flex; align-items:center; margin-top:12px; padding:8px 13px; border-radius:999px; background:#e3eee5; color:var(--pine); font-size:.68rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+    .calendar-tip { display:inline-flex; align-items:center; margin-top:9px; padding:7px 12px; border-radius:999px; background:#fff0db; color:#78462f; font-size:.65rem; font-weight:800; letter-spacing:.05em; }
     .month-actions { display:flex; align-items:center; gap:7px; }
     button,.cta { border:1px solid var(--line); background:white; color:var(--ink); border-radius:999px; padding:10px 14px; font:800 .68rem Montserrat,sans-serif; text-transform:uppercase; letter-spacing:.07em; cursor:pointer; }
     .cta { display:inline-block; text-decoration:none; color:white; background:var(--pine); border-color:var(--pine); }
     .calendar-title { display:flex; justify-content:space-between; align-items:center; gap:15px; margin-bottom:12px; }
     .calendar-title h2 { color:var(--pine); font-size:2.1rem; }
     .weekdays,.calendar { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); }
+    .calendar.selecting { user-select:none; touch-action:none; }
     .weekdays div { padding:9px; text-align:center; color:var(--muted); font-size:.62rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
     .day { min-height:112px; padding:9px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); background:white; }
     .day:nth-child(7n+1) { border-left:1px solid var(--line); }
     .day:nth-child(-n+7) { border-top:1px solid var(--line); }
     .day.outside,.day.past { background:#f0ebe3; color:#aaa096; }
     .day.unavailable { background:var(--closed); color:#7f746a; }
-    .day.available { background:var(--open); }
+    .day.available { background:var(--open); cursor:grab; transition:background .12s ease,box-shadow .12s ease,transform .12s ease; }
+    .day.available:hover { background:#d7e8da; box-shadow:inset 0 0 0 2px #6a9a76; }
+    .day.selected { position:relative; z-index:1; background:#c9dfce; box-shadow:inset 0 0 0 2px var(--pine); }
+    .day.selection-start,.day.selection-end { background:var(--pine); color:white; }
+    .day.selection-start .rate,.day.selection-end .rate,.day.selection-start .night,.day.selection-end .night { color:white; }
     .day.today { box-shadow:inset 0 0 0 2px var(--rust); }
     .number { font-size:.72rem; font-weight:800; }
     .rate { display:block; color:var(--pine); font-family:'Crimson Text',serif; font-size:1.16rem; font-weight:700; margin-top:16px; }
@@ -49,27 +55,38 @@
     .swatch { width:14px; height:14px; border:1px solid var(--line); border-radius:4px; }
     .foot { display:flex; align-items:center; justify-content:space-between; gap:20px; border-top:1px solid var(--line); padding-top:18px; }
     .foot p { color:var(--muted); font-size:.7rem; line-height:1.5; margin:0; max-width:720px; }
+    .selection-bar { display:flex; align-items:center; justify-content:space-between; gap:18px; margin:18px 0; padding:15px 17px; border:1px solid #b8cdbd; border-radius:14px; background:#edf6ee; color:var(--pine); }
+    .selection-bar strong { display:block; font-family:'Crimson Text',serif; font-size:1.3rem; }
+    .selection-bar span { display:block; margin-top:3px; color:var(--muted); font-size:.69rem; line-height:1.45; }
+    .selection-actions { display:flex; align-items:center; gap:8px; flex:0 0 auto; }
+    .selection-actions button { background:transparent; }
+    .selection-error { margin:15px 0; padding:12px 14px; border-radius:10px; background:#fff0f0; color:#8a2f2f; font-size:.72rem; font-weight:700; }
     .message { padding:30px; text-align:center; color:#8a2f2f; font-weight:700; }
-    @media(max-width:720px) { .panel { padding:18px 10px; } .head { align-items:flex-start; flex-direction:column; } .day { min-height:76px; padding:6px; } .rate { font-size:.9rem; margin-top:9px; } .night { display:none; } .unavailable .rate { font-size:.49rem; } .foot { align-items:flex-start; flex-direction:column; } .weekdays div { padding:6px 2px; font-size:.53rem; } }
+    @media(max-width:720px) { .panel { padding:18px 10px; } .head { align-items:flex-start; flex-direction:column; } .day { min-height:76px; padding:6px; } .rate { font-size:.9rem; margin-top:9px; } .night { display:none; } .unavailable .rate { font-size:.49rem; } .foot,.selection-bar { align-items:flex-start; flex-direction:column; } .selection-actions { width:100%; } .selection-actions .cta { flex:1; text-align:center; } .weekdays div { padding:6px 2px; font-size:.53rem; } }
   </style>
 </head>
 <body>
   <div class="page">
     <header class="top"><div class="brand"><img src="webpic/weeks-creek-haven-round-logo.png" alt="Weeks Creek Haven">Weeks Creek Haven</div><nav class="top-actions"><a href="/register.html">Request a stay</a><a href="/index.html">Home</a></nav></header>
     <main class="shell panel">
-      <div class="head"><div><div class="eyebrow">Private stays &middot; Blue Ridge, Georgia</div><h1>Availability &amp; rates</h1><div class="minimum">Minimum stay: 2 nights</div><p class="intro">Browse open nights, then send us one date choice—or a second option if you have one. Availability can change until your reservation deposit is paid.</p></div><a class="cta" href="/register.html">Request dates</a></div>
+      <div class="head"><div><div class="eyebrow">Private stays &middot; Blue Ridge, Georgia</div><h1>Availability &amp; rates</h1><div class="minimum">Minimum stay: 2 nights</div><div class="calendar-tip">Press and drag across available nights to choose your stay</div><p class="intro">Browse open nights, then send us one date choice—or a second option if you have one. Availability can change until your reservation deposit is paid.</p></div><a class="cta" href="/register.html">Request dates</a></div>
       <div class="calendar-title"><h2 id="month-title"></h2><div class="month-actions"><button id="previous" aria-label="Previous month">&larr;</button><button id="today">Today</button><button id="next" aria-label="Next month">&rarr;</button></div></div>
       <div class="weekdays"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>
       <div id="calendar" class="calendar" aria-live="polite"></div>
+      <div id="selection-error" class="selection-error" hidden role="alert"></div>
+      <div id="selection-bar" class="selection-bar" hidden aria-live="polite"><div><strong id="selection-title"></strong><span id="selection-details"></span></div><div class="selection-actions"><button id="clear-selection" type="button">Clear</button><a id="request-selected" class="cta" href="/register.html">Request selected dates</a></div></div>
       <div class="legend"><span class="key"><i class="swatch" style="background:var(--open)"></i>Available</span><span class="key"><i class="swatch" style="background:var(--closed)"></i>Unavailable</span><span class="key"><i class="swatch" style="background:#f0ebe3"></i>Past or outside this month</span></div>
       <div class="foot"><p><strong>Two-night minimum.</strong> Displayed amounts are nightly base rates. Your final quote may also include cleaning, applicable lodging taxes, and any agreed deposit. Checkout dates can also be arrival dates for another stay.</p><a class="cta" href="/register.html">Request dates</a></div>
     </main>
   </div>
   <script>
-    const state={unavailable:[],rates:[],defaultNightlyRateCents:0,month:new Date(new Date().getFullYear(),new Date().getMonth(),1)};
+    const state={unavailable:[],rates:[],defaultNightlyRateCents:0,selection:null,month:new Date(new Date().getFullYear(),new Date().getMonth(),1)};
     const $=(id)=>document.getElementById(id);
     const key=(date)=>`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
     const todayKey=key(new Date());
+    const addDays=(value,days)=>{ const date=new Date(`${value}T12:00:00`); date.setDate(date.getDate()+days); return key(date); };
+    const daysBetween=(arrival,departure)=>Math.round((Date.parse(`${departure}T00:00:00Z`)-Date.parse(`${arrival}T00:00:00Z`))/86400000);
+    const friendlyDate=(value)=>new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric',year:'numeric'}).format(new Date(`${value}T12:00:00`));
     const money=(cents)=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(cents/100);
     function nightlyRate(dateKey){ const match=state.rates.filter(rate=>dateKey>=rate.arrival&&dateKey<rate.departure).at(-1); return match?.amountCents||state.defaultNightlyRateCents; }
     function isUnavailable(dateKey){ return state.unavailable.some(range=>dateKey>=range.arrival&&dateKey<range.departure); }
@@ -78,13 +95,31 @@
       const start=new Date(state.month); start.setDate(1-start.getDay()); let html='';
       for(let index=0;index<42;index++){
         const date=new Date(start); date.setDate(start.getDate()+index); const dateKey=key(date); const outside=date.getMonth()!==state.month.getMonth(); const past=dateKey<todayKey; const unavailable=!outside&&!past&&isUnavailable(dateKey); const available=!outside&&!past&&!unavailable; const rate=available?nightlyRate(dateKey):0;
-        html+=`<div class="day ${outside?'outside':''} ${past?'past':''} ${unavailable?'unavailable':''} ${available?'available':''} ${dateKey===todayKey?'today':''}"><span class="number">${date.getDate()}</span>${unavailable?'<span class="rate">Unavailable</span>':available?`<span class="rate">${rate?money(rate):'Ask us'}</span><span class="night">per night</span>`:''}</div>`;
+        html+=`<div class="day ${outside?'outside':''} ${past?'past':''} ${unavailable?'unavailable':''} ${available?'available':''} ${dateKey===todayKey?'today':''}" data-date="${dateKey}" ${available?'data-selectable="true"':''}><span class="number">${date.getDate()}</span>${unavailable?'<span class="rate">Unavailable</span>':available?`<span class="rate">${rate?money(rate):'Ask us'}</span><span class="night">per night</span>`:''}</div>`;
       }
       $('calendar').innerHTML=html;
+      paintSelection();
     }
-    $('previous').onclick=()=>{ state.month=new Date(state.month.getFullYear(),state.month.getMonth()-1,1); render(); };
-    $('next').onclick=()=>{ state.month=new Date(state.month.getFullYear(),state.month.getMonth()+1,1); render(); };
-    $('today').onclick=()=>{ const now=new Date(); state.month=new Date(now.getFullYear(),now.getMonth(),1); render(); };
+    function clearSelection(){ state.selection=null; dragging=false; dragStart=dragCurrent=null; $('calendar').classList.remove('selecting'); $('selection-bar').hidden=true; $('selection-error').hidden=true; document.querySelectorAll('.selected,.selection-start,.selection-end').forEach(day=>day.classList.remove('selected','selection-start','selection-end')); }
+    function selectionIsAvailable(first,last){ for(let date=first;date<=last;date=addDays(date,1)){ if(!$('calendar').querySelector(`[data-date="${date}"][data-selectable]`))return false; } return true; }
+    function paintSelection(){
+      const selection=dragging&&dragStart&&dragCurrent?{first:dragStart<dragCurrent?dragStart:dragCurrent,last:dragStart<dragCurrent?dragCurrent:dragStart}:state.selection;
+      document.querySelectorAll('[data-date]').forEach(day=>{ const selected=selection&&day.dataset.date>=selection.first&&day.dataset.date<=selection.last; day.classList.toggle('selected',Boolean(selected)); day.classList.toggle('selection-start',Boolean(selected&&day.dataset.date===selection.first)); day.classList.toggle('selection-end',Boolean(selected&&day.dataset.date===selection.last)); });
+    }
+    function finishSelection(){
+      if(!dragging)return; dragging=false; $('calendar').classList.remove('selecting');
+      const first=dragStart<dragCurrent?dragStart:dragCurrent,last=dragStart<dragCurrent?dragCurrent:dragStart,departure=addDays(last,1),nightCount=daysBetween(first,departure);
+      if(nightCount<2||!selectionIsAvailable(first,last)){ state.selection=null; paintSelection(); $('selection-bar').hidden=true; $('selection-error').textContent=nightCount<2?'Choose at least two available nights.':'That range crosses an unavailable date. Please choose only consecutive available nights.'; $('selection-error').hidden=false; return; }
+      state.selection={first,last,departure}; $('selection-error').hidden=true; $('selection-title').textContent=`${friendlyDate(first)} – ${friendlyDate(departure)}`; $('selection-details').textContent=`${nightCount} nights · checkout ${friendlyDate(departure)}`; $('request-selected').href=`/register.html?arrival1=${encodeURIComponent(first)}&departure1=${encodeURIComponent(departure)}`; $('selection-bar').hidden=false; paintSelection();
+    }
+    let dragStart=null,dragCurrent=null,dragging=false;
+    $('calendar').addEventListener('pointerdown',(event)=>{ const day=event.target.closest('[data-selectable]'); if(!day||event.button!==0)return; dragStart=dragCurrent=day.dataset.date; dragging=true; state.selection=null; $('selection-bar').hidden=true; $('selection-error').hidden=true; $('calendar').classList.add('selecting'); paintSelection(); event.preventDefault(); });
+    $('calendar').addEventListener('pointermove',(event)=>{ if(!dragging)return; const day=document.elementFromPoint(event.clientX,event.clientY)?.closest('[data-date]'); if(day&&day.dataset.date!==dragCurrent){ dragCurrent=day.dataset.date; paintSelection(); } });
+    window.addEventListener('pointerup',finishSelection);
+    $('clear-selection').onclick=clearSelection;
+    $('previous').onclick=()=>{ clearSelection(); state.month=new Date(state.month.getFullYear(),state.month.getMonth()-1,1); render(); };
+    $('next').onclick=()=>{ clearSelection(); state.month=new Date(state.month.getFullYear(),state.month.getMonth()+1,1); render(); };
+    $('today').onclick=()=>{ clearSelection(); const now=new Date(); state.month=new Date(now.getFullYear(),now.getMonth(),1); render(); };
     fetch('/api/availability').then(async(response)=>{ const data=await response.json(); if(!response.ok)throw new Error(data.error||'Availability could not be loaded.'); Object.assign(state,data); render(); }).catch(error=>{ $('calendar').innerHTML=`<div class="message" style="grid-column:1/-1">${error.message}</div>`; });
   </script>
 </body>
