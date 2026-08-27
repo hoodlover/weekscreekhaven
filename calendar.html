@@ -28,31 +28,36 @@
     .admin-pill { background:#0a231880; }
     .layout { display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:15px; align-items:start; }
     .panel { background:rgba(255,253,248,.98); border:1px solid var(--line); border-radius:18px; box-shadow:0 15px 45px #0006; }
-    .calendar-panel { padding:20px; min-width:0; }
-    .calendar-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:15px; }
+    .calendar-panel { padding:0; min-width:0; overflow:hidden; border-radius:22px; }
+    .calendar-wrap { padding:clamp(20px,2.4vw,34px); }
+    .calendar-intro { padding-bottom:24px; margin-bottom:25px; border-bottom:1px solid var(--line); }
+    .calendar-intro h2 { color:var(--pine); font-size:clamp(2.7rem,5vw,4.5rem); line-height:.92; margin-top:7px; }
+    .calendar-intro p { max-width:720px; margin:13px 0 0; color:var(--muted); font-size:.78rem; line-height:1.55; }
+    .calendar-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:13px; }
     .calendar-head h2 { color:var(--pine); font-size:2.25rem; }
     .calendar-tip { display:inline-flex; margin-top:7px; padding:6px 10px; border-radius:999px; background:#e5eee7; color:var(--pine); font-size:.62rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
     .month-actions { display:flex; align-items:center; gap:7px; }
-    .month-actions button,.small { border:1px solid var(--line); background:white; border-radius:8px; padding:9px 12px; color:var(--ink); font-weight:800; }
+    .month-actions button,.small { border:1px solid var(--line); background:white; border-radius:999px; padding:9px 12px; color:var(--ink); font-weight:800; }
     .weekdays,.calendar { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); }
-    .weekdays div { padding:8px; text-align:center; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; font-size:.62rem; font-weight:800; }
-    .day { min-height:125px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); padding:7px; background:#fff; overflow:hidden; }
+    .calendar { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--line); gap:1px; }
+    .weekdays div { padding:9px 3px; text-align:center; color:var(--muted); text-transform:uppercase; letter-spacing:.09em; font-size:.6rem; font-weight:800; }
+    .day { position:relative; min-height:125px; padding:9px; background:#fff; overflow:hidden; }
     .day[data-price-day] { cursor:crosshair; }
     .day.price-selected { background:#e8d5b5; color:var(--ink); box-shadow:inset 0 0 0 3px var(--rust); }
     .day.price-checkout { box-shadow:inset 0 0 0 3px var(--rust),inset 0 -7px 0 #fff8; }
     .calendar.price-selecting { user-select:none; }
-    .day:nth-child(7n+1) { border-left:1px solid var(--line); }
-    .day:nth-child(-n+7) { border-top:1px solid var(--line); }
-    .day.outside { background:#f1ece3; color:#aaa096; }
+    .day.outside { background:#f5f1eb; color:#b1a89e; }
     .day.outside.price-selected { background:#e8d5b5; color:var(--ink); }
-    .day.today { box-shadow:inset 0 0 0 2px var(--pine); }
-    .day-number { font-size:.72rem; font-weight:800; margin-bottom:5px; }
+    .day.today .day-number { outline:2px solid var(--rust); outline-offset:3px; border-radius:50%; }
+    .day-number { display:inline-grid; place-items:center; width:22px; height:22px; font-size:.72rem; font-weight:800; margin-bottom:5px; }
     .day-rate { display:inline-flex; max-width:100%; margin:0 0 4px; padding:3px 5px; border-radius:5px; background:#e7f0e9; color:var(--pine); font-size:.54rem; line-height:1.15; font-weight:800; white-space:nowrap; }
     .day-rate.special { background:#f1d6c8; color:#733a27; }
     .day-rate.package { background:#b96f45; color:white; }
     .event { display:block; width:100%; border:0; text-align:left; border-radius:5px; margin:3px 0; padding:5px 6px; font-size:.6rem; line-height:1.25; font-weight:800; overflow:hidden; color:#251d17; }
     .event-main,.event-note { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .event-note { margin-top:2px; font-size:.56rem; font-weight:600; opacity:.82; }
+    .event-arrival-details { display:grid; gap:3px; margin-top:5px; padding-top:5px; border-top:1px solid #ffffff66; font-size:.55rem; font-weight:700; }
+    .event-arrival-details a { color:inherit; font-weight:800; text-decoration:underline; text-underline-offset:2px; }
     .event.request { background:var(--request); } .event.reserved { background:var(--reserved); color:#102b39; } .event.booked { background:var(--booked); color:white; } .event.blocked { background:var(--blocked); color:white; }
     .event.checkout { background:transparent; color:var(--muted); border:1px dashed currentColor; }
     .sidebar { display:grid; gap:15px; }
@@ -85,7 +90,7 @@
     .dialog-actions .save { background:var(--pine); color:white; border-color:var(--pine); }
     .calendar-bottom-actions { display:flex; justify-content:center; margin-top:15px; }
     @media(max-width:1000px) { .layout { grid-template-columns:1fr; } .sidebar { grid-template-columns:1fr 1fr; } }
-    @media(max-width:700px) { .shell { width:min(100% - 10px,1500px); } .calendar-panel { padding:10px; overflow-x:auto; } .calendar-wrap { min-width:850px; } .sidebar { grid-template-columns:1fr; } .topbar { align-items:flex-start; } .day { min-height:105px; } }
+    @media(max-width:700px) { .shell { width:min(100% - 10px,1500px); } .calendar-panel { overflow-x:auto; } .calendar-wrap { min-width:850px; padding:18px 12px; } .calendar-intro { padding:0 4px 18px; margin-bottom:18px; } .calendar-intro h2 { font-size:2.85rem; } .sidebar { grid-template-columns:1fr; } .topbar { align-items:flex-start; } .day { min-height:105px; padding:6px; } }
   </style>
 </head>
 <body>
@@ -97,7 +102,8 @@
     <div class="layout">
       <section class="panel calendar-panel">
         <div class="calendar-wrap">
-          <div class="calendar-head"><div><div class="eyebrow">Requests &amp; stays</div><h2 id="month-title"></h2><div class="calendar-tip">Drag arrival through checkout · minimum 2 nights</div></div><div class="month-actions"><button id="previous" aria-label="Previous month">&larr;</button><button id="today">Today</button><button id="next" aria-label="Next month">&rarr;</button></div></div>
+          <div class="calendar-intro"><div class="eyebrow">Private owner calendar</div><h2>Plan the cabin</h2><div class="calendar-tip">Requests, stays &amp; owner holds</div><p>See every stay at a glance. Booked ranges show the renter, with payment and welcome-page details kept on the arrival date.</p></div>
+          <div class="calendar-head"><h2 id="month-title"></h2><div class="month-actions"><button id="previous" aria-label="Previous month">&larr;</button><button id="today">Today</button><button id="next" aria-label="Next month">&rarr;</button></div></div>
           <div class="weekdays"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>
           <div id="calendar" class="calendar"></div>
           <div class="calendar-bottom-actions"><div class="month-actions"><button id="previous-bottom" aria-label="Previous month">&larr;</button><button id="today-bottom">Today</button><button id="next-bottom" aria-label="Next month">&rarr;</button></div></div>
@@ -155,11 +161,18 @@
       return result;
     }
     function paymentStatus(event){const booking=event.booking;if(!booking)return'';if(booking.paymentPlan==='complimentary'||Number(booking.amountCents)===0)return`<span class="item-note">No invoice needed · ${booking.agreementAcceptedAt?'agreement accepted':'agreement pending'}</span>`;if(!booking.squareInvoiceId)return`<span class="item-note">Invoice not sent · ${booking.agreementAcceptedAt?'agreement accepted':'agreement pending'}</span>`;const paid=Number(booking.squarePaidCents)||0,balance=Number.isFinite(Number(booking.squareBalanceCents))?Number(booking.squareBalanceCents):Math.max(0,(Number(booking.amountCents)||0)-paid),label=booking.paymentFullyPaid?'Paid in full':booking.paymentRequirementMet?'Deposit paid':paid?'Partial payment':'Invoice sent · unpaid';return`<span class="item-note"><strong>${label}</strong> · ${money(paid)} received · ${money(balance)} remaining<br>${booking.agreementAcceptedAt?'Agreement accepted':'Agreement pending'}</span>`;}
+    function bookedArrivalDetails(event,dateKey){
+      if(event.type!=='booked'||dateKey!==event.arrival||!event.booking)return'';
+      const booking=event.booking;
+      const paid=booking.paymentPlan==='complimentary'||Number(booking.amountCents)===0?'<span>Complimentary stay</span>':`<span>Total paid: ${money(Number(booking.squarePaidCents)||0)}</span>`;
+      const welcome=booking.welcomePreviewUrl?`<a href="${esc(booking.welcomePreviewUrl)}" target="_blank" rel="noopener">Open welcome page</a>`:'<span>Welcome page not created</span>';
+      return `<span class="event-arrival-details">${paid}${welcome}</span>`;
+    }
     function render(){
       $('month-title').textContent=new Intl.DateTimeFormat(undefined,{month:'long',year:'numeric'}).format(state.month);
       const start=new Date(state.month); start.setDate(1-start.getDay()); const all=events(); const today=key(new Date()); let html='';
       for(let index=0;index<42;index++){ const date=new Date(start); date.setDate(start.getDate()+index); const dateKey=key(date); const outside=date.getMonth()!==state.month.getMonth(); const dayEvents=all.filter(event=>dateKey>=event.arrival&&dateKey<=event.departure); const price=priceForDay(dateKey);
-        html+=`<div class="day ${outside?'outside':''} ${dateKey===today?'today':''}" data-date="${dateKey}" data-price-day="true"><div class="day-number">${date.getDate()}</div>${price?`<div class="day-rate ${price.special?'special':''} ${price.package?'package':''}" title="${esc(price.title)}">${esc(price.label)}</div>`:''}${dayEvents.map(event=>{ const checkout=dateKey===event.departure; const title=`${event.name}${event.type==='request'?` · choice ${event.dateChoice}`:''}`; return `<div class="event ${event.type} ${checkout?'checkout':''}" title="${esc(title)}${event.note?` · ${esc(event.note)}`:''}${checkout?' checkout':''}"><span class="event-main">${checkout?'Checkout · ':''}${esc(title)}</span>${event.note?`<small class="event-note">${esc(event.note)}</small>`:''}</div>`; }).join('')}</div>`;
+        html+=`<div class="day ${outside?'outside':''} ${dateKey===today?'today':''}" data-date="${dateKey}" data-price-day="true"><div class="day-number">${date.getDate()}</div>${price?`<div class="day-rate ${price.special?'special':''} ${price.package?'package':''}" title="${esc(price.title)}">${esc(price.label)}</div>`:''}${dayEvents.map(event=>{ const checkout=dateKey===event.departure; const title=`${event.name}${event.type==='request'?` · choice ${event.dateChoice}`:''}`; return `<div class="event ${event.type} ${checkout?'checkout':''}" title="${esc(title)}${event.note?` · ${esc(event.note)}`:''}${checkout?' checkout':''}"><span class="event-main">${checkout?'Checkout · ':''}${esc(title)}</span>${event.note?`<small class="event-note">${esc(event.note)}</small>`:''}${bookedArrivalDetails(event,dateKey)}</div>`; }).join('')}</div>`;
       }
       $('calendar').innerHTML=html;
       const upcoming=all.filter(event=>event.departure>=today).sort((a,b)=>a.arrival.localeCompare(b.arrival));
@@ -183,7 +196,7 @@
       if(nightCount<2){ document.querySelectorAll('.price-selected,.price-checkout').forEach((day)=>day.classList.remove('price-selected','price-checkout')); alert('Select arrival through checkout for at least two nights (three calendar dates).'); return; }
       state.priceSelection={arrival,departure,nightCount}; $('rate-selection-summary').textContent=`${friendlyDate(arrival)} to ${friendlyDate(departure)} · ${nightCount} nights · the last highlighted day is checkout`; $('drag-rate-amount').value=''; $('drag-rate-error').hidden=true; $('rate-dialog').showModal();
     }
-    $('calendar').addEventListener('pointerdown',(event)=>{ const day=event.target.closest('[data-price-day]'); if(!day||event.button!==0)return; dragStart=dragCurrent=day.dataset.date; dragging=true; $('calendar').classList.add('price-selecting'); paintDragSelection(); event.preventDefault(); });
+    $('calendar').addEventListener('pointerdown',(event)=>{ if(event.target.closest('a,button'))return; const day=event.target.closest('[data-price-day]'); if(!day||event.button!==0)return; dragStart=dragCurrent=day.dataset.date; dragging=true; $('calendar').classList.add('price-selecting'); paintDragSelection(); event.preventDefault(); });
     $('calendar').addEventListener('pointermove',(event)=>{ if(!dragging)return; const day=document.elementFromPoint(event.clientX,event.clientY)?.closest('[data-price-day]'); if(day&&day.dataset.date!==dragCurrent){ dragCurrent=day.dataset.date; paintDragSelection(); } });
     window.addEventListener('pointerup',finishPriceDrag);
     $('drag-rate-mode').addEventListener('change',()=>{ const total=$('drag-rate-mode').value==='total'; $('drag-rate-label').textContent=total?'Total for selected stay':'Nightly rate'; $('drag-rate-amount').placeholder=total?'1200':'325'; $('drag-rate-helper').textContent=total?'The calendar will show one package total across arrival through checkout.':'This amount will appear in each selected night on the guest calendar.'; });
