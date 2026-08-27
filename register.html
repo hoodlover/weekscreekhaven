@@ -33,6 +33,10 @@
     .card h2 { font-size:2.25rem; color:var(--pine); }
     .helper { color:var(--muted); line-height:1.55; font-size:.82rem; }
     .minimum { display:inline-flex; align-items:center; gap:7px; margin:10px 0 2px; padding:8px 12px; border-radius:999px; background:#e7efe8; color:var(--pine); font-size:.7rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
+    .blocked-dates { margin-top:14px; border:1px solid var(--line); border-radius:9px; background:#fff; }
+    .blocked-dates summary { padding:11px 13px; color:var(--pine); cursor:pointer; font-size:.72rem; font-weight:800; }
+    .blocked-dates-content { padding:0 13px 12px; color:var(--muted); font-size:.72rem; line-height:1.65; }
+    .blocked-dates-content a { color:var(--pine); font-weight:800; }
     .grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
     label { display:block; font-size:.67rem; text-transform:uppercase; letter-spacing:.11em; font-weight:800; margin-top:15px; }
     input,select,textarea { width:100%; margin-top:7px; padding:13px 14px; border:1px solid #cfc4b4; border-radius:9px; background:white; color:var(--ink); font:inherit; outline:none; }
@@ -41,6 +45,11 @@
     legend { padding:0 8px; color:var(--pine); font-family:'Crimson Text',serif; font-size:1.25rem; font-weight:700; }
     .choice { background:#f6f0e6; }
     .choice.unavailable { border-color:#a33b35; background:#fff0f0; box-shadow:0 0 0 3px #a33b351a; }
+    .availability-status { margin-top:12px; padding:11px 12px; border-radius:9px; font-size:.74rem; line-height:1.5; font-weight:700; }
+    .availability-status.available { color:#255b39; background:#e8f2e9; border:1px solid #b8cdbd; }
+    .availability-status.conflict { color:#8a2f2f; background:#fff0f0; border:1px solid #dfb2af; }
+    .availability-status a { font-weight:800; }
+    .availability-status[hidden] { display:none; }
     .check { display:flex; align-items:flex-start; gap:9px; margin-top:17px; text-transform:none; letter-spacing:0; line-height:1.5; color:var(--muted); font-weight:600; }
     .check input { width:auto; margin:3px 0 0; accent-color:var(--pine); }
     .honeypot { position:absolute; left:-9999px; }
@@ -82,6 +91,7 @@
         <h2>Tell us what might work</h2>
         <div class="minimum">One night allowed &middot; two-night minimum price</div>
         <p class="helper">Choose your dates and guest count to see the price immediately. One-night stays are welcome but billed at the two-night minimum price. This form does not reserve dates or charge you.</p>
+        <details id="blocked-dates" class="blocked-dates" hidden><summary>See blocked dates</summary><div id="blocked-dates-content" class="blocked-dates-content"></div></details>
         <div id="calendar-selection" class="message picked" hidden role="status"></div>
         <div class="grid">
           <label>Full name<input name="name" autocomplete="name" maxlength="100" required></label>
@@ -90,8 +100,8 @@
           <label>Number of guests<select id="guest-count" name="guests" required><option value="">Choose</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></label>
           <label>Dogs <small>(prior approval)</small><select id="dog-count" name="dogs"><option value="0">None</option><option value="1">1 dog</option><option value="2">2 dogs</option><option value="3">3 dogs</option><option value="4">4 dogs</option></select></label>
         </div>
-        <fieldset id="choice-1" class="choice"><legend>First choice</legend><div class="grid"><label>Arrival<input name="arrival1" type="date" required></label><label>Departure<input name="departure1" type="date" required></label></div><div id="quote-1" class="stay-quote" hidden><strong></strong><span></span></div></fieldset>
-        <fieldset id="choice-2" class="choice"><legend>Second choice <small>(optional)</small></legend><div class="grid"><label>Arrival<input name="arrival2" type="date"></label><label>Departure<input name="departure2" type="date"></label></div><div id="quote-2" class="stay-quote" hidden><strong></strong><span></span></div></fieldset>
+        <fieldset id="choice-1" class="choice"><legend>First choice</legend><div class="grid"><label>Arrival<input name="arrival1" type="date" required></label><label>Departure<input name="departure1" type="date" required></label></div><div id="availability-1" class="availability-status" hidden role="status"></div><div id="quote-1" class="stay-quote" hidden><strong></strong><span></span></div></fieldset>
+        <fieldset id="choice-2" class="choice"><legend>Second choice <small>(optional)</small></legend><div class="grid"><label>Arrival<input name="arrival2" type="date"></label><label>Departure<input name="departure2" type="date"></label></div><div id="availability-2" class="availability-status" hidden role="status"></div><div id="quote-2" class="stay-quote" hidden><strong></strong><span></span></div></fieldset>
         <label class="check"><input id="late-checkout" name="lateCheckout" type="checkbox" value="1"><span><strong>Add noon checkout for $50.</strong> Standard checkout is 11:00 AM. Check-in begins at 4:00 PM.</span></label>
         <div class="grid">
           <label>How do you know us?<select name="relationship"><option value="">Choose one</option><option>Family</option><option>Friend</option><option>Friend of a friend</option><option>Previous guest</option><option>Found the cabin online</option><option>Other</option></select></label>
@@ -109,11 +119,12 @@
   <script type="module">
     import { money, quoteStay } from '/pricing.js';
     const form=document.getElementById('booking-form'); const button=document.getElementById('submit'); const message=document.getElementById('form-message');
-    const pricingState={rates:[],loaded:false,discountQuotes:{},discountTimer:null,discountRequest:0};
+    const pricingState={rates:[],unavailable:[],loaded:false,discountQuotes:{},discountTimer:null,discountRequest:0};
     const today=new Date(); today.setHours(0,0,0,0); const minimum=today.toISOString().slice(0,10);
     const addDays=(value,days)=>{ const date=new Date(`${value}T12:00:00`); date.setDate(date.getDate()+days); return date.toISOString().slice(0,10); };
     const validDate=(value)=>/^\d{4}-\d{2}-\d{2}$/.test(value||'')&&!Number.isNaN(Date.parse(`${value}T12:00:00`));
     const friendlyDate=(value)=>new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric',year:'numeric'}).format(new Date(`${value}T12:00:00`));
+    const rangesOverlap=(first,second)=>first.arrival<second.departure&&second.arrival<first.departure;
     document.querySelectorAll('input[type="date"]').forEach((input)=>input.min=minimum);
     for (const pair of [['arrival1','departure1'],['arrival2','departure2']]) {
       const arrival=form.elements[pair[0]], departure=form.elements[pair[1]];
@@ -135,7 +146,30 @@
       box.querySelector('span').textContent=`Price does not include ${money(quote.estimatedTaxesAndFeesCents)} in estimated taxes and fees · estimated amount if booked ${money(quote.estimatedGrandTotalCents)} · ${discountNote} · Check in ${friendlyDate(arrival)} at 4:00 PM · check out ${friendlyDate(departure)} at ${quote.checkoutTime}${quote.lateCheckout?' (+$50)':''} · ${quote.actualNights} night${quote.actualNights===1?'':'s'} · ${quote.pricingRule} · ${adjustment}`;
       box.hidden=false;
     }
-    function quoteChanged(index){renderQuote(index);scheduleDiscountQuotes();}
+    function checkAvailability(index){
+      const fieldset=document.getElementById(`choice-${index}`),status=document.getElementById(`availability-${index}`),arrival=form.elements[`arrival${index}`].value,departure=form.elements[`departure${index}`].value;
+      fieldset.classList.remove('unavailable'); status.hidden=true; status.className='availability-status'; status.replaceChildren();
+      if(!pricingState.loaded||!validDate(arrival)||!validDate(departure)||departure<=arrival)return false;
+      const conflict=pricingState.unavailable.some((range)=>rangesOverlap({arrival,departure},range));
+      const text=document.createElement('span');
+      if(conflict){
+        fieldset.classList.add('unavailable'); status.classList.add('conflict'); text.textContent='These dates overlap a reserved or blocked stay. Choose different dates or '; status.append(text);
+        const link=document.createElement('a'); link.href='/availability.html'; link.textContent='view available dates on the calendar'; status.append(link,document.createTextNode('.'));
+      }else{
+        status.classList.add('available'); text.textContent='These dates are currently available. We will confirm them after you send your request.'; status.append(text);
+      }
+      status.hidden=false; return conflict;
+    }
+    function hasAvailabilityConflict(){return [1,2].some((index)=>checkAvailability(index));}
+    function renderBlockedDates(){
+      const details=document.getElementById('blocked-dates'),content=document.getElementById('blocked-dates-content'),future=pricingState.unavailable.filter((range)=>range.departure>=minimum).sort((a,b)=>a.arrival.localeCompare(b.arrival));
+      if(!future.length){details.hidden=true;return;}
+      const ranges=document.createElement('div'); ranges.textContent=future.map((range)=>`${friendlyDate(range.arrival)} to ${friendlyDate(range.departure)}`).join(' · ');
+      const guide=document.createElement('div'); guide.append('Departure dates may be used as a new arrival. For the clearest view, ');
+      const link=document.createElement('a'); link.href='/availability.html'; link.textContent='open the availability calendar'; guide.append(link,document.createTextNode('.'));
+      content.replaceChildren(ranges,guide); details.hidden=false;
+    }
+    function quoteChanged(index){renderQuote(index);checkAvailability(index);scheduleDiscountQuotes();}
     function scheduleDiscountQuotes(){clearTimeout(pricingState.discountTimer);pricingState.discountTimer=setTimeout(refreshDiscountQuotes,350);}
     async function refreshDiscountQuotes(){
       const phone=normalizedPhone(),requestId=++pricingState.discountRequest;
@@ -153,9 +187,11 @@
       form.elements.arrival1.value=selectedArrival; form.elements.departure1.min=addDays(selectedArrival,1); form.elements.departure1.value=selectedDeparture;
       const selectionNote=document.getElementById('calendar-selection'); selectionNote.textContent=`Your calendar selection was added: ${friendlyDate(selectedArrival)} through ${friendlyDate(selectedDeparture)}.`; selectionNote.hidden=false;
     }
-    fetch('/api/availability').then(async(response)=>{const data=await response.json();if(!response.ok)throw new Error(data.error||'Pricing could not be loaded.');pricingState.rates=data.rates||[];pricingState.loaded=true;renderQuote(1);renderQuote(2);scheduleDiscountQuotes();}).catch(()=>{});
+    fetch('/api/availability').then(async(response)=>{const data=await response.json();if(!response.ok)throw new Error(data.error||'Pricing could not be loaded.');pricingState.rates=data.rates||[];pricingState.unavailable=data.unavailable||[];pricingState.loaded=true;renderQuote(1);renderQuote(2);renderBlockedDates();checkAvailability(1);checkAvailability(2);scheduleDiscountQuotes();}).catch(()=>{});
     form.addEventListener('submit',async(event)=>{
-      event.preventDefault(); button.disabled=true; button.textContent='Sending request...'; message.hidden=true; document.querySelectorAll('.choice').forEach((choice)=>choice.classList.remove('unavailable'));
+      event.preventDefault(); message.hidden=true;
+      if(hasAvailabilityConflict()){message.className='message error';message.textContent='One or more date choices are unavailable. Choose different dates or use the availability calendar before sending your request.';message.hidden=false;document.querySelector('.choice.unavailable')?.scrollIntoView({behavior:'smooth',block:'center'});return;}
+      button.disabled=true; button.textContent='Sending request...'; document.querySelectorAll('.choice').forEach((choice)=>choice.classList.remove('unavailable'));
       const payload=Object.fromEntries(new FormData(form));
       try {
         const response=await fetch('/api/booking-requests',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
