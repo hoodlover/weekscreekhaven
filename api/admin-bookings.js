@@ -1,29 +1,65 @@
 import { appendBookingRecord, getBookingCalendar, getBookingRequests, rangesOverlap, unavailableRanges } from '../_lib/booking-store.js';
 import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
+import { getInvites } from '../_lib/invite-store.js';
 import { createAgreementToken, createReviewToken, json, requireAdmin } from '../_lib/security.js';
 import { createSquareBookingInvoice, createSquareFriendInvoice, squareStatus } from '../_lib/square.js';
 import { refreshSquareBooking } from '../_lib/payment-sync.js';
 import { daysBetween, PRICING_CONFIG, quoteStay, withEstimatedTaxesAndFees } from '../pricing.js';
 
+function bookingPacketUrl(bookingId) {
+  const token = createAgreementToken(bookingId, 365 * 86400);
+  return `https://www.weekscreekhaven.com/booking-packet.html?token=${encodeURIComponent(token)}`;
+}
+
+async function sendBookingPacketEmail(booking, packetUrl) {
+  const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || booking.dateChoices?.[0] || {};
+  const paid = booking.paymentPlan === 'complimentary' || Number(booking.amountCents) === 0 || booking.paymentRequirementMet === true;
+  const signed = Boolean(booking.agreementAcceptedAt);
+  const nextStep = signed
+    ? 'Your signed agreement, payment status, and booking information are available in the packet.'
+    : paid
+      ? 'We received your payment. Please open the packet and sign the rental agreement to finish your booking.'
+      : 'Open the packet to review payment details and sign the rental agreement.';
+  await sendEmail({
+    to: booking.email,
+    toName: booking.name,
+    subject: signed ? 'Your Weeks Creek Haven booking packet' : 'Please sign your Weeks Creek Haven agreement',
+    text: `Hi ${booking.name},\n\n${nextStep}\n\nStay: ${dates.arrival || 'To be confirmed'} through ${dates.departure || 'To be confirmed'}\n\nOpen your private booking packet: ${packetUrl}\n\nCheck-in begins at 4:00 PM. Checkout is ${booking.lateCheckout ? 'noon' : '11:00 AM'}.`,
+    html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Your private booking packet</h1><p>Hi ${escapeEmailHtml(booking.name)},</p><p>${escapeEmailHtml(nextStep)}</p><p><strong>${escapeEmailHtml(dates.arrival || 'To be confirmed')} through ${escapeEmailHtml(dates.departure || 'To be confirmed')}</strong></p><p><a href="${packetUrl}" style="display:inline-block;background:#183c2d;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">${signed ? 'Open booking packet' : 'Open packet and sign agreement'}</a></p><p>Check-in begins at <strong>4:00 PM</strong>. Checkout is <strong>${booking.lateCheckout ? 'noon' : '11:00 AM'}</strong>.</p></div>`,
+  });
+}
+
 export default async function handler(request, response) {
   if (!requireAdmin(request)) return json(response, 401, { error: 'Please sign in as the site owner.' });
   try {
     if (request.method === 'GET') {
-      const [storedBookings, calendar] = await Promise.all([getBookingRequests(), getBookingCalendar()]);
+      const [storedBookings, calendar, invites] = await Promise.all([getBookingRequests(), getBookingCalendar(), getInvites()]);
       const bookings = await Promise.all(storedBookings.map(async (booking) => {
         if (!booking.squareInvoiceId || (booking.status === 'booked' && booking.paymentFullyPaid && booking.bookedWelcomeSentAt)) return booking;
         try { return await refreshSquareBooking(booking); }
         catch (error) { return { ...booking, paymentCheckError: error.message || 'Square status unavailable.' }; }
       }));
-      const pricedBookings = bookings.map((booking) => ({
-        ...booking,
-        dateChoices: (booking.dateChoices || []).map((choice) => ({
-          ...choice,
-          calculatedQuote: choice.quote
-            ? withEstimatedTaxesAndFees(choice.quote)
-            : quoteStay({ ...choice, guests: booking.guests || 1, dogs: booking.dogs || 0, lateCheckout: booking.lateCheckout, rates: calendar.rates || [] }),
-        })),
-      }));
+      const inviteById = new Map(invites.map((invite) => [invite.id, invite]));
+      const pricedBookings = bookings.map((booking) => {
+        const invite = booking.inviteId ? inviteById.get(booking.inviteId) : null;
+        return {
+          ...booking,
+          bookingPacketUrl: bookingPacketUrl(booking.id),
+          invitePasscode: invite?.passcode || '',
+          welcomePreviewUrl: invite ? `/api/admin-preview-invite?inviteId=${encodeURIComponent(invite.id)}` : '',
+          dateChoices: (booking.dateChoices || []).map((choice) => {
+            const calculatedQuote = choice.quote
+              ? withEstimatedTaxesAndFees(choice.quote)
+              : quoteStay({ ...choice, guests: booking.guests || 1, dogs: booking.dogs || 0, lateCheckout: booking.lateCheckout, rates: calendar.rates || [] });
+            return {
+              ...choice,
+              calculatedQuote: choice.complimentary
+                ? withEstimatedTaxesAndFees({ ...calculatedQuote, totalCents: 0, complimentary: true })
+                : calculatedQuote,
+            };
+          }),
+        };
+      });
       return json(response, 200, { bookings: pricedBookings, square: squareStatus(), pricing: PRICING_CONFIG, rates: calendar.rates || [] }, { 'Cache-Control': 'no-store' });
     }
     if (request.method !== 'PATCH') return json(response, 405, { error: 'Method not allowed.' });
@@ -41,7 +77,8 @@ export default async function handler(request, response) {
       const conflicts = unavailableRanges(await getBookingCalendar()).filter((range) => range.bookingId !== booking.id);
       if (!requestedDates || conflicts.some((range) => rangesOverlap(requestedDates, range))) return json(response, 409, { error: 'Those dates are no longer available. Choose the other date option or update the calendar.' });
       const preTaxAmountCents = originalAmountCents - discountAmountCents;
-      const tax = withEstimatedTaxesAndFees({ totalCents: preTaxAmountCents, actualNights: Math.max(1, daysBetween(requestedDates.arrival, requestedDates.departure)) });
+      const complimentary = preTaxAmountCents === 0 && (requestedDates.complimentary === true || requestedDates.quote?.complimentary === true || booking.friendsAndFamilyDiscount?.discountType === 'complimentary');
+      const tax = withEstimatedTaxesAndFees({ totalCents: preTaxAmountCents, actualNights: Math.max(1, daysBetween(requestedDates.arrival, requestedDates.departure)), complimentary });
       const amountCents = tax.estimatedGrandTotalCents;
       let payment = null;
       let paymentPlan = 'complimentary';
@@ -53,7 +90,7 @@ export default async function handler(request, response) {
         paymentPlan = 'deposit-balance';
       }
       const changes = {
-        status: 'reserved', approvedAt: createdAt, approvedChoice, originalAmountCents, discountAmountCents, amountCents, paymentPlan,
+        status: 'reserved', approvedAt: createdAt, approvedChoice, originalAmountCents, discountAmountCents, amountCents, paymentPlan, complimentary,
         preTaxAmountCents, salesTaxCents: tax.salesTaxCents, lodgingTaxCents: tax.lodgingTaxCents,
         stateHotelMotelFeeCents: tax.stateHotelMotelFeeCents, taxesAndFeesCents: tax.estimatedTaxesAndFeesCents,
         paymentUrl: payment?.url || null, squareInvoiceId: payment?.invoiceId || null, squareOrderId: payment?.orderId || null, squareCustomerId: payment?.customerId || null,
@@ -110,6 +147,17 @@ export default async function handler(request, response) {
         balanceCents: updated.squareBalanceCents,
         agreementAccepted: Boolean(updated.agreementAcceptedAt),
       });
+    }
+    if (action === 'send-booking-packet') {
+      if (!booking.email) return json(response, 400, { error: 'This guest does not have an email address.' });
+      if (!['reserved', 'booked'].includes(booking.status)) return json(response, 409, { error: 'Reserve the stay before sending its signing packet.' });
+      const packetUrl = bookingPacketUrl(booking.id);
+      await sendBookingPacketEmail(booking, packetUrl);
+      await appendBookingRecord({
+        type: 'status', bookingId: booking.id, createdAt,
+        changes: { bookingPacketSentAt: booking.bookingPacketSentAt || createdAt, bookingPacketResentAt: createdAt },
+      });
+      return json(response, 200, { ok: true, packetUrl });
     }
     if (action === 'send-review') {
       if (!booking.email) return json(response, 400, { error: 'This guest does not have an email address.' });

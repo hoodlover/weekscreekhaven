@@ -67,11 +67,26 @@ export default async function handler(request, response) {
     let confirmationSent = false;
     if (emailConfigured()) {
       const safeName = escapeEmailHtml(name);
+      const firstQuote = dateChoices[0].quote;
+      const complimentaryMessage = firstQuote.complimentary
+        ? ` Welcome! Your stay is complimentary: $0 due, with no taxes or government lodging fees.`
+        : firstQuote.friendsAndFamilyDiscount
+          ? ` Welcome! Your ${firstQuote.friendsAndFamilyDiscount.label} gives you a discounted rate of ${money(dateChoices[0].amountCents)} for choice 1, saving ${money(firstQuote.discountAmountCents)}.`
+          : ` Your current estimate for choice 1 is ${money(dateChoices[0].amountCents)}.`;
+      const priceMessage = firstQuote.complimentary
+        ? ''
+        : ` This price does not include an estimated ${money(firstQuote.estimatedTaxesAndFeesCents)} in taxes and government lodging fees; the estimated amount if booked is ${money(firstQuote.estimatedGrandTotalCents)}. The standard $200 cleaning cost is included.`;
+      const complimentaryHtml = firstQuote.complimentary
+        ? '<p style="background:#e8f2e9;padding:14px;border-radius:10px"><strong>Welcome!</strong> This is a complimentary stay: <strong>$0 due</strong>, with no taxes or government lodging fees.</p>'
+        : firstQuote.friendsAndFamilyDiscount
+          ? `<p style="background:#e8f2e9;padding:14px;border-radius:10px"><strong>Welcome!</strong> Your ${escapeEmailHtml(firstQuote.friendsAndFamilyDiscount.label)} gives you a discounted rate of <strong>${money(dateChoices[0].amountCents)}</strong> for choice 1. You save ${money(firstQuote.discountAmountCents)}.</p>`
+          : `<p>Current choice 1 estimate: <strong>${money(dateChoices[0].amountCents)}</strong></p>`;
+      const priceHtml = firstQuote.complimentary ? '' : `<p>Price does not include <strong>${money(firstQuote.estimatedTaxesAndFeesCents)}</strong> in estimated taxes and government lodging fees.<br>Estimated amount if booked: <strong>${money(firstQuote.estimatedGrandTotalCents)}</strong></p>`;
       try {
         await sendEmail({
           to: email, toName: name, subject: 'We received your Weeks Creek Haven date request',
-          text: `Hi ${name},\n\nWe received your preferred date${hasSecondChoice ? ' choices' : ' choice'} for Weeks Creek Haven.${dateChoices[0].quote.friendsAndFamilyDiscount ? ` Welcome! Your ${dateChoices[0].quote.friendsAndFamilyDiscount.label} gives you a discounted rate of ${money(dateChoices[0].amountCents)} for choice 1, saving ${money(dateChoices[0].quote.discountAmountCents)}.` : ` Your current estimate for choice 1 is ${money(dateChoices[0].amountCents)}.`} This price does not include an estimated ${money(dateChoices[0].quote.estimatedTaxesAndFeesCents)} in taxes and government lodging fees; the estimated amount if booked is ${money(dateChoices[0].quote.estimatedGrandTotalCents)}. The standard $200 cleaning cost is included.${lateCheckout ? ' Your estimate includes the $50 noon checkout option.' : ' Standard checkout is 11:00 AM.'} Check-in begins at 4:00 PM. This is a request, not a confirmed reservation.\n\nThank you!`,
-          html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">We got your request</h1><p>Hi ${safeName},</p><p>We received your preferred date${hasSecondChoice ? ' choices' : ' choice'} for Weeks Creek Haven.</p>${dateChoices[0].quote.friendsAndFamilyDiscount ? `<p style="background:#e8f2e9;padding:14px;border-radius:10px"><strong>Welcome!</strong> Your ${escapeEmailHtml(dateChoices[0].quote.friendsAndFamilyDiscount.label)} gives you a discounted rate of <strong>${money(dateChoices[0].amountCents)}</strong> for choice 1. You save ${money(dateChoices[0].quote.discountAmountCents)}.</p>` : `<p>Current choice 1 estimate: <strong>${money(dateChoices[0].amountCents)}</strong></p>`}<p>Price does not include <strong>${money(dateChoices[0].quote.estimatedTaxesAndFeesCents)}</strong> in estimated taxes and government lodging fees.<br>Estimated amount if booked: <strong>${money(dateChoices[0].quote.estimatedGrandTotalCents)}</strong></p><p><span style="color:#74685e">Standard $200 cleaning cost included · ${lateCheckout ? '$50 noon checkout included' : '11:00 AM checkout'} · 4:00 PM check-in</span></p><p><strong>This is a request, not a confirmed reservation.</strong> We’ll review the calendar and get back to you with availability and next steps.</p><p>Thanks for thinking of the Haven!</p></div>`,
+          text: `Hi ${name},\n\nWe received your preferred date${hasSecondChoice ? ' choices' : ' choice'} for Weeks Creek Haven.${complimentaryMessage}${priceMessage}${lateCheckout && !firstQuote.complimentary ? ' Your estimate includes the $50 noon checkout option.' : ' Standard checkout is 11:00 AM.'} Check-in begins at 4:00 PM. This is a request, not a confirmed reservation.\n\nThank you!`,
+          html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">We got your request</h1><p>Hi ${safeName},</p><p>We received your preferred date${hasSecondChoice ? ' choices' : ' choice'} for Weeks Creek Haven.</p>${complimentaryHtml}${priceHtml}<p><span style="color:#74685e">${firstQuote.complimentary?'No payment required':`Standard $200 cleaning cost included · ${lateCheckout ? '$50 noon checkout included' : '11:00 AM checkout'}`} · 4:00 PM check-in</span></p><p><strong>This is a request, not a confirmed reservation.</strong> We’ll review the calendar and get back to you with availability and next steps.</p><p>Thanks for thinking of the Haven!</p></div>`,
         });
         confirmationSent = true;
         if (process.env.OWNER_EMAIL) {

@@ -18,8 +18,8 @@ function parsePhoneLine(value) {
 }
 
 function pricingValues(body) {
-  const discountType = ['percentage', 'amount', 'flat'].includes(body?.discountType) ? body.discountType : 'percentage';
-  const enteredValue = Number(body?.value);
+  const discountType = ['percentage', 'amount', 'flat', 'complimentary'].includes(body?.discountType) ? body.discountType : 'percentage';
+  const enteredValue = discountType === 'complimentary' ? 0 : Number(body?.value);
   if (!Number.isFinite(enteredValue) || enteredValue < 0) throw new Error('Enter a valid discount amount.');
   if (discountType === 'percentage' && (enteredValue <= 0 || enteredValue > 100)) throw new Error('Percentage discounts must be from 1% through 100%.');
   if (discountType === 'amount' && enteredValue < 5) throw new Error('Dollar discounts must be at least $5.');
@@ -28,15 +28,15 @@ function pricingValues(body) {
   const customFeeCents = roundUpCents(Math.round(customFeeValue * 100));
   return {
     discountType,
-    label: safeText(body?.label, 80) || 'Friends & Family rate',
+    label: safeText(body?.label, 80) || (discountType === 'complimentary' ? 'Our guest · complimentary stay' : 'Friends & Family rate'),
     percentage: discountType === 'percentage' ? enteredValue : null,
     amountOffCents: discountType === 'amount' ? roundUpCents(Math.round(enteredValue * 100)) : null,
     flatTotalCents: discountType === 'flat' ? roundUpCents(Math.round(enteredValue * 100)) : null,
-    chargeCleaning: Boolean(body?.chargeCleaning),
-    chargeDogFee: Boolean(body?.chargeDogFee),
-    chargeLateCheckout: Boolean(body?.chargeLateCheckout),
-    customFeeLabel: customFeeCents ? safeText(body?.customFeeLabel, 60) || 'Required fee' : '',
-    customFeeCents,
+    chargeCleaning: discountType === 'complimentary' ? false : Boolean(body?.chargeCleaning),
+    chargeDogFee: discountType === 'complimentary' ? false : Boolean(body?.chargeDogFee),
+    chargeLateCheckout: discountType === 'complimentary' ? false : Boolean(body?.chargeLateCheckout),
+    customFeeLabel: discountType !== 'complimentary' && customFeeCents ? safeText(body?.customFeeLabel, 60) || 'Required fee' : '',
+    customFeeCents: discountType === 'complimentary' ? 0 : customFeeCents,
   };
 }
 

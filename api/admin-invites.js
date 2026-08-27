@@ -41,9 +41,10 @@ function stayOptions(body) {
   return (supplied.length ? supplied : legacy).filter((option) => option?.arrival || option?.departure || String(option?.cost || '').trim()).map((option) => {
     const arrival = safeDate(option.arrival);
     const departure = safeDate(option.departure);
-    const suppliedCost = String(option.cost || '').trim();
+    const complimentary = option.complimentary === true;
+    const suppliedCost = complimentary ? '' : String(option.cost || '').trim();
     const costCents = suppliedCost ? Math.round(Number(suppliedCost) * 100) : 0;
-    return { arrival, departure, costCents, suppliedCost, expiresOn: safeDate(option.expiresOn) || null };
+    return { arrival, departure, costCents, suppliedCost, complimentary, expiresOn: safeDate(option.expiresOn) || null };
   });
 }
 
@@ -88,7 +89,7 @@ export default async function handler(request, response) {
         notes: safeText(request.body?.notes, 240),
         recipientEmail: safeEmail(request.body?.recipientEmail),
         welcomeMessage: safeText(request.body?.welcomeMessage, 500),
-        stayOptions: options.map(({ arrival, departure, costCents, expiresOn }) => ({ arrival, departure, costCents, expiresOn })),
+        stayOptions: options.map(({ arrival, departure, costCents, complimentary, expiresOn }) => ({ arrival, departure, costCents, complimentary, expiresOn })),
         bookingId,
         photos: [],
         maxUses: Math.max(0, Math.min(999, Number(request.body?.maxUses) || 0)),
@@ -97,7 +98,7 @@ export default async function handler(request, response) {
         const booking = {
           id: bookingId, inviteId, source: 'direct-invite', status: 'offered', createdAt,
           name: label, email: invite.recipientEmail, phone: '', guests: 1,
-          dateChoices: options.map(({ arrival, departure, costCents, expiresOn }) => ({ arrival, departure, amountCents: costCents || undefined, expiresOn })),
+          dateChoices: options.map(({ arrival, departure, costCents, complimentary, expiresOn }) => ({ arrival, departure, amountCents: complimentary ? 0 : (costCents || undefined), complimentary, expiresOn })),
           notes: invite.notes,
         };
         await appendBookingRecord({ type: 'requested', createdAt, booking });

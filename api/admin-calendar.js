@@ -1,6 +1,7 @@
 import { appendBookingRecord, getBookingCalendar, rangesOverlap, unavailableRanges } from '../_lib/booking-store.js';
 import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
-import { json, requireAdmin } from '../_lib/security.js';
+import { getInvites } from '../_lib/invite-store.js';
+import { createAgreementToken, json, requireAdmin } from '../_lib/security.js';
 import { cancelSquareInvoice } from '../_lib/square.js';
 import { refreshSquareBooking } from '../_lib/payment-sync.js';
 
@@ -12,11 +13,17 @@ export default async function handler(request, response) {
   if (!requireAdmin(request)) return json(response, 401, { error: 'Please sign in as the site owner.' });
   try {
     if (request.method === 'GET') {
-      const calendar = await getBookingCalendar();
+      const [calendar, invites] = await Promise.all([getBookingCalendar(), getInvites()]);
+      const inviteById = new Map(invites.map((invite) => [invite.id, invite]));
       calendar.bookings = await Promise.all((calendar.bookings || []).map(async (booking) => {
-        if (!booking.squareInvoiceId || (booking.status === 'booked' && booking.paymentFullyPaid && booking.bookedWelcomeSentAt)) return booking;
-        try { return await refreshSquareBooking(booking); }
-        catch (error) { return { ...booking, paymentCheckError: error.message || 'Square status unavailable.' }; }
+        let current = booking;
+        if (booking.squareInvoiceId && !(booking.status === 'booked' && booking.paymentFullyPaid && booking.bookedWelcomeSentAt)) {
+          try { current = await refreshSquareBooking(booking); }
+          catch (error) { current = { ...booking, paymentCheckError: error.message || 'Square status unavailable.' }; }
+        }
+        const token = createAgreementToken(current.id, 365 * 86400);
+        const invite = current.inviteId ? inviteById.get(current.inviteId) : null;
+        return { ...current, bookingPacketUrl: `https://www.weekscreekhaven.com/booking-packet.html?token=${encodeURIComponent(token)}`, invitePasscode: invite?.passcode || '', welcomePreviewUrl: invite ? `/api/admin-preview-invite?inviteId=${encodeURIComponent(invite.id)}` : '' };
       }));
       return json(response, 200, calendar, { 'Cache-Control': 'no-store' });
     }

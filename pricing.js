@@ -117,9 +117,10 @@ export function cleaningFeeForGuests(guests) {
 
 export function withEstimatedTaxesAndFees(quote) {
   const taxableSubtotalCents = Math.max(0, Number(quote?.totalCents) || 0);
-  const salesTaxCents = Math.round(taxableSubtotalCents * PRICING_CONFIG.salesTaxRate);
-  const lodgingTaxCents = Math.round(taxableSubtotalCents * PRICING_CONFIG.lodgingTaxRate);
-  const stateHotelMotelFeeCents = Math.max(0, Number(quote?.actualNights) || 0) * PRICING_CONFIG.stateHotelMotelFeePerNightCents;
+  const complimentary = Boolean(quote?.complimentary) && taxableSubtotalCents === 0;
+  const salesTaxCents = complimentary ? 0 : Math.round(taxableSubtotalCents * PRICING_CONFIG.salesTaxRate);
+  const lodgingTaxCents = complimentary ? 0 : Math.round(taxableSubtotalCents * PRICING_CONFIG.lodgingTaxRate);
+  const stateHotelMotelFeeCents = complimentary ? 0 : Math.max(0, Number(quote?.actualNights) || 0) * PRICING_CONFIG.stateHotelMotelFeePerNightCents;
   const estimatedTaxesAndFeesCents = salesTaxCents + lodgingTaxCents + stateHotelMotelFeeCents;
   return {
     ...quote,
@@ -234,15 +235,18 @@ export function applyFriendsAndFamilyDiscount(quote, phone, discounts = []) {
   if (!quote) return null;
   const rule = matchingDiscount(phone, discounts);
   if (!rule) return quote;
-  const cleaningFeeCents = rule.chargeCleaning ? 17500 : 0;
-  const dogFeeCents = rule.chargeDogFee ? quote.dogs * Math.ceil(quote.actualNights / 2) * 2500 : 0;
-  const lateCheckoutFeeCents = rule.chargeLateCheckout ? quote.lateCheckoutCents : 0;
-  const customFeeCents = Math.max(0, Number(rule.customFeeCents) || 0);
+  const noChargeStay = rule.discountType === 'complimentary';
+  const cleaningFeeCents = !noChargeStay && rule.chargeCleaning ? 17500 : 0;
+  const dogFeeCents = !noChargeStay && rule.chargeDogFee ? quote.dogs * Math.ceil(quote.actualNights / 2) * 2500 : 0;
+  const lateCheckoutFeeCents = !noChargeStay && rule.chargeLateCheckout ? quote.lateCheckoutCents : 0;
+  const customFeeCents = noChargeStay ? 0 : Math.max(0, Number(rule.customFeeCents) || 0);
   const removedCleaningCents = rule.chargeCleaning ? Math.min(quote.totalCents, quote.includedCleaningCents + quote.cleaningAdjustmentCents) : 0;
   const removedLateCheckoutCents = rule.chargeLateCheckout ? quote.lateCheckoutCents : 0;
   const discountableCents = Math.max(0, quote.totalCents - removedCleaningCents - removedLateCheckoutCents);
   let discountedStayCents = discountableCents;
-  if (rule.discountType === 'percentage') {
+  if (noChargeStay) {
+    discountedStayCents = 0;
+  } else if (rule.discountType === 'percentage') {
     const percentage = Math.max(0, Math.min(100, Number(rule.percentage) || 0));
     discountedStayCents = percentage >= 100 ? 0 : roundUpCents(discountableCents * (1 - percentage / 100));
   } else if (rule.discountType === 'amount') {
@@ -260,6 +264,7 @@ export function applyFriendsAndFamilyDiscount(quote, phone, discounts = []) {
     discountAmountCents,
     discountCents: discountAmountCents,
     totalCents: discountedTotalCents,
+    complimentary: noChargeStay && discountedTotalCents === 0,
     discountedStayCents,
     passThroughCents,
     passThroughFees: {
