@@ -2,7 +2,8 @@ import { appendBookingRecord, getBookingRequests } from '../_lib/booking-store.j
 import { finalizeBookingFlow } from '../_lib/booking-finalization.js';
 import { anonymizeIp, json, verifyAgreementToken } from '../_lib/security.js';
 
-export const AGREEMENT_VERSION = '2026-08-25';
+export const AGREEMENT_VERSION = '2026-08-27-fannin';
+export const AGREEMENT_VERSION_LABEL = 'August 27, 2026 · Fannin County edition';
 
 async function context(rawToken) {
   const token = verifyAgreementToken(rawToken);
@@ -25,6 +26,9 @@ function bookingDetails({ booking, dates }) {
     acceptedAt: booking.agreementAcceptedAt || null,
     acceptedBy: booking.agreementAcceptedBy || '',
     agreementVersion: booking.agreementVersion || AGREEMENT_VERSION,
+    agreementVersionLabel: booking.agreementVersion && booking.agreementVersion !== AGREEMENT_VERSION
+      ? booking.agreementVersion
+      : AGREEMENT_VERSION_LABEL,
   };
 }
 
