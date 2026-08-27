@@ -39,6 +39,31 @@
       transform: scale(1.0) !important;
     }
 
+    .railroad-tie-nav .admin-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      margin-left: 8px;
+      padding: 7px 13px;
+      border: 1px solid rgba(255,255,255,.38);
+      border-radius: 999px;
+      background: rgba(10,35,24,.5);
+      color: white;
+      font: 800 .64rem/1 Montserrat, sans-serif;
+      letter-spacing: .08em;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: background .2s ease, border-color .2s ease, transform .2s ease;
+    }
+    .railroad-tie-nav .admin-pill:hover,
+    .railroad-tie-nav .admin-pill:focus-visible {
+      background: #2f6846;
+      border-color: #a8c8b2;
+      transform: translateY(-1px);
+      outline: none;
+    }
+
     /* -- Logo hover swap -- */
     .logo-link { position: relative; display: inline-block; }
     .logo-link .hover-img { position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s ease-in-out; z-index: 2; }
@@ -59,8 +84,17 @@
       height: 72px !important;
       width: auto !important;
     }
+    @media (max-width: 767px) {
+      .railroad-tie-nav { padding-left: 10px !important; padding-right: 10px !important; }
+      .railroad-tie-nav .logo-link .wood-btn { max-width:180px; object-fit:contain; }
+      .railroad-tie-nav .admin-pill { margin-left: auto; margin-right: 7px; padding: 7px 10px; font-size: .58rem; }
+    }
   `;
   document.head.appendChild(style);
+
+  const pagePath = location.pathname.toLowerCase();
+  const showAdminPill = pagePath === '/' || pagePath.endsWith('/index.html') || pagePath.endsWith('/friends-hub.html');
+  const adminPill = showAdminPill ? '<a href="admin.html" class="admin-pill">Admin</a>' : '';
 
   const navHTML = `
     <!-- ===== TOP NAV BAR ===== -->
@@ -92,6 +126,8 @@
           <img src="buttons/friends-info-hover.webp" alt="Friends Hub" class="wood-btn hover-img">
         </a>
       </div>
+
+      ${adminPill}
 
       <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none p-2 bg-black/20 rounded-lg border border-white/20">
         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">

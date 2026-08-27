@@ -20,6 +20,8 @@
     .brand img { width:72px; height:72px; object-fit:contain; }
     .top-actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
     .home { text-decoration:none; border:1px solid rgba(255,255,255,.5); padding:10px 16px; border-radius:999px; font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:.1em; }
+    .home:hover,.home:focus-visible { background:#2f6846; border-color:#a8c8b2; outline:none; }
+    .admin-pill { background:rgba(10,35,24,.55); }
     .layout { width:min(1120px,100%); margin:auto; display:grid; grid-template-columns:minmax(0,.85fr) minmax(520px,1.15fr); gap:24px; align-items:start; }
     .intro { color:white; padding:42px 20px 20px 0; position:sticky; top:20px; }
     .eyebrow { color:#e3b27f; text-transform:uppercase; letter-spacing:.22em; font-weight:800; font-size:.68rem; }
@@ -70,10 +72,10 @@
     @media(max-width:850px) { .layout { grid-template-columns:1fr; } .intro { position:static; padding:20px 8px; } .intro h1 { max-width:650px; } }
     @media(max-width:560px) {
       .page { padding:12px 8px 44px; }
-      .top { align-items:flex-start; gap:8px; margin-bottom:12px; }
+      .top { align-items:flex-start; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
       .brand { gap:7px; font-size:.58rem; line-height:1.25; }
       .brand img { width:50px; height:50px; }
-      .top-actions { gap:5px; }
+      .top-actions { width:100%; gap:5px; }
       .home { padding:8px 10px; font-size:.56rem; }
       .intro { padding:14px 6px 18px; }
       h1 { font-size:3.35rem; margin:12px 0 18px; }
@@ -92,7 +94,7 @@
 </head>
 <body>
   <div class="page">
-    <header class="top"><div class="brand"><img src="webpic/weeks-creek-haven-round-logo.png" alt="Weeks Creek Haven">Weeks Creek Haven</div><div class="top-actions"><a class="home" href="/availability.html">View calendar</a><a class="home" href="/index.html">Home</a></div></header>
+    <header class="top"><div class="brand"><img src="webpic/weeks-creek-haven-round-logo.png" alt="Weeks Creek Haven">Weeks Creek Haven</div><div class="top-actions"><a class="home admin-pill" href="/admin.html">Admin</a><a class="home" href="/availability.html">View calendar</a><a class="home" href="/index.html">Home</a></div></header>
     <main class="layout">
       <section class="intro">
         <div class="eyebrow">Private cabin stays &middot; Blue Ridge, Georgia</div>
