@@ -112,12 +112,6 @@ export function cleaningFeeForGuests(guests) {
   return PRICING_CONFIG.cleaningTiers.find((tier) => count >= tier.minGuests && count <= tier.maxGuests)?.amountCents || 0;
 }
 
-function standardNightCents(dateKey, rates) {
-  const plan = weekPlan(dateKey, rates);
-  const day = new Date(`${dateKey}T12:00:00`).getDay();
-  return day === 5 || day === 6 ? plan.weekendCents / 2 : plan.weeknightCents;
-}
-
 function exactOwnerTotal(arrival, departure, rates = []) {
   return rates.filter((rate) => rate.pricingMode === 'total' && rate.arrival === arrival && rate.departure === departure).at(-1) || null;
 }
@@ -152,13 +146,28 @@ export function quoteStay({ arrival, departure, guests = 1, dogs = 0, rates = []
     }
     pricingRule = actualNights === 7 ? 'Weekly price · weekday rate throughout' : 'Extended stay · weekday rate throughout';
   } else {
+    const chargedWeekends = new Set();
     for (let index = 0; index < actualNights; index++) {
       const date = addDays(arrival, index);
-      const amountCents = standardNightCents(date, rates);
-      nightly.push({ date, amountCents, kind: [5, 6].includes(new Date(`${date}T12:00:00`).getDay()) ? 'weekend' : 'weeknight' });
+      const day = new Date(`${date}T12:00:00`).getDay();
+      let amountCents;
+      let kind;
+      if ([5, 6].includes(day)) {
+        const friday = fridayForCalendarWeek(date);
+        const alreadyCharged = chargedWeekends.has(friday);
+        amountCents = alreadyCharged ? 0 : weekPlan(date, rates).weekendCents;
+        kind = alreadyCharged ? 'weekend-included' : 'weekend-package';
+        chargedWeekends.add(friday);
+      } else {
+        amountCents = weekPlan(date, rates).weeknightCents;
+        kind = 'weeknight';
+      }
+      nightly.push({ date, amountCents, kind });
       lodgingCents += amountCents;
     }
-    pricingRule = actualNights === 5 ? 'Five-night price · included dates' : 'Night-by-night price';
+    pricingRule = chargedWeekends.size
+      ? `${actualNights === 5 ? 'Five-night price' : 'Stay price'} · full weekend package${chargedWeekends.size > 1 ? 's' : ''} + weeknights`
+      : actualNights === 5 ? 'Five-night price · included dates' : 'Night-by-night price';
   }
 
   lodgingCents = roundUpCents(lodgingCents);
