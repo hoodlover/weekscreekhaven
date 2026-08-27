@@ -53,6 +53,7 @@
     .tab { position:relative; border:0; border-radius:10px; padding:12px 13px; background:transparent; color:#5f544b; font-weight:800; font-size:.7rem; text-transform:uppercase; text-align:left; }
     .tab.active { background:var(--rust); color:white; }
     .count-badge { display:inline-grid; place-items:center; min-width:20px; height:20px; margin-left:6px; padding:0 6px; border-radius:999px; background:#8a2f2f; color:white; font-size:.6rem; vertical-align:middle; }
+    .count-badge[hidden] { display:none !important; }
     .tab-panel { display:none; min-width:0; padding:28px; }
     .tab-panel.active { display:block; grid-column:2; }
     #panel-invites.active { display:grid; grid-template-columns:minmax(285px,360px) minmax(0,1fr); gap:24px; align-items:start; }
