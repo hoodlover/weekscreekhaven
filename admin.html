@@ -22,6 +22,7 @@
     .brand img { width:87px; height:87px; object-fit:contain; }
     h1,h2,h3 { font-family:'Crimson Text',serif; margin:0; }
     h1 { font-size:clamp(2rem,5vw,3.5rem); line-height:.95; text-shadow:0 3px 2px rgba(0,0,0,.9),0 8px 18px rgba(0,0,0,.85); }
+    h1 .command-title { display:block; width:max-content; max-width:100%; font-size:.78em; white-space:nowrap; }
     .eyebrow { font-size:.68rem; letter-spacing:.2em; font-weight:800; text-transform:uppercase; color:#d8b48b; margin-bottom:6px; }
     .panel { background:rgba(255,253,248,.97); border:1px solid var(--line); border-radius:18px; box-shadow:0 18px 50px rgba(0,0,0,.35); }
     .login { max-width:470px; padding:34px; margin:10vh auto 0; }
@@ -170,6 +171,7 @@
       .brand { gap:9px; min-width:0; }
       .brand img { width:56px; height:56px; }
       h1 { font-size:2rem; }
+      h1 .command-title { font-size:.65em; }
       .eyebrow { font-size:.58rem; letter-spacing:.12em; }
       .top-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); width:100%; gap:6px; }
       .top-actions .ghost { width:100%; min-width:0; padding:9px 7px; font-size:.59rem; line-height:1.25; text-align:center; overflow-wrap:anywhere; }
@@ -208,7 +210,7 @@
     <header class="topbar">
       <div class="brand">
         <img src="webpic/weeks-creek-haven-round-logo.png" alt="Weeks Creek Haven">
-        <div><div class="eyebrow">Weeks Creek Haven · private</div><h1>Lance &amp; Heather&rsquo;s<br>Cabin Command Center</h1></div>
+        <div><div class="eyebrow">Weeks Creek Haven · private</div><h1>Lance &amp; Heather&rsquo;s<span class="command-title">Cabin Command Center</span></h1></div>
       </div>
       <div class="top-actions">
         <a href="/index.html" class="ghost" style="text-decoration:none">Home</a>
