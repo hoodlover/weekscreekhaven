@@ -41,7 +41,7 @@
     .weekdays,.calendar { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); }
     .calendar { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--line); gap:1px; }
     .weekdays div { padding:9px 3px; text-align:center; color:var(--muted); text-transform:uppercase; letter-spacing:.09em; font-size:.6rem; font-weight:800; }
-    .day { position:relative; min-height:125px; padding:9px; background:#fff; overflow:hidden; }
+    .day { position:relative; min-height:125px; padding:9px 9px 30px; background:#fff; overflow:hidden; }
     .day[data-price-day] { cursor:crosshair; }
     .day.price-selected { background:#e8d5b5; color:var(--ink); box-shadow:inset 0 0 0 3px var(--rust); }
     .day.price-checkout { box-shadow:inset 0 0 0 3px var(--rust),inset 0 -7px 0 #fff8; }
@@ -50,9 +50,9 @@
     .day.outside.price-selected { background:#e8d5b5; color:var(--ink); }
     .day.today .day-number { outline:2px solid var(--rust); outline-offset:3px; border-radius:50%; }
     .day-number { display:inline-grid; place-items:center; width:22px; height:22px; font-size:.72rem; font-weight:800; margin-bottom:5px; }
-    .day-rate { display:inline-flex; max-width:100%; margin:0 0 4px; padding:3px 5px; border-radius:5px; background:#e7f0e9; color:var(--pine); font-size:.54rem; line-height:1.15; font-weight:800; white-space:nowrap; }
-    .day-rate.special { background:#f1d6c8; color:#733a27; }
-    .day-rate.package { background:#b96f45; color:white; }
+    .day-rate { position:absolute; left:9px; bottom:8px; max-width:calc(100% - 18px); color:var(--pine); font:700 .66rem/1 'Crimson Text',serif; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .day-rate.special { color:#733a27; }
+    .day-rate.package { color:var(--rust); }
     .event { display:block; width:100%; border:0; text-align:left; border-radius:5px; margin:3px 0; padding:5px 6px; font-size:.6rem; line-height:1.25; font-weight:800; overflow:hidden; color:#251d17; }
     .event-main,.event-note { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .event-note { margin-top:2px; font-size:.56rem; font-weight:600; opacity:.82; }
@@ -90,7 +90,7 @@
     .dialog-actions .save { background:var(--pine); color:white; border-color:var(--pine); }
     .calendar-bottom-actions { display:flex; justify-content:center; margin-top:15px; }
     @media(max-width:1000px) { .layout { grid-template-columns:1fr; } .sidebar { grid-template-columns:1fr 1fr; } }
-    @media(max-width:700px) { .shell { width:min(100% - 10px,1500px); } .calendar-panel { overflow-x:auto; } .calendar-wrap { min-width:850px; padding:18px 12px; } .calendar-intro { padding:0 4px 18px; margin-bottom:18px; } .calendar-intro h2 { font-size:2.85rem; } .sidebar { grid-template-columns:1fr; } .topbar { align-items:flex-start; } .day { min-height:105px; padding:6px; } }
+    @media(max-width:700px) { .shell { width:min(100% - 10px,1500px); } .calendar-panel { overflow-x:auto; } .calendar-wrap { min-width:850px; padding:18px 12px; } .calendar-intro { padding:0 4px 18px; margin-bottom:18px; } .calendar-intro h2 { font-size:2.85rem; } .sidebar { grid-template-columns:1fr; } .topbar { align-items:flex-start; } .day { min-height:105px; padding:6px 6px 27px; } .day-rate { left:6px; bottom:6px; max-width:calc(100% - 12px); } }
   </style>
 </head>
 <body>
@@ -171,8 +171,8 @@
     function render(){
       $('month-title').textContent=new Intl.DateTimeFormat(undefined,{month:'long',year:'numeric'}).format(state.month);
       const start=new Date(state.month); start.setDate(1-start.getDay()); const all=events(); const today=key(new Date()); let html='';
-      for(let index=0;index<42;index++){ const date=new Date(start); date.setDate(start.getDate()+index); const dateKey=key(date); const outside=date.getMonth()!==state.month.getMonth(); const dayEvents=all.filter(event=>dateKey>=event.arrival&&dateKey<=event.departure); const price=priceForDay(dateKey);
-        html+=`<div class="day ${outside?'outside':''} ${dateKey===today?'today':''}" data-date="${dateKey}" data-price-day="true"><div class="day-number">${date.getDate()}</div>${price?`<div class="day-rate ${price.special?'special':''} ${price.package?'package':''}" title="${esc(price.title)}">${esc(price.label)}</div>`:''}${dayEvents.map(event=>{ const checkout=dateKey===event.departure; const title=`${event.name}${event.type==='request'?` · choice ${event.dateChoice}`:''}`; return `<div class="event ${event.type} ${checkout?'checkout':''}" title="${esc(title)}${event.note?` · ${esc(event.note)}`:''}${checkout?' checkout':''}"><span class="event-main">${checkout?'Checkout · ':''}${esc(title)}</span>${event.note?`<small class="event-note">${esc(event.note)}</small>`:''}${bookedArrivalDetails(event,dateKey)}</div>`; }).join('')}</div>`;
+      for(let index=0;index<42;index++){ const date=new Date(start); date.setDate(start.getDate()+index); const dateKey=key(date); const outside=date.getMonth()!==state.month.getMonth(); const dayEvents=all.filter(event=>dateKey>=event.arrival&&dateKey<=event.departure); const price=priceForDay(dateKey); const hasBooked=dayEvents.some(event=>event.type==='booked');
+        html+=`<div class="day ${outside?'outside':''} ${dateKey===today?'today':''}" data-date="${dateKey}" data-price-day="true"><div class="day-number">${date.getDate()}</div>${price&&!hasBooked?`<div class="day-rate ${price.special?'special':''} ${price.package?'package':''}" title="${esc(price.title)}">${esc(price.label)}</div>`:''}${dayEvents.map(event=>{ const checkout=dateKey===event.departure; const title=`${event.name}${event.type==='request'?` · choice ${event.dateChoice}`:''}`; return `<div class="event ${event.type} ${checkout?'checkout':''}" title="${esc(title)}${event.note?` · ${esc(event.note)}`:''}${checkout?' checkout':''}"><span class="event-main">${checkout?'Checkout · ':''}${esc(title)}</span>${event.note?`<small class="event-note">${esc(event.note)}</small>`:''}${bookedArrivalDetails(event,dateKey)}</div>`; }).join('')}</div>`;
       }
       $('calendar').innerHTML=html;
       const upcoming=all.filter(event=>event.departure>=today).sort((a,b)=>a.arrival.localeCompare(b.arrival));
