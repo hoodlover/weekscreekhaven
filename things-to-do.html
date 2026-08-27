@@ -1,220 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Things to Do Near Blue Ridge GA | Weeks Creek Haven</title>
+  <link rel="stylesheet" href="/site-interactions.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Things to Do Near Blue Ridge GA | Weeks Creek Haven</title>
   <link rel="icon" href="/webpic/weeks-creek-haven-favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="/webpic/weeks-creek-haven-favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/webpic/weeks-creek-haven-favicon-16.png">
-    <meta name="description" content="Plan things to do near Blue Ridge, GA, including hiking, trout fishing, family attractions, dining, and shopping near Weeks Creek Haven.">
-    <meta name="robots" content="index,follow,max-image-preview:large">
-    <link rel="canonical" href="https://www.weekscreekhaven.com/things-to-do.html">
-    <meta property="og:title" content="Things to Do Near Blue Ridge GA | Weeks Creek Haven">
-    <meta property="og:description" content="A local guide to trails, fishing, family attractions, dining, and shopping around Blue Ridge and the Aska Adventure Area.">
-    <meta property="og:image" content="https://www.weekscreekhaven.com/webpic/Weeks_Creek_Haven_Social_Preview.webp">
-    <meta property="og:url" content="https://www.weekscreekhaven.com/things-to-do.html">
-    <meta property="og:type" content="website">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
- 
+  <meta name="description" content="Plan things to do near Blue Ridge, GA, including hiking, trout fishing, family attractions, dining, and shopping near Weeks Creek Haven.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="canonical" href="https://www.weekscreekhaven.com/things-to-do.html">
+  <meta property="og:title" content="Things to Do Near Blue Ridge GA | Weeks Creek Haven">
+  <meta property="og:description" content="A local guide to trails, fishing, family attractions, dining, and shopping around Blue Ridge and the Aska Adventure Area.">
+  <meta property="og:image" content="https://www.weekscreekhaven.com/gallery/blue-ridge-ga-creekside-cabin.webp">
+  <meta property="og:url" content="https://www.weekscreekhaven.com/things-to-do.html">
+  <meta property="og:type" content="website">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@600;700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body { 
-        font-family: 'Montserrat', sans-serif; 
-        color: #f4eee0; 
-        scroll-behavior: smooth; 
-        background-image: url('webpic/barn.webp');
-        background-attachment: fixed;
-        background-size: cover;
-    }
-
-    .extra-heavy-shadow {
-        text-shadow: 
-            3px 3px 6px rgba(0, 0, 0, 1),
-            0px 0px 25px rgba(0, 0, 0, 1),
-            0px 0px 10px rgba(0, 0, 0, 0.8);
-    }
-
-    h1, h2, h3, h4 { font-family: 'Crimson Text', serif; font-weight: 700; }
-    
-    .header-title { color: #ffffff; text-shadow: 2px 2px 8px rgba(0,0,0,0.8); }
-    .header-sub { color: #e5e7eb; text-shadow: 1px 1px 4px rgba(0,0,0,0.8); }
-
-    .adventure-card { 
-        background-color: rgba(255, 255, 255, 0.05); 
-        backdrop-filter: blur(5px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        transition: transform 0.3s ease;
-    }
-    .adventure-card:hover { transform: translateY(-5px); background-color: rgba(255, 255, 255, 0.1); }
-    
-    .card-desc { color: #f3f4f6; font-weight: 600; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
-    .accent-blue-light { color: #bae6fd; font-weight: 800; }
-    
-    .section-heading { 
-        color: #fef3c7; 
-        border-bottom: 2px solid #fef3c7;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-    }
-
-	.wood-btn { height: 80px; }          /* was 80px — mobile */
-
-@media (min-width: 768px)  { .wood-btn { height: 74px; } }   /* was 64px — desktop */
-@media (min-width: 1536px) { .wood-btn { height: 112px; } }  /* was 96px — 2xl */
-        #mobile-menu { background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('webpic/railroad-tie-texture.webp'); background-size: cover; }
-
-    .wood-btn:hover { transform: scale(1.05); }
-
-    .nav-link-group a .hover-img { display: none; }
-    .nav-link-group a:hover .normal-img { display: none; }
-    .nav-link-group a:hover .hover-img { display: block; }
-
-    #lightbox {
-        display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%;
-        background-color: rgba(0,0,0,0.9); justify-content: center; align-items: center;
-    }
-    #lightbox-img { max-width: 90%; max-height: 90%; border: 3px solid black; }
-    .close-btn { position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; cursor: pointer; }
-
-/* This specifically stops the 5% growth on the logo images */
-.logo-link:hover .wood-btn { 
-    transform: scale(1.0) !important; 
-}
-
-
-/* 1. Position the container */
-.logo-link {
-    position: relative;
-    display: inline-block;
-    background: transparent; /* Ensures no background bleed */
-}
-
-/* 2. The Bottom Image (Normal) */
-.logo-link .normal-img {
-    opacity: 1;
-    /* We remove the transition here so it stays solid */
-    transition: none; 
-}
-
-/* 3. The Top Image (Hover) */
-.logo-link .hover-img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    /* Only the top image fades in */
-    transition: opacity 0.3s ease-in-out;
-    z-index: 2;
-}
-
-/* 4. Hover State */
-.logo-link:hover .hover-img {
-    opacity: 1;
-}
-
-/* Optional: Hide the normal image ONLY after hover is complete 
-   or keep it visible underneath to prevent the 'gap' */
-.logo-link:hover .normal-img {
-    opacity: 1; /* Keeping this at 1 ensures there is always a solid image */
-}
-
-    </style>
+    :root { --pine:#173f2b; --pine-soft:#2f5a43; --rust:#a45d41; --cream:#f4eee0; --paper:#fffdf8; --ink:#332820; --muted:#74685e; --line:#ddd2c2; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; color:var(--ink); font-family:Montserrat,sans-serif; background:#15110e url('webpic/barn.webp') center/cover fixed; }
+    .page { min-height:100vh; padding:112px 16px 68px; background:linear-gradient(rgba(15,12,9,.6),rgba(15,12,9,.9)); }
+    .shell { width:min(1180px,100%); margin:auto; }
+    .hero { position:relative; min-height:500px; display:flex; align-items:flex-end; overflow:hidden; border-radius:24px; box-shadow:0 28px 80px #0009; }
+    .hero > img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+    .hero::after { content:''; position:absolute; inset:0; background:linear-gradient(90deg,rgba(12,18,13,.9) 0%,rgba(12,18,13,.6) 48%,rgba(12,18,13,.12) 100%),linear-gradient(0deg,rgba(8,10,8,.7),transparent 55%); }
+    .hero-copy { position:relative; z-index:1; width:min(640px,100%); padding:clamp(30px,6vw,72px); color:white; }
+    .eyebrow { color:#e3b28e; font-size:.66rem; font-weight:800; letter-spacing:.2em; text-transform:uppercase; }
+    h1,h2 { margin:0; font-family:'Crimson Text',serif; }
+    .hero-copy h1 { margin-top:10px; font-size:clamp(3.4rem,8vw,6.4rem); line-height:.82; font-weight:700; }
+    .hero-copy p { margin:20px 0 0; max-width:540px; color:#f3ece1; font-size:.84rem; line-height:1.7; }
+    .hero-actions { display:flex; flex-wrap:wrap; gap:9px; margin-top:25px; }
+    .hero-actions a { border:1px solid #ffffff73; border-radius:999px; padding:11px 15px; color:white; background:#0003; text-decoration:none; font-size:.63rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; backdrop-filter:blur(7px); }
+    .hero-actions a:first-child { color:var(--pine); background:white; border-color:white; }
+    .guide { margin-top:24px; padding:clamp(24px,4vw,44px); border-radius:24px; background:rgba(255,253,248,.985); box-shadow:0 24px 70px #0007; }
+    .guide-head { display:flex; align-items:end; justify-content:space-between; gap:25px; padding-bottom:24px; border-bottom:1px solid var(--line); }
+    .guide-head .eyebrow { color:var(--rust); }
+    .guide-head h2 { margin-top:6px; color:var(--pine); font-size:clamp(2.3rem,5vw,3.8rem); line-height:.95; }
+    .guide-head p { max-width:440px; margin:0; color:var(--muted); font-size:.74rem; line-height:1.65; }
+    .cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; margin-top:26px; }
+    .card { display:grid; grid-template-columns:180px 1fr; min-height:220px; overflow:hidden; border:1px solid var(--line); border-radius:16px; color:inherit; background:white; text-decoration:none; transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease; }
+    .card:hover,.card:focus-visible { transform:translateY(-3px); border-color:#b9c8bc; box-shadow:0 14px 32px #173f2b1c; outline:none; }
+    .card img { width:100%; height:100%; object-fit:cover; }
+    .card-copy { display:flex; flex-direction:column; align-items:flex-start; padding:24px 22px; }
+    .card-kicker { color:var(--rust); font-size:.56rem; font-weight:800; letter-spacing:.13em; text-transform:uppercase; }
+    .card h2 { margin-top:6px; color:var(--pine); font-size:2rem; line-height:1; }
+    .card p { margin:12px 0 18px; color:var(--muted); font-size:.7rem; line-height:1.6; }
+    .card .link { margin-top:auto; color:var(--pine); font-size:.6rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+    .card .link::after { content:' →'; }
+    .local-note { display:grid; grid-template-columns:auto 1fr; gap:16px; align-items:center; margin-top:20px; padding:20px 22px; border-radius:14px; color:white; background:var(--pine); }
+    .local-note strong { display:grid; place-items:center; width:46px; height:46px; border:1px solid #ffffff55; border-radius:50%; font:700 1.35rem 'Crimson Text',serif; }
+    .local-note p { margin:0; color:#e8eee9; font-size:.7rem; line-height:1.6; }
+    .local-note b { color:white; }
+    .bg-footer-wood { background:#17120f url('webpic/barn.webp') center/cover; }
+    @media(max-width:900px) { .cards { grid-template-columns:1fr; } .card { grid-template-columns:220px 1fr; } }
+    @media(max-width:650px) { .page { padding:96px 7px 34px; } .hero,.guide { border-radius:16px; } .hero { min-height:520px; } .hero::after { background:linear-gradient(0deg,rgba(10,15,11,.92),rgba(10,15,11,.28)); } .hero-copy { padding:30px 23px 38px; } .guide { padding:27px 18px; } .guide-head { display:block; } .guide-head p { margin-top:13px; } .cards { gap:13px; } .card { grid-template-columns:1fr; } .card img { height:190px; } .card-copy { min-height:205px; } }
+  </style>
 </head>
-<body class="bg-wood">
-
-<div id="nav-placeholder"></div>
-<script src="nav.js"></script>
-
-<script>
-    // Mobile Menu Toggle Logic
-    const menuBtn = document.getElementById('mobile-menu-button');
-    const closeBtnMobile = document.getElementById('close-mobile-menu');
-    const mobileMenu = document.getElementById('mobile-menu');
-
-    function toggleMenu() {
-        mobileMenu.classList.toggle('hidden');
-        // Prevent scrolling when menu is open
-        document.body.classList.toggle('overflow-hidden');
-    }
-
-    menuBtn.addEventListener('click', toggleMenu);
-    closeBtnMobile.addEventListener('click', toggleMenu);
-
-    // Close menu if a link is clicked
-    mobileMenu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            mobileMenu.classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-        });
-    });
-
-    /* --- Keep your existing Lightbox JS below this line --- */
-    const galleryItems = document.querySelectorAll('.gallery-item');
-    // ... rest of your lightbox code
-</script>
-
-<header class="pt-28 pb-3 px-6 max-w-6xl mx-auto text-center">
-    <h4 class="text-amber-200 uppercase tracking-[0.3em] font-bold mb-4 animate-pulse">Adventure Awaits</h4>
-    
-    <div class="relative mx-auto h-auto max-w-full md:max-w-4xl group">
-        <img src="webpic/chooespath.webp" alt="Pick Your Path" class="w-full h-auto drop-shadow-2xl">
-        <!-- Clickable icon overlays -->
-        <a href="hiking.html"   title="Hiking"    style="position:absolute; left:18%; top:63%; width:15%; height:32%; cursor:pointer;" aria-label="Hiking"></a>
-        <a href="fishing.html"  title="Fishing"   style="position:absolute; left:31%; top:63%; width:15%; height:32%; cursor:pointer;" aria-label="Fishing"></a>
-        <a href="shopping.html" title="Shopping"  style="position:absolute; left:43%; top:63%; width:15%; height:32%; cursor:pointer;" aria-label="Shopping"></a>
-        <a href="shopping.html" title="Dining"    style="position:absolute; left:55%; top:63%; width:15%; height:32%; cursor:pointer;" aria-label="Dining"></a>
-        <a href="activities.html" title="Fun"     style="position:absolute; left:67%; top:63%; width:15%; height:32%; cursor:pointer;" aria-label="Fun"></a>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="page">
+    <div class="shell">
+      <section class="hero" aria-labelledby="things-title">
+        <img src="gallery/blue-ridge-ga-creekside-cabin.webp" alt="Weeks Creek Haven and the wooded Blue Ridge landscape">
+        <div class="hero-copy">
+          <div class="eyebrow">The Aska Adventure Area · Blue Ridge, Georgia</div>
+          <h1 id="things-title">Pick your kind of adventure</h1>
+          <p>Follow a trail to a waterfall, cast into cold mountain water, wander downtown Blue Ridge, or make a day the whole family will remember. It all starts close to the cabin.</p>
+          <nav class="hero-actions" aria-label="Explore activities"><a href="#local-guide">Explore the guide</a><a href="find-us.html">Cabin location</a></nav>
+        </div>
+      </section>
+      <section id="local-guide" class="guide" aria-labelledby="guide-title">
+        <header class="guide-head"><div><div class="eyebrow">Four ways to explore</div><h2 id="guide-title">Make the day your own</h2></div><p>Our hand-picked guides focus on nearby places worth your time, with ideas for easy mornings, full adventure days, and everything between.</p></header>
+        <div class="cards">
+          <a href="hiking.html" class="card"><img src="webpic/hiking.webp" alt="Mountain trail near Blue Ridge"><div class="card-copy"><span class="card-kicker">Trails · Waterfalls</span><h2>Hiking &amp; Falls</h2><p>Explore the Aska trails, hidden waterfalls, and the Toccoa River swinging bridge.</p><span class="link">Hit the trail</span></div></a>
+          <a href="fishing.html" class="card"><img src="webpic/fishing.webp" alt="Trout fishing in North Georgia"><div class="card-copy"><span class="card-kicker">Creeks · Rivers</span><h2>Trout Fishing</h2><p>Find public access points, promising local water, and experienced area guides.</p><span class="link">Cast a line</span></div></a>
+          <a href="shopping.html" class="card"><img src="webpic/foodshop.webp" alt="Dining and shopping in Blue Ridge"><div class="card-copy"><span class="card-kicker">Downtown · Local flavor</span><h2>Eat &amp; Shop</h2><p>Discover downtown dining, relaxed cafés, wineries, and one-of-a-kind shops.</p><span class="link">Explore downtown</span></div></a>
+          <a href="activities.html" class="card"><img src="webpic/familyfun.webp" alt="Family adventures around Blue Ridge"><div class="card-copy"><span class="card-kicker">All ages · All seasons</span><h2>Family Fun</h2><p>Ride the scenic railway, pick apples, mine for gems, or spend the afternoon on the river.</p><span class="link">Plan a day</span></div></a>
+        </div>
+        <div class="local-note"><strong>W</strong><p><b>Leave room for cabin time.</b> Some of the best hours here are the unplanned ones—coffee by the creek, a slow dinner, and an evening in the hot tub.</p></div>
+      </section>
     </div>
-
-    <p class="text-xl md:text-2xl header-sub max-w-3xl mx-auto font-light italic mt-6">
-        The best of Blue Ridge is right at your doorstep.<br>Whether you're here to hike the ridges,<br>cast a line, or shop 'til you drop, <br>your amazing mountain journey starts here.
-    </p>
-</header>
-
-<main class="max-w-7xl mx-auto px-6 pb-32">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        
-        <a href="hiking.html" class="hub-card group p-8 rounded-3xl flex flex-col items-center text-center">
-            <div class="w-full h-25 mb-6 overflow-hidden rounded-xl">
-                <img src="webpic/hiking.webp" alt="Hiking" class="w-full h-full object-cover">
-            </div>
-            <h2 class="text-3xl text-white mb-4 group-hover:text-amber-200 transition-colors">Hiking & Falls</h2>
-            <p class="text-stone-300 leading-relaxed">Explore the ASKA adventure area, hidden waterfalls, and the swinging bridge.</p>
-            <div class="mt-8 text-amber-200 font-bold uppercase tracking-widest text-sm border-b border-amber-200/30 pb-1">Hit the Trail ?</div>
-        </a>
-
-        <a href="fishing.html" class="hub-card group p-8 rounded-3xl flex flex-col items-center text-center">
-            <div class="w-full h-25 mb-6 overflow-hidden rounded-xl">
-                <img src="webpic/fishing.webp" alt="Fishing" class="w-full h-full object-cover">
-            </div>
-            <h2 class="text-3xl text-white mb-4 group-hover:text-amber-200 transition-colors">Trout Fishing</h2>
-            <p class="text-stone-300 leading-relaxed">Discover public honey holes, river access points, and local guide secrets.</p>
-            <div class="mt-8 text-amber-200 font-bold uppercase tracking-widest text-sm border-b border-amber-200/30 pb-1">Cast a Line ?</div>
-        </a>
-
-        <a href="shopping.html" class="hub-card group p-8 rounded-3xl flex flex-col items-center text-center">
-          <div class="w-full h-24 mb-6 overflow-hidden rounded-xl">
-                <img src="webpic/foodshop.webp" alt="Food & Shopping" class="w-full h-full object-cover">
-            </div>
-            <h2 class="text-3xl text-white mb-4 group-hover:text-amber-200 transition-colors">Eat & Shop</h2>
-            <p class="text-stone-300 leading-relaxed">Fine dining in downtown Blue Ridge and the most unique boutiques in North Georgia.</p>
-            <div class="mt-8 text-amber-200 font-bold uppercase tracking-widest text-sm border-b border-amber-200/30 pb-1">Explore Downtown ?</div>
-        </a>
-
-        <a href="activities.html" class="hub-card group p-8 rounded-3xl flex flex-col items-center text-center">
-            <div class="w-full h-24 mb-6 overflow-hidden rounded-xl">
-                <img src="webpic/familyfun.webp" alt="Adventures Galore" class="w-full h-full object-cover">
-            </div>
-            <h2 class="text-3xl text-white mb-4 group-hover:text-amber-200 transition-colors">Family Fun</h2>
-            <p class="text-stone-300 leading-relaxed">Scenic railways, apple picking at Mercier, gem mining, and river tubing.</p>
-            <div class="mt-8 text-amber-200 font-bold uppercase tracking-widest text-sm border-b border-amber-200/30 pb-1">Plan a Day ?</div>
-        </a>
-
-    </div>
-</main>
-<div id="footer-placeholder"></div>
-<script src="footer.js"></script>
-
-<script>document.addEventListener("contextmenu", function(e){ e.preventDefault(); });</script>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="footer.js?v=3"></script>
 </body>
 </html>

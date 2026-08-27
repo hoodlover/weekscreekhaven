@@ -1,0 +1,220 @@
+:root {
+  --wch-pine: #173f2b;
+  --wch-rust: #a45d41;
+  --wch-rust-dark: #88472f;
+  --wch-cream: #f4eee0;
+  --wch-paper: #fffdf8;
+  --wch-ink: #332820;
+  --wch-muted: #74685e;
+  --wch-line: #ddd2c2;
+}
+
+/* Shared tactile movement for pills, tabs, and compact navigation. */
+:is(.tab, .tab-btn, .home, .ghost, .quick-links a, .hero-actions a, .nav-app-btn, .workspace-links a, .wch-nav-link, .guest-guide-page #tab-links a) {
+  background-image: linear-gradient(90deg, var(--wch-rust), var(--wch-rust)) !important;
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 0 100% !important;
+  transition: background-size .28s cubic-bezier(.2,.75,.25,1), color .2s ease, border-color .2s ease, transform .2s ease, box-shadow .2s ease !important;
+}
+
+:is(.tab, .tab-btn, .home, .ghost, .quick-links a, .hero-actions a, .nav-app-btn, .workspace-links a, .wch-nav-link, .guest-guide-page #tab-links a):hover,
+:is(.tab, .tab-btn, .home, .ghost, .quick-links a, .hero-actions a, .nav-app-btn, .workspace-links a, .wch-nav-link, .guest-guide-page #tab-links a):focus-visible {
+  background-size: 100% 100% !important;
+  border-color: var(--wch-rust) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 20px rgba(164,93,65,.26);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.tab.active,
+.tab-btn.active {
+  box-shadow: 0 7px 18px rgba(23,63,43,.18);
+}
+
+/* Admin's side rail gets a directional wash that follows the pointer. */
+body .section-head .tab {
+  overflow: hidden;
+  background-color: transparent;
+  background-image: linear-gradient(90deg, var(--wch-rust), #bf704d) !important;
+}
+
+body .section-head .tab.active {
+  background-color: var(--wch-rust);
+  background-size: 100% 100% !important;
+}
+
+body .section-head .workspace-links a {
+  background-color: #fff;
+  background-image: linear-gradient(90deg, var(--wch-rust), #bf704d) !important;
+}
+
+/* Guest guide: editorial hero, pill navigation, and quieter paper surface. */
+.guest-guide-page .guest-guide-hero {
+  height: min(48vh, 520px);
+  min-height: 390px;
+  border-bottom: 5px solid var(--wch-rust);
+}
+
+.guest-guide-page .guest-guide-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(10,20,14,.78), rgba(10,20,14,.34), rgba(10,20,14,.72));
+}
+
+.guest-guide-page .guest-guide-hero > div:last-child {
+  max-width: 900px;
+}
+
+.guest-guide-page .guest-guide-hero h1 {
+  font-size: clamp(3.4rem, 8vw, 6.7rem) !important;
+  line-height: .86;
+  text-transform: none;
+  font-variant: normal !important;
+}
+
+.guest-guide-page .guest-guide-shell {
+  width: min(1180px, 100%);
+  padding-top: 28px !important;
+}
+
+.guest-guide-page .guest-guide-tabs {
+  gap: 8px !important;
+  padding: 0 2px 12px;
+}
+
+.guest-guide-page .tab-btn {
+  border: 1px solid rgba(255,255,255,.38);
+  border-radius: 999px;
+  padding: 11px 16px;
+  color: #f4eee0;
+  background-color: rgba(10,18,13,.68);
+  background-image: linear-gradient(90deg, var(--wch-rust), #bf704d) !important;
+  backdrop-filter: blur(8px);
+}
+
+.guest-guide-page .tab-btn.active {
+  color: #fff;
+  border-color: var(--wch-pine);
+  background-color: var(--wch-pine);
+  background-size: 0 100% !important;
+}
+
+.guest-guide-page .hub-body {
+  border: 0;
+  border-radius: 22px;
+  background: rgba(255,253,248,.985);
+  box-shadow: 0 26px 70px rgba(0,0,0,.5);
+}
+
+.guest-guide-page .section-title {
+  color: var(--wch-pine);
+  text-transform: none;
+  font-size: clamp(2.25rem, 5vw, 3.35rem);
+  line-height: .95;
+}
+
+/* Gallery: keep the masonry charm, replace the heavy framing. */
+.gallery-page .gallery-hero {
+  position: relative;
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  margin: 0;
+  padding: 150px max(28px, calc((100vw - 1180px) / 2)) 62px;
+  overflow: hidden;
+  text-align: left;
+  background-image: linear-gradient(90deg, rgba(10,18,13,.88), rgba(10,18,13,.35), rgba(10,18,13,.15)), url('gallery/blue-ridge-ga-cabin-rental-exterior.webp');
+  background-position: center;
+  background-size: cover;
+  border-bottom: 5px solid var(--wch-rust);
+}
+
+.gallery-page .gallery-eyebrow {
+  margin-bottom: 12px;
+  color: #e3b28e;
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+
+.gallery-page .gallery-hero h1 {
+  max-width: 720px;
+  margin: 0;
+  color: #fff;
+  font-size: clamp(3.7rem, 8vw, 6.8rem) !important;
+  line-height: .82;
+  letter-spacing: -.025em !important;
+  text-transform: none !important;
+}
+
+.gallery-page .gallery-intro {
+  max-width: 570px;
+  margin: 20px 0 0;
+  color: #f3ece1;
+  font-size: .82rem;
+  line-height: 1.65;
+}
+
+.gallery-page .gallery-shell {
+  width: min(1240px, calc(100% - 28px));
+  max-width: none;
+  margin: 26px auto 58px;
+  padding: clamp(18px, 3vw, 34px) !important;
+  border-radius: 24px;
+  color: var(--wch-ink);
+  background: rgba(255,253,248,.975);
+  box-shadow: 0 26px 70px rgba(0,0,0,.5);
+}
+
+.gallery-page .gallery-item {
+  margin-bottom: 18px;
+  border: 0 !important;
+  border-radius: 15px !important;
+  box-shadow: 0 10px 26px rgba(38,28,20,.18) !important;
+  transition: transform .22s ease, box-shadow .22s ease;
+}
+
+.gallery-page .gallery-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 36px rgba(38,28,20,.25) !important;
+}
+
+.gallery-page .gallery-item img {
+  transition: transform .4s ease;
+}
+
+.gallery-page .gallery-item:hover img {
+  transform: scale(1.025);
+}
+
+.gallery-page .parchment-label {
+  border: 0;
+  color: var(--wch-pine);
+  background: var(--wch-paper);
+}
+
+.gallery-page .winter-heading {
+  margin: 34px 0 24px;
+  color: var(--wch-pine) !important;
+  text-shadow: none !important;
+}
+
+@media (max-width: 640px) {
+  .guest-guide-page .guest-guide-hero { min-height: 420px; }
+  .guest-guide-page .guest-guide-tabs { padding-bottom: 10px; }
+  .guest-guide-page .tab-btn { padding: 9px 13px; }
+  .gallery-page .gallery-hero { min-height: 470px; padding: 130px 24px 42px; }
+  .gallery-page .gallery-shell { width: calc(100% - 12px); border-radius: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.tab, .tab-btn, .home, .ghost, .quick-links a, .hero-actions a, .nav-app-btn, .workspace-links a, .wch-nav-link, .guest-guide-page #tab-links a),
+  .gallery-page .gallery-item,
+  .gallery-page .gallery-item img { transition: none !important; }
+}

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="/site-interactions.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weeks Creek Haven | Guest Guide</title>
@@ -85,12 +86,12 @@
         .close-modal { position: absolute; top: 20px; right: 35px; color: #fff; font-size: 60px; cursor: pointer; }
     </style>
 </head>
-<body class="bg-wood">
+<body class="bg-wood guest-guide-page">
 
 <div id="nav-placeholder"></div>
 <script src="nav.js"></script>
 
-<header class="relative h-[50vh] flex flex-col items-center justify-center text-white overflow-hidden" >
+<header class="guest-guide-hero relative h-[50vh] flex flex-col items-center justify-center text-white overflow-hidden" >
     <img src="webpic/toknow.webp" class="absolute inset-0 w-full h-full object-cover">
     <div class="absolute inset-0 bg-black/50"></div>
     <div class="relative z-10 text-center px-4 pt-20">
@@ -100,9 +101,9 @@
 </header>
 
 <!-- Tab system -->
-<div class="max-w-5xl mx-auto px-4 pt-10 pb-20 relative z-30">
+<div class="guest-guide-shell max-w-5xl mx-auto px-4 pt-10 pb-20 relative z-30">
 
-    <div class="flex gap-1 overflow-x-auto pb-0">
+    <div class="guest-guide-tabs flex gap-1 overflow-x-auto pb-0">
         <button class="tab-btn active" onclick="switchTab('links',this)">&#9646; Quick Links</button>
         <button class="tab-btn" onclick="switchTab('scoop',this)">&#9650; The Scoop</button>
         <button class="tab-btn" onclick="switchTab('departure',this)">&#9632; Departure</button>
@@ -746,7 +747,7 @@
 </div>
 
 <div id="footer-placeholder"></div>
-<script src="footer.js"></script>
+<script src="footer.js?v=3"></script>
 
 <script>
 if (new URLSearchParams(location.search).get('print') === '1') window.addEventListener('load',()=>setTimeout(()=>window.print(),500));

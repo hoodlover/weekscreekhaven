@@ -32,40 +32,54 @@
       .wch-nav-link {
         display: inline-block;
         color: #fff;
-        background: rgba(164,93,65,0.44);
-        border: 1px solid #A45D41;
-        border-radius: 4px;
-        padding: 3px 10px;
-        text-shadow: 1px 1px 0 rgba(0,0,0,0.4);
+        background-color: rgba(0,0,0,.18);
+        border: 1px solid rgba(255,255,255,.34);
+        border-radius: 999px;
+        padding: 8px 13px;
+        text-shadow: 0 1px 2px rgba(0,0,0,.55);
         text-decoration: none;
-        font-size: 0.875rem;
+        font-size: 0.68rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.1em;
-        transition: all 0.2s ease;
       }
       .wch-nav-link:hover {
-        color: #4a4747;
-        background: rgba(245,245,244,0.64);
-        border-color: #4a4747;
-        text-shadow: none;
+        color: #fff;
+        border-color: #A45D41;
       }
       .wch-nav-link-active {
         display: inline-block;
         color: #fff;
-        background: rgba(255,255,255,0.08);
-        border: 1px solid rgba(255,255,255,0.4);
-        border-radius: 4px;
-        padding: 3px 10px;
-        text-shadow: 0 1px 4px rgba(0,0,0,0.9), 1px 1px 0 #000;
+        background: #173f2b;
+        border: 1px solid #72917c;
+        border-radius: 999px;
+        padding: 8px 13px;
+        text-shadow: 0 1px 3px rgba(0,0,0,.6);
         text-decoration: none;
-        font-size: 0.875rem;
+        font-size: 0.68rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.1em;
         cursor: default;
         pointer-events: none;
       }
+      .wch-footer-root {
+        padding: 34px 24px 24px;
+        color: white;
+        text-align: center;
+        background: linear-gradient(rgba(12,18,14,.88),rgba(12,18,14,.96)), url('webpic/barn.webp') center/cover;
+        border-top: 5px solid #A45D41;
+      }
+      .wch-footer-logo {
+        width: 88px;
+        height: 88px;
+        margin: 0 auto 10px;
+        object-fit: contain;
+        filter: drop-shadow(0 8px 18px rgba(0,0,0,.5));
+      }
+      .wch-footer-title { margin: 0 0 3px; color: white; font: 700 1.7rem/1 'Crimson Text', Georgia, serif; }
+      .wch-footer-address { margin: 0 0 8px; color: #eee6da; font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+      .wch-footer-copy { margin: 0; color: #cfc6b9; font-size: .6rem; letter-spacing: .09em; text-transform: uppercase; }
     `;
     document.head.appendChild(style);
   }
@@ -78,21 +92,19 @@
 
   // ── Full footer HTML ─────────────────────────────────────
   const footerHTML = `
-    <footer class="pt-2 pb-2 px-6 text-center bg-footer-wood">
+    <footer class="wch-footer-root">
 
       <!-- Nav links row -->
-      <div class="max-w-6xl mx-auto flex flex-wrap justify-center gap-3 mb-4">
+      <div class="max-w-6xl mx-auto flex flex-wrap justify-center gap-2 mb-5">
         ${linksHTML}
       </div>
 
       <!-- Logo image + address + copyright -->
-      <div class="flex flex-col items-center border-t border-stone-800 pt-4 text-xs text-stone-400 uppercase tracking-widest">
-        <img src="webpic/Weeks_Creek_Haven_Social_Preview.webp"
-             alt="Cabin Away From Home!"
-             class="mb-4 mx-auto w-full max-w-md rounded-lg opacity-80 hover:opacity-100 transition-opacity">
-        <p class="text-white text-xl font-serif italic extra-heavy-shadow normal-case mb-1">Weeks Creek Haven</p>
-        <p class="text-stone-100 extra-heavy-shadow mb-2">421 Weeks Creek Rd | Blue Ridge, GA 30513</p>
-        <p class="text-stone-300" style="text-shadow: 0 1px 3px rgba(0,0,0,0.95), 0 2px 8px rgba(0,0,0,0.85), 1px 1px 0 #000;">&copy; 2026 H &amp; L Havens, LLC | Beautiful Blue Ridge</p>
+      <div>
+        <img src="webpic/weeks-creek-haven-round-logo.png" alt="Weeks Creek Haven" class="wch-footer-logo">
+        <p class="wch-footer-title">Weeks Creek Haven</p>
+        <p class="wch-footer-address">421 Weeks Creek Rd · Blue Ridge, GA 30513</p>
+        <p class="wch-footer-copy">&copy; 2026 H &amp; L Havens, LLC · Beautiful Blue Ridge</p>
       </div>
 
     </footer>
@@ -114,4 +126,4 @@
     injectFooter();
   }
 
-})();S
+})();

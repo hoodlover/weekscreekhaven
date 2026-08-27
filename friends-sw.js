@@ -1,13 +1,14 @@
-const CACHE_NAME = 'friends-hub-v17';
+const CACHE_NAME = 'friends-hub-v18';
 
 const PRECACHE_URLS = [
   '/friends-hub.html',
-  '/manifest.json?v=17',
+  '/manifest.json?v=18',
   '/hub-adventures.html',
   '/nav.js',
   '/footer.js',
+  '/site-interactions.css',
   // backgrounds & textures
-  '/webpic/lightbardwood..webp',
+  '/webpic/lightbardwood.webp',
   '/webpic/railroad-tie-texture.webp',
   '/webpic/rrtie.webp',
   '/webpic/barn.webp',
@@ -16,7 +17,7 @@ const PRECACHE_URLS = [
   '/webpic/weeks-creek-haven-favicon.ico',
   '/webpic/weeks-creek-haven-favicon-32.png',
   '/webpic/weeks-creek-haven-favicon-16.png',
-  '/webpic/Weeks_Creek_Haven_Social_Preview.webp',
+  '/gallery/weeks-creek-haven-blue-ridge-cabin.webp',
   '/webpic/checkmark.webp',
   // check-in assets
   '/webpic/wifi.webp',

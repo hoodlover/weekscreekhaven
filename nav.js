@@ -11,6 +11,14 @@
 
 (function () {
 
+  // Shared public-page polish. The wooden railroad header remains unchanged.
+  if (!document.querySelector('link[href$="site-interactions.css"]')) {
+    const polish = document.createElement('link');
+    polish.rel = 'stylesheet';
+    polish.href = '/site-interactions.css';
+    document.head.appendChild(polish);
+  }
+
   // -- Inject all nav CSS automatically --------------------
   const style = document.createElement('style');
   style.textContent = `

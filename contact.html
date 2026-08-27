@@ -1,197 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Weeks Creek Haven | Blue Ridge GA Cabin</title>
+  <link rel="stylesheet" href="/site-interactions.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Weeks Creek Haven | Blue Ridge GA Cabin</title>
   <link rel="icon" href="/webpic/weeks-creek-haven-favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="/webpic/weeks-creek-haven-favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/webpic/weeks-creek-haven-favicon-16.png">
-
-    <meta name="description" content="Contact Weeks Creek Haven about a private creekside cabin stay near Blue Ridge, Georgia, with room for up to 11 guests.">
-    <meta name="robots" content="noindex,follow">
-    <link rel="canonical" href="https://www.weekscreekhaven.com/contact.html">
-    
-    <meta property="og:title" content="Weeks Creek Haven | Blue Ridge, GA Log Cabin">
-    <meta property="og:description" content="A unique chinking log cabin escape! Fast Fiber, large Hot Tub, Streamside relaxation, and room for 11 guests. Check our availability!">
-    <meta property="og:image" content="/webpic/Weeks_Creek_Haven_Social_Preview.webp" loading="lazy">
-    <meta property="og:url" content="https://weekscreekhaven.com/">
-    <meta property="og:type" content="website">
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Montserrat', sans-serif; color: #3d3128; scroll-behavior: smooth; }
-        h1, h2, h3, h4, p { font-family: 'Crimson Text', serif; }
-        
-        details summary::-webkit-details-marker { display: none; }
-        details summary { list-style: none; }
-        summary { display: flex !important; }
-
-/* Unified Dark Shadow for High Legibility */
-.extra-heavy-shadow {
-    text-shadow: 
-        3px 3px 6px rgba(0, 0, 0, 1),    /* Primary offset shadow */
-        0px 0px 25px rgba(0, 0, 0, 1),   /* Deep outer glow */
-        0px 0px 10px rgba(0, 0, 0, 0.8); /* Mid-range sharpness */
-}
-
-/* Forces all main headers to use the dark style by default */
-h1, h2, h3, h4 {
-    font-family: 'Crimson Text', serif;
-    text-shadow: 3px 3px 6px rgba(0, 0, 0, 1), 0px 0px 25px rgba(0, 0, 0, 1), 0px 0px 10px rgba(0, 0, 0, 0.8);
-}
-
-/* Define p separately without the shadow */
-p {
-    font-family: 'Crimson Text', serif;
-    text-shadow: none; 
-}
-
-        /* EXTRA DARK SHADOW for headers over wood grains */
-        .extra-heavy-shadow {
-            text-shadow: 3px 3px 6px rgba(0,0,0,1), 0px 0px 25px rgba(0,0,0,1), 0px 0px 10px rgba(0,0,0,0.8);
-        }
-
-        /* Wood Background Classes */
-        .bg-wood { background-color: #1a1512; background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('webpic/vintage-wooden-board-textured-background.webp" loading="lazy'); background-attachment: fixed; background-size: cover; }
-        .bg-about-wood { 
-            background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('webpic/heap-various-size-wood-log_1150-38093.webp" loading="lazy'); 
-            background-size: cover; background-position: center;
-        }
-        .bg-rules-wood { 
-            background-image: url('webpic/lightbardwood.webp" loading="lazy'); 
-            background-size: cover; background-position: center;
-        }
-        .bg-book-wood { 
-            background-image: url('webpic/rusticboards.webp" loading="lazy'); 
-            background-size: cover; background-position: center;
-        }
-        .bg-footer-wood { 
-            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('webpic/barn.webp" loading="lazy'); 
-            background-size: cover; background-position: center;
-        }
-        
-    	.wood-btn { height: 80px; }          /* was 80px — mobile */
-
-@media (min-width: 768px)  { .wood-btn { height: 74px; } }   /* was 64px — desktop */
-@media (min-width: 1536px) { .wood-btn { height: 112px; } }  /* was 96px — 2xl */
-      
-    .wood-btn:hover { transform: scale(1.05); }
-
-    .wood-btn:hover { transform: scale(1.05); }
-
-        .hero-btn { height: auto; width: 180px; margin: 0 auto; }
-        @media (min-width: 768px) { .hero-btn { width: 240px; } }
-        @media (min-width: 1536px) { .hero-btn { width: 300px; } }
-
-        .nav-link-group a .hover-img { display: none; }
-        .nav-link-group a:hover .normal-img { display: none; }
-        .nav-link-group a:hover .hover-img { display: block; }
-
-        .accent-green { color: #A45D41; }
-        .parchment { background-color: rgba(244, 238, 224, 0.9); border: 1px solid #dcd3bd; }
-        
-        #mobile-menu {
-            background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('/webpic/railroad-tie-texture.webp" loading="lazy');
-            background-size: cover;
-        }
-/* This specifically stops the 5% growth on the logo images */
-.logo-link:hover .wood-btn { 
-    transform: scale(1.0) !important; 
-}
-
-
-/* 1. Position the container */
-.logo-link {
-    position: relative;
-    display: inline-block;
-    background: transparent; /* Ensures no background bleed */
-}
-
-/* 2. The Bottom Image (Normal) */
-.logo-link .normal-img {
-    opacity: 1;
-    /* We remove the transition here so it stays solid */
-    transition: none; 
-}
-
-/* 3. The Top Image (Hover) */
-.logo-link .hover-img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    /* Only the top image fades in */
-    transition: opacity 0.8s ease-in-out;
-    z-index: 2;
-}
-
-/* 4. Hover State */
-.logo-link:hover .hover-img {
-    opacity: 1;
-}
-
-/* Optional: Hide the normal image ONLY after hover is complete 
-   or keep it visible underneath to prevent the 'gap' */
-.logo-link:hover .normal-img {
-    opacity: 1; /* Keeping this at 1 ensures there is always a solid image */
-}
-
-    </style>
+  <meta name="description" content="Contact Weeks Creek Haven about a private creekside cabin stay near Blue Ridge, Georgia, with room for up to 11 guests.">
+  <meta name="robots" content="noindex,follow">
+  <link rel="canonical" href="https://www.weekscreekhaven.com/contact.html">
+  <meta property="og:title" content="Contact Weeks Creek Haven | Blue Ridge, Georgia">
+  <meta property="og:description" content="Ask about a private stay at our creekside cabin in the Aska Adventure Area near Blue Ridge, Georgia.">
+  <meta property="og:image" content="https://www.weekscreekhaven.com/gallery/blue-ridge-ga-cabin-rental-exterior.webp">
+  <meta property="og:url" content="https://www.weekscreekhaven.com/contact.html">
+  <meta property="og:type" content="website">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@600;700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --pine:#173f2b; --pine-soft:#2f5a43; --rust:#a45d41; --cream:#f4eee0; --paper:#fffdf8; --ink:#332820; --muted:#74685e; --line:#ddd2c2; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; min-height:100vh; color:var(--ink); font-family:Montserrat,sans-serif; background:#15110e url('webpic/barn.webp') center/cover fixed; }
+    .page { min-height:100vh; padding:112px 16px 64px; background:linear-gradient(rgba(15,12,9,.64),rgba(15,12,9,.9)); }
+    .shell { width:min(1180px,100%); margin:auto; overflow:hidden; border-radius:24px; background:rgba(255,253,248,.985); box-shadow:0 28px 80px #0009; }
+    .hero { display:grid; grid-template-columns:minmax(0,1.04fr) minmax(390px,.96fr); min-height:610px; }
+    .photo { position:relative; min-height:450px; background:#1a1512; overflow:hidden; }
+    .photo img { width:100%; height:100%; object-fit:cover; }
+    .photo::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,transparent 48%,rgba(14,18,13,.82)); }
+    .photo-note { position:absolute; z-index:1; left:clamp(24px,4vw,48px); right:32px; bottom:34px; color:white; }
+    .photo-note strong { display:block; font:700 clamp(1.8rem,3vw,2.7rem)/.95 'Crimson Text',serif; }
+    .photo-note span { display:block; margin-top:10px; color:#f1e9dc; font-size:.72rem; font-weight:700; letter-spacing:.09em; text-transform:uppercase; }
+    .content { padding:clamp(30px,5vw,62px); }
+    .eyebrow { color:var(--rust); font-size:.66rem; font-weight:800; letter-spacing:.2em; text-transform:uppercase; }
+    h1,h2 { margin:0; color:var(--pine); font-family:'Crimson Text',serif; }
+    .content h1 { margin-top:9px; font-size:clamp(3rem,6vw,5rem); line-height:.86; font-weight:700; }
+    .intro { margin:18px 0 28px; max-width:540px; color:var(--muted); font-size:.82rem; line-height:1.7; }
+    .quick-links { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:30px; }
+    .quick-links a { padding:9px 13px; border:1px solid var(--line); border-radius:999px; color:var(--pine); text-decoration:none; font-size:.62rem; font-weight:800; letter-spacing:.07em; text-transform:uppercase; transition:.18s ease; }
+    .quick-links a:hover,.quick-links a:focus-visible { color:white; background:var(--pine); border-color:var(--pine); outline:none; }
+    form { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    label { display:grid; gap:6px; color:var(--pine); font-size:.6rem; font-weight:800; letter-spacing:.09em; text-transform:uppercase; }
+    label.full { grid-column:1/-1; }
+    input,textarea { width:100%; border:1px solid var(--line); border-radius:10px; padding:13px 14px; color:var(--ink); background:#fff; font:600 .76rem/1.4 Montserrat,sans-serif; transition:border-color .18s ease,box-shadow .18s ease; }
+    textarea { min-height:116px; resize:vertical; }
+    input:focus,textarea:focus { border-color:var(--pine-soft); box-shadow:0 0 0 3px #2f5a431f; outline:none; }
+    .submit { grid-column:1/-1; margin-top:4px; border:0; border-radius:999px; padding:14px 18px; color:white; background:var(--pine); font:800 .7rem Montserrat,sans-serif; letter-spacing:.09em; text-transform:uppercase; cursor:pointer; box-shadow:0 10px 24px #173f2b32; transition:transform .18s ease,background .18s ease; }
+    .submit:hover,.submit:focus-visible { background:var(--pine-soft); transform:translateY(-1px); outline:none; }
+    .fine-print { grid-column:1/-1; margin:0; color:var(--muted); font-size:.62rem; line-height:1.55; }
+    .bg-footer-wood { background:#17120f url('webpic/barn.webp') center/cover; }
+    @media(max-width:820px) { .hero { grid-template-columns:1fr; } .photo { min-height:390px; } }
+    @media(max-width:560px) { .page { padding:96px 7px 34px; } .shell { border-radius:16px; } .photo { min-height:320px; } .content { padding:28px 20px 34px; } form { grid-template-columns:1fr; } label.full,.submit,.fine-print { grid-column:1; } }
+  </style>
 </head>
-<body class="bg-wood">
-
-<div id="nav-placeholder"></div>
-<script src="nav.js"></script>
-
-    <header class="relative h-[60vh] flex flex-col items-center justify-center text-white overflow-hidden">
-<img src="webpic/heap-various-size-wood-log_1150-38093.webp" loading="lazy" 
-     alt="Weeks Creek Haven" 
-     class="absolute inset-0 w-full h-full object-cover">       
-        <div class="relative z-10 text-center px-4 pt-20">
-            <h1 class="text-5xl md:text-8xl mb-2 md:mb-4 tracking-tight font-serif heavy-shadow" style="font-variant: small-caps;">Weeks Creek Haven</h1>
-            <h2 class="text-xl md:text-4xl italic mb-8 md:mb-12 text-stone-200 font-serif heavy-shadow" style="font-variant: small-caps;">"No PASSWORD For You."<br>  Soz Mate.  <br><BR>Check in below for a time that might be free for ya."</h2>
-        </div>
-
-        <div class="relative z-20 nav-link-group md:absolute md:bottom-8 md:right-8">
-            <a href="#book">
-                <img src="buttons/borrow-the-cabin-normal.webp" loading="lazy" alt="Borrow The Cabin?" class="normal-img hero-btn">
-                <img src="buttons/borrow-the-cabin-hover.webp" loading="lazy" alt="Borrow The Cabin?" class="hover-img hero-btn">
-            </a>
-        </div>
-    </header>
-
-    <section id="book" class="py-24 px-6 border-t border-stone-200 bg-book-wood">
-        <div class="max-w-6xl mx-auto flex flex-col gap-20 items-center">
-            
-            <div class="w-full max-w-3xl bg-white p-8 md:p-14 shadow-2xl rounded-lg border-t-8 border-green-800 parchment">
-             <h2 class="text-4xl font-bold text-center mb-10 accent-green italic" style="text-shadow: none !important;">Inquire About Your Stay</h2>
-               <form action="https://formspree.io/f/mzdjnprj" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <input type="text" name="name" placeholder="*Full Name" required 
-        class="border-b-2 border-stone-800 p-2 text-stone-1200 placeholder-stone-600 focus:border-green-800 outline-none parchment">
-    
-    <input type="email" name="email" placeholder="*Email Address" required 
-        class="border-b-2 border-stone-800 p-2 text-stone-900 placeholder-stone-600 focus:border-green-800 outline-none parchment">
-    
-    <input type="text" name="arrival" placeholder="Arrival Date" onfocus="(this.type='date')" 
-        class="border-b-2 border-stone-800 p-2 text-stone-900 placeholder-stone-600 focus:border-green-800 outline-none parchment">
-    
-    <input type="text" name="departure" placeholder="Departure Date" onfocus="(this.type='date')" 
-        class="border-b-2 border-stone-800 p-2 text-stone-900 placeholder-stone-600 focus:border-green-800 outline-none parchment">
-    
-    <textarea name="message" placeholder="Message or Number of guests... or is the toilet glogged again?" rows="3" 
-        class="md:col-span-2 border-b-2 border-stone-800 p-2 text-stone-1300 placeholder-stone-600 focus:border-green-800 outline-none parchment"></textarea>
-    
-    <button type="submit" class="md:col-span-2 bg-green-800 text-white font-bold py-4 rounded hover:bg-green-900 transition shadow-lg text-sm uppercase tracking-widest mt-6">Send Inquiry</button>
-</form>
-            </div>
-
-               </section>
-
-   <div id="footer-placeholder"></div>
-<script src="footer.js"></script>
-
-<script>document.addEventListener("contextmenu", function(e){ e.preventDefault(); });</script>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="page">
+    <section class="shell hero" aria-labelledby="contact-title">
+      <div class="photo">
+        <img src="gallery/blue-ridge-ga-creekside-cabin.webp" alt="Weeks Creek Haven beside the creek in Blue Ridge, Georgia">
+        <div class="photo-note"><strong>A quiet place to gather.</strong><span>Creekside in the Aska Adventure Area</span></div>
+      </div>
+      <div class="content">
+        <div class="eyebrow">Private stays · Blue Ridge, Georgia</div>
+        <h1 id="contact-title">Let’s plan your stay</h1>
+        <p class="intro">Tell us a little about your group and the dates you have in mind. We’ll get back to you personally with availability and the details you need.</p>
+        <nav class="quick-links" aria-label="Planning links">
+          <a href="availability.html">Check availability</a>
+          <a href="gallery.html">See the cabin</a>
+          <a href="find-us.html">Find us</a>
+        </nav>
+        <form action="https://formspree.io/f/mzdjnprj" method="POST">
+          <label>Full name<input type="text" name="name" autocomplete="name" required></label>
+          <label>Email address<input type="email" name="email" autocomplete="email" required></label>
+          <label>Arrival date<input type="date" name="arrival"></label>
+          <label>Departure date<input type="date" name="departure"></label>
+          <label class="full">How can we help?<textarea name="message" placeholder="Number of guests, questions, or anything we should know..."></textarea></label>
+          <button class="submit" type="submit">Send inquiry</button>
+          <p class="fine-print">Weeks Creek Haven sleeps up to 11 guests. Submitting this form is an inquiry and does not confirm a reservation.</p>
+        </form>
+      </div>
+    </section>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="footer.js?v=3"></script>
 </body>
 </html>
