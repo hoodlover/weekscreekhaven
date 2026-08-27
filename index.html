@@ -348,6 +348,18 @@
     </div>
 </section>
 
+    <section id="guest-reviews" class="py-16 md:py-24 px-6 bg-[#f4eee0] border-t border-stone-300">
+        <div class="max-w-6xl mx-auto">
+            <div class="max-w-3xl mb-10">
+                <p class="text-xs uppercase tracking-[0.22em] font-bold text-[#a45d41] mb-3">Guest experiences</p>
+                <h2 class="text-4xl md:text-5xl text-[#173f2b] font-bold mb-4" style="text-shadow:none">What guests have said about the cabin</h2>
+                <p id="review-summary" class="text-stone-600 leading-relaxed">Real feedback from stays at Weeks Creek Haven. Reviews from the cabin&rsquo;s previous ownership are identified below; new approved guest reviews will join them here.</p>
+            </div>
+            <div id="public-review-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" aria-live="polite"></div>
+            <div class="mt-7 text-center"><button id="show-all-reviews" type="button" class="hidden border border-[#173f2b] text-[#173f2b] px-5 py-3 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-[#173f2b] hover:text-white transition">Show all guest reviews</button></div>
+        </div>
+    </section>
+
     <section class="py-14 md:py-20 px-6 bg-stone-950 border-t border-white/10">
         <div class="max-w-5xl mx-auto text-center">
             <p class="text-xs uppercase tracking-[0.22em] font-bold text-[#d4a373] mb-3">A private Blue Ridge vacation rental</p>
@@ -450,6 +462,54 @@
     #about img { cursor: zoom-in; }
 </style>
 
+<script>
+    (function loadPublicReviews() {
+        const list = document.getElementById('public-review-list');
+        const button = document.getElementById('show-all-reviews');
+        const summary = document.getElementById('review-summary');
+        if (!list || !button) return;
+        let reviews = [];
+        let expanded = false;
+        const render = () => {
+            list.replaceChildren();
+            const visible = expanded ? reviews : reviews.slice(0, 6);
+            visible.forEach((review) => {
+                const article = document.createElement('article');
+                article.className = 'flex flex-col bg-white border border-stone-300 rounded-lg p-5 shadow-sm';
+                const stars = document.createElement('div');
+                stars.className = 'text-[#a45d41] text-lg tracking-wider';
+                stars.setAttribute('aria-label', `${review.overall} out of 5 stars`);
+                stars.textContent = '★'.repeat(review.overall) + '☆'.repeat(5 - review.overall);
+                const quote = document.createElement('blockquote');
+                quote.className = 'grow mt-3 text-stone-700 leading-relaxed font-serif text-lg';
+                quote.textContent = `“${review.publicComments}”`;
+                const name = document.createElement('strong');
+                name.className = 'block mt-5 text-[#173f2b] text-sm';
+                name.textContent = review.displayName;
+                const details = document.createElement('div');
+                details.className = 'mt-1 text-[11px] uppercase tracking-wide text-stone-500';
+                const month = new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' }).format(new Date(review.createdAt));
+                details.textContent = [review.location, month, review.source, review.previousOwnership ? 'Previous ownership' : 'Verified guest'].filter(Boolean).join(' · ');
+                article.append(stars, quote, name, details);
+                list.appendChild(article);
+            });
+            button.hidden = reviews.length <= 6;
+            button.classList.toggle('hidden', reviews.length <= 6);
+            button.textContent = expanded ? 'Show fewer reviews' : `Show all ${reviews.length} guest reviews`;
+        };
+        fetch('/api/public-reviews')
+            .then((response) => response.ok ? response.json() : Promise.reject(new Error('Reviews unavailable')))
+            .then((data) => {
+                reviews = data.reviews || [];
+                if (!reviews.length) return;
+                const fiveStarCount = reviews.filter((review) => review.overall === 5).length;
+                summary.textContent = `${fiveStarCount} five-star guest experience${fiveStarCount === 1 ? '' : 's'} and counting. Reviews from the cabin’s previous ownership are identified below; new approved guest reviews will join them here.`;
+                render();
+            })
+            .catch(() => document.getElementById('guest-reviews').hidden = true);
+        button.addEventListener('click', () => { expanded = !expanded; render(); if (!expanded) document.getElementById('guest-reviews').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+    })();
+</script>
 <script>
     const menuBtn = document.getElementById('mobile-menu-button');
     const closeBtnMobile = document.getElementById('close-mobile-menu');
