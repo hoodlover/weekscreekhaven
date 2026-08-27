@@ -1,12 +1,24 @@
-import { getBookingRequests } from '../_lib/booking-store.js';
+import { appendBookingRecord, getBookingRequests } from '../_lib/booking-store.js';
 import { getSquareInvoiceAccounting } from '../_lib/square.js';
 import { json, requireAdmin } from '../_lib/security.js';
 import { daysBetween, withEstimatedTaxesAndFees } from '../pricing.js';
 
 export default async function handler(request, response) {
   if (!requireAdmin(request)) return json(response, 401, { error: 'Please sign in as the site owner.' });
-  if (request.method !== 'GET') return json(response, 405, { error: 'Method not allowed.' });
   try {
+    if (request.method === 'PATCH') {
+      const bookingId = String(request.body?.bookingId || '').trim();
+      const bookings = await getBookingRequests();
+      const booking = bookings.find((item) => item.id === bookingId);
+      if (!booking) return json(response, 404, { error: 'Booking not found.' });
+      const cleaningFeeCents = Math.round(Number(request.body?.cleaningFee) * 100);
+      if (!Number.isInteger(cleaningFeeCents) || cleaningFeeCents < 0 || cleaningFeeCents > 100000) return json(response, 400, { error: 'Enter a valid cleaning cost.' });
+      const changes = { accountingWriteOff: request.body?.writeOff === true, accountingCleaningFeeCents: cleaningFeeCents };
+      const createdAt = new Date().toISOString();
+      await appendBookingRecord({ type: 'status', bookingId, changes, createdAt });
+      return json(response, 200, { ok: true, ...changes }, { 'Cache-Control': 'private, no-store' });
+    }
+    if (request.method !== 'GET') return json(response, 405, { error: 'Method not allowed.' });
     const bookings = (await getBookingRequests()).filter((booking) => booking.status === 'booked' || booking.paymentFullyPaid);
     const rows = await Promise.all(bookings.map(async (booking) => {
       const choice = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || {};
@@ -39,6 +51,9 @@ export default async function handler(request, response) {
         departure: choice.departure || '',
         bookedAt: booking.bookedAt || booking.paymentReceivedAt || booking.approvedAt || '',
         preTaxAmountCents,
+        writeOff: booking.accountingWriteOff === true,
+        writeOffCents: booking.accountingWriteOff === true ? preTaxAmountCents : 0,
+        cleaningFeeCents: Number.isFinite(Number(booking.accountingCleaningFeeCents)) ? Number(booking.accountingCleaningFeeCents) : 17500,
         paidCents,
         refundedCents,
         netPaidCents,
