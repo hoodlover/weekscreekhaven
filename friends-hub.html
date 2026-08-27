@@ -282,6 +282,9 @@
 
 <!-- Adventures link strip -->
 <div class="max-w-5xl mx-auto px-4 mb-2">
+    <a id="hub-booking-packet" href="#" hidden class="flex items-center justify-between dark-card rounded-xl px-5 py-3 mb-2 hover:border-[#d4a373] transition group no-underline" style="border-color: rgba(212,163,115,0.35); text-decoration: none;">
+        <div><p class="font-black text-[#d4a373] text-sm uppercase tracking-wide group-hover:text-white transition">Booking &amp; Signing Packet</p><p class="text-stone-400 text-xs">Payment status, rental agreement, and booking summary</p></div><span class="text-[#d4a373] text-lg group-hover:text-white transition">&#10145;</span>
+    </a>
     <a href="hub-adventures.html" class="flex items-center justify-between dark-card rounded-xl px-5 py-3 hover:border-[#d4a373] transition group no-underline" style="border-color: rgba(212,163,115,0.35); text-decoration: none;">
         <div class="flex items-center gap-3">
             <span class="text-xl">&#127956;</span>
@@ -442,45 +445,29 @@
             </div>
             <form id="pre-arrival-form" action="https://formspree.io/f/mzdjnprj" method="POST" class="px-7 py-6 space-y-5">
                 <input type="hidden" name="form_type" value="Pre-Arrival Concierge">
+                <input type="hidden" name="name">
+                <input type="hidden" name="email">
+                <input type="hidden" name="stay_dates">
+                <input type="hidden" name="guest_count">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Your Name</label>
-                        <input type="text" name="name" placeholder="Jane Smith" class="maint-input" required>
+                        <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Estimated arrival</label>
+                        <input type="text" name="arrival_time" placeholder="Around 5:00 PM" class="maint-input">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Email</label>
-                        <input type="email" name="email" placeholder="jane@email.com" class="maint-input" required>
+                        <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Travel update</label>
+                        <input type="text" name="travel_update" placeholder="On schedule, arriving late, road question..." class="maint-input">
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">What time are you arriving?</label>
-                        <input type="text" name="arrival_time" placeholder="Morning, afternoon, late... no rules" class="maint-input">
+                        <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Departure update (optional)</label>
+                        <input type="text" name="departure_time" placeholder="Only if your plans changed" class="maint-input">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">What time are you heading out?</label>
-                        <input type="text" name="departure_time" placeholder="Whenever — seriously, no rush" class="maint-input">
+                        <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Backup contact (optional)</label>
+                        <input type="text" name="emergency_contact" placeholder="Name and cell number" class="maint-input">
                     </div>
-                </div>
-                <p class="text-xs text-stone-400 italic -mt-3">We really don't care what time for either. Arrive or stay any time you want.</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Number of Guests</label>
-                        <select name="guest_count" class="maint-input" required>
-                            <option value="">How many folks?</option>
-                            <option>1</option><option>2</option><option>3</option><option>4</option>
-                            <option>5</option><option>6</option><option>7</option><option>8</option>
-                            <option>9</option><option>10</option><option>11</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Any other contact info, just in case?</label>
-                        <input type="text" name="emergency_contact" placeholder="Name, cell, email — whoever we should reach" class="maint-input">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-2">Anything specific on your activity list?</label>
-                    <input type="text" name="activity_question" placeholder="Something specific on your list?" class="maint-input text-sm">
                 </div>
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Special Requests or Questions</label>
@@ -1434,6 +1421,26 @@ fetchForm('maintenance-form', 'maintenance-submit', 'maintenance-sending', 'main
 // PRE-ARRIVAL FORM — fetch submit + redirect
 // ============================
 const preArrivalForm = document.getElementById('pre-arrival-form');
+async function loadGuestBookingTools() {
+    try {
+        const response = await fetch('/api/invite-profile', { cache:'no-store' });
+        const data = await response.json();
+        if (!response.ok) return;
+        if (data.bookingPacketUrl) {
+            const packet = document.getElementById('hub-booking-packet');
+            packet.href = data.bookingPacketUrl;
+            packet.hidden = false;
+        }
+        const profile = data.bookingProfile || {};
+        if (preArrivalForm) {
+            preArrivalForm.elements.name.value = profile.guestName || data.inviteLabel || data.visitorName || '';
+            preArrivalForm.elements.email.value = profile.email || '';
+            preArrivalForm.elements.stay_dates.value = profile.arrival && profile.departure ? `${profile.arrival} to ${profile.departure}` : '';
+            preArrivalForm.elements.guest_count.value = profile.guests || '';
+        }
+    } catch { /* The Hub remains usable if profile details are temporarily unavailable. */ }
+}
+loadGuestBookingTools();
 if (preArrivalForm) {
     preArrivalForm.addEventListener('submit', async function(e) {
         e.preventDefault();

@@ -16,6 +16,7 @@ export default async function handler(request, response) {
     const complimentary = booking.paymentPlan === 'complimentary' || Number(booking.amountCents) === 0;
     return json(response, 200, {
       guestName: booking.name,
+      guestEmail: booking.email || '',
       arrival: dates.arrival || '',
       departure: dates.departure || '',
       guests: booking.guests || 1,

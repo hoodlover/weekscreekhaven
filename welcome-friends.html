@@ -50,6 +50,9 @@
     .rule { width:80px; height:3px; background:var(--rust); margin:23px auto; }
     .enter { display:inline-block; text-decoration:none; background:var(--pine); color:white; padding:15px 27px; border-radius:999px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; font-size:.78rem; box-shadow:0 10px 24px rgba(23,58,44,.25); }
     .enter:hover { background:#0b251a; transform:translateY(-1px); }
+    .welcome-actions { display:flex; justify-content:center; gap:9px; flex-wrap:wrap; }
+    .enter.packet { background:var(--rust); }
+    .enter.packet:hover { background:#813f2b; }
     .aside { display:block; color:#8d8178; font-size:.72rem; margin-top:14px; }
     .loading { min-height:110px; display:grid; place-items:center; color:var(--cream); text-align:center; font-family:'Crimson Text',serif; font-size:1.35rem; }
     .error { max-width:520px; margin:15vh auto; padding:35px; border-radius:18px; background:var(--paper); text-align:center; }
@@ -69,7 +72,7 @@
         <div class="rule"></div>
         <p id="message" class="message"></p>
         <section id="stay-box" class="stay-box" hidden><h3 id="stay-heading">Choose your stay</h3><p id="stay-helper" class="stay-helper"></p><div id="stay-options" class="stay-options"></div></section>
-        <a class="enter" href="/friends-hub.html">Enter the Friends Hub &rarr;</a>
+        <div class="welcome-actions"><a class="enter" href="/friends-hub.html">Enter the Friends Hub &rarr;</a><a id="booking-packet-link" class="enter packet" href="#" hidden>Booking &amp; signing packet</a></div>
         <span class="aside">Cabin details, directions, Wi-Fi, hot tub guide, and everything else await.</span>
       </div>
       <div id="photos" class="photos"></div>
@@ -112,6 +115,7 @@
         document.getElementById('visitor-heading').textContent = `Welcome, ${escapeText(data.visitorName)}.`;
         document.getElementById('invite-label').textContent = escapeText(data.inviteLabel);
         document.getElementById('message').textContent = escapeText(data.welcomeMessage) || `We made this welcome just for ${escapeText(data.inviteLabel)}. Settle in, breathe out, and make yourselves at home.`;
+        if(data.bookingPacketUrl){const packet=document.getElementById('booking-packet-link');packet.href=data.bookingPacketUrl;packet.hidden=false;}
         renderStayChoices(data);
         const customPhoto = escapeText(data.inviteLabel).toLowerCase() === 'do vibers' ? '/guests/DO_Vibers.webp' : '';
         const photos = data.photos || [];
