@@ -68,6 +68,15 @@ export default async function handler(request, response) {
     if (!booking) return json(response, 404, { error: 'Booking request not found.' });
     const action = String(request.body?.action || '');
     const createdAt = new Date().toISOString();
+    if (action === 'archive') {
+      if (!['declined', 'cancelled'].includes(booking.status)) return json(response, 409, { error: 'Only declined or canceled bookings can be archived.' });
+      await appendBookingRecord({ type: 'status', bookingId: booking.id, changes: { archivedAt: createdAt }, createdAt });
+      return json(response, 200, { ok: true, archivedAt: createdAt });
+    }
+    if (action === 'unarchive') {
+      await appendBookingRecord({ type: 'status', bookingId: booking.id, changes: { archivedAt: null }, createdAt });
+      return json(response, 200, { ok: true });
+    }
     if (action === 'approve') {
       const originalAmountCents = Math.round(Number(request.body?.amount) * 100);
       const discountAmountCents = Math.round(Number(request.body?.discount || 0) * 100);
@@ -182,7 +191,7 @@ export default async function handler(request, response) {
       });
       return json(response, 200, { ok: true });
     }
-    return json(response, 400, { error: 'Choose approve, decline, check payment, or send review request.' });
+    return json(response, 400, { error: 'Choose a valid booking action.' });
   } catch (error) {
     console.error(error);
     return json(response, 503, { error: error.message || 'The booking request could not be updated.' });
