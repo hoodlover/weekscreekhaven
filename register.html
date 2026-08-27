@@ -36,6 +36,7 @@
     .blocked-dates { margin-top:14px; border:1px solid var(--line); border-radius:9px; background:#fff; }
     .blocked-dates summary { padding:11px 13px; color:var(--pine); cursor:pointer; font-size:.72rem; font-weight:800; }
     .blocked-dates-content { padding:0 13px 12px; color:var(--muted); font-size:.72rem; line-height:1.65; }
+    .blocked-date-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px 18px; margin-bottom:7px; color:var(--ink); font-weight:800; }
     .blocked-dates-content a { color:var(--pine); font-weight:800; }
     .grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
     label { display:block; font-size:.67rem; text-transform:uppercase; letter-spacing:.11em; font-weight:800; margin-top:15px; }
@@ -44,10 +45,10 @@
     fieldset { border:1px solid var(--line); border-radius:13px; padding:15px; margin:18px 0 0; }
     legend { padding:0 8px; color:var(--pine); font-family:'Crimson Text',serif; font-size:1.25rem; font-weight:700; }
     .choice { background:#f6f0e6; }
-    .choice.unavailable { border-color:#a33b35; background:#fff0f0; box-shadow:0 0 0 3px #a33b351a; }
+    .choice.unavailable { border-color:#77917d; background:#eef5ef; box-shadow:0 0 0 3px #426d4d1a; }
     .availability-status { margin-top:12px; padding:11px 12px; border-radius:9px; font-size:.74rem; line-height:1.5; font-weight:700; }
     .availability-status.available { color:#255b39; background:#e8f2e9; border:1px solid #b8cdbd; }
-    .availability-status.conflict { color:#8a2f2f; background:#fff0f0; border:1px solid #dfb2af; }
+    .availability-status.conflict { color:#234d31; background:#dfece2; border:1px solid #9ab5a0; }
     .availability-status a { font-weight:800; }
     .availability-status[hidden] { display:none; }
     .check { display:flex; align-items:flex-start; gap:9px; margin-top:17px; text-transform:none; letter-spacing:0; line-height:1.5; color:var(--muted); font-weight:600; }
@@ -67,7 +68,7 @@
     .stay-quote[hidden],.message[hidden] { display:none; }
     .fine { border-top:1px solid var(--line); margin-top:22px; padding-top:17px; font-size:.69rem; line-height:1.6; color:var(--muted); }
     @media(max-width:850px) { .layout { grid-template-columns:1fr; } .intro { position:static; padding:20px 8px; } .intro h1 { max-width:650px; } }
-    @media(max-width:560px) { .grid { grid-template-columns:1fr; gap:0; } .card { padding:24px 18px; } .page { padding-inline:10px; } }
+    @media(max-width:560px) { .grid,.blocked-date-grid { grid-template-columns:1fr; gap:0; } .blocked-date-grid { gap:4px; } .card { padding:24px 18px; } .page { padding-inline:10px; } }
   </style>
 </head>
 <body>
@@ -98,7 +99,7 @@
           <label>Email address<input name="email" type="email" autocomplete="email" maxlength="160" required></label>
           <label>Phone (optional)<input name="phone" type="tel" autocomplete="tel" maxlength="40"></label>
           <label>Number of guests<select id="guest-count" name="guests" required><option value="">Choose</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></label>
-          <label>Dogs <small>(prior approval)</small><select id="dog-count" name="dogs"><option value="0">None</option><option value="1">1 dog</option><option value="2">2 dogs</option><option value="3">3 dogs</option><option value="4">4 dogs</option></select></label>
+          <label id="dog-field" hidden>Dogs <small>(approved guests)</small><select id="dog-count" name="dogs"><option value="0">None</option><option value="1">1 dog</option><option value="2">2 dogs</option><option value="3">3 dogs</option><option value="4">4 dogs</option></select></label>
         </div>
         <fieldset id="choice-1" class="choice"><legend>First choice</legend><div class="grid"><label>Arrival<input name="arrival1" type="date" required></label><label>Departure<input name="departure1" type="date" required></label></div><div id="availability-1" class="availability-status" hidden role="status"></div><div id="quote-1" class="stay-quote" hidden><strong></strong><span></span></div></fieldset>
         <fieldset id="choice-2" class="choice"><legend>Second choice <small>(optional)</small></legend><div class="grid"><label>Arrival<input name="arrival2" type="date"></label><label>Departure<input name="departure2" type="date"></label></div><div id="availability-2" class="availability-status" hidden role="status"></div><div id="quote-2" class="stay-quote" hidden><strong></strong><span></span></div></fieldset>
@@ -164,22 +165,26 @@
     function renderBlockedDates(){
       const details=document.getElementById('blocked-dates'),content=document.getElementById('blocked-dates-content'),future=pricingState.unavailable.filter((range)=>range.departure>=minimum).sort((a,b)=>a.arrival.localeCompare(b.arrival));
       if(!future.length){details.hidden=true;return;}
-      const ranges=document.createElement('div'); ranges.textContent=future.map((range)=>`${friendlyDate(range.arrival)} to ${friendlyDate(range.departure)}`).join(' · ');
+      const ranges=document.createElement('div'); ranges.className='blocked-date-grid';
+      future.forEach((range)=>{const item=document.createElement('div');item.textContent=`${friendlyDate(range.arrival)} to ${friendlyDate(range.departure)}`;ranges.append(item);});
       const guide=document.createElement('div'); guide.append('Departure dates may be used as a new arrival. For the clearest view, ');
       const link=document.createElement('a'); link.href='/availability.html'; link.textContent='open the availability calendar'; guide.append(link,document.createTextNode('.'));
       content.replaceChildren(ranges,guide); details.hidden=false;
     }
     function quoteChanged(index){renderQuote(index);checkAvailability(index);scheduleDiscountQuotes();}
     function scheduleDiscountQuotes(){clearTimeout(pricingState.discountTimer);pricingState.discountTimer=setTimeout(refreshDiscountQuotes,350);}
+    function setDogsVisibility(approved){const field=document.getElementById('dog-field');field.hidden=!approved;if(!approved)form.elements.dogs.value='0';}
     async function refreshDiscountQuotes(){
       const phone=normalizedPhone(),requestId=++pricingState.discountRequest;
-      if(phone.length!==10){pricingState.discountQuotes={};renderQuote(1);renderQuote(2);return;}
-      await Promise.all([1,2].map(async(index)=>{const arrival=form.elements[`arrival${index}`].value,departure=form.elements[`departure${index}`].value,guests=Number(form.elements.guests.value),dogs=Number(form.elements.dogs.value);if(!guests||!validDate(arrival)||!validDate(departure)||departure<=arrival)return;const signature=quoteSignature(index);try{const response=await fetch('/api/quote',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({arrival,departure,guests,dogs,phone,lateCheckout:form.elements.lateCheckout.checked})}),data=await response.json();if(response.ok&&requestId===pricingState.discountRequest&&signature===quoteSignature(index)){pricingState.discountQuotes[index]={signature,quote:data.quote};renderQuote(index);}}catch{}}));
+      if(phone.length!==10){pricingState.discountQuotes={};setDogsVisibility(false);renderQuote(1);renderQuote(2);return;}
+      let approved=false;
+      await Promise.all([1,2].map(async(index)=>{const arrival=form.elements[`arrival${index}`].value,departure=form.elements[`departure${index}`].value,guests=Number(form.elements.guests.value),dogs=Number(form.elements.dogs.value);if(!guests||!validDate(arrival)||!validDate(departure)||departure<=arrival)return;const signature=quoteSignature(index);try{const response=await fetch('/api/quote',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({arrival,departure,guests,dogs,phone,lateCheckout:form.elements.lateCheckout.checked})}),data=await response.json();if(response.ok&&requestId===pricingState.discountRequest&&signature===quoteSignature(index)){pricingState.discountQuotes[index]={signature,quote:data.quote};approved=approved||Boolean(data.quote?.friendsAndFamilyDiscount);renderQuote(index);}}catch{}}));
+      if(requestId===pricingState.discountRequest)setDogsVisibility(approved);
     }
     form.elements.guests.addEventListener('change',()=>{quoteChanged(1);quoteChanged(2);});
     form.elements.dogs.addEventListener('change',()=>{quoteChanged(1);quoteChanged(2);});
     form.elements.lateCheckout.addEventListener('change',()=>{quoteChanged(1);quoteChanged(2);});
-    form.elements.phone.addEventListener('input',()=>{renderQuote(1);renderQuote(2);scheduleDiscountQuotes();});
+    form.elements.phone.addEventListener('input',()=>{setDogsVisibility(false);renderQuote(1);renderQuote(2);scheduleDiscountQuotes();});
     const selectedParams=new URLSearchParams(location.search), selectedArrival=selectedParams.get('arrival1'), selectedDeparture=selectedParams.get('departure1'),selectedGuests=selectedParams.get('guests');
     if(selectedGuests&&Number(selectedGuests)>=1&&Number(selectedGuests)<=11)form.elements.guests.value=selectedGuests;
     if(selectedParams.get('lateCheckout')==='1')form.elements.lateCheckout.checked=true;
@@ -196,7 +201,7 @@
       try {
         const response=await fetch('/api/booking-requests',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
         const data=await response.json().catch(()=>({})); if(!response.ok) { const error=new Error(data.error || 'We could not send your request.'); error.unavailableChoices=data.unavailableChoices; throw error; }
-        form.reset(); form.elements.departure1.min=minimum; form.elements.departure2.min=minimum; document.querySelectorAll('.stay-quote').forEach(box=>box.hidden=true); message.className='message success'; message.textContent=data.confirmationSent?'Your request is in. Check your email for confirmation.':'Your request is in. We’ll email you after we review the dates.'; message.hidden=false;
+        form.reset(); setDogsVisibility(false); form.elements.departure1.min=minimum; form.elements.departure2.min=minimum; document.querySelectorAll('.stay-quote').forEach(box=>box.hidden=true); message.className='message success'; message.textContent=data.confirmationSent?'Your request is in. Check your email for confirmation.':'Your request is in. We’ll email you after we review the dates.'; message.hidden=false;
       } catch(error) { if(Array.isArray(error.unavailableChoices)) error.unavailableChoices.forEach((blocked,index)=>{ if(blocked) document.getElementById(`choice-${index+1}`).classList.add('unavailable'); }); message.className='message error'; message.textContent=error.message; message.hidden=false; }
       finally { button.disabled=false; button.textContent='Send my date choices'; }
     });
