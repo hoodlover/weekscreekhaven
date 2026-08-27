@@ -4,6 +4,9 @@ export const PRICING_CONFIG = Object.freeze({
   roundToCents: 500,
   includedCleaningCents: 20000,
   lateCheckoutCents: 5000,
+  salesTaxRate: 0.07,
+  lodgingTaxRate: 0.06,
+  stateHotelMotelFeePerNightCents: 500,
   cleaningTiers: Object.freeze([
     Object.freeze({ minGuests: 1, maxGuests: 4, amountCents: 20000 }),
     Object.freeze({ minGuests: 5, maxGuests: 8, amountCents: 22500 }),
@@ -112,6 +115,23 @@ export function cleaningFeeForGuests(guests) {
   return PRICING_CONFIG.cleaningTiers.find((tier) => count >= tier.minGuests && count <= tier.maxGuests)?.amountCents || 0;
 }
 
+export function withEstimatedTaxesAndFees(quote) {
+  const taxableSubtotalCents = Math.max(0, Number(quote?.totalCents) || 0);
+  const salesTaxCents = Math.round(taxableSubtotalCents * PRICING_CONFIG.salesTaxRate);
+  const lodgingTaxCents = Math.round(taxableSubtotalCents * PRICING_CONFIG.lodgingTaxRate);
+  const stateHotelMotelFeeCents = Math.max(0, Number(quote?.actualNights) || 0) * PRICING_CONFIG.stateHotelMotelFeePerNightCents;
+  const estimatedTaxesAndFeesCents = salesTaxCents + lodgingTaxCents + stateHotelMotelFeeCents;
+  return {
+    ...quote,
+    taxableSubtotalCents,
+    salesTaxCents,
+    lodgingTaxCents,
+    stateHotelMotelFeeCents,
+    estimatedTaxesAndFeesCents,
+    estimatedGrandTotalCents: taxableSubtotalCents + estimatedTaxesAndFeesCents,
+  };
+}
+
 function exactOwnerTotal(arrival, departure, rates = []) {
   return rates.filter((rate) => rate.pricingMode === 'total' && rate.arrival === arrival && rate.departure === departure).at(-1) || null;
 }
@@ -175,7 +195,7 @@ export function quoteStay({ arrival, departure, guests = 1, dogs = 0, rates = []
   const cleaningAdjustmentCents = Math.max(0, cleaningCents - PRICING_CONFIG.includedCleaningCents);
   const lateCheckoutSelected = lateCheckout === true || lateCheckout === 'true' || lateCheckout === 'on' || lateCheckout === 1 || lateCheckout === '1';
   const lateCheckoutCents = lateCheckoutSelected ? PRICING_CONFIG.lateCheckoutCents : 0;
-  return {
+  return withEstimatedTaxesAndFees({
     arrival,
     departure,
     guests: guestCount,
@@ -196,7 +216,7 @@ export function quoteStay({ arrival, departure, guests = 1, dogs = 0, rates = []
     discountCents: 0,
     totalCents: lodgingCents + cleaningAdjustmentCents + lateCheckoutCents,
     nightly,
-  };
+  });
 }
 
 function normalizedPhone(value) {
@@ -234,7 +254,7 @@ export function applyFriendsAndFamilyDiscount(quote, phone, discounts = []) {
   const standardTotalCents = quote.totalCents + dogFeeCents + customFeeCents;
   const discountedTotalCents = discountedStayCents + passThroughCents;
   const discountAmountCents = Math.max(0, standardTotalCents - discountedTotalCents);
-  return {
+  return withEstimatedTaxesAndFees({
     ...quote,
     standardTotalCents,
     discountAmountCents,
@@ -258,12 +278,12 @@ export function applyFriendsAndFamilyDiscount(quote, phone, discounts = []) {
       amountOffCents: rule.discountType === 'amount' ? Number(rule.amountOffCents) : null,
       flatTotalCents: rule.discountType === 'flat' ? Number(rule.flatTotalCents) : null,
     },
-  };
+  });
 }
 
 export function quoteSummary(quote) {
   if (!quote) return '';
   const adjustment = quote.cleaningAdjustmentCents ? ` + ${money(quote.cleaningAdjustmentCents)} large-group cleaning` : '';
   const lateCheckout = quote.lateCheckoutCents ? ` + ${money(quote.lateCheckoutCents)} noon checkout` : '';
-  return `${quote.actualNights} night${quote.actualNights === 1 ? '' : 's'} · ${money(quote.baseStayCents)} base stay${adjustment}${lateCheckout} · ${money(quote.totalCents)} estimated total`;
+  return `${quote.actualNights} night${quote.actualNights === 1 ? '' : 's'} · ${money(quote.baseStayCents)} base stay${adjustment}${lateCheckout} · ${money(quote.totalCents)} estimated price · does not include ${money(quote.estimatedTaxesAndFeesCents)} in taxes and fees`;
 }

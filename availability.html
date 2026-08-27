@@ -107,7 +107,7 @@
           <p id="selection-placeholder" class="selection-placeholder">Choose dates on the calendar to see the complete stay price. Check-in is at <strong>4:00 PM</strong>; standard checkout is at <strong>11:00 AM</strong>.</p>
           <div id="selection-error" class="selection-error" hidden role="alert"></div>
           <div id="selection-bar" class="selection-bar" hidden><strong id="selection-title"></strong><span id="selection-details"></span><div class="selection-actions"><a id="request-selected" class="cta" href="/register.html">Request these dates</a><button id="clear-selection" type="button">Choose different dates</button></div></div>
-          <div class="price-guide"><strong>Simple, transparent pricing</strong><br>The displayed total includes the base $200 cleaning cost. Groups of 5–8 add $25; groups of 9–11 add $50. No discounts are applied. Taxes and any refundable deposit are confirmed before payment.</div>
+          <div class="price-guide"><strong>Simple, transparent pricing</strong><br>The displayed price includes the base $200 cleaning cost. Groups of 5–8 add $25; groups of 9–11 add $50. No discounts are applied. The calculator shows the estimated taxes and government lodging fees separately.</div>
         </aside>
       </div>
       <div class="foot"><strong>How calendar prices work:</strong> weekday cells show the weeknight rate and Friday/Saturday cells show the complete Friday-and-Saturday weekend price. Your live total applies the two-night minimum, included-date five-night price, or weekly rate automatically.</div>
@@ -158,9 +158,9 @@
       if(!selectionIsAvailable(first,departure)){$('selection-bar').hidden=true;return;}
       const guests=Number($('calendar-guests').value),lateCheckout=$('calendar-late-checkout').checked,quote=quoteStay({arrival:first,departure,guests,lateCheckout,rates:state.rates});
       const cleaningNote=quote.cleaningAdjustmentCents?`${money(quote.cleaningAdjustmentCents)} larger-group cleaning adjustment`:'standard $200 cleaning included';
-      $('selection-title').textContent=`${money(quote.totalCents)} estimated total`;
+      $('selection-title').textContent=`${money(quote.totalCents)} estimated price`;
       const checkoutNote=lateCheckout?'noon checkout (+$50)':'11:00 AM checkout';
-      $('selection-details').textContent=`Check in ${friendlyDate(first)} at 4:00 PM · ${checkoutNote} ${friendlyDate(departure)} · ${nightCount} night${nightCount===1?'':'s'} · ${cleaningNote} · no discounts applied`;
+      $('selection-details').textContent=`Price does not include ${money(quote.estimatedTaxesAndFeesCents)} in estimated taxes and fees · estimated amount if booked ${money(quote.estimatedGrandTotalCents)} · Check in ${friendlyDate(first)} at 4:00 PM · ${checkoutNote} ${friendlyDate(departure)} · ${nightCount} night${nightCount===1?'':'s'} · ${cleaningNote} · no discounts applied`;
       $('request-selected').href=`/register.html?arrival1=${encodeURIComponent(first)}&departure1=${encodeURIComponent(departure)}&guests=${guests}${lateCheckout?'&lateCheckout=1':''}`;
       $('request-selected').hidden=false;$('selection-bar').hidden=false;
     }

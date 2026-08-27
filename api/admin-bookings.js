@@ -3,7 +3,7 @@ import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
 import { createAgreementToken, createReviewToken, json, requireAdmin } from '../_lib/security.js';
 import { createSquareBookingInvoice, createSquareFriendInvoice, squareStatus } from '../_lib/square.js';
 import { refreshSquareBooking } from '../_lib/payment-sync.js';
-import { PRICING_CONFIG, quoteStay } from '../pricing.js';
+import { daysBetween, PRICING_CONFIG, quoteStay, withEstimatedTaxesAndFees } from '../pricing.js';
 
 export default async function handler(request, response) {
   if (!requireAdmin(request)) return json(response, 401, { error: 'Please sign in as the site owner.' });
@@ -19,7 +19,9 @@ export default async function handler(request, response) {
         ...booking,
         dateChoices: (booking.dateChoices || []).map((choice) => ({
           ...choice,
-          calculatedQuote: choice.quote || quoteStay({ ...choice, guests: booking.guests || 1, dogs: booking.dogs || 0, lateCheckout: booking.lateCheckout, rates: calendar.rates || [] }),
+          calculatedQuote: choice.quote
+            ? withEstimatedTaxesAndFees(choice.quote)
+            : quoteStay({ ...choice, guests: booking.guests || 1, dogs: booking.dogs || 0, lateCheckout: booking.lateCheckout, rates: calendar.rates || [] }),
         })),
       }));
       return json(response, 200, { bookings: pricedBookings, square: squareStatus(), pricing: PRICING_CONFIG, rates: calendar.rates || [] }, { 'Cache-Control': 'no-store' });
@@ -33,12 +35,14 @@ export default async function handler(request, response) {
     if (action === 'approve') {
       const originalAmountCents = Math.round(Number(request.body?.amount) * 100);
       const discountAmountCents = Math.round(Number(request.body?.discount || 0) * 100);
-      const amountCents = originalAmountCents - discountAmountCents;
       const approvedChoice = Number(request.body?.dateChoice) === 2 ? 1 : 0;
       if (!Number.isInteger(originalAmountCents) || originalAmountCents < 0 || !Number.isInteger(discountAmountCents) || discountAmountCents < 0 || discountAmountCents > originalAmountCents) return json(response, 400, { error: 'Enter a valid stay price and optional discount.' });
       const requestedDates = booking.dateChoices?.[approvedChoice];
       const conflicts = unavailableRanges(await getBookingCalendar()).filter((range) => range.bookingId !== booking.id);
       if (!requestedDates || conflicts.some((range) => rangesOverlap(requestedDates, range))) return json(response, 409, { error: 'Those dates are no longer available. Choose the other date option or update the calendar.' });
+      const preTaxAmountCents = originalAmountCents - discountAmountCents;
+      const tax = withEstimatedTaxesAndFees({ totalCents: preTaxAmountCents, actualNights: Math.max(1, daysBetween(requestedDates.arrival, requestedDates.departure)) });
+      const amountCents = tax.estimatedGrandTotalCents;
       let payment = null;
       let paymentPlan = 'complimentary';
       if (amountCents > 0 && (booking.friendsAndFamilyDiscount || amountCents < 10000)) {
@@ -50,6 +54,8 @@ export default async function handler(request, response) {
       }
       const changes = {
         status: 'reserved', approvedAt: createdAt, approvedChoice, originalAmountCents, discountAmountCents, amountCents, paymentPlan,
+        preTaxAmountCents, salesTaxCents: tax.salesTaxCents, lodgingTaxCents: tax.lodgingTaxCents,
+        stateHotelMotelFeeCents: tax.stateHotelMotelFeeCents, taxesAndFeesCents: tax.estimatedTaxesAndFeesCents,
         paymentUrl: payment?.url || null, squareInvoiceId: payment?.invoiceId || null, squareOrderId: payment?.orderId || null, squareCustomerId: payment?.customerId || null,
         invoiceSentAt: payment ? createdAt : null, bookingPacketSentAt: createdAt,
         depositAmountCents: paymentPlan === 'deposit-balance' ? payment.depositAmountCents : amountCents,
@@ -80,14 +86,16 @@ export default async function handler(request, response) {
       if (booking.source !== 'direct-invite' || !['reserved', 'booked'].includes(booking.status)) return json(response, 409, { error: 'Friend invoices are available after the invitee selects a stay.' });
       if (booking.squareInvoiceId) return json(response, 409, { error: 'This stay already has a Square invoice.' });
       if (!booking.email) return json(response, 400, { error: 'This friend invite does not have an email address.' });
-      const amountCents = Number(booking.amountCents);
-      if (!Number.isInteger(amountCents) || amountCents < 100) return json(response, 400, { error: 'The selected friend stay must have a total of at least $1.00.' });
+      const preTaxAmountCents = Number(booking.preTaxAmountCents ?? booking.amountCents);
+      if (!Number.isInteger(preTaxAmountCents) || preTaxAmountCents < 100) return json(response, 400, { error: 'The selected friend stay must have a total of at least $1.00.' });
       const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0];
       if (!dates) return json(response, 400, { error: 'The selected stay dates could not be found.' });
+      const tax = withEstimatedTaxesAndFees({ totalCents: preTaxAmountCents, actualNights: Math.max(1, daysBetween(dates.arrival, dates.departure)) });
+      const amountCents = tax.estimatedGrandTotalCents;
       const payment = await createSquareFriendInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, amountCents, arrival: dates.arrival });
       await appendBookingRecord({
         type: 'status', bookingId: booking.id, createdAt,
-        changes: { paymentPlan: 'friend-total', paymentUrl: payment.url, squareInvoiceId: payment.invoiceId, squareOrderId: payment.orderId, squareCustomerId: payment.customerId, friendInvoiceSentAt: createdAt },
+        changes: { paymentPlan: 'friend-total', preTaxAmountCents, amountCents, salesTaxCents: tax.salesTaxCents, lodgingTaxCents: tax.lodgingTaxCents, stateHotelMotelFeeCents: tax.stateHotelMotelFeeCents, taxesAndFeesCents: tax.estimatedTaxesAndFeesCents, paymentUrl: payment.url, squareInvoiceId: payment.invoiceId, squareOrderId: payment.orderId, squareCustomerId: payment.customerId, friendInvoiceSentAt: createdAt },
       });
       return json(response, 200, { ok: true, paymentUrl: payment.url });
     }

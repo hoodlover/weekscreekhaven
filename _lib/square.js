@@ -229,9 +229,21 @@ async function invoicePayments(invoiceId, fallbackOrderId) {
     const payment = result.payment;
     const paid = Number(payment?.amount_money?.amount) || 0;
     const refunded = Number(payment?.refunded_money?.amount) || 0;
-    return { id: paymentId, status: payment?.status, paid, refunded, refundable: Math.max(0, paid - refunded) };
+    const processingFeeCents = (payment?.processing_fee || []).reduce((sum, fee) => sum + (Number(fee?.amount_money?.amount) || 0), 0);
+    return { id: paymentId, status: payment?.status, paid, refunded, refundable: Math.max(0, paid - refunded), processingFeeCents, createdAt: payment?.created_at || null };
   }));
   return { invoice, orderId, payments };
+}
+
+export async function getSquareInvoiceAccounting(invoiceId, orderId) {
+  const details = await invoicePayments(invoiceId, orderId);
+  const completed = details.payments.filter((payment) => payment.status === 'COMPLETED');
+  return {
+    paidCents: completed.reduce((sum, payment) => sum + payment.paid, 0),
+    refundedCents: completed.reduce((sum, payment) => sum + payment.refunded, 0),
+    processingFeeCents: completed.reduce((sum, payment) => sum + payment.processingFeeCents, 0),
+    payments: completed,
+  };
 }
 
 export async function refundSquareBooking({ bookingId, invoiceId, orderId, amountCents, reason, operationId }) {

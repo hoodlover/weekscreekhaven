@@ -1,6 +1,7 @@
 import { sendEmail, escapeEmailHtml } from '../_lib/email.js';
 import { getInvites } from '../_lib/invite-store.js';
 import { inviteCodeSuffix, json, requireAdmin } from '../_lib/security.js';
+import { daysBetween, withEstimatedTaxesAndFees } from '../pricing.js';
 
 function validEmail(value) {
   const email = String(value || '').trim().toLowerCase();
@@ -25,8 +26,9 @@ export default async function handler(request, response) {
     const code = inviteCodeSuffix(invite.passcode);
     const safeCode = escapeEmailHtml(code);
     const options = invite.stayOptions || [];
-    const optionsText = options.map((option, index) => `Option ${index + 1}: ${formatStayDate(option.arrival)} to ${formatStayDate(option.departure)}${option.costCents ? ` — $${(option.costCents / 100).toFixed(2)}` : ''}${option.expiresOn ? ` — choose by ${formatStayDate(option.expiresOn)} or this option will be released for others` : ''}`).join('\n');
-    const optionsHtml = options.map((option, index) => `<li style="margin:0 0 12px"><strong>Option ${index + 1}:</strong> ${formatStayDate(option.arrival)} through ${formatStayDate(option.departure)}${option.costCents ? `<br>Cost: <strong>$${(option.costCents / 100).toFixed(2)}</strong>` : ''}${option.expiresOn ? `<br><span style="color:#8a2f2f">Choose by <strong>${formatStayDate(option.expiresOn)}</strong>. If you do not choose it by then, this option will be released for someone else; any other unexpired choices remain available.</span>` : '<br>This option has no automatic expiration.'}</li>`).join('');
+    const taxFor = (option) => option.costCents ? withEstimatedTaxesAndFees({ totalCents: option.costCents, actualNights: daysBetween(option.arrival, option.departure) }) : null;
+    const optionsText = options.map((option, index) => { const tax=taxFor(option); return `Option ${index + 1}: ${formatStayDate(option.arrival)} to ${formatStayDate(option.departure)}${tax ? ` — $${(option.costCents / 100).toFixed(2)} before an estimated $${(tax.estimatedTaxesAndFeesCents / 100).toFixed(2)} in taxes and fees` : ''}${option.expiresOn ? ` — choose by ${formatStayDate(option.expiresOn)} or this option will be released for others` : ''}`; }).join('\n');
+    const optionsHtml = options.map((option, index) => { const tax=taxFor(option); return `<li style="margin:0 0 12px"><strong>Option ${index + 1}:</strong> ${formatStayDate(option.arrival)} through ${formatStayDate(option.departure)}${tax ? `<br>Cost: <strong>$${(option.costCents / 100).toFixed(2)}</strong><br>Does not include an estimated <strong>$${(tax.estimatedTaxesAndFeesCents / 100).toFixed(2)}</strong> in taxes and fees.` : ''}${option.expiresOn ? `<br><span style="color:#8a2f2f">Choose by <strong>${formatStayDate(option.expiresOn)}</strong>. If you do not choose it by then, this option will be released for someone else; any other unexpired choices remain available.</span>` : '<br>This option has no automatic expiration.'}</li>`; }).join('');
     await sendEmail({
       to: recipientEmail,
       toName: guestName,
