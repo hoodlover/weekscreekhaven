@@ -143,7 +143,42 @@
     .status-pending { background:#fff0cc; color:#76530c; } .status-offered { background:#f3e3bf; color:#76530c; } .status-approved,.status-reserved { background:#dceaf4; color:#285b79; } .status-booked { background:#e0efe5; color:#276141; } .status-declined,.status-cancelled { background:#f2dddd; color:#842e2e; }
     @media (max-width:900px) { .content { grid-template-columns:1fr; } .section-head { grid-row:auto; border-right:0; border-bottom:1px solid var(--line); padding:18px; } .section-head h2 { margin-bottom:12px; } .tabs { display:flex; overflow:auto; padding-bottom:4px; } .tab { white-space:nowrap; } .workspace-links { grid-template-columns:1fr 1fr; margin-top:12px; padding-top:12px; } .tab-panel.active { grid-column:1; } #panel-invites.active { grid-template-columns:1fr; } }
     @media (max-width:800px) { .pricing-layout,.discount-layout { grid-template-columns:1fr; } .invite { grid-template-columns:1fr; gap:9px; } .stats { grid-template-columns:1fr 1fr; } .stats .stat:last-child { grid-column:1/-1; } }
-    @media (max-width:560px) { .discount-editor-grid,.discount-editor .check-grid { grid-template-columns:1fr; } .discount-summary { align-items:flex-start; flex-direction:column; } }
+    @media (max-width:560px) {
+      .shell { width:calc(100% - 12px); padding:10px 0 44px; }
+      .topbar { align-items:stretch; flex-direction:column; gap:12px; margin-bottom:14px; }
+      .brand { gap:9px; min-width:0; }
+      .brand img { width:56px; height:56px; }
+      h1 { font-size:2rem; }
+      .eyebrow { font-size:.58rem; letter-spacing:.12em; }
+      .top-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); width:100%; gap:6px; }
+      .top-actions .ghost { width:100%; min-width:0; padding:9px 7px; font-size:.59rem; line-height:1.25; text-align:center; overflow-wrap:anywhere; }
+      .login { margin:5vh auto 0; padding:24px 18px; }
+      .panel { border-radius:12px; }
+      .stats { grid-template-columns:1fr; gap:8px; }
+      .stats .stat:last-child { grid-column:auto; }
+      .stat { padding:14px 16px; }
+      .stat strong { font-size:1.8rem; }
+      .create,.section-head,.tab-panel { padding:15px; }
+      .section-head h2 { margin-bottom:10px; }
+      .tabs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; overflow:visible; padding:0; }
+      .tab { min-width:0; min-height:44px; padding:9px 6px; white-space:normal; text-align:center; line-height:1.25; overflow-wrap:anywhere; }
+      .count-badge { display:inline-grid; margin:3px 0 0 3px; }
+      .workspace-links { grid-template-columns:1fr; }
+      .workspace-links a { text-align:center; }
+      .booking-head,.review-head { align-items:flex-start; flex-direction:column; gap:7px; }
+      .booking-dates,.stay-option-grid,.calculator-grid,.pricing-seasons,.refund-grid { grid-template-columns:1fr; }
+      .booking-actions,.booking-tools,.refund-actions,.payment-links,.discount-editor-buttons { align-items:stretch; flex-direction:column; }
+      .booking-actions label { width:100%; min-width:0; }
+      .booking-actions button,.booking-tools button,.booking-tools a,.refund-actions button,.payment-links button,.payment-links a,.discount-editor-buttons button { width:100%; text-align:center; }
+      .activity { grid-template-columns:1fr; gap:5px; }
+      .activity time { white-space:normal; }
+      .passcode { align-items:stretch; flex-wrap:wrap; }
+      .passcode code { width:100%; text-align:center; overflow-wrap:anywhere; }
+      .discount-editor-grid,.discount-editor .check-grid { grid-template-columns:1fr; }
+      .discount-summary { align-items:flex-start; flex-direction:column; }
+      input,textarea,select { min-width:0; max-width:100%; }
+      .accounting-table-wrap { max-width:100%; }
+    }
   </style>
 </head>
 <body>
