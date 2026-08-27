@@ -2,6 +2,7 @@ import { appendBookingRecord, getBookingCalendar, rangesOverlap, unavailableRang
 import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
 import { json, requireAdmin } from '../_lib/security.js';
 import { cancelSquareInvoice } from '../_lib/square.js';
+import { refreshSquareBooking } from '../_lib/payment-sync.js';
 
 const text = (value, max = 120) => String(value || '').trim().slice(0, max);
 const date = (value) => /^\d{4}-\d{2}-\d{2}$/.test(String(value || '')) ? String(value) : '';
@@ -11,7 +12,13 @@ export default async function handler(request, response) {
   if (!requireAdmin(request)) return json(response, 401, { error: 'Please sign in as the site owner.' });
   try {
     if (request.method === 'GET') {
-      return json(response, 200, await getBookingCalendar(), { 'Cache-Control': 'no-store' });
+      const calendar = await getBookingCalendar();
+      calendar.bookings = await Promise.all((calendar.bookings || []).map(async (booking) => {
+        if (!booking.squareInvoiceId || (booking.status === 'booked' && booking.paymentFullyPaid && booking.bookedWelcomeSentAt)) return booking;
+        try { return await refreshSquareBooking(booking); }
+        catch (error) { return { ...booking, paymentCheckError: error.message || 'Square status unavailable.' }; }
+      }));
+      return json(response, 200, calendar, { 'Cache-Control': 'no-store' });
     }
     const createdAt = new Date().toISOString();
     if (request.method === 'POST') {
@@ -95,6 +102,8 @@ export default async function handler(request, response) {
         return json(response, 200, { ok: true });
       }
       if (action === 'mark-booked') {
+        const paymentReady = booking.paymentPlan === 'complimentary' || Number(booking.amountCents) === 0 || booking.paymentRequirementMet === true;
+        if (!paymentReady || !booking.agreementAcceptedAt) return json(response, 409, { error: `This stay is still missing ${!paymentReady && !booking.agreementAcceptedAt ? 'payment and the rental agreement' : !paymentReady ? 'the required payment' : 'the rental agreement'}. Use Check payment after Square is paid.` });
         await appendBookingRecord({ type: 'status', bookingId, changes: { status: 'booked', bookedAt: createdAt }, createdAt });
         return json(response, 200, { ok: true });
       }

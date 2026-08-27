@@ -14,6 +14,7 @@ export function squareStatus() {
     configured: squareConfigured(),
     environment: ['sandbox', 'production'].includes(environment) ? environment : 'not-set',
     live: environment === 'production' && squareConfigured(),
+    webhookConfigured: Boolean(process.env.SQUARE_WEBHOOK_SIGNATURE_KEY && process.env.SQUARE_WEBHOOK_URL),
   };
 }
 
@@ -37,6 +38,13 @@ async function squareRequest(path, { method = 'GET', body } = {}) {
   const result = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(result.errors?.[0]?.detail || 'Square could not complete the request.');
   return result;
+}
+
+export async function getSquareInvoice(invoiceId) {
+  if (!invoiceId) throw new Error('This reservation does not have a Square invoice yet.');
+  const result = await squareRequest(`/v2/invoices/${encodeURIComponent(invoiceId)}`);
+  if (!result.invoice) throw new Error('Square did not return that invoice.');
+  return result.invoice;
 }
 
 function easternDate() {

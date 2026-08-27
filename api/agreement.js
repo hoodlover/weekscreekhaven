@@ -1,4 +1,5 @@
 import { appendBookingRecord, getBookingRequests } from '../_lib/booking-store.js';
+import { finalizeBookingFlow } from '../_lib/booking-finalization.js';
 import { anonymizeIp, json, verifyAgreementToken } from '../_lib/security.js';
 
 export const AGREEMENT_VERSION = '2026-08-25';
@@ -41,19 +42,21 @@ export default async function handler(request, response) {
     }
     const acceptedAt = new Date().toISOString();
     const forwarded = String(request.headers['x-forwarded-for'] || '').split(',')[0].trim();
+    const changes = {
+      agreementAcceptedAt: acceptedAt,
+      agreementAcceptedBy: acceptedBy,
+      agreementVersion: AGREEMENT_VERSION,
+      agreementIpHash: anonymizeIp(forwarded || request.socket?.remoteAddress || ''),
+      agreementUserAgent: String(request.headers['user-agent'] || '').slice(0, 300),
+    };
     await appendBookingRecord({
       type: 'status',
       bookingId: result.booking.id,
-      changes: {
-        agreementAcceptedAt: acceptedAt,
-        agreementAcceptedBy: acceptedBy,
-        agreementVersion: AGREEMENT_VERSION,
-        agreementIpHash: anonymizeIp(forwarded || request.socket?.remoteAddress || ''),
-        agreementUserAgent: String(request.headers['user-agent'] || '').slice(0, 300),
-      },
+      changes,
       createdAt: acceptedAt,
     });
-    return json(response, 201, { ok: true, acceptedAt });
+    const finalized = await finalizeBookingFlow({ ...result.booking, ...changes });
+    return json(response, 201, { ok: true, acceptedAt, booked: finalized.status === 'booked' });
   } catch (error) {
     console.error(error);
     return json(response, 503, { error: error.message || 'The rental agreement could not be saved.' });

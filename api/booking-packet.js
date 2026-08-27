@@ -1,0 +1,43 @@
+import { getBookingRequests } from '../_lib/booking-store.js';
+import { refreshSquareBooking } from '../_lib/payment-sync.js';
+import { json, verifyAgreementToken } from '../_lib/security.js';
+
+export default async function handler(request, response) {
+  if (request.method !== 'GET') return json(response, 405, { error: 'Method not allowed.' });
+  try {
+    const token = verifyAgreementToken(request.query?.token);
+    if (!token) return json(response, 404, { error: 'This booking-packet link is invalid or has expired.' });
+    let booking = (await getBookingRequests()).find((item) => item.id === token.bookingId);
+    if (!booking) return json(response, 404, { error: 'Booking not found.' });
+    if (booking.squareInvoiceId && !(booking.status === 'booked' && booking.paymentFullyPaid && booking.bookedWelcomeSentAt)) {
+      try { booking = await refreshSquareBooking(booking); } catch { /* Show the last confirmed status. */ }
+    }
+    const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || booking.dateChoices?.[0] || {};
+    const complimentary = booking.paymentPlan === 'complimentary' || Number(booking.amountCents) === 0;
+    return json(response, 200, {
+      guestName: booking.name,
+      arrival: dates.arrival || '',
+      departure: dates.departure || '',
+      guests: booking.guests || 1,
+      totalCents: Number(booking.amountCents) || 0,
+      status: booking.status || 'pending',
+      checkInTime: '4:00 PM',
+      checkoutTime: booking.lateCheckout ? 'noon' : '11:00 AM',
+      complimentary,
+      invoiceSent: Boolean(booking.squareInvoiceId),
+      invoiceSentAt: booking.friendInvoiceSentAt || booking.invoiceSentAt || booking.approvedAt || null,
+      invoiceUrl: booking.paymentUrl || '',
+      invoiceStatus: booking.squareInvoiceStatus || (booking.squareInvoiceId ? 'SENT' : 'NOT_SENT'),
+      paidCents: complimentary ? 0 : Number(booking.squarePaidCents) || 0,
+      balanceCents: complimentary ? 0 : Number(booking.squareBalanceCents ?? booking.amountCents) || 0,
+      paymentRequirementMet: complimentary || booking.paymentRequirementMet === true,
+      paymentFullyPaid: complimentary || booking.paymentFullyPaid === true,
+      agreementAccepted: Boolean(booking.agreementAcceptedAt),
+      agreementAcceptedAt: booking.agreementAcceptedAt || null,
+      booked: booking.status === 'booked',
+    }, { 'Cache-Control': 'no-store' });
+  } catch (error) {
+    console.error(error);
+    return json(response, 503, { error: 'Your booking packet is temporarily unavailable.' });
+  }
+}

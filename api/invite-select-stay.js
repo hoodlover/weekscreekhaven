@@ -38,13 +38,13 @@ export default async function handler(request, response) {
     const costText = option.amountCents ? ` The listed cost is $${(option.amountCents / 100).toFixed(2)}.` : '';
     const safeName = escapeEmailHtml(invite.label);
     const safeDates = `${formatDate(option.arrival)} through ${formatDate(option.departure)}`;
-    const agreementUrl = `https://www.weekscreekhaven.com/rental-agreement.html?token=${encodeURIComponent(createAgreementToken(booking.id))}`;
+    const packetUrl = `https://www.weekscreekhaven.com/booking-packet.html?token=${encodeURIComponent(createAgreementToken(booking.id, 365 * 86400))}`;
     const guestEmail = invite.recipientEmail;
     const emailTasks = [];
     if (guestEmail) emailTasks.push(sendEmail({
       to: guestEmail, toName: invite.label, subject: 'Your Weeks Creek Haven stay choice is reserved',
-      text: `Hi ${invite.label},\n\nYou chose ${safeDates}.${costText} We released the other offered dates.\n\nReview and accept your rental agreement: ${agreementUrl}\n\nCancellation policy: cancel at least two calendar days before check-in for a 100% refund. No refund is available after that deadline, including the day before check-in. We will follow up with any remaining payment or stay details.`,
-      html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Your stay choice is reserved</h1><p>Hi ${safeName},</p><p>You chose <strong>${safeDates}</strong>.</p>${option.amountCents ? `<p>Listed cost: <strong>$${(option.amountCents / 100).toFixed(2)}</strong></p>` : ''}<p><a href="${agreementUrl}" style="display:inline-block;background:#a45d41;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Review rental agreement</a></p><p style="background:#fff0cc;padding:12px;border-radius:8px"><strong>Cancellation policy:</strong> Cancel at least two calendar days before check-in for a 100% refund. No refund is available after that deadline, including the day before check-in.</p><p>We released the other offered dates. We will follow up with any remaining payment or stay details.</p></div>`,
+      text: `Hi ${invite.label},\n\nYou chose ${safeDates}.${costText} We released the other offered dates.\n\nOpen your private booking packet to track payment, sign the rental agreement, and download your paperwork: ${packetUrl}\n\nCancellation policy: cancel at least two calendar days before check-in for a 100% refund. No refund is available after that deadline, including the day before check-in. We will follow up with any remaining payment or stay details.`,
+      html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Your stay choice is reserved</h1><p>Hi ${safeName},</p><p>You chose <strong>${safeDates}</strong>.</p>${option.amountCents ? `<p>Listed cost: <strong>$${(option.amountCents / 100).toFixed(2)}</strong></p>` : ''}<p><a href="${packetUrl}" style="display:inline-block;background:#a45d41;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Open booking packet</a></p><p>Track payment, sign the rental agreement, and download your paperwork there.</p><p style="background:#fff0cc;padding:12px;border-radius:8px"><strong>Cancellation policy:</strong> Cancel at least two calendar days before check-in for a 100% refund. No refund is available after that deadline, including the day before check-in.</p><p>We released the other offered dates. We will follow up with any remaining payment or stay details.</p></div>`,
     }));
     if (process.env.OWNER_EMAIL) emailTasks.push(sendEmail({
       to: process.env.OWNER_EMAIL, toName: 'Lance', subject: `${invite.label} chose their Weeks Creek Haven dates`,
@@ -52,6 +52,7 @@ export default async function handler(request, response) {
       html: `<p><strong>${safeName}</strong> chose <strong>${safeDates}</strong>.</p>${option.amountCents ? `<p>Listed cost: <strong>$${(option.amountCents / 100).toFixed(2)}</strong></p>` : ''}<p>The other offered dates were released. <a href="https://www.weekscreekhaven.com/calendar.html">Open the owner calendar</a>.</p>`,
     }));
     const emailResults = await Promise.allSettled(emailTasks);
+    if (guestEmail && emailResults[0]?.status === 'fulfilled') await appendBookingRecord({ type: 'status', bookingId: booking.id, changes: { bookingPacketSentAt: new Date().toISOString() }, createdAt: new Date().toISOString() });
     const warning = emailResults.some((result) => result.status === 'rejected') ? 'Your dates were reserved, but one confirmation email could not be delivered.' : null;
     return json(response, 200, { ok: true, selectedStayChoice: choiceIndex, warning });
   } catch (error) {

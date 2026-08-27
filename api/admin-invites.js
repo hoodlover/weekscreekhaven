@@ -70,7 +70,7 @@ export default async function handler(request, response) {
       const options = stayOptions(request.body);
       for (const option of options) {
         if (!option.arrival || !option.departure || option.departure <= option.arrival) return json(response, 400, { error: 'Complete both dates for every stay option, or remove the incomplete option.' });
-        if (nights(option) < 2) return json(response, 400, { error: 'Every offered stay must be at least two nights.' });
+        if (nights(option) < 1) return json(response, 400, { error: 'Every offered stay must include at least one night.' });
         if (option.suppliedCost && (!Number.isInteger(option.costCents) || option.costCents < 0)) return json(response, 400, { error: 'Enter a valid optional cost for every stay option.' });
         if (option.expiresOn && (option.expiresOn < easternToday() || option.expiresOn > option.arrival)) return json(response, 400, { error: 'Each choose-by date must be between today and that stay’s arrival.' });
       }

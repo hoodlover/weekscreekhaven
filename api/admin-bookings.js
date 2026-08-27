@@ -2,12 +2,27 @@ import { appendBookingRecord, getBookingCalendar, getBookingRequests, rangesOver
 import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
 import { createAgreementToken, createReviewToken, json, requireAdmin } from '../_lib/security.js';
 import { createSquareBookingInvoice, createSquareFriendInvoice, squareStatus } from '../_lib/square.js';
+import { refreshSquareBooking } from '../_lib/payment-sync.js';
+import { PRICING_CONFIG, quoteStay } from '../pricing.js';
 
 export default async function handler(request, response) {
   if (!requireAdmin(request)) return json(response, 401, { error: 'Please sign in as the site owner.' });
   try {
     if (request.method === 'GET') {
-      return json(response, 200, { bookings: await getBookingRequests(), square: squareStatus() }, { 'Cache-Control': 'no-store' });
+      const [storedBookings, calendar] = await Promise.all([getBookingRequests(), getBookingCalendar()]);
+      const bookings = await Promise.all(storedBookings.map(async (booking) => {
+        if (!booking.squareInvoiceId || (booking.status === 'booked' && booking.paymentFullyPaid && booking.bookedWelcomeSentAt)) return booking;
+        try { return await refreshSquareBooking(booking); }
+        catch (error) { return { ...booking, paymentCheckError: error.message || 'Square status unavailable.' }; }
+      }));
+      const pricedBookings = bookings.map((booking) => ({
+        ...booking,
+        dateChoices: (booking.dateChoices || []).map((choice) => ({
+          ...choice,
+          calculatedQuote: choice.quote || quoteStay({ ...choice, guests: booking.guests || 1, dogs: booking.dogs || 0, lateCheckout: booking.lateCheckout, rates: calendar.rates || [] }),
+        })),
+      }));
+      return json(response, 200, { bookings: pricedBookings, square: squareStatus(), pricing: PRICING_CONFIG, rates: calendar.rates || [] }, { 'Cache-Control': 'no-store' });
     }
     if (request.method !== 'PATCH') return json(response, 405, { error: 'Method not allowed.' });
     const bookings = await getBookingRequests();
@@ -20,23 +35,46 @@ export default async function handler(request, response) {
       const discountAmountCents = Math.round(Number(request.body?.discount || 0) * 100);
       const amountCents = originalAmountCents - discountAmountCents;
       const approvedChoice = Number(request.body?.dateChoice) === 2 ? 1 : 0;
-      if (!Number.isInteger(originalAmountCents) || !Number.isInteger(discountAmountCents) || discountAmountCents < 0 || discountAmountCents >= originalAmountCents) return json(response, 400, { error: 'Enter a valid stay price and optional discount.' });
-      if (amountCents < 10000) return json(response, 400, { error: 'The discounted stay total must still cover the $100 deposit.' });
+      if (!Number.isInteger(originalAmountCents) || originalAmountCents < 0 || !Number.isInteger(discountAmountCents) || discountAmountCents < 0 || discountAmountCents > originalAmountCents) return json(response, 400, { error: 'Enter a valid stay price and optional discount.' });
       const requestedDates = booking.dateChoices?.[approvedChoice];
       const conflicts = unavailableRanges(await getBookingCalendar()).filter((range) => range.bookingId !== booking.id);
       if (!requestedDates || conflicts.some((range) => rangesOverlap(requestedDates, range))) return json(response, 409, { error: 'Those dates are no longer available. Choose the other date option or update the calendar.' });
-      const payment = await createSquareBookingInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, amountCents, arrival: requestedDates.arrival, discountCents: discountAmountCents });
-      const changes = { status: 'reserved', approvedAt: createdAt, approvedChoice, originalAmountCents, discountAmountCents, amountCents, paymentUrl: payment.url, squareInvoiceId: payment.invoiceId, squareOrderId: payment.orderId, squareCustomerId: payment.customerId, depositAmountCents: payment.depositAmountCents, balanceAmountCents: payment.balanceAmountCents, balanceDueDate: payment.balanceDueDate };
+      let payment = null;
+      let paymentPlan = 'complimentary';
+      if (amountCents > 0 && (booking.friendsAndFamilyDiscount || amountCents < 10000)) {
+        payment = await createSquareFriendInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, amountCents, arrival: requestedDates.arrival });
+        paymentPlan = 'friends-family-total';
+      } else if (amountCents >= 10000) {
+        payment = await createSquareBookingInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, amountCents, arrival: requestedDates.arrival, discountCents: discountAmountCents });
+        paymentPlan = 'deposit-balance';
+      }
+      const changes = {
+        status: 'reserved', approvedAt: createdAt, approvedChoice, originalAmountCents, discountAmountCents, amountCents, paymentPlan,
+        paymentUrl: payment?.url || null, squareInvoiceId: payment?.invoiceId || null, squareOrderId: payment?.orderId || null, squareCustomerId: payment?.customerId || null,
+        invoiceSentAt: payment ? createdAt : null, bookingPacketSentAt: createdAt,
+        depositAmountCents: paymentPlan === 'deposit-balance' ? payment.depositAmountCents : amountCents,
+        balanceAmountCents: paymentPlan === 'deposit-balance' ? payment.balanceAmountCents : 0,
+        balanceDueDate: paymentPlan === 'deposit-balance' ? payment.balanceDueDate : null,
+      };
       await appendBookingRecord({ type: 'status', bookingId: booking.id, changes, createdAt });
       const dates = requestedDates;
       const safeName = escapeEmailHtml(booking.name);
-      const agreementUrl = `https://www.weekscreekhaven.com/rental-agreement.html?token=${encodeURIComponent(createAgreementToken(booking.id))}`;
+      const bookingToken = createAgreementToken(booking.id, 365 * 86400);
+      const packetUrl = `https://www.weekscreekhaven.com/booking-packet.html?token=${encodeURIComponent(bookingToken)}`;
+      const paymentText = paymentPlan === 'complimentary'
+        ? 'This stay is complimentary, so no payment is required.'
+        : paymentPlan === 'friends-family-total'
+          ? `Your full Friends & Family total of $${(amountCents / 100).toFixed(2)} is due now. Pay here: ${payment.url}`
+          : `A $100 deposit reserves the dates, and the remaining $${(payment.balanceAmountCents / 100).toFixed(2)} is due by ${payment.balanceDueDate}. Pay the Square invoice: ${payment.url}`;
+      const paymentHtml = paymentPlan === 'complimentary'
+        ? '<p style="background:#e8f2e9;padding:12px;border-radius:8px"><strong>Complimentary stay:</strong> No payment is required.</p>'
+        : `<p><a href="${payment.url}" style="display:inline-block;background:#183c2d;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold;margin:0 8px 8px 0">${paymentPlan === 'friends-family-total' ? 'Pay Friends & Family total' : 'Open Square invoice'}</a></p>`;
       await sendEmail({
         to: booking.email, toName: booking.name, subject: 'Your Weeks Creek Haven dates are approved',
-        text: `Hi ${booking.name},\n\nYour requested stay from ${dates.arrival} to ${dates.departure} is available.${discountAmountCents ? ` We applied a $${(discountAmountCents / 100).toFixed(2)} discount.` : ''} The total is $${(amountCents / 100).toFixed(2)}. A $100 deposit reserves the dates, and the remaining $${(payment.balanceAmountCents / 100).toFixed(2)} is due by ${payment.balanceDueDate}.\n\nBooking packet:\nPay the Square invoice: ${payment.url}\nReview and accept the rental agreement: ${agreementUrl}\n\nCancellation policy: cancel at least two calendar days before check-in for a 100% refund. No refund is available after that deadline, including the day before check-in.\n\nYour reservation is final after the deposit is paid and the rental agreement is accepted.`,
-        html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Your booking packet</h1><p>Hi ${safeName},</p><p>We approved <strong>${dates.arrival} through ${dates.departure}</strong>.</p><p>${discountAmountCents ? `Original stay price: <strong>$${(originalAmountCents / 100).toFixed(2)}</strong><br>Weeks Creek Haven discount: <strong>−$${(discountAmountCents / 100).toFixed(2)}</strong><br>` : ''}Total: <strong>$${(amountCents / 100).toFixed(2)}</strong><br>Reservation deposit due now: <strong>$100.00</strong><br>Remaining balance due ${payment.balanceDueDate}: <strong>$${(payment.balanceAmountCents / 100).toFixed(2)}</strong></p><p><a href="${payment.url}" style="display:inline-block;background:#183c2d;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold;margin:0 8px 8px 0">Open Square invoice</a><a href="${agreementUrl}" style="display:inline-block;background:#a45d41;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Review rental agreement</a></p><p style="background:#fff0cc;padding:12px;border-radius:8px"><strong>Cancellation policy:</strong> Cancel at least two calendar days before check-in for a 100% refund. No refund is available after that deadline, including the day before check-in.</p><p>Your reservation is final after the deposit is paid and the rental agreement is accepted.</p></div>`,
+        text: `Hi ${booking.name},\n\nYour requested stay from ${dates.arrival} to ${dates.departure} is available. The approved total is $${(amountCents / 100).toFixed(2)}. Check-in begins at 4:00 PM and checkout is ${booking.lateCheckout ? 'noon (your $50 late checkout is included)' : '11:00 AM'}. ${paymentText}\n\nOpen your private booking packet to track payment, sign the rental agreement, and download your paperwork: ${packetUrl}\n\nCancellation policy: cancel at least two calendar days before check-in for a 100% refund. No refund is available after that deadline, including the day before check-in.\n\nYour reservation is final after ${paymentPlan === 'complimentary' ? 'the rental agreement is accepted' : 'payment is made and the rental agreement is accepted'}.`,
+        html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Your booking packet</h1><p>Hi ${safeName},</p><p>We approved <strong>${dates.arrival} through ${dates.departure}</strong>.</p><p>Check-in: <strong>4:00 PM</strong><br>Checkout: <strong>${booking.lateCheckout ? 'noon ($50 late checkout included)' : '11:00 AM'}</strong></p><p>Approved total: <strong>$${(amountCents / 100).toFixed(2)}</strong></p>${paymentHtml}<p><a href="${packetUrl}" style="display:inline-block;background:#a45d41;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Open booking packet</a></p><p>Track payment, sign the rental agreement, and download your paperwork from the packet.</p><p style="background:#fff0cc;padding:12px;border-radius:8px"><strong>Cancellation policy:</strong> Cancel at least two calendar days before check-in for a 100% refund. No refund is available after that deadline, including the day before check-in.</p><p>Your reservation is final after ${paymentPlan === 'complimentary' ? 'the rental agreement is accepted' : 'payment is made and the rental agreement is accepted'}.</p></div>`,
       });
-      return json(response, 200, { ok: true, paymentUrl: payment.url });
+      return json(response, 200, { ok: true, paymentUrl: payment?.url || null, complimentary: paymentPlan === 'complimentary' });
     }
     if (action === 'send-friend-invoice') {
       if (booking.source !== 'direct-invite' || !['reserved', 'booked'].includes(booking.status)) return json(response, 409, { error: 'Friend invoices are available after the invitee selects a stay.' });
@@ -52,6 +90,18 @@ export default async function handler(request, response) {
         changes: { paymentPlan: 'friend-total', paymentUrl: payment.url, squareInvoiceId: payment.invoiceId, squareOrderId: payment.orderId, squareCustomerId: payment.customerId, friendInvoiceSentAt: createdAt },
       });
       return json(response, 200, { ok: true, paymentUrl: payment.url });
+    }
+    if (action === 'check-payment') {
+      if (!booking.squareInvoiceId) return json(response, 400, { error: 'No Square invoice has been sent for this stay.' });
+      const updated = await refreshSquareBooking(booking, { recordCheck: true });
+      return json(response, 200, {
+        ok: true,
+        status: updated.status,
+        invoiceStatus: updated.squareInvoiceStatus,
+        paidCents: updated.squarePaidCents,
+        balanceCents: updated.squareBalanceCents,
+        agreementAccepted: Boolean(updated.agreementAcceptedAt),
+      });
     }
     if (action === 'send-review') {
       if (!booking.email) return json(response, 400, { error: 'This guest does not have an email address.' });
@@ -76,7 +126,7 @@ export default async function handler(request, response) {
       });
       return json(response, 200, { ok: true });
     }
-    return json(response, 400, { error: 'Choose approve, decline, or send review request.' });
+    return json(response, 400, { error: 'Choose approve, decline, check payment, or send review request.' });
   } catch (error) {
     console.error(error);
     return json(response, 503, { error: error.message || 'The booking request could not be updated.' });

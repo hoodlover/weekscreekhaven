@@ -50,6 +50,12 @@
     .error { background:#fff0f0; color:#8a2f2f; }
     .success { background:#e8f2e9; color:#255b39; }
     .picked { background:#e8f2e9; color:#255b39; border:1px solid #b8cdbd; }
+    .stay-quote { margin-top:13px; padding:14px 15px; border-radius:11px; background:#e8f2e9; border:1px solid #b8cdbd; color:var(--pine); }
+    .stay-quote strong { display:block; font:700 1.45rem/1.1 'Crimson Text',serif; }
+    .stay-quote span { display:block; margin-top:5px; color:var(--muted); font-size:.7rem; line-height:1.5; }
+    .stay-quote.discounted { background:#fff5d9; border-color:#d8b26d; }
+    .stay-quote.discounted strong { color:#7a4b13; }
+    .stay-quote[hidden],.message[hidden] { display:none; }
     .fine { border-top:1px solid var(--line); margin-top:22px; padding-top:17px; font-size:.69rem; line-height:1.6; color:var(--muted); }
     @media(max-width:850px) { .layout { grid-template-columns:1fr; } .intro { position:static; padding:20px 8px; } .intro h1 { max-width:650px; } }
     @media(max-width:560px) { .grid { grid-template-columns:1fr; gap:0; } .card { padding:24px 18px; } .page { padding-inline:10px; } }
@@ -74,17 +80,19 @@
       <form id="booking-form" class="card">
         <div class="eyebrow">Stay request</div>
         <h2>Tell us what might work</h2>
-        <div class="minimum">Minimum stay: 2 nights</div>
-        <p class="helper">Your first date choice is required. Add a second choice only if another date could work. Every choice must include at least two nights. This form does not reserve dates or charge you.</p>
+        <div class="minimum">One night allowed &middot; two-night minimum price</div>
+        <p class="helper">Choose your dates and guest count to see the price immediately. One-night stays are welcome but billed at the two-night minimum price. This form does not reserve dates or charge you.</p>
         <div id="calendar-selection" class="message picked" hidden role="status"></div>
         <div class="grid">
           <label>Full name<input name="name" autocomplete="name" maxlength="100" required></label>
           <label>Email address<input name="email" type="email" autocomplete="email" maxlength="160" required></label>
           <label>Phone (optional)<input name="phone" type="tel" autocomplete="tel" maxlength="40"></label>
-          <label>Number of guests<select name="guests" required><option value="">Choose</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></label>
+          <label>Number of guests<select id="guest-count" name="guests" required><option value="">Choose</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></label>
+          <label>Dogs <small>(prior approval)</small><select id="dog-count" name="dogs"><option value="0">None</option><option value="1">1 dog</option><option value="2">2 dogs</option><option value="3">3 dogs</option><option value="4">4 dogs</option></select></label>
         </div>
-        <fieldset id="choice-1" class="choice"><legend>First choice</legend><div class="grid"><label>Arrival<input name="arrival1" type="date" required></label><label>Departure<input name="departure1" type="date" required></label></div></fieldset>
-        <fieldset id="choice-2" class="choice"><legend>Second choice <small>(optional)</small></legend><div class="grid"><label>Arrival<input name="arrival2" type="date"></label><label>Departure<input name="departure2" type="date"></label></div></fieldset>
+        <fieldset id="choice-1" class="choice"><legend>First choice</legend><div class="grid"><label>Arrival<input name="arrival1" type="date" required></label><label>Departure<input name="departure1" type="date" required></label></div><div id="quote-1" class="stay-quote" hidden><strong></strong><span></span></div></fieldset>
+        <fieldset id="choice-2" class="choice"><legend>Second choice <small>(optional)</small></legend><div class="grid"><label>Arrival<input name="arrival2" type="date"></label><label>Departure<input name="departure2" type="date"></label></div><div id="quote-2" class="stay-quote" hidden><strong></strong><span></span></div></fieldset>
+        <label class="check"><input id="late-checkout" name="lateCheckout" type="checkbox" value="1"><span><strong>Add noon checkout for $50.</strong> Standard checkout is 11:00 AM. Check-in begins at 4:00 PM.</span></label>
         <div class="grid">
           <label>How do you know us?<select name="relationship"><option value="">Choose one</option><option>Family</option><option>Friend</option><option>Friend of a friend</option><option>Previous guest</option><option>Found the cabin online</option><option>Other</option></select></label>
           <label>Reference (optional)<input name="reference" maxlength="160" placeholder="Who sent you our way?"></label>
@@ -94,12 +102,14 @@
         <label class="honeypot">Website<input name="website" tabindex="-1" autocomplete="off"></label>
         <button id="submit" type="submit">Send my date choices</button>
         <div id="form-message" class="message" hidden role="status"></div>
-        <p class="fine">Rates will be itemized before payment and may include nightly charges, cleaning, applicable lodging taxes, and a refundable damage deposit. Cancel at least two calendar days before check-in for a 100% refund; no refund is available after that deadline, including the day before check-in. The rental agreement and house rules are provided before payment.</p>
+        <p class="fine">Displayed estimates include the standard $200 cleaning cost and any larger-group cleaning adjustment. Eligible Friends &amp; Family pricing is applied automatically when the entered phone number matches the private discount list. Dog fees or other required costs appear only when they apply to that rate. Applicable lodging taxes and any refundable damage deposit are confirmed before payment. Cancel at least two calendar days before check-in for a 100% refund; no refund is available after that deadline, including the day before check-in.</p>
       </form>
     </main>
   </div>
-  <script>
+  <script type="module">
+    import { money, quoteStay } from '/pricing.js';
     const form=document.getElementById('booking-form'); const button=document.getElementById('submit'); const message=document.getElementById('form-message');
+    const pricingState={rates:[],loaded:false,discountQuotes:{},discountTimer:null,discountRequest:0};
     const today=new Date(); today.setHours(0,0,0,0); const minimum=today.toISOString().slice(0,10);
     const addDays=(value,days)=>{ const date=new Date(`${value}T12:00:00`); date.setDate(date.getDate()+days); return date.toISOString().slice(0,10); };
     const validDate=(value)=>/^\d{4}-\d{2}-\d{2}$/.test(value||'')&&!Number.isNaN(Date.parse(`${value}T12:00:00`));
@@ -107,20 +117,50 @@
     document.querySelectorAll('input[type="date"]').forEach((input)=>input.min=minimum);
     for (const pair of [['arrival1','departure1'],['arrival2','departure2']]) {
       const arrival=form.elements[pair[0]], departure=form.elements[pair[1]];
-      arrival.addEventListener('change',()=>{ const firstCheckout=arrival.value ? addDays(arrival.value,2) : minimum; departure.min=firstCheckout; if(arrival.value && (!departure.value || departure.value<firstCheckout)) departure.value=firstCheckout; });
+      const index=pair[0].slice(-1);
+      arrival.addEventListener('change',()=>{ const firstCheckout=arrival.value ? addDays(arrival.value,1) : minimum; departure.min=firstCheckout; if(arrival.value && (!departure.value || departure.value<firstCheckout)) departure.value=firstCheckout; quoteChanged(index); });
+      departure.addEventListener('change',()=>quoteChanged(index));
     }
-    const selectedParams=new URLSearchParams(location.search), selectedArrival=selectedParams.get('arrival1'), selectedDeparture=selectedParams.get('departure1');
-    if(validDate(selectedArrival)&&validDate(selectedDeparture)&&selectedArrival>=minimum&&selectedDeparture>=addDays(selectedArrival,2)){
-      form.elements.arrival1.value=selectedArrival; form.elements.departure1.min=addDays(selectedArrival,2); form.elements.departure1.value=selectedDeparture;
+    const normalizedPhone=()=>{const digits=String(form.elements.phone.value||'').replace(/\D/g,'');return digits.length===11&&digits.startsWith('1')?digits.slice(1):digits;};
+    const quoteSignature=(index)=>`${form.elements[`arrival${index}`].value}|${form.elements[`departure${index}`].value}|${form.elements.guests.value}|${form.elements.dogs.value}|${form.elements.lateCheckout.checked?'1':'0'}|${normalizedPhone()}`;
+    function renderQuote(index){
+      const box=document.getElementById(`quote-${index}`),arrival=form.elements[`arrival${index}`].value,departure=form.elements[`departure${index}`].value,guests=Number(form.elements.guests.value),dogs=Number(form.elements.dogs.value);
+      if(!pricingState.loaded||!guests||!validDate(arrival)||!validDate(departure)||departure<=arrival){box.hidden=true;return;}
+      const lateCheckout=form.elements.lateCheckout.checked,cached=pricingState.discountQuotes[index],quote=cached?.signature===quoteSignature(index)?cached.quote:quoteStay({arrival,departure,guests,dogs,lateCheckout,rates:pricingState.rates}); if(!quote){box.hidden=true;return;}
+      const adjustment=quote.friendsAndFamilyDiscount?(quote.passThroughCents?'required fees itemized above':'no pass-through fees'):(quote.cleaningAdjustmentCents?`${money(quote.cleaningAdjustmentCents)} larger-group cleaning adjustment`:'standard $200 cleaning included');
+      box.classList.toggle('discounted',Boolean(quote.friendsAndFamilyDiscount));
+      box.querySelector('strong').textContent=quote.friendsAndFamilyDiscount?(quote.friendsAndFamilyDiscount.guestName?`Welcome, ${quote.friendsAndFamilyDiscount.guestName} — here’s your cabin price: ${money(quote.totalCents)}`:`Welcome — here’s your cabin price: ${money(quote.totalCents)}`):`${money(quote.totalCents)} estimated total`;
+      const feeParts=quote.passThroughFees?[quote.passThroughFees.cleaningFeeCents?`${money(quote.passThroughFees.cleaningFeeCents)} cleaning`:'',quote.passThroughFees.dogFeeCents?`${money(quote.passThroughFees.dogFeeCents)} dog fee`:'',quote.passThroughFees.lateCheckoutFeeCents?`${money(quote.passThroughFees.lateCheckoutFeeCents)} noon checkout`:'',quote.passThroughFees.customFeeCents?`${money(quote.passThroughFees.customFeeCents)} ${quote.passThroughFees.customFeeLabel}`:''].filter(Boolean):[];
+      const discountNote=quote.friendsAndFamilyDiscount?`${quote.friendsAndFamilyDiscount.label} · standard price ${money(quote.standardTotalCents)} · you save ${money(quote.discountAmountCents)}${feeParts.length?` · includes ${feeParts.join(', ')}`:''}`:'standard public rate';
+      box.querySelector('span').textContent=`${discountNote} · Check in ${friendlyDate(arrival)} at 4:00 PM · check out ${friendlyDate(departure)} at ${quote.checkoutTime}${quote.lateCheckout?' (+$50)':''} · ${quote.actualNights} night${quote.actualNights===1?'':'s'} · ${quote.pricingRule} · ${adjustment}`;
+      box.hidden=false;
+    }
+    function quoteChanged(index){renderQuote(index);scheduleDiscountQuotes();}
+    function scheduleDiscountQuotes(){clearTimeout(pricingState.discountTimer);pricingState.discountTimer=setTimeout(refreshDiscountQuotes,350);}
+    async function refreshDiscountQuotes(){
+      const phone=normalizedPhone(),requestId=++pricingState.discountRequest;
+      if(phone.length!==10){pricingState.discountQuotes={};renderQuote(1);renderQuote(2);return;}
+      await Promise.all([1,2].map(async(index)=>{const arrival=form.elements[`arrival${index}`].value,departure=form.elements[`departure${index}`].value,guests=Number(form.elements.guests.value),dogs=Number(form.elements.dogs.value);if(!guests||!validDate(arrival)||!validDate(departure)||departure<=arrival)return;const signature=quoteSignature(index);try{const response=await fetch('/api/quote',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({arrival,departure,guests,dogs,phone,lateCheckout:form.elements.lateCheckout.checked})}),data=await response.json();if(response.ok&&requestId===pricingState.discountRequest&&signature===quoteSignature(index)){pricingState.discountQuotes[index]={signature,quote:data.quote};renderQuote(index);}}catch{}}));
+    }
+    form.elements.guests.addEventListener('change',()=>{quoteChanged(1);quoteChanged(2);});
+    form.elements.dogs.addEventListener('change',()=>{quoteChanged(1);quoteChanged(2);});
+    form.elements.lateCheckout.addEventListener('change',()=>{quoteChanged(1);quoteChanged(2);});
+    form.elements.phone.addEventListener('input',()=>{renderQuote(1);renderQuote(2);scheduleDiscountQuotes();});
+    const selectedParams=new URLSearchParams(location.search), selectedArrival=selectedParams.get('arrival1'), selectedDeparture=selectedParams.get('departure1'),selectedGuests=selectedParams.get('guests');
+    if(selectedGuests&&Number(selectedGuests)>=1&&Number(selectedGuests)<=11)form.elements.guests.value=selectedGuests;
+    if(selectedParams.get('lateCheckout')==='1')form.elements.lateCheckout.checked=true;
+    if(validDate(selectedArrival)&&validDate(selectedDeparture)&&selectedArrival>=minimum&&selectedDeparture>=addDays(selectedArrival,1)){
+      form.elements.arrival1.value=selectedArrival; form.elements.departure1.min=addDays(selectedArrival,1); form.elements.departure1.value=selectedDeparture;
       const selectionNote=document.getElementById('calendar-selection'); selectionNote.textContent=`Your calendar selection was added: ${friendlyDate(selectedArrival)} through ${friendlyDate(selectedDeparture)}.`; selectionNote.hidden=false;
     }
+    fetch('/api/availability').then(async(response)=>{const data=await response.json();if(!response.ok)throw new Error(data.error||'Pricing could not be loaded.');pricingState.rates=data.rates||[];pricingState.loaded=true;renderQuote(1);renderQuote(2);scheduleDiscountQuotes();}).catch(()=>{});
     form.addEventListener('submit',async(event)=>{
       event.preventDefault(); button.disabled=true; button.textContent='Sending request...'; message.hidden=true; document.querySelectorAll('.choice').forEach((choice)=>choice.classList.remove('unavailable'));
       const payload=Object.fromEntries(new FormData(form));
       try {
         const response=await fetch('/api/booking-requests',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
         const data=await response.json().catch(()=>({})); if(!response.ok) { const error=new Error(data.error || 'We could not send your request.'); error.unavailableChoices=data.unavailableChoices; throw error; }
-        form.reset(); form.elements.departure1.min=minimum; form.elements.departure2.min=minimum; message.className='message success'; message.textContent=data.confirmationSent?'Your request is in. Check your email for confirmation.':'Your request is in. We’ll email you after we review the dates.'; message.hidden=false;
+        form.reset(); form.elements.departure1.min=minimum; form.elements.departure2.min=minimum; document.querySelectorAll('.stay-quote').forEach(box=>box.hidden=true); message.className='message success'; message.textContent=data.confirmationSent?'Your request is in. Check your email for confirmation.':'Your request is in. We’ll email you after we review the dates.'; message.hidden=false;
       } catch(error) { if(Array.isArray(error.unavailableChoices)) error.unavailableChoices.forEach((blocked,index)=>{ if(blocked) document.getElementById(`choice-${index+1}`).classList.add('unavailable'); }); message.className='message error'; message.textContent=error.message; message.hidden=false; }
       finally { button.disabled=false; button.textContent='Send my date choices'; }
     });

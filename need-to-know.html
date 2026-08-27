@@ -350,7 +350,7 @@
                             <p class="text-sm font-bold italic mb-1">Quick Exit Command:</p>
                             <p class="text-lg font-black uppercase tracking-widest text-[#d4a373]">&ldquo;Alexa, Going Home&rdquo;</p>
                         </div>
-                        <p class="italic text-stone-500 mt-4 text-xs">Check-out is at 3:00 PM.</p>
+                        <p class="italic text-stone-500 mt-4 text-xs">Standard check-out is 11:00 AM. Guests who purchased and received confirmation of late checkout may depart at noon.</p>
                     </div>
                     <div>
                         <img src="info/29_F_2.webp" class="zoom-card border-4 border-[#4a4747] rounded shadow-2xl w-full" onclick="openModal(this.src)">
@@ -749,6 +749,7 @@
 <script src="footer.js"></script>
 
 <script>
+if (new URLSearchParams(location.search).get('print') === '1') window.addEventListener('load',()=>setTimeout(()=>window.print(),500));
 // Tab switching
 function switchTab(name, btn) {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));

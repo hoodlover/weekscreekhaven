@@ -10,84 +10,111 @@
   <meta name="description" content="View available dates and nightly rates for a private stay at Weeks Creek Haven in Blue Ridge, Georgia.">
   <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@600;700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root { --pine:#173f2b; --rust:#a45d41; --cream:#f4eee0; --paper:#fffdf8; --ink:#332820; --muted:#74685e; --line:#ddd2c2; --open:#e6f0e7; --closed:#e9e3db; }
+    :root { --pine:#173f2b; --pine-soft:#2f5a43; --rust:#a45d41; --cream:#f4eee0; --paper:#fffdf8; --ink:#332820; --muted:#74685e; --line:#ddd2c2; --open:#f8fbf8; --closed:#eee9e2; --sand:#faf3e7; }
     * { box-sizing:border-box; }
     body { margin:0; min-height:100vh; color:var(--ink); font-family:Montserrat,sans-serif; background:#15110e url('webpic/barn.webp') center/cover fixed; }
     a { color:inherit; }
-    .page { min-height:100vh; background:linear-gradient(rgba(15,12,9,.72),rgba(15,12,9,.86)); padding:22px 14px 60px; }
-    .top,.shell { width:min(1180px,100%); margin:auto; }
+    .page { min-height:100vh; background:linear-gradient(rgba(15,12,9,.7),rgba(15,12,9,.88)); padding:22px 14px 60px; }
+    .top,.shell { width:min(1240px,100%); margin:auto; }
     .top { display:flex; justify-content:space-between; align-items:center; gap:16px; color:white; margin-bottom:20px; }
     .brand { display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; font-size:.75rem; }
-    .brand img { width:72px; height:72px; object-fit:contain; }
+    .brand img { width:68px; height:68px; object-fit:contain; }
     .top-actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
     .top-actions a { text-decoration:none; border:1px solid #ffffff66; background:#0003; padding:9px 14px; border-radius:999px; font-size:.66rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
-    .panel { background:rgba(255,253,248,.98); border-top:8px solid var(--pine); border-radius:22px; padding:28px; box-shadow:0 24px 70px #0008; }
-    .head { display:flex; align-items:end; justify-content:space-between; gap:20px; margin-bottom:22px; }
+    .panel { background:rgba(255,253,248,.985); border-radius:22px; padding:clamp(20px,3vw,34px); box-shadow:0 24px 70px #0008; }
+    .head { display:flex; align-items:end; justify-content:space-between; gap:20px; padding-bottom:24px; border-bottom:1px solid var(--line); }
     .eyebrow { color:var(--rust); text-transform:uppercase; letter-spacing:.2em; font-size:.65rem; font-weight:800; }
-    h1,h2 { font-family:'Crimson Text',serif; margin:0; }
-    h1 { color:var(--pine); font-size:clamp(2.7rem,6vw,5rem); line-height:.9; margin-top:7px; }
-    .intro { max-width:580px; color:var(--muted); line-height:1.55; font-size:.8rem; margin:12px 0 0; }
-    .minimum { display:inline-flex; align-items:center; margin-top:12px; padding:8px 13px; border-radius:999px; background:#e3eee5; color:var(--pine); font-size:.68rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
-    .calendar-tip { display:inline-flex; align-items:center; margin-top:9px; padding:7px 12px; border-radius:999px; background:#fff0db; color:#78462f; font-size:.65rem; font-weight:800; letter-spacing:.05em; }
-    .month-actions { display:flex; align-items:center; gap:7px; }
+    h1,h2,h3 { font-family:'Crimson Text',serif; margin:0; }
+    h1 { color:var(--pine); font-size:clamp(2.7rem,6vw,4.8rem); line-height:.9; margin-top:7px; }
+    .intro { max-width:650px; color:var(--muted); line-height:1.55; font-size:.8rem; margin:12px 0 0; }
+    .minimum { display:inline-flex; align-items:center; margin-top:12px; padding:7px 12px; border-radius:999px; background:#e8f0e9; color:var(--pine); font-size:.63rem; font-weight:800; letter-spacing:.07em; text-transform:uppercase; }
     button,.cta { border:1px solid var(--line); background:white; color:var(--ink); border-radius:999px; padding:10px 14px; font:800 .68rem Montserrat,sans-serif; text-transform:uppercase; letter-spacing:.07em; cursor:pointer; }
-    .cta { display:inline-block; text-decoration:none; color:white; background:var(--pine); border-color:var(--pine); }
-    .calendar-title { display:flex; justify-content:space-between; align-items:center; gap:15px; margin-bottom:12px; }
-    .calendar-title h2 { color:var(--pine); font-size:2.1rem; }
+    button:hover,.cta:hover { transform:translateY(-1px); }
+    .cta { display:inline-block; text-decoration:none; color:white; background:var(--pine); border-color:var(--pine); text-align:center; }
+    .booking-layout { display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:26px; align-items:start; padding-top:26px; }
+    .calendar-title { display:flex; justify-content:space-between; align-items:center; gap:15px; margin-bottom:13px; }
+    .calendar-title h2 { color:var(--pine); font-size:2.15rem; }
+    .month-actions { display:flex; align-items:center; gap:7px; }
     .weekdays,.calendar { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); }
+    .calendar { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--line); gap:1px; }
     .calendar.selecting { user-select:none; touch-action:none; }
-    .weekdays div { padding:9px; text-align:center; color:var(--muted); font-size:.62rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
-    .day { min-height:112px; padding:9px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); background:white; }
-    .day:nth-child(7n+1) { border-left:1px solid var(--line); }
-    .day:nth-child(-n+7) { border-top:1px solid var(--line); }
-    .day.outside,.day.past { background:#f0ebe3; color:#aaa096; }
-    .day.unavailable { background:var(--closed); color:#7f746a; }
-    .day.available { background:var(--open); cursor:grab; transition:background .12s ease,box-shadow .12s ease,transform .12s ease; }
-    .day.available:hover { background:#d7e8da; box-shadow:inset 0 0 0 2px #6a9a76; }
-    .day.package { background:#f8e4c7; box-shadow:inset 0 4px 0 #b96f45; }
-    .day.package.package-end { box-shadow:inset 0 4px 0 #b96f45,inset -4px 0 0 #b96f45; }
-    .day.selected { position:relative; z-index:1; background:#c9dfce; box-shadow:inset 0 0 0 2px var(--pine); }
-    .day.selection-start,.day.selection-end { background:var(--pine); color:white; }
-    .day.selection-start .rate,.day.selection-end .rate,.day.selection-start .night,.day.selection-end .night { color:white; }
-    .day.today { box-shadow:inset 0 0 0 2px var(--rust); }
-    .number { font-size:.72rem; font-weight:800; }
-    .rate { display:block; color:var(--pine); font-family:'Crimson Text',serif; font-size:1.16rem; font-weight:700; margin-top:16px; }
-    .night { display:block; color:var(--muted); font-size:.55rem; font-weight:700; margin-top:1px; }
-    .unavailable .rate { color:#796d64; font-family:Montserrat,sans-serif; font-size:.59rem; text-transform:uppercase; letter-spacing:.05em; }
-    .package .rate { color:#7b3f28; }
-    .package .night { color:#7b3f28; text-transform:uppercase; letter-spacing:.04em; }
-    .legend { display:flex; gap:18px; flex-wrap:wrap; margin:18px 0; color:var(--muted); font-size:.68rem; }
+    .weekdays div { padding:9px 3px; text-align:center; color:var(--muted); font-size:.6rem; font-weight:800; letter-spacing:.09em; text-transform:uppercase; }
+    .day { position:relative; min-height:96px; padding:9px; background:white; }
+    .day.outside,.day.past { background:#f5f1eb; color:#b1a89e; }
+    .day.unavailable { background:var(--closed); color:#988d83; }
+    .day.unavailable::after { content:''; position:absolute; inset:50% 12px auto; border-top:1px solid #c9c0b6; transform:rotate(-25deg); }
+    .day.available { background:var(--open); cursor:crosshair; transition:background .12s ease,box-shadow .12s ease; }
+    .day.weekend { background:var(--sand); box-shadow:inset 0 3px 0 #d6a17e; }
+    .day.available:not(.selected):hover { background:#eaf3eb; box-shadow:inset 0 0 0 2px #789980; }
+    .day.selected { z-index:1; background:#dcebdd; box-shadow:inset 0 2px 0 var(--pine),inset 0 -2px 0 var(--pine); }
+    .day.selection-start,.day.selection-end { background:var(--pine); color:white; box-shadow:none; }
+    .day.selection-start { border-radius:10px 0 0 10px; }
+    .day.selection-end { border-radius:0 10px 10px 0; }
+    .day.selection-start .day-price,.day.selection-start .day-kind,.day.selection-end .day-price,.day.selection-end .day-kind { color:white; }
+    .day.today .number { outline:2px solid var(--rust); outline-offset:3px; border-radius:50%; }
+    .number { display:inline-grid; place-items:center; width:22px; height:22px; font-size:.72rem; font-weight:800; }
+    .day-price { display:block; margin-top:17px; color:var(--pine); font:700 1rem/1 'Crimson Text',serif; }
+    .day-kind { display:block; margin-top:3px; color:var(--muted); font-size:.48rem; font-weight:800; letter-spacing:.045em; text-transform:uppercase; }
+    .unavailable .day-kind { margin-top:18px; font-size:.48rem; }
+    .calendar-note { margin:11px 2px 0; color:var(--muted); font-size:.66rem; line-height:1.5; }
+    .quote-card { position:sticky; top:20px; padding:22px; border-radius:16px; background:var(--pine); color:white; box-shadow:0 14px 36px #173f2b33; }
+    .quote-card .eyebrow { color:#e3b28e; }
+    .quote-card h3 { margin-top:5px; font-size:1.8rem; }
+    .guest-picker { display:block; margin-top:18px; color:#e8efe9; font-size:.57rem; font-weight:800; letter-spacing:.09em; text-transform:uppercase; }
+    .guest-picker select { width:100%; margin-top:6px; padding:11px 12px; border:1px solid #ffffff55; border-radius:9px; background:#fff; color:var(--ink); font:700 .75rem Montserrat,sans-serif; }
+    .option-check { display:flex; align-items:flex-start; gap:9px; margin-top:13px; padding:11px; border:1px solid #ffffff38; border-radius:9px; color:#edf3ee; font-size:.66rem; line-height:1.45; cursor:pointer; }
+    .option-check input { flex:0 0 auto; margin-top:2px; accent-color:#e3b28e; }
+    .selection-placeholder { margin:24px 0; color:#e6eee8; font-size:.76rem; line-height:1.6; }
+    .selection-bar { margin-top:20px; }
+    .selection-bar strong { display:block; color:white; font:700 2rem/1 'Crimson Text',serif; }
+    .selection-bar span { display:block; margin:10px 0 17px; color:#e4ece6; font-size:.67rem; line-height:1.6; }
+    .selection-actions { display:grid; gap:8px; }
+    .selection-actions button { color:white; border-color:#ffffff66; background:transparent; }
+    .selection-actions .cta { background:white; border-color:white; color:var(--pine); }
+    .selection-actions [hidden] { display:none; }
+    .selection-error { margin-top:14px; padding:11px 12px; border-radius:9px; background:#fff2ef; color:#7d3327; font-size:.68rem; font-weight:700; line-height:1.45; }
+    .selection-bar[hidden],.selection-error[hidden] { display:none; }
+    .price-guide { padding-top:18px; border-top:1px solid #ffffff38; color:#e6eee8; font-size:.62rem; line-height:1.55; }
+    .price-guide strong { color:white; }
+    .legend { display:flex; gap:16px; flex-wrap:wrap; margin:18px 0 0; color:var(--muted); font-size:.65rem; }
     .key { display:flex; align-items:center; gap:7px; }
-    .swatch { width:14px; height:14px; border:1px solid var(--line); border-radius:4px; }
-    .foot { display:flex; align-items:center; justify-content:space-between; gap:20px; border-top:1px solid var(--line); padding-top:18px; }
-    .foot p { color:var(--muted); font-size:.7rem; line-height:1.5; margin:0; max-width:720px; }
-    .selection-bar { display:flex; align-items:center; justify-content:space-between; gap:18px; margin:18px 0; padding:15px 17px; border:1px solid #b8cdbd; border-radius:14px; background:#edf6ee; color:var(--pine); }
-    .selection-bar strong { display:block; font-family:'Crimson Text',serif; font-size:1.3rem; }
-    .selection-bar span { display:block; margin-top:3px; color:var(--muted); font-size:.69rem; line-height:1.45; }
-    .selection-actions { display:flex; align-items:center; gap:8px; flex:0 0 auto; }
-    .selection-actions button { background:transparent; }
-    .selection-error { margin:15px 0; padding:12px 14px; border-radius:10px; background:#fff0f0; color:#8a2f2f; font-size:.72rem; font-weight:700; }
-    .bottom-month-actions { display:flex; justify-content:center; margin:18px 0 4px; }
+    .swatch { width:13px; height:13px; border:1px solid var(--line); border-radius:4px; }
+    .foot { margin-top:22px; padding-top:18px; border-top:1px solid var(--line); color:var(--muted); font-size:.68rem; line-height:1.55; }
+    .bottom-month-actions { display:flex; justify-content:center; margin:16px 0 0; }
     .message { padding:30px; text-align:center; color:#8a2f2f; font-weight:700; }
-    @media(max-width:720px) { .panel { padding:18px 10px; } .head { align-items:flex-start; flex-direction:column; } .day { min-height:76px; padding:6px; } .rate { font-size:.9rem; margin-top:9px; } .night { display:none; } .unavailable .rate { font-size:.49rem; } .foot,.selection-bar { align-items:flex-start; flex-direction:column; } .selection-actions { width:100%; } .selection-actions .cta { flex:1; text-align:center; } .weekdays div { padding:6px 2px; font-size:.53rem; } }
+    @media(max-width:900px) { .booking-layout { grid-template-columns:1fr; } .quote-card { position:static; } }
+    @media(max-width:640px) { .page { padding:8px 5px 34px; } .top { padding:5px 7px; } .brand img { width:52px; height:52px; } .brand { font-size:.62rem; } .top-actions a:first-child { display:none; } .panel { padding:18px 9px; border-radius:16px; } .head { align-items:flex-start; flex-direction:column; padding:6px 7px 20px; } h1 { font-size:2.85rem; } .booking-layout { gap:17px; padding-top:18px; } .calendar-title { padding:0 4px; } .calendar-title h2 { font-size:1.7rem; } .month-actions button { padding:9px 11px; } .day { min-height:72px; padding:6px; } .day-price { margin-top:10px; font-size:.83rem; } .day-kind { font-size:.4rem; letter-spacing:0; } .unavailable .day-kind { display:none; } .weekdays div { font-size:.52rem; } .quote-card { padding:19px; } .legend { padding:0 3px; } }
   </style>
 </head>
 <body>
   <div class="page">
     <header class="top"><div class="brand"><img src="webpic/weeks-creek-haven-round-logo.png" alt="Weeks Creek Haven">Weeks Creek Haven</div><nav class="top-actions"><a href="/register.html">Request a stay</a><a href="/index.html">Home</a></nav></header>
     <main class="shell panel">
-      <div class="head"><div><div class="eyebrow">Private stays &middot; Blue Ridge, Georgia</div><h1>Availability &amp; rates</h1><div class="minimum">Minimum stay: 2 nights</div><div class="calendar-tip">Press and drag across available nights to choose your stay</div><p class="intro">Browse open nights, then send us one date choice—or a second option if you have one. Availability can change until your reservation deposit is paid.</p></div><a class="cta" href="/register.html">Request dates</a></div>
-      <div class="calendar-title"><h2 id="month-title"></h2><div class="month-actions"><button id="previous" aria-label="Previous month">&larr;</button><button id="today">Today</button><button id="next" aria-label="Next month">&rarr;</button></div></div>
-      <div class="weekdays"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>
-      <div id="calendar" class="calendar" aria-live="polite"></div>
-      <div class="bottom-month-actions"><div class="month-actions"><button id="previous-bottom" aria-label="Previous month">&larr;</button><button id="today-bottom">Today</button><button id="next-bottom" aria-label="Next month">&rarr;</button></div></div>
-      <div id="selection-error" class="selection-error" hidden role="alert"></div>
-      <div id="selection-bar" class="selection-bar" hidden aria-live="polite"><div><strong id="selection-title"></strong><span id="selection-details"></span></div><div class="selection-actions"><button id="clear-selection" type="button">Clear</button><a id="request-selected" class="cta" href="/register.html">Request selected dates</a></div></div>
-      <div class="legend"><span class="key"><i class="swatch" style="background:var(--open)"></i>Available</span><span class="key"><i class="swatch" style="background:#f8e4c7"></i>Package total</span><span class="key"><i class="swatch" style="background:var(--closed)"></i>Unavailable</span><span class="key"><i class="swatch" style="background:#f0ebe3"></i>Past</span></div>
-      <div class="foot"><p><strong>Two-night minimum.</strong> Nightly prices say “per night”; weekend and other package prices show one total for the complete arrival-through-checkout stay. Your final quote may also include cleaning, applicable lodging taxes, and any agreed deposit.</p><a class="cta" href="/register.html">Request dates</a></div>
+      <div class="head"><div><div class="eyebrow">Private stays &middot; Blue Ridge, Georgia</div><h1>Plan your stay</h1><div class="minimum">One night welcome &middot; two-night minimum price</div><p class="intro">Choose an arrival date, then drag or tap your checkout date. Your exact stay estimate updates instantly—even when your dates continue onto the next calendar row.</p></div><a class="cta" href="/register.html">Request a stay</a></div>
+      <div class="booking-layout">
+        <section class="calendar-area" aria-label="Choose your stay dates">
+          <div class="calendar-title"><h2 id="month-title"></h2><div class="month-actions"><button id="previous" aria-label="Previous month">&larr;</button><button id="today">Today</button><button id="next" aria-label="Next month">&rarr;</button></div></div>
+          <div class="weekdays"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>
+          <div id="calendar" class="calendar" aria-live="polite"></div>
+          <p class="calendar-note">Click or press your arrival date, then drag to checkout. The final highlighted day is your checkout day.</p>
+          <div class="bottom-month-actions"><div class="month-actions"><button id="previous-bottom" aria-label="Previous month">&larr;</button><button id="today-bottom">Today</button><button id="next-bottom" aria-label="Next month">&rarr;</button></div></div>
+          <div class="legend"><span class="key"><i class="swatch" style="background:var(--open)"></i>Available</span><span class="key"><i class="swatch" style="background:var(--sand);border-top:3px solid #d6a17e"></i>Weekend</span><span class="key"><i class="swatch" style="background:var(--closed)"></i>Unavailable</span></div>
+        </section>
+        <aside class="quote-card" aria-live="polite">
+          <div class="eyebrow">Your stay estimate</div><h3>Select your dates</h3>
+          <label class="guest-picker">Number of guests<select id="calendar-guests"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></label>
+          <label class="option-check"><input id="calendar-late-checkout" type="checkbox"><span><strong>Add noon checkout · $50</strong><br>Standard checkout is 11:00 AM.</span></label>
+          <p id="selection-placeholder" class="selection-placeholder">Choose dates on the calendar to see the complete stay price. Check-in is at <strong>4:00 PM</strong>; standard checkout is at <strong>11:00 AM</strong>.</p>
+          <div id="selection-error" class="selection-error" hidden role="alert"></div>
+          <div id="selection-bar" class="selection-bar" hidden><strong id="selection-title"></strong><span id="selection-details"></span><div class="selection-actions"><a id="request-selected" class="cta" href="/register.html">Request these dates</a><button id="clear-selection" type="button">Choose different dates</button></div></div>
+          <div class="price-guide"><strong>Simple, transparent pricing</strong><br>The displayed total includes the base $200 cleaning cost. Groups of 5–8 add $25; groups of 9–11 add $50. No discounts are applied. Taxes and any refundable deposit are confirmed before payment.</div>
+        </aside>
+      </div>
+      <div class="foot"><strong>How calendar prices work:</strong> weekday cells show the weeknight rate and Friday/Saturday cells show the complete Friday-and-Saturday weekend price. Your live total applies the two-night minimum, included-date five-night price, or weekly rate automatically.</div>
     </main>
   </div>
-  <script>
+  <script type="module">
+    import { money, quoteStay, weekPlan } from '/pricing.js';
     const state={unavailable:[],rates:[],defaultNightlyRateCents:0,selection:null,month:new Date(new Date().getFullYear(),new Date().getMonth(),1)};
     const $=(id)=>document.getElementById(id);
     const key=(date)=>`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
@@ -95,12 +122,13 @@
     const addDays=(value,days)=>{ const date=new Date(`${value}T12:00:00`); date.setDate(date.getDate()+days); return key(date); };
     const daysBetween=(arrival,departure)=>Math.round((Date.parse(`${departure}T00:00:00Z`)-Date.parse(`${arrival}T00:00:00Z`))/86400000);
     const friendlyDate=(value)=>new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric',year:'numeric'}).format(new Date(`${value}T12:00:00`));
-    const money=(cents)=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(cents/100);
     function priceDetails(dateKey){
-      const packageRate=state.rates.filter(rate=>rate.pricingMode==='total'&&dateKey>=rate.arrival&&dateKey<=rate.departure).at(-1);
-      if(packageRate)return {amountCents:packageRate.totalCents||packageRate.amountCents*(packageRate.nightCount||daysBetween(packageRate.arrival,packageRate.departure)),detail:dateKey===packageRate.departure?'package checkout':'complete stay total',package:true,end:dateKey===packageRate.departure};
-      const nightly=state.rates.filter(rate=>dateKey>=rate.arrival&&dateKey<rate.departure).at(-1);
-      return {amountCents:nightly?.amountCents||state.defaultNightlyRateCents,detail:'per night',package:false,end:false};
+      const day=new Date(`${dateKey}T12:00:00`).getDay(),plan=weekPlan(dateKey,state.rates);
+      const weekend=day===5||day===6;
+      return {weekend,amountCents:weekend?plan.weekendCents:plan.weeknightCents,kind:weekend?'weekend total':'weeknight'};
+    }
+    function priceMarkup(price){
+      return `<span class="day-price">${money(price.amountCents)}</span><span class="day-kind">${price.kind}</span>`;
     }
     function isUnavailable(dateKey){ return state.unavailable.some(range=>dateKey>=range.arrival&&dateKey<range.departure); }
     function render(){
@@ -108,28 +136,50 @@
       const start=new Date(state.month); start.setDate(1-start.getDay()); let html='';
       for(let index=0;index<42;index++){
         const date=new Date(start); date.setDate(start.getDate()+index); const dateKey=key(date); const outside=date.getMonth()!==state.month.getMonth(); const past=dateKey<todayKey; const unavailable=!past&&isUnavailable(dateKey); const available=!past&&!unavailable; const price=available?priceDetails(dateKey):null;
-        html+=`<div class="day ${outside?'outside':''} ${past?'past':''} ${unavailable?'unavailable':''} ${available?'available':''} ${price?.package?'package':''} ${price?.end?'package-end':''} ${dateKey===todayKey?'today':''}" data-date="${dateKey}" ${available?'data-selectable="true"':''}><span class="number">${date.getDate()}</span>${unavailable?'<span class="rate">Unavailable</span>':available?`<span class="rate">${price.amountCents?money(price.amountCents):'Ask us'}</span><span class="night">${price.amountCents?price.detail:'contact us'}</span>`:''}</div>`;
+        const weekendClass=price?.weekend?'weekend':'';
+        const aria=`${friendlyDate(dateKey)}${available?`, available, ${money(price.amountCents)} ${price.kind}`:unavailable?', unavailable':', past'}`;
+        html+=`<div class="day ${outside?'outside':''} ${past?'past':''} ${unavailable?'unavailable':''} ${available?'available':''} ${weekendClass} ${dateKey===todayKey?'today':''}" data-date="${dateKey}" ${available?`data-selectable="true" role="button" tabindex="0" aria-label="${aria}"`:''}><span class="number">${date.getDate()}</span>${unavailable?'<span class="day-kind">Unavailable</span>':available?priceMarkup(price):''}</div>`;
       }
       $('calendar').innerHTML=html;
       paintSelection();
     }
-    function clearSelection(){ state.selection=null; dragging=false; dragStart=dragCurrent=null; $('calendar').classList.remove('selecting'); $('selection-bar').hidden=true; $('selection-error').hidden=true; document.querySelectorAll('.selected,.selection-start,.selection-end').forEach(day=>day.classList.remove('selected','selection-start','selection-end')); }
+    function clearSelection(){ state.selection=null; dragging=false; dragStart=dragCurrent=null; $('calendar').classList.remove('selecting'); $('selection-bar').hidden=true; $('selection-placeholder').hidden=false; $('selection-error').hidden=true; document.querySelectorAll('.selected,.selection-start,.selection-end').forEach(day=>day.classList.remove('selected','selection-start','selection-end')); }
     function selectionIsAvailable(first,departure){ for(let date=first;date<departure;date=addDays(date,1)){ if(!$('calendar').querySelector(`[data-date="${date}"][data-selectable]`))return false; } return Boolean($('calendar').querySelector(`[data-date="${departure}"]`)); }
     function paintSelection(){
       const selection=dragging&&dragStart&&dragCurrent?{first:dragStart<dragCurrent?dragStart:dragCurrent,last:dragStart<dragCurrent?dragCurrent:dragStart}:state.selection;
       document.querySelectorAll('[data-date]').forEach(day=>{ const selected=selection&&day.dataset.date>=selection.first&&day.dataset.date<=selection.last; day.classList.toggle('selected',Boolean(selected)); day.classList.toggle('selection-start',Boolean(selected&&day.dataset.date===selection.first)); day.classList.toggle('selection-end',Boolean(selected&&day.dataset.date===selection.last)); });
+      updateSelectionSummary(selection);
+    }
+    function updateSelectionSummary(selection){
+      if(!selection){$('selection-bar').hidden=true;$('selection-placeholder').hidden=false;return;}
+      $('selection-placeholder').hidden=true;
+      const first=selection.first,departure=selection.last,nightCount=daysBetween(first,departure);
+      if(nightCount<1){$('selection-title').textContent='Now choose checkout';$('selection-details').textContent=`Arrival: ${friendlyDate(first)} at 4:00 PM. Tap or drag to your checkout date.`;$('selection-bar').hidden=false;$('request-selected').hidden=true;return;}
+      if(!selectionIsAvailable(first,departure)){$('selection-bar').hidden=true;return;}
+      const guests=Number($('calendar-guests').value),lateCheckout=$('calendar-late-checkout').checked,quote=quoteStay({arrival:first,departure,guests,lateCheckout,rates:state.rates});
+      const cleaningNote=quote.cleaningAdjustmentCents?`${money(quote.cleaningAdjustmentCents)} larger-group cleaning adjustment`:'standard $200 cleaning included';
+      $('selection-title').textContent=`${money(quote.totalCents)} estimated total`;
+      const checkoutNote=lateCheckout?'noon checkout (+$50)':'11:00 AM checkout';
+      $('selection-details').textContent=`Check in ${friendlyDate(first)} at 4:00 PM · ${checkoutNote} ${friendlyDate(departure)} · ${nightCount} night${nightCount===1?'':'s'} · ${cleaningNote} · no discounts applied`;
+      $('request-selected').href=`/register.html?arrival1=${encodeURIComponent(first)}&departure1=${encodeURIComponent(departure)}&guests=${guests}${lateCheckout?'&lateCheckout=1':''}`;
+      $('request-selected').hidden=false;$('selection-bar').hidden=false;
     }
     function finishSelection(){
       if(!dragging)return; dragging=false; $('calendar').classList.remove('selecting');
       const first=dragStart<dragCurrent?dragStart:dragCurrent,departure=dragStart<dragCurrent?dragCurrent:dragStart,nightCount=daysBetween(first,departure);
-      if(nightCount<2||!selectionIsAvailable(first,departure)){ state.selection=null; paintSelection(); $('selection-bar').hidden=true; $('selection-error').textContent=nightCount<2?'Choose arrival through checkout for at least two nights (three calendar dates).':'That range crosses an unavailable night. Please choose consecutive available nights.'; $('selection-error').hidden=false; return; }
-      state.selection={first,last:departure,departure}; $('selection-error').hidden=true; $('selection-title').textContent=`${friendlyDate(first)} – ${friendlyDate(departure)}`; $('selection-details').textContent=`${nightCount} nights · the last highlighted day is checkout`; $('request-selected').href=`/register.html?arrival1=${encodeURIComponent(first)}&departure1=${encodeURIComponent(departure)}`; $('selection-bar').hidden=false; paintSelection();
+      if(nightCount<1){ state.selection={first,last:first,pending:true}; paintSelection(); return; }
+      if(!selectionIsAvailable(first,departure)){ state.selection=null; paintSelection(); $('selection-bar').hidden=true; $('selection-placeholder').hidden=false; $('selection-error').textContent='That range crosses an unavailable night. Please choose consecutive available nights.'; $('selection-error').hidden=false; return; }
+      state.selection={first,last:departure,departure}; $('selection-error').hidden=true; paintSelection();
     }
     let dragStart=null,dragCurrent=null,dragging=false;
-    $('calendar').addEventListener('pointerdown',(event)=>{ const day=event.target.closest('[data-selectable]'); if(!day||event.button!==0)return; dragStart=dragCurrent=day.dataset.date; dragging=true; state.selection=null; $('selection-bar').hidden=true; $('selection-error').hidden=true; $('calendar').classList.add('selecting'); paintSelection(); event.preventDefault(); });
+    function beginSelection(dateKey){ const pending=state.selection?.pending?state.selection.first:null; dragStart=pending||dateKey; dragCurrent=dateKey; dragging=true; state.selection=null; $('selection-bar').hidden=true; $('selection-error').hidden=true; $('calendar').classList.add('selecting'); paintSelection(); }
+    $('calendar').addEventListener('pointerdown',(event)=>{ const day=event.target.closest('[data-selectable]'); if(!day||event.button!==0)return; beginSelection(day.dataset.date); event.preventDefault(); });
     $('calendar').addEventListener('pointermove',(event)=>{ if(!dragging)return; const day=document.elementFromPoint(event.clientX,event.clientY)?.closest('[data-date]'); if(day&&day.dataset.date!==dragCurrent){ dragCurrent=day.dataset.date; paintSelection(); } });
+    $('calendar').addEventListener('keydown',(event)=>{ if(!['Enter',' '].includes(event.key))return; const day=event.target.closest('[data-selectable]'); if(!day)return; event.preventDefault(); beginSelection(day.dataset.date); finishSelection(); });
     window.addEventListener('pointerup',finishSelection);
     $('clear-selection').onclick=clearSelection;
+    $('calendar-guests').addEventListener('change',()=>{ if(dragging||state.selection)paintSelection(); });
+    $('calendar-late-checkout').addEventListener('change',()=>{ if(dragging||state.selection)paintSelection(); });
     const previousMonth=()=>{ clearSelection(); state.month=new Date(state.month.getFullYear(),state.month.getMonth()-1,1); render(); };
     const nextMonth=()=>{ clearSelection(); state.month=new Date(state.month.getFullYear(),state.month.getMonth()+1,1); render(); };
     const currentMonth=()=>{ clearSelection(); const now=new Date(); state.month=new Date(now.getFullYear(),now.getMonth(),1); render(); };
