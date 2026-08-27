@@ -77,6 +77,13 @@ export default async function handler(request, response) {
       await appendBookingRecord({ type: 'status', bookingId: booking.id, changes: { archivedAt: null }, createdAt });
       return json(response, 200, { ok: true });
     }
+    if (action === 'convert-legacy-complimentary') {
+      if (booking.status !== 'booked' || booking.agreementAcceptedAt || booking.squareInvoiceId) return json(response, 409, { error: 'This repair applies only to an unsigned legacy booking with no Square invoice.' });
+      const preTaxAmountCents = Number(booking.preTaxAmountCents ?? booking.amountCents ?? booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0]?.amountCents) || 0;
+      const changes = { status: 'reserved', paymentPlan: 'complimentary', complimentary: true, preTaxAmountCents, amountCents: 0, paymentRequirementCents: 0, paymentRequirementMet: true, paymentFullyPaid: true, legacyModelUpdatedAt: createdAt };
+      await appendBookingRecord({ type: 'status', bookingId: booking.id, changes, createdAt });
+      return json(response, 200, { ok: true, status: 'reserved', complimentary: true });
+    }
     if (action === 'approve') {
       const originalAmountCents = Math.round(Number(request.body?.amount) * 100);
       const discountAmountCents = Math.round(Number(request.body?.discount || 0) * 100);
