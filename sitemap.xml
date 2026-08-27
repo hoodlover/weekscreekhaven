@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://www.weekscreekhaven.com/</loc>
+    <lastmod>2026-08-27</lastmod>
+    <image:image><image:loc>https://www.weekscreekhaven.com/gallery/blue-ridge-ga-cabin-rental-exterior.webp</image:loc></image:image>
+    <image:image><image:loc>https://www.weekscreekhaven.com/gallery/weeks-creek-haven-blue-ridge-cabin.webp</image:loc></image:image>
+    <image:image><image:loc>https://www.weekscreekhaven.com/gallery/blue-ridge-cabin-hot-tub.webp</image:loc></image:image>
+    <image:image><image:loc>https://www.weekscreekhaven.com/gallery/blue-ridge-ga-creekside-cabin.webp</image:loc></image:image>
+  </url>
+  <url><loc>https://www.weekscreekhaven.com/availability.html</loc><lastmod>2026-08-27</lastmod></url>
+  <url><loc>https://www.weekscreekhaven.com/register.html</loc><lastmod>2026-08-27</lastmod></url>
+  <url>
+    <loc>https://www.weekscreekhaven.com/gallery.html</loc>
+    <lastmod>2026-08-27</lastmod>
+    <image:image><image:loc>https://www.weekscreekhaven.com/gallery/blue-ridge-ga-cabin-rental-exterior.webp</image:loc></image:image>
+    <image:image><image:loc>https://www.weekscreekhaven.com/gallery/blue-ridge-cabin-bedroom.webp</image:loc></image:image>
+    <image:image><image:loc>https://www.weekscreekhaven.com/gallery/blue-ridge-cabin-hot-tub.webp</image:loc></image:image>
+    <image:image><image:loc>https://www.weekscreekhaven.com/gallery/blue-ridge-ga-creekside-cabin.webp</image:loc></image:image>
+  </url>
+  <url><loc>https://www.weekscreekhaven.com/things-to-do.html</loc><lastmod>2026-08-27</lastmod></url>
+  <url><loc>https://www.weekscreekhaven.com/hiking.html</loc><lastmod>2026-08-27</lastmod></url>
+  <url><loc>https://www.weekscreekhaven.com/fishing.html</loc><lastmod>2026-08-27</lastmod></url>
+  <url><loc>https://www.weekscreekhaven.com/activities.html</loc><lastmod>2026-08-27</lastmod></url>
+  <url><loc>https://www.weekscreekhaven.com/shopping.html</loc><lastmod>2026-08-27</lastmod></url>
+  <url><loc>https://www.weekscreekhaven.com/find-us.html</loc><lastmod>2026-08-27</lastmod></url>
+  <url><loc>https://www.weekscreekhaven.com/provisions.html</loc><lastmod>2026-08-27</lastmod></url>
+</urlset>
