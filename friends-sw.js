@@ -1,8 +1,8 @@
-const CACHE_NAME = 'friends-hub-v16';
+const CACHE_NAME = 'friends-hub-v17';
 
 const PRECACHE_URLS = [
   '/friends-hub.html',
-  '/manifest.json?v=16',
+  '/manifest.json?v=17',
   '/hub-adventures.html',
   '/nav.js',
   '/footer.js',
@@ -125,7 +125,7 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Fetch: cache-first for local assets, network-first for CDN/API
+// Fetch: prefer current deployed files, with the cache retained for offline use.
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
@@ -133,6 +133,23 @@ self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   if (url.pathname.startsWith('/api/')) return;
   if (url.hostname === 'formspree.io') return;
+
+  // The worker has root scope, so every site page can pass through it. Always
+  // check the network for navigations to avoid stale admin and booking screens.
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then(res => {
+          if (res && res.status === 200 && !res.redirected) {
+            const clone = res.clone();
+            caches.open(CACHE_NAME).then(c => c.put(url.pathname, clone));
+          }
+          return res;
+        })
+        .catch(() => caches.match(url.pathname))
+    );
+    return;
+  }
 
   // Pages with authentication or frequently updated controls must check the network first.
   // Previously authorized devices can still use the last cached Hub when fully offline.
@@ -173,17 +190,16 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // For local assets — cache first, network fallback
+  // Refresh local files whenever online; cached copies keep the guest app usable offline.
   event.respondWith(
-    caches.match(event.request).then(cached => {
-      if (cached) return cached;
-      return fetch(event.request).then(res => {
+    fetch(event.request)
+      .then(res => {
         if (res && res.status === 200) {
           const clone = res.clone();
           caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
         }
         return res;
-      });
-    })
+      })
+      .catch(() => caches.match(event.request))
   );
 });
