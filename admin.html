@@ -421,10 +421,10 @@
         const canvas = document.createElement('canvas');
         canvas.width = Math.max(1,Math.round(image.naturalWidth*scale)); canvas.height = Math.max(1,Math.round(image.naturalHeight*scale));
         canvas.getContext('2d').drawImage(image,0,0,canvas.width,canvas.height);
-        let blob = await new Promise((resolve) => canvas.toBlob(resolve,'image/jpeg',.8));
+        let blob = await new Promise((resolve) => canvas.toBlob(resolve,'image/webp',.95));
         if (!blob) throw new Error('That photo format could not be converted.');
-        if (blob.size > 2.7*1024*1024) blob = await new Promise((resolve) => canvas.toBlob(resolve,'image/jpeg',.58));
-        return { contentType:'image/jpeg', data:await photoDataUrl(blob) };
+        if (blob.size > 2.7*1024*1024) blob = await new Promise((resolve) => canvas.toBlob(resolve,'image/webp',.88));
+        return { contentType:'image/webp', data:await photoDataUrl(blob) };
       } finally { URL.revokeObjectURL(url); }
     }
     const todayKey=()=>new Date().toISOString().slice(0,10);

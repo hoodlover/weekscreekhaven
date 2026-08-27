@@ -22,12 +22,14 @@
     .brand { display:flex; justify-content:center; align-items:center; gap:10px; color:var(--cream); margin-bottom:14px; text-transform:uppercase; letter-spacing:.17em; font-size:.68rem; font-weight:800; }
     .brand img { width:75px; height:75px; object-fit:contain; filter:drop-shadow(0 5px 10px rgba(0,0,0,.45)); }
     .card { overflow:hidden; background:rgba(255,250,240,.97); border:1px solid rgba(255,255,255,.32); border-radius:24px; box-shadow:0 25px 70px rgba(0,0,0,.48); }
-    .photos { display:grid; min-height:340px; background:#2a211b; }
+    .photos { display:grid; min-height:340px; background:transparent; }
     .photos.count-1 { grid-template-columns:1fr; }
     .photos.count-2 { grid-template-columns:1fr 1fr; }
     .photos.count-3 { grid-template-columns:1.25fr .75fr; grid-template-rows:1fr 1fr; }
     .photos.count-3 img:first-child { grid-row:1/3; }
     .photos img { width:100%; height:100%; min-height:170px; object-fit:cover; display:block; border:1px solid rgba(255,255,255,.1); }
+    .photos.feature-art { min-height:0; padding:16px; background:transparent; }
+    .photos.feature-art img { height:auto; min-height:0; object-fit:contain; border:0; }
     .welcome { padding:clamp(28px,5vw,58px); text-align:center; }
     .eyebrow { color:var(--rust); font-size:.7rem; text-transform:uppercase; letter-spacing:.22em; font-weight:800; margin-bottom:10px; }
     h1 { margin:0; color:var(--pine); font:italic 700 clamp(2.8rem,8vw,5.7rem)/.93 'Crimson Text',serif; }
@@ -111,10 +113,13 @@
         document.getElementById('invite-label').textContent = escapeText(data.inviteLabel);
         document.getElementById('message').textContent = escapeText(data.welcomeMessage) || `We made this welcome just for ${escapeText(data.inviteLabel)}. Settle in, breathe out, and make yourselves at home.`;
         renderStayChoices(data);
+        const customPhoto = escapeText(data.inviteLabel).toLowerCase() === 'do vibers' ? '/guests/DO_Vibers.webp' : '';
         const photos = data.photos || [];
         const photoBox = document.getElementById('photos');
-        photoBox.className = `photos count-${Math.max(1, photos.length)}`;
-        if (photos.length) {
+        photoBox.className = customPhoto ? 'photos count-1 feature-art' : `photos count-${Math.max(1, photos.length)}`;
+        if (customPhoto) {
+          photoBox.innerHTML = `<img src="${customPhoto}" alt="Welcome to Weeks Creek Haven, DO Vibers">`;
+        } else if (photos.length) {
           photoBox.innerHTML = photos.map((photo,index) => `<img src="/api/invite-photo?photoId=${encodeURIComponent(photo.id)}" alt="Welcome photo ${index + 1}">`).join('');
         } else {
           photoBox.innerHTML = '<img src="gallery/creek-listening-spot.webp" alt="Weeks Creek Haven stream and bridge">';
