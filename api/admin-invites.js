@@ -1,6 +1,7 @@
 import { appendInviteRecord, getAccessRecords, getInvites } from '../_lib/invite-store.js';
 import { appendBookingRecord, getBookingCalendar, rangesOverlap, unavailableRanges } from '../_lib/booking-store.js';
 import { generatePasscode, hashPasscode, json, requireAdmin } from '../_lib/security.js';
+import { findInviteBooking } from '../_lib/booking-invite.js';
 
 function safeText(value, max = 120) {
   return String(value || '').trim().slice(0, max);
@@ -55,7 +56,7 @@ export default async function handler(request, response) {
       const [invites, access, calendar] = await Promise.all([getInvites(), getAccessRecords(), getBookingCalendar()]);
       const withActivity = invites.map((invite) => {
         const inviteAccess = access.filter((entry) => entry.inviteId === invite.id);
-        const booking = invite.bookingId ? calendar.bookings.find((item) => item.id === invite.bookingId) : null;
+        const booking = findInviteBooking(invite, calendar.bookings);
         return { ...presentInvite(invite, booking), accessCount: inviteAccess.length, lastAccessAt: inviteAccess[0]?.accessedAt || null };
       });
       return json(response, 200, { invites: withActivity, access: access.slice(0, 250) }, { 'Cache-Control': 'no-store' });

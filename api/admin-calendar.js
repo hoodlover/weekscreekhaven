@@ -4,6 +4,7 @@ import { getInvites } from '../_lib/invite-store.js';
 import { createAgreementToken, json, requireAdmin } from '../_lib/security.js';
 import { cancelSquareInvoice } from '../_lib/square.js';
 import { refreshSquareBooking } from '../_lib/payment-sync.js';
+import { findBookingInvite } from '../_lib/booking-invite.js';
 
 const text = (value, max = 120) => String(value || '').trim().slice(0, max);
 const date = (value) => /^\d{4}-\d{2}-\d{2}$/.test(String(value || '')) ? String(value) : '';
@@ -14,7 +15,6 @@ export default async function handler(request, response) {
   try {
     if (request.method === 'GET') {
       const [calendar, invites] = await Promise.all([getBookingCalendar(), getInvites()]);
-      const inviteById = new Map(invites.map((invite) => [invite.id, invite]));
       calendar.bookings = await Promise.all((calendar.bookings || []).map(async (booking) => {
         let current = booking;
         if (booking.squareInvoiceId && !(booking.status === 'booked' && booking.paymentFullyPaid && booking.bookedWelcomeSentAt)) {
@@ -22,7 +22,7 @@ export default async function handler(request, response) {
           catch (error) { current = { ...booking, paymentCheckError: error.message || 'Square status unavailable.' }; }
         }
         const token = createAgreementToken(current.id, 365 * 86400);
-        const invite = current.inviteId ? inviteById.get(current.inviteId) : null;
+        const invite = findBookingInvite(current, invites);
         return { ...current, bookingPacketUrl: `https://www.weekscreekhaven.com/booking-packet.html?token=${encodeURIComponent(token)}`, invitePasscode: invite?.passcode || '', welcomePreviewUrl: invite ? `/api/admin-preview-invite?inviteId=${encodeURIComponent(invite.id)}` : '' };
       }));
       return json(response, 200, calendar, { 'Cache-Control': 'no-store' });

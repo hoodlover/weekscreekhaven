@@ -4,6 +4,7 @@ import { getInvites } from '../_lib/invite-store.js';
 import { createAgreementToken, createReviewToken, json, requireAdmin } from '../_lib/security.js';
 import { createSquareBookingInvoice, createSquareFriendInvoice, squareStatus } from '../_lib/square.js';
 import { refreshSquareBooking } from '../_lib/payment-sync.js';
+import { findBookingInvite } from '../_lib/booking-invite.js';
 import { daysBetween, PRICING_CONFIG, quoteStay, withEstimatedTaxesAndFees } from '../pricing.js';
 
 function bookingPacketUrl(bookingId) {
@@ -39,9 +40,8 @@ export default async function handler(request, response) {
         try { return await refreshSquareBooking(booking); }
         catch (error) { return { ...booking, paymentCheckError: error.message || 'Square status unavailable.' }; }
       }));
-      const inviteById = new Map(invites.map((invite) => [invite.id, invite]));
       const pricedBookings = bookings.map((booking) => {
-        const invite = booking.inviteId ? inviteById.get(booking.inviteId) : null;
+        const invite = findBookingInvite(booking, invites);
         return {
           ...booking,
           bookingPacketUrl: bookingPacketUrl(booking.id),
