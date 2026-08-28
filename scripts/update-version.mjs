@@ -4,6 +4,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const manualLegacyGraphicsHours = 40;
 
 function git(args) {
   return execFileSync('git', args, {
@@ -24,6 +25,7 @@ function writeJson(path, data) {
 function parseHistory() {
   const log = git([
     'log',
+    'main',
     '--reverse',
     '--date=iso-strict',
     '--shortstat',
@@ -112,7 +114,8 @@ function estimateHours(commits) {
 const commits = parseHistory();
 const distinctDays = new Set(commits.map((commit) => commit.date.slice(0, 10))).size;
 const totalCommits = commits.length;
-const estimatedBuildHours = estimateHours(commits);
+const historyEstimatedHours = estimateHours(commits);
+const estimatedBuildHours = historyEstimatedHours + manualLegacyGraphicsHours;
 const rawCommitHoursAt45Minutes = Math.round(totalCommits * 0.75);
 const version = `${distinctDays}.${estimatedBuildHours}.${totalCommits}`;
 
@@ -140,12 +143,14 @@ writeJson(buildVersionPath, {
   format: 'days.hours.commits',
   distinctCommitDays: distinctDays,
   estimatedBuildHours,
+  historyEstimatedHours,
+  manualLegacyGraphicsHours,
   totalCommits,
   rawCommitHoursAt45Minutes,
   estimateMethod:
-    'Groups commit bursts into work sessions, starts each session at 45 minutes, adds time for session span and larger changes, and caps any single day at 10 hours.',
+    'Counts commits from main, groups commit bursts into work sessions, starts each session at 45 minutes, adds time for session span and larger changes, caps any single day at 10 hours, and adds the documented legacy graphics allowance.',
   interpretationNote:
-    'This repository has many auto-save/upload commits, so build hours are interpreted from clustered work sessions instead of treating every commit as a separate 45-minute work block.',
+    'This repository has many auto-save/upload commits, so build hours are interpreted from clustered work sessions instead of treating every commit as a separate 45-minute work block. The manual allowance records approximately 40 hours spent creating early graphics outside the Git commit timeline.',
 });
 
 console.log(version);

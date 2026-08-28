@@ -1,10 +1,12 @@
 {
-  "version": "25.158.1083",
+  "version": "29.223.1145",
   "format": "days.hours.commits",
-  "distinctCommitDays": 25,
-  "estimatedBuildHours": 158,
-  "totalCommits": 1083,
-  "rawCommitHoursAt45Minutes": 812,
-  "estimateMethod": "Groups commit bursts into work sessions, starts each session at 45 minutes, adds time for session span and larger changes, and caps any single day at 10 hours.",
-  "interpretationNote": "This repository has many auto-save/upload commits, so build hours are interpreted from clustered work sessions instead of treating every commit as a separate 45-minute work block."
+  "distinctCommitDays": 29,
+  "estimatedBuildHours": 223,
+  "historyEstimatedHours": 183,
+  "manualLegacyGraphicsHours": 40,
+  "totalCommits": 1145,
+  "rawCommitHoursAt45Minutes": 859,
+  "estimateMethod": "Counts commits from main, groups commit bursts into work sessions, starts each session at 45 minutes, adds time for session span and larger changes, caps any single day at 10 hours, and adds the documented legacy graphics allowance.",
+  "interpretationNote": "This repository has many auto-save/upload commits, so build hours are interpreted from clustered work sessions instead of treating every commit as a separate 45-minute work block. The manual allowance records approximately 40 hours spent creating early graphics outside the Git commit timeline."
 }
