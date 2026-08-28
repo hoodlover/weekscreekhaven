@@ -76,6 +76,8 @@
     .calendar-day.is-today { border-color:var(--rust); }
     .calendar-day.is-past { color:#c4bdb5; background:#fcfbf8; border-color:#f1ece5; }
     .calendar-day.is-blocked { color:#8b8178; background:repeating-linear-gradient(135deg,#ded7ce 0 5px,#eee9e2 5px 10px); text-decoration:line-through; }
+    .calendar-day.is-requested { color:#315c73; background:#e5f0f6; border-color:#bfd5e2; text-decoration:none; }
+    .calendar-day.is-deposit-pending { color:#214d67; background:repeating-linear-gradient(135deg,#bcd8e7 0 6px,#dcebf3 6px 12px); border-color:#78a9c2; text-decoration:none; }
     .calendar-day.is-in-range { color:var(--pine); background:#dce9df; border-radius:3px; }
     .calendar-day.is-arrival,.calendar-day.is-departure { color:white; background:var(--pine); border-color:var(--pine); border-radius:50%; text-decoration:none; }
     .calendar-day.is-checkout-only { color:var(--pine); background:linear-gradient(135deg,#dce9df 0 50%,#ded7ce 50%); border-color:#9cae9f; text-decoration:none; }
@@ -85,6 +87,8 @@
     .calendar-key { display:inline-flex; align-items:center; gap:6px; }
     .calendar-swatch { width:13px; height:13px; border-radius:4px; background:#f4eee4; border:1px solid #d8cdbd; }
     .calendar-swatch.blocked { background:repeating-linear-gradient(135deg,#ded7ce 0 4px,#eee9e2 4px 8px); }
+    .calendar-swatch.requested { background:#e5f0f6; border-color:#bfd5e2; }
+    .calendar-swatch.deposit-pending { background:repeating-linear-gradient(135deg,#bcd8e7 0 5px,#dcebf3 5px 10px); border-color:#78a9c2; }
     .calendar-swatch.selected { background:var(--pine); border-color:var(--pine); }
     .calendar-swatch.range { background:#dce9df; border-color:#b8cdbd; }
     .calendar-summary { min-height:44px; margin-top:13px; padding:11px 12px; color:var(--muted); background:#fff; border:1px solid var(--line); border-radius:9px; font-size:.7rem; line-height:1.45; }
@@ -93,6 +97,8 @@
     .calendar-price-main span { display:block; color:var(--muted); font-size:.55rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
     .calendar-price-main strong { display:block; margin-top:2px; font:700 1.35rem/1 'Crimson Text',serif; }
     .calendar-price-detail { color:var(--muted); font-size:.61rem; line-height:1.45; }
+    .calendar-price-detail span,.calendar-deposit-note { display:block; }
+    .calendar-deposit-note { margin-top:5px; color:#315c73; font-size:.65rem; line-height:1.4; }
     .calendar-season { grid-column:1/-1; margin:0; padding-top:8px; border-top:1px solid #c9d9cc; color:#41644c; font-size:.65rem; font-weight:700; line-height:1.45; }
     .choice-actions { display:flex; justify-content:flex-end; margin-top:10px; }
     .clear-choice,.choice-toggle { width:auto; margin:0; padding:9px 13px; border:1px solid #cbbdab; background:transparent; color:var(--pine); box-shadow:none; font-size:.61rem; }
@@ -190,9 +196,9 @@
           <div class="calendar-picker" data-calendar="1">
             <div class="calendar-toolbar"><button class="calendar-nav" type="button" data-calendar-prev="1" aria-label="Show previous months">&#8592;</button><p class="calendar-prompt" id="calendar-prompt-1">Loading live availability&hellip;</p><button class="calendar-nav" type="button" data-calendar-next="1" aria-label="Show next months">&#8594;</button></div>
             <div class="calendar-months" id="calendar-months-1" aria-live="polite"></div>
-            <div class="calendar-legend"><span class="calendar-key"><i class="calendar-swatch"></i>Available</span><span class="calendar-key"><i class="calendar-swatch blocked"></i>Unavailable night</span><span class="calendar-key"><i class="calendar-swatch selected"></i>Arrival / checkout</span><span class="calendar-key"><i class="calendar-swatch range"></i>Your stay</span></div>
+            <div class="calendar-legend"><span class="calendar-key"><i class="calendar-swatch"></i>Available</span><span class="calendar-key"><i class="calendar-swatch requested"></i>Requested &middot; no deposit</span><span class="calendar-key"><i class="calendar-swatch deposit-pending"></i>Deposit pending &middot; held</span><span class="calendar-key"><i class="calendar-swatch blocked"></i>Unavailable night</span><span class="calendar-key"><i class="calendar-swatch selected"></i>Arrival / checkout</span><span class="calendar-key"><i class="calendar-swatch range"></i>Your stay</span></div>
             <div class="calendar-summary" id="calendar-summary-1">Choose an arrival date, then choose your checkout date.</div>
-            <div class="calendar-price" id="calendar-price-1" hidden><div class="calendar-price-main"><span>Live stay estimate</span><strong></strong></div><div class="calendar-price-detail"></div><p class="calendar-season"></p></div>
+            <div class="calendar-price" id="calendar-price-1" hidden><div class="calendar-price-main"><span>Live stay estimate</span><strong></strong></div><div class="calendar-price-detail"><span></span><strong class="calendar-deposit-note"></strong></div><p class="calendar-season"></p></div>
           </div>
           <div id="availability-1" class="availability-status" hidden role="status"></div><div id="quote-1" class="stay-quote" hidden><strong></strong><span></span></div>
         </fieldset>
@@ -203,9 +209,9 @@
           <div class="calendar-picker" data-calendar="2">
             <div class="calendar-toolbar"><button class="calendar-nav" type="button" data-calendar-prev="2" aria-label="Show previous months">&#8592;</button><p class="calendar-prompt" id="calendar-prompt-2">Choose another possible stay.</p><button class="calendar-nav" type="button" data-calendar-next="2" aria-label="Show next months">&#8594;</button></div>
             <div class="calendar-months" id="calendar-months-2" aria-live="polite"></div>
-            <div class="calendar-legend"><span class="calendar-key"><i class="calendar-swatch"></i>Available</span><span class="calendar-key"><i class="calendar-swatch blocked"></i>Unavailable night</span><span class="calendar-key"><i class="calendar-swatch selected"></i>Arrival / checkout</span><span class="calendar-key"><i class="calendar-swatch range"></i>Your stay</span></div>
+            <div class="calendar-legend"><span class="calendar-key"><i class="calendar-swatch"></i>Available</span><span class="calendar-key"><i class="calendar-swatch requested"></i>Requested &middot; no deposit</span><span class="calendar-key"><i class="calendar-swatch deposit-pending"></i>Deposit pending &middot; held</span><span class="calendar-key"><i class="calendar-swatch blocked"></i>Unavailable night</span><span class="calendar-key"><i class="calendar-swatch selected"></i>Arrival / checkout</span><span class="calendar-key"><i class="calendar-swatch range"></i>Your stay</span></div>
             <div class="calendar-summary" id="calendar-summary-2">Choose an arrival date, then choose your checkout date.</div>
-            <div class="calendar-price" id="calendar-price-2" hidden><div class="calendar-price-main"><span>Live stay estimate</span><strong></strong></div><div class="calendar-price-detail"></div><p class="calendar-season"></p></div>
+            <div class="calendar-price" id="calendar-price-2" hidden><div class="calendar-price-main"><span>Live stay estimate</span><strong></strong></div><div class="calendar-price-detail"><span></span><strong class="calendar-deposit-note"></strong></div><p class="calendar-season"></p></div>
           </div>
           <div class="choice-actions"><button class="clear-choice" id="remove-choice" type="button">Remove second choice</button></div>
           <div id="availability-2" class="availability-status" hidden role="status"></div><div id="quote-2" class="stay-quote" hidden><strong></strong><span></span></div>
@@ -227,7 +233,7 @@
   <script type="module">
     import { money, quoteStay, seasonForDate } from '/pricing.js';
     const form=document.getElementById('booking-form'); const button=document.getElementById('submit'); const message=document.getElementById('form-message');
-    const pricingState={rates:[],unavailable:[],loaded:false,calendarError:'',discountQuotes:{},discountTimer:null,discountRequest:0};
+    const pricingState={rates:[],unavailable:[],requested:[],loaded:false,calendarError:'',discountQuotes:{},discountTimer:null,discountRequest:0};
     const today=new Date(); today.setHours(0,0,0,0); const minimum=today.toISOString().slice(0,10);
     const addDays=(value,days)=>{ const date=new Date(`${value}T12:00:00`); date.setDate(date.getDate()+days); return date.toISOString().slice(0,10); };
     const validDate=(value)=>/^\d{4}-\d{2}-\d{2}$/.test(value||'')&&!Number.isNaN(Date.parse(`${value}T12:00:00`));
@@ -242,6 +248,7 @@
     const weekdays=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     const stayNights=(arrival,departure)=>Math.round((Date.parse(`${departure}T12:00:00`)-Date.parse(`${arrival}T12:00:00`))/86400000);
     const unavailableNight=(value)=>pricingState.unavailable.some((range)=>value>=range.arrival&&value<range.departure);
+    const requestStateForNight=(value)=>pricingState.requested.find((range)=>range.state==='deposit-pending'&&value>=range.arrival&&value<range.departure)?.state||pricingState.requested.find((range)=>value>=range.arrival&&value<range.departure)?.state||'';
     const stayConflicts=(arrival,departure)=>pricingState.unavailable.some((range)=>rangesOverlap({arrival,departure},range));
     function seasonalNote(arrival){
       const season=seasonForDate(arrival),month=Number(arrival.slice(5,7));
@@ -261,7 +268,8 @@
       const quote=cached?.signature===quoteSignature(index)?cached.quote:quoteStay({arrival,departure,guests,dogs,lateCheckout:form.elements.lateCheckout.checked,rates:pricingState.rates});
       if(!quote){panel.hidden=true;return;}
       panel.querySelector('.calendar-price-main strong').textContent=`${money(quote.totalCents)} before taxes`;
-      panel.querySelector('.calendar-price-detail').textContent=`${money(quote.estimatedGrandTotalCents)} estimated with taxes · ${form.elements.guests.value?`${guests} guest${guests===1?'':'s'}`:'priced for 1–4 guests'} · ${quote.cleaningAdjustmentCents?`${money(quote.cleaningAdjustmentCents)} group cleaning adjustment`:'standard cleaning included'}`;
+      panel.querySelector('.calendar-price-detail span').textContent=`${money(quote.estimatedGrandTotalCents)} estimated with taxes · ${form.elements.guests.value?`${guests} guest${guests===1?'':'s'}`:'priced for 1–4 guests'} · ${quote.cleaningAdjustmentCents?`${money(quote.cleaningAdjustmentCents)} group cleaning adjustment`:'standard cleaning included'}`;
+      panel.querySelector('.calendar-deposit-note').textContent=quote.complimentary?'Approved guest stay · no payment required':quote.friendsAndFamilyDiscount?'Approved guest pricing · final payment details follow confirmation':'After approval, a $100 deposit reserves these dates · remaining balance due the day before check-in';
       panel.querySelector('.calendar-season').textContent=`${seasonalNote(arrival)} · ${quote.pricingRule}`;
       panel.hidden=false;
     }
@@ -278,18 +286,19 @@
         for(let blank=0;blank<visibleMonth.getDay();blank++){const spacer=document.createElement('span');spacer.className='calendar-blank';spacer.setAttribute('aria-hidden','true');days.append(spacer);}
         const dayCount=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()+1,0).getDate();
         for(let dayNumber=1;dayNumber<=dayCount;dayNumber++){
-          const value=dateKey(new Date(visibleMonth.getFullYear(),visibleMonth.getMonth(),dayNumber,12)),day=document.createElement('button'),isPast=value<minimum,isBlocked=unavailableNight(value),choosingCheckout=Boolean(arrival&&!departure),validCheckout=choosingCheckout&&value>arrival&&!stayConflicts(arrival,value),checkoutOnly=validCheckout&&isBlocked;
+          const value=dateKey(new Date(visibleMonth.getFullYear(),visibleMonth.getMonth(),dayNumber,12)),day=document.createElement('button'),isPast=value<minimum,isBlocked=unavailableNight(value),requestState=requestStateForNight(value),choosingCheckout=Boolean(arrival&&!departure),validCheckout=choosingCheckout&&value>arrival&&!stayConflicts(arrival,value),checkoutOnly=validCheckout&&isBlocked;
           day.type='button';day.className='calendar-day';day.dataset.calendarDay=value;day.dataset.calendarIndex=index;day.textContent=String(dayNumber);
           day.disabled=isPast||(choosingCheckout&&value>arrival?!validCheckout:isBlocked);
           if(value===minimum)day.classList.add('is-today');
           if(isPast)day.classList.add('is-past');
           if(isBlocked)day.classList.add('is-blocked');
+          if(requestState&&!isPast)day.classList.add(requestState==='deposit-pending'?'is-deposit-pending':'is-requested');
           if(arrival&&departure&&value>arrival&&value<departure)day.classList.add('is-in-range');
           if(value===arrival)day.classList.add('is-arrival');
           if(value===departure)day.classList.add('is-departure');
           if(checkoutOnly)day.classList.add('is-checkout-only');
           const spoken=new Intl.DateTimeFormat(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'}).format(new Date(`${value}T12:00:00`));
-          const stateLabel=isPast?'past date':checkoutOnly?'available as checkout only':day.disabled&&isBlocked?'unavailable':value===arrival?'selected arrival':value===departure?'selected checkout':'available';
+          const stateLabel=isPast?'past date':checkoutOnly?'available as checkout only':value===arrival?'selected arrival':value===departure?'selected checkout':requestState==='deposit-pending'?'deposit pending, temporarily held':requestState==='requested'?'requested, still available':day.disabled&&isBlocked?'unavailable':'available';
           day.setAttribute('aria-label',`${spoken}, ${stateLabel}`);day.setAttribute('aria-pressed',String(value===arrival||value===departure));
           days.append(day);
         }
@@ -368,7 +377,7 @@
       const selectionNote=document.getElementById('calendar-selection'); selectionNote.textContent=`Your calendar selection was added: ${friendlyDate(selectedArrival)} through ${friendlyDate(selectedDeparture)}.`; selectionNote.hidden=false;
     }
     renderCalendars();
-    fetch('/api/availability').then(async(response)=>{const data=await response.json();if(!response.ok)throw new Error(data.error||'Pricing could not be loaded.');pricingState.rates=data.rates||[];pricingState.unavailable=data.unavailable||[];pricingState.loaded=true;renderCalendars();renderQuote(1);renderQuote(2);checkAvailability(1);checkAvailability(2);scheduleDiscountQuotes();}).catch((error)=>{pricingState.calendarError=error.message||'Live availability could not be loaded.';renderCalendars();});
+    fetch('/api/availability').then(async(response)=>{const data=await response.json();if(!response.ok)throw new Error(data.error||'Pricing could not be loaded.');pricingState.rates=data.rates||[];pricingState.unavailable=data.unavailable||[];pricingState.requested=data.requested||[];pricingState.loaded=true;renderCalendars();renderQuote(1);renderQuote(2);checkAvailability(1);checkAvailability(2);scheduleDiscountQuotes();}).catch((error)=>{pricingState.calendarError=error.message||'Live availability could not be loaded.';renderCalendars();});
     form.addEventListener('submit',async(event)=>{
       event.preventDefault(); message.hidden=true;
       if(!validDate(form.elements.arrival1.value)||!validDate(form.elements.departure1.value)){message.className='message error';message.textContent='Choose an arrival and checkout date for your first choice.';message.hidden=false;document.getElementById('choice-1').scrollIntoView({behavior:'smooth',block:'center'});return;}
