@@ -1,391 +1,321 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="/site-interactions.css">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blue Ridge Cabin Photos | Weeks Creek Haven Gallery</title>
+  <link rel="stylesheet" href="/site-interactions.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blue Ridge Cabin Photos | Weeks Creek Haven Gallery</title>
   <link rel="icon" href="/webpic/weeks-creek-haven-favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="/webpic/weeks-creek-haven-favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/webpic/weeks-creek-haven-favicon-16.png">
-    <meta name="description" content="Tour Weeks Creek Haven through real photos of this four-bedroom creekside Blue Ridge cabin, including the hot tub, bedrooms, decks, and Weeks Creek.">
-    <meta name="robots" content="index,follow,max-image-preview:large">
-    <link rel="canonical" href="https://www.weekscreekhaven.com/gallery.html">
-    <meta property="og:title" content="Blue Ridge Cabin Photos | Weeks Creek Haven">
-    <meta property="og:description" content="See the actual cabin, hot tub, bedrooms, decks, and private creek setting before requesting your Blue Ridge stay.">
-    <meta property="og:url" content="https://www.weekscreekhaven.com/gallery.html">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="https://www.weekscreekhaven.com/gallery/blue-ridge-ga-cabin-rental-exterior.webp">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
-    
-    <style>
-        body { font-family: 'Montserrat', sans-serif; color: #f4eee0; scroll-behavior: smooth; }
-        h1, h2, h3, h4 { font-family: 'Crimson Text', serif; }
+  <meta name="description" content="Tour Weeks Creek Haven through real photos of this four-bedroom creekside Blue Ridge cabin, including the hot tub, bedrooms, decks, and Weeks Creek.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="canonical" href="https://www.weekscreekhaven.com/gallery.html">
+  <meta property="og:title" content="Blue Ridge Cabin Photos | Weeks Creek Haven">
+  <meta property="og:description" content="See the actual cabin, hot tub, bedrooms, decks, and private creek setting before requesting your Blue Ridge stay.">
+  <meta property="og:url" content="https://www.weekscreekhaven.com/gallery.html">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://www.weekscreekhaven.com/gallery/blue-ridge-ga-cabin-rental-exterior.webp">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-        .bg-wood {
-            background-color: #1a1512;
-            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('webpic/vintage-wooden-board-textured-background.webp');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
+  <style>
+    :root {
+      --pine: #153f31;
+      --pine-deep: #0d2d23;
+      --rust: #ad603f;
+      --cream: #f5efe5;
+      --paper: #fffdf8;
+      --ink: #302a25;
+      --muted: #746b62;
+      --line: #dacdbb;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; color: var(--ink); background: var(--cream); font-family: 'Montserrat', sans-serif; }
+    h1, h2, h3 { font-family: 'Crimson Text', serif; font-weight: 700; }
 
-        .extra-heavy-shadow {
-            text-shadow: 
-                3px 3px 6px rgba(0, 0, 0, 1),
-                0px 0px 25px rgba(0, 0, 0, 1),
-                0px 0px 10px rgba(0, 0, 0, 0.8);
-        }
+    .gallery-hero {
+      min-height: 650px;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      isolation: isolate;
+      overflow: hidden;
+      background: var(--pine-deep);
+    }
+    .gallery-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      background: url('/gallery/cabin-sunset.webp') center 58% / cover no-repeat;
+      transform: scale(1.01);
+    }
+    .gallery-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(90deg, rgba(10,31,24,.86), rgba(10,31,24,.34) 62%, rgba(10,31,24,.08)), linear-gradient(0deg, rgba(10,31,24,.64), transparent 50%);
+    }
+    .hero-inner { width: min(1180px, calc(100% - 48px)); margin: 0 auto; padding: 125px 0 115px; }
+    .eyebrow, .chapter-kicker { margin: 0 0 16px; color: #e2b582; font-size: .72rem; font-weight: 800; letter-spacing: .22em; text-transform: uppercase; }
+    .hero-title { max-width: 760px; margin: 0; color: #fffdf8; font-size: clamp(4rem, 9vw, 7.4rem); line-height: .88; letter-spacing: -.04em; }
+    .hero-copy { max-width: 560px; margin: 24px 0 0; color: rgba(255,255,255,.84); font-size: 1.02rem; line-height: 1.75; }
 
-        h1, h2, h3, h4 {
-            font-family: 'Crimson Text', serif;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 1), 0px 0px 25px rgba(0, 0, 0, 1), 0px 0px 10px rgba(0, 0, 0, 0.8);
-        }
+    .chapter-nav {
+      position: relative;
+      z-index: 5;
+      width: min(860px, calc(100% - 32px));
+      margin: -36px auto 0;
+      padding: 14px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      background: rgba(255,253,248,.96);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      box-shadow: 0 20px 55px rgba(48,42,37,.16);
+      backdrop-filter: blur(12px);
+    }
+    .chapter-nav a {
+      flex: 1;
+      max-width: 220px;
+      padding: 14px 18px;
+      color: var(--pine);
+      border-radius: 999px;
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-align: center;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color .2s ease, background .2s ease, transform .2s ease;
+    }
+    .chapter-nav a:hover { color: #fff; background: var(--rust); transform: translateY(-2px); }
 
-.wood-btn { height: 80px; }          /* was 80px — mobile */
+    .gallery-shell { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+    .gallery-chapter { padding: 110px 0 20px; scroll-margin-top: 40px; }
+    .chapter-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 430px); gap: 50px; align-items: end; margin-bottom: 42px; }
+    .chapter-kicker { color: var(--rust); margin-bottom: 12px; }
+    .chapter-title { margin: 0; color: var(--pine); font-size: clamp(3.2rem, 6vw, 5.3rem); line-height: .9; letter-spacing: -.035em; }
+    .chapter-copy { margin: 0; color: var(--muted); font-size: .95rem; line-height: 1.75; }
 
-@media (min-width: 768px)  { .wood-btn { height: 74px; } }   /* was 64px — desktop */
-@media (min-width: 1536px) { .wood-btn { height: 112px; } }  /* was 96px — 2xl */
-        #mobile-menu { background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('webpic/railroad-tie-texture.webp'); background-size: cover; }
+    .photo-grid { display: grid; grid-template-columns: repeat(12, minmax(0,1fr)); grid-auto-flow: dense; gap: 22px; }
+    .gallery-item {
+      position: relative;
+      grid-column: span 4;
+      height: 350px;
+      overflow: hidden;
+      cursor: zoom-in;
+      border: 1px solid rgba(58,47,39,.13);
+      border-radius: 18px;
+      background: #d7cec1;
+      box-shadow: 0 14px 34px rgba(48,42,37,.09);
+      transition: transform .3s ease, box-shadow .3s ease;
+    }
+    .gallery-item.feature { grid-column: span 8; height: 520px; }
+    .gallery-item.tall { grid-column: span 4; height: 520px; }
+    .gallery-item.wide { grid-column: span 8; height: 390px; }
+    .gallery-item.half { grid-column: span 6; height: 410px; }
+    .gallery-item:hover { transform: translateY(-5px); box-shadow: 0 22px 46px rgba(48,42,37,.15); }
+    .gallery-item img { width: 100%; height: 100%; display: block; object-fit: cover; transition: transform .55s ease; }
+    .gallery-item:hover img { transform: scale(1.035); }
+    .gallery-item::after { content: ''; position: absolute; inset: 45% 0 0; background: linear-gradient(0deg, rgba(9,29,23,.8), transparent); pointer-events: none; }
+    .photo-caption { position: absolute; z-index: 2; right: 24px; bottom: 22px; left: 24px; color: #fff; }
+    .photo-caption span { display: block; margin-bottom: 5px; color: #e2b582; font-size: .62rem; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+    .photo-caption strong { font-family: 'Crimson Text', serif; font-size: 1.35rem; line-height: 1.1; }
 
-        .wood-btn:hover { transform: scale(1.05); }
+    .winter-band {
+      width: 100%;
+      margin-top: 110px;
+      padding: 115px 0 125px;
+      color: #fff;
+      background: var(--pine-deep);
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+    }
+    .winter-band::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      opacity: .22;
+      background: url('/gallery/snow-bridge.webp') center / cover no-repeat;
+    }
+    .winter-band::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(13,45,35,.72), rgba(13,45,35,.94) 40%); }
+    .winter-band .gallery-shell { position: relative; }
+    .winter-band .chapter-title { color: #fffdf8; }
+    .winter-band .chapter-copy { color: rgba(255,255,255,.78); }
+    .winter-band .chapter-kicker { color: #f0c79d; }
+    .winter-band .gallery-item { border-color: rgba(255,255,255,.17); box-shadow: 0 18px 44px rgba(0,0,0,.24); }
 
-        .nav-link-group a .hover-img { display: none; }
-        .nav-link-group a:hover .normal-img { display: none; }
-        .nav-link-group a:hover .hover-img { display: block; }
+    #lightbox { display: none; position: fixed; z-index: 1000; inset: 0; align-items: center; justify-content: center; padding: 72px; background: rgba(8,22,18,.95); backdrop-filter: blur(10px); }
+    #lightbox img { max-width: min(1100px, 82vw); max-height: 78vh; border-radius: 12px; box-shadow: 0 30px 90px rgba(0,0,0,.6); }
+    #caption { position: absolute; bottom: 28px; width: min(720px, 75vw); color: #fff; font-family: 'Crimson Text', serif; font-size: 1.45rem; text-align: center; }
+    #close { position: absolute; top: 18px; right: 28px; color: #fff; font-size: 2.6rem; line-height: 1; cursor: pointer; }
+    .nav-btn { position: absolute; top: 50%; width: 48px; height: 48px; display: grid; place-items: center; color: #fff; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.28); border-radius: 50%; font-size: 1.2rem; cursor: pointer; transform: translateY(-50%); transition: background .2s ease; }
+    .nav-btn:hover { background: var(--rust); }
+    #prev { left: 24px; }
+    #next { right: 24px; }
 
-        .accent-green { color: #A45D41; }
-        .parchment-label { background-color: rgba(244, 238, 224, 0.95); border-top: 3px solid #231f1f; }
-
-        /* Lightbox Styles */
-        #lightbox { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); justify-content: center; align-items: center; }
-        #lightbox img { max-width: 82%; max-height: 80vh; border: 4px solid #231f1f; box-shadow: 0 0 50px rgba(0,0,0,0.5); border-radius: 4px; }
-        .nav-btn {
-            position: absolute; top: 50%; transform: translateY(-50%);
-            background: rgba(54,51,51,0.75); color: #f4eee0;
-            border: 2px solid #231f1f; border-radius: 8px;
-            font-size: 2rem; line-height: 1; cursor: pointer;
-            padding: 12px 18px; user-select: none;
-            transition: background 0.2s, color 0.2s;
-            z-index: 10;
-        }
-        .nav-btn:hover { background: #A45D41; color: #fff; border-color: #A45D41; }
-        #prev { left: 16px; }
-        #next { right: 16px; }
-        #close { position: absolute; top: 20px; right: 30px; color: white; font-size: 3rem; cursor: pointer; line-height: 1; }
-        #caption { position: absolute; bottom: 40px; color: #f4eee0; font-family: 'Crimson Text', serif; font-style: italic; font-size: 1.5rem; text-align: center; width: 80%; }
-        
-        .gallery-item { cursor: pointer; break-inside: avoid; margin-bottom: 2rem; }
-/* This specifically stops the 5% growth on the logo images */
-.logo-link:hover .wood-btn { 
-    transform: scale(1.0) !important; 
-}
-
-
-/* 1. Position the container */
-.logo-link {
-    position: relative;
-    display: inline-block;
-    background: transparent; /* Ensures no background bleed */
-}
-
-/* 2. The Bottom Image (Normal) */
-.logo-link .normal-img {
-    opacity: 1;
-    /* We remove the transition here so it stays solid */
-    transition: none; 
-}
-
-/* 3. The Top Image (Hover) */
-.logo-link .hover-img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    /* Only the top image fades in */
-    transition: opacity 0.8s ease-in-out;
-    z-index: 2;
-}
-
-/* 4. Hover State */
-.logo-link:hover .hover-img {
-    opacity: 1;
-}
-
-/* Optional: Hide the normal image ONLY after hover is complete 
-   or keep it visible underneath to prevent the 'gap' */
-.logo-link:hover .normal-img {
-    opacity: 1; /* Keeping this at 1 ensures there is always a solid image */
-}
-
-    </style>
+    @media (max-width: 900px) {
+      .chapter-head { grid-template-columns: 1fr; gap: 18px; }
+      .gallery-item, .gallery-item.tall { grid-column: span 6; height: 390px; }
+      .gallery-item.feature, .gallery-item.wide { grid-column: span 12; height: 500px; }
+      .gallery-item.half { grid-column: span 6; height: 390px; }
+    }
+    @media (max-width: 600px) {
+      .gallery-hero { min-height: 540px; }
+      .gallery-hero::after { background: linear-gradient(0deg, rgba(10,31,24,.9), rgba(10,31,24,.22) 75%); }
+      .hero-inner { width: calc(100% - 32px); padding: 110px 0 98px; }
+      .hero-title { font-size: clamp(3.7rem, 19vw, 5rem); }
+      .hero-copy { font-size: .9rem; }
+      .chapter-nav { width: calc(100% - 24px); padding: 9px; gap: 4px; }
+      .chapter-nav a { padding: 12px 7px; font-size: .63rem; letter-spacing: .04em; }
+      .gallery-shell { width: calc(100% - 28px); }
+      .gallery-chapter { padding-top: 82px; }
+      .photo-grid { gap: 14px; }
+      .gallery-item, .gallery-item.feature, .gallery-item.tall, .gallery-item.wide, .gallery-item.half { grid-column: span 12; height: 360px; }
+      .gallery-item.feature { height: 440px; }
+      .winter-band { margin-top: 80px; padding: 85px 0 95px; }
+      #lightbox { padding: 55px 14px 90px; }
+      #lightbox img { max-width: 100%; max-height: 72vh; }
+      #prev { left: 10px; }
+      #next { right: 10px; }
+    }
+  </style>
 </head>
-<body class="bg-wood gallery-page">
+<body>
 
 <div id="nav-placeholder"></div>
 <script src="nav.js"></script>
 
-<header class="gallery-hero bg-wood pt-28 md:pt-56 pb-24 px-6 mb-12 shadow-lg text-center">
-    <div class="gallery-eyebrow">The cabin · The creek · The seasons</div>
-    <h1 class="text-5xl md:text-7xl text-white extra-heavy-shadow uppercase tracking-widest">
-        See the Haven
-    </h1>
-    <p class="gallery-intro">Real corners, real seasons, and the quiet details that make Weeks Creek Haven feel like a place of its own.</p>
+<header class="gallery-hero">
+  <div class="hero-inner">
+    <p class="eyebrow">Weeks Creek Haven &middot; A closer look</p>
+    <h1 class="hero-title">Come inside.<br>Then wander out.</h1>
+    <p class="hero-copy">A real-photo tour of the cabin, the creek, and the quiet corners that make a few days in the mountains feel longer.</p>
+  </div>
 </header>
 
-<main class="gallery-shell max-w-7xl mx-auto px-6 pb-24">
-    <div class="columns-1 md:columns-2 lg:columns-3 gap-8">
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/blue-ridge-ga-cabin-rental-exterior.webp" alt="Weeks Creek Haven cabin rental near Blue Ridge, Georgia, at sunset" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Sunset Over the Haven</div>
-        </div>
-                <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/Porch1.webp" alt="Front Porch" class="w-full" loading="lazy">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Welcome to the Porch</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/tv-room.webp" alt="Media room" class="w-full" loading="lazy">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Cozy Media Room Seating</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/bedroom-loft.webp" alt="Loft Bed" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">The Treehouse Loft Suite</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/blue-ridge-cabin-bedroom.webp" alt="Main-floor bedroom at Weeks Creek Haven cabin" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Main Floor Serenity</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/bedroom-main-floor-2.webp" alt="Bedroom window" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Fall Asleep to the Stream</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/bedroom-ground-level.webp" alt="Ground level bed" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Quiet Ground Level Workspace & Nursery</div>
-        </div>
-		<div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="webpic/lovethecabin.webp" alt="Ground level bed" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Everything We Love At The Cabin</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/washer-dryer.webp" alt="Laundry" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">In-Cabin Laundry Convenience</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/front-steps-stream.webp" alt="Stream" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Weeks Creek: Just Steps Away</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/blue-ridge-cabin-hot-tub.webp" alt="Private hot tub on the cabin deck" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Rested Mind, Rested Body</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/driveway.webp" alt="Driveway" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Easy Access Mountain Drive</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/living-space-loft-view.webp" alt="Main floor layout" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Open Concept Living from Above</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/living-room.webp" alt="Living Room" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Space for Conversations</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/inside-3.webp" alt="Interior" class="w-full" loading="lazy">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Warmth and High Ceilings</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/kitchen-meals.webp" alt="Kitchen" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Fully Equipped Kitchen</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/loft-cover-mattress.webp" alt="Loft cove" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Cozy Loft Sleeping Cove</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/main-bathroom.webp" alt="Main bath" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Main Level Bath & Tub</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/loft-bathroom.webp" alt="Loft bath" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Private Loft Bathroom</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/creek-swing.webp" alt="Swing" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Best Place to Listen to the Rain</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/games-toys.webp" alt="Game corner" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Games & Fun for Everyone</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/cabin-daylight.webp" alt="Daylight exterior" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Sunlight Through the Trees</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/inside-2.webp" alt="Interior 2" class="w-full" loading="lazy">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Cozy Fireplace & Vaulted Ceilings</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/living-room-ceilings.webp" alt="Ceilings" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Modern Comfort in Rustic Setting</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/dining-room.webp" alt="Dining" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Dining Area & Coffee Station</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/bedroom-1.webp" alt="Bedroom 1" class="w-full" loading="lazy">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Restful Mountain Nights</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/blue-ridge-ga-creekside-cabin.webp" alt="Private creek and footbridge beside the Blue Ridge cabin" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Serene Bridge Over the Stream</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/evening-view.webp" alt="Night view" class="w-full">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Evening Lights on the Deck</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/Creek1.webp" alt="Creek" class="w-full" loading="lazy">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">The Sounds of Weeks Creek</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/weeks-creek-haven-blue-ridge-cabin.webp" alt="Exterior of Weeks Creek Haven log cabin in the Aska area" class="w-full" loading="lazy">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Weeks Creek Haven</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/bigoletv.webp" alt="Large TV" class="w-full" loading="lazy">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">The Big Ole TV</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/bridge-n-swing.webp" alt="Bridge and swing" class="w-full" loading="lazy">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Bridge & Swing by the Creek</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/hot-tub.webp" alt="Hot tub" class="w-full" loading="lazy">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Soak Under the Stars</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/inside-1.webp" alt="Interior" class="w-full" loading="lazy">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Warm Interior Living</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/sreamside.webp" alt="Creekside" class="w-full" loading="lazy">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Right at the Creek's Edge</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/toccoa-river-nearby.webp" alt="Toccoa River" class="w-full" loading="lazy">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Toccoa River — Just Down the Road</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/toccoa-van-zandts-bridge.webp" alt="Van Zandt's Bridge" class="w-full" loading="lazy">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Van Zandt's Bridge on the Toccoa</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/spring.jpg" alt="Spring at the creek" class="w-full" loading="lazy">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Spring Blooms at the Haven</div>
-        </div>
-    </div>
+<nav class="chapter-nav" aria-label="Gallery sections">
+  <a href="#inside">Inside the cabin</a>
+  <a href="#outside">Outside &amp; creek</a>
+  <a href="#winter">Winter</a>
+</nav>
 
-    <!-- Winter / Snow Gallery -->
-    <div class="mt-20 mb-8 text-center">
-        <h2 class="winter-heading text-4xl md:text-5xl text-white uppercase tracking-widest">Winter at the Haven</h2>
-        <p class="mt-3 text-[#f4eee0] font-light opacity-75 extra-heavy-shadow">When the snow falls, the mountain transforms</p>
+<main>
+  <section class="gallery-chapter gallery-shell" id="inside">
+    <div class="chapter-head">
+      <div><p class="chapter-kicker">Chapter one</p><h2 class="chapter-title">Inside the cabin</h2></div>
+      <p class="chapter-copy">Warm wood, high ceilings, gathering spaces, and four bedrooms spread across three levels. Nothing staged beyond recognition&mdash;this is how the cabin actually lives.</p>
     </div>
-    <div class="columns-1 md:columns-2 lg:columns-3 gap-8">
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/driveway-snow.webp" alt="Snowy driveway" class="w-full" loading="lazy">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Snowy Mountain Arrival</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/snow-1.webp" alt="Snow view" class="w-full" loading="lazy">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Winter Magic</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/snow-2.webp" alt="Snow view" class="w-full" loading="lazy">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">A Snowy Mountain Morning</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/snow-3.webp" alt="Snow view" class="w-full" loading="lazy">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Cabin in the Snow</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/snow-4.webp" alt="Snow view" class="w-full" loading="lazy">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Pure Winter Stillness</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/snow-bridge.webp" alt="Bridge in snow" class="w-full" loading="lazy">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">The Creek Bridge in Snow</div>
-        </div>
-        <div class="gallery-item shadow-2xl rounded-lg overflow-hidden border-4 border-[#231f1f] bg-white">
-            <img src="gallery/deck-snow.webp" alt="Deck in snow" class="w-full" loading="lazy">
-            <div class="p-4 parchment-label text-xs italic text-center accent-green font-bold">Deck Covered in Snow</div>
-        </div>
+    <div class="photo-grid">
+      <figure class="gallery-item feature"><img src="/gallery/living-room.webp" alt="Warm living room at Weeks Creek Haven"><figcaption class="photo-caption"><span>Gather</span><strong>The heart of the cabin</strong></figcaption></figure>
+      <figure class="gallery-item tall"><img src="/gallery/living-space-loft-view.webp" alt="View of the main living space from the loft"><figcaption class="photo-caption"><span>Look up</span><strong>Open living from the loft</strong></figcaption></figure>
+      <figure class="gallery-item half"><img src="/gallery/kitchen-meals.webp" alt="Fully equipped cabin kitchen"><figcaption class="photo-caption"><span>Cook</span><strong>A kitchen made for long breakfasts</strong></figcaption></figure>
+      <figure class="gallery-item half"><img src="/gallery/dining-room.webp" alt="Dining room and coffee station"><figcaption class="photo-caption"><span>Settle in</span><strong>Dining and coffee station</strong></figcaption></figure>
+      <figure class="gallery-item"><img src="/gallery/bedroom-main-floor-1.webp" alt="Main-floor bedroom"><figcaption class="photo-caption"><span>Rest</span><strong>Main-floor bedroom</strong></figcaption></figure>
+      <figure class="gallery-item"><img src="/gallery/bedroom-loft.webp" alt="Loft bedroom"><figcaption class="photo-caption"><span>Upstairs</span><strong>The loft suite</strong></figcaption></figure>
+      <figure class="gallery-item"><img src="/gallery/bedroom-ground-level.webp" alt="Ground-level bedroom and workspace"><figcaption class="photo-caption"><span>Downstairs</span><strong>Bedroom, workspace, and nursery</strong></figcaption></figure>
+      <figure class="gallery-item wide"><img src="/gallery/tv-room.webp" alt="Ground-floor media room"><figcaption class="photo-caption"><span>Unwind</span><strong>The downstairs media room</strong></figcaption></figure>
+      <figure class="gallery-item"><img src="/gallery/games-toys.webp" alt="Games and toys at the cabin"><figcaption class="photo-caption"><span>Play</span><strong>Games for slow afternoons</strong></figcaption></figure>
+      <figure class="gallery-item"><img src="/gallery/main-bathroom.webp" alt="Main-level bathroom"><figcaption class="photo-caption"><span>Refresh</span><strong>Main-level bath</strong></figcaption></figure>
+      <figure class="gallery-item"><img src="/gallery/loft-bathroom.webp" alt="Private loft bathroom"><figcaption class="photo-caption"><span>Private</span><strong>Loft bathroom</strong></figcaption></figure>
     </div>
+  </section>
+
+  <section class="gallery-chapter gallery-shell" id="outside">
+    <div class="chapter-head">
+      <div><p class="chapter-kicker">Chapter two</p><h2 class="chapter-title">Outside &amp; creekside</h2></div>
+      <p class="chapter-copy">The cabin sits low in a wooded hollow with Weeks Creek just steps away. Porches wrap the house, and the best seats are the ones where you can hear the water.</p>
+    </div>
+    <div class="photo-grid">
+      <figure class="gallery-item feature"><img src="/gallery/cabin-daylight.webp" alt="Weeks Creek Haven cabin in daylight"><figcaption class="photo-caption"><span>Arrive</span><strong>Tucked into the trees</strong></figcaption></figure>
+      <figure class="gallery-item tall"><img src="/gallery/Porch1.webp" alt="Front porch at Weeks Creek Haven"><figcaption class="photo-caption"><span>Welcome</span><strong>The front porch</strong></figcaption></figure>
+      <figure class="gallery-item half"><img src="/gallery/blue-ridge-cabin-hot-tub.webp" alt="Private hot tub on the cabin deck"><figcaption class="photo-caption"><span>Soak</span><strong>Private hot tub above the creek</strong></figcaption></figure>
+      <figure class="gallery-item half"><img src="/gallery/creek-swing.webp" alt="Wood swing beside Weeks Creek"><figcaption class="photo-caption"><span>Listen</span><strong>The creekside swing</strong></figcaption></figure>
+      <figure class="gallery-item wide"><img src="/gallery/blue-ridge-ga-creekside-cabin.webp" alt="Private creek and footbridge beside the cabin"><figcaption class="photo-caption"><span>Explore</span><strong>Your own bridge over Weeks Creek</strong></figcaption></figure>
+      <figure class="gallery-item"><img src="/gallery/front-steps-stream.webp" alt="Creek beside the cabin steps"><figcaption class="photo-caption"><span>Close by</span><strong>Water just beyond the steps</strong></figcaption></figure>
+      <figure class="gallery-item"><img src="/gallery/driveway.webp" alt="Gravel driveway approaching the cabin"><figcaption class="photo-caption"><span>Find us</span><strong>The final approach</strong></figcaption></figure>
+      <figure class="gallery-item"><img src="/gallery/bridge-n-swing.webp" alt="Footbridge and swing at the creek"><figcaption class="photo-caption"><span>Stay awhile</span><strong>Bridge and swing by the creek</strong></figcaption></figure>
+      <figure class="gallery-item half"><img src="/gallery/evening-view.webp" alt="Cabin lights glowing at evening"><figcaption class="photo-caption"><span>After dark</span><strong>Evening settles over the decks</strong></figcaption></figure>
+      <figure class="gallery-item half"><img src="/gallery/spring.jpg" alt="Springtime beside Weeks Creek"><figcaption class="photo-caption"><span>In season</span><strong>Spring along the creek</strong></figcaption></figure>
+    </div>
+  </section>
+
+  <section class="winter-band" id="winter">
+    <div class="gallery-shell">
+      <div class="chapter-head">
+        <div><p class="chapter-kicker">A quieter season</p><h2 class="chapter-title">Winter at the Haven</h2></div>
+        <p class="chapter-copy">Snow changes the sound of the hollow. The creek keeps moving, the decks go still, and the cabin feels especially warm from the inside.</p>
+      </div>
+      <div class="photo-grid">
+        <figure class="gallery-item feature"><img src="/gallery/snow-3.webp" alt="Weeks Creek Haven in the snow" loading="lazy"><figcaption class="photo-caption"><span>Snow day</span><strong>The cabin in winter</strong></figcaption></figure>
+        <figure class="gallery-item tall"><img src="/gallery/snow-bridge.webp" alt="Creek bridge covered in snow" loading="lazy"><figcaption class="photo-caption"><span>Stillness</span><strong>The bridge after snowfall</strong></figcaption></figure>
+        <figure class="gallery-item"><img src="/gallery/driveway-snow.webp" alt="Snow-covered driveway" loading="lazy"><figcaption class="photo-caption"><span>Arrival</span><strong>A white mountain road</strong></figcaption></figure>
+        <figure class="gallery-item"><img src="/gallery/snow-1.webp" alt="Snow around the cabin" loading="lazy"><figcaption class="photo-caption"><span>Outside</span><strong>Fresh snow in the hollow</strong></figcaption></figure>
+        <figure class="gallery-item"><img src="/gallery/snow-2.webp" alt="Winter morning at the cabin" loading="lazy"><figcaption class="photo-caption"><span>Morning</span><strong>Quiet through the trees</strong></figcaption></figure>
+        <figure class="gallery-item half"><img src="/gallery/snow-4.webp" alt="Winter stillness at Weeks Creek Haven" loading="lazy"><figcaption class="photo-caption"><span>Slow down</span><strong>Nothing on the schedule</strong></figcaption></figure>
+        <figure class="gallery-item half"><img src="/gallery/deck-snow.webp" alt="Cabin deck covered in snow" loading="lazy"><figcaption class="photo-caption"><span>From the porch</span><strong>The deck under a fresh layer</strong></figcaption></figure>
+      </div>
+    </div>
+  </section>
 </main>
 
 <div id="footer-placeholder"></div>
 <script src="footer.js?v=3"></script>
 
-<div id="lightbox">
-    <span id="close">&times;</span>
-    <span id="prev" class="nav-btn">&#10094;</span>
-    <img id="lightbox-img" src="" alt="">
-    <div id="caption"></div>
-    <span id="next" class="nav-btn">&#10095;</span>
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="Gallery image viewer">
+  <button id="close" aria-label="Close image viewer">&times;</button>
+  <button id="prev" class="nav-btn" aria-label="Previous image">&#10094;</button>
+  <img id="lightbox-img" alt="">
+  <div id="caption"></div>
+  <button id="next" class="nav-btn" aria-label="Next image">&#10095;</button>
 </div>
 
 <script>
-       // --- Lightbox Logic ---
-    const galleryItems = document.querySelectorAll('.gallery-item');
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-    const caption = document.getElementById('caption');
-    const closeBtn = document.getElementById('close');
-    const prevBtn = document.getElementById('prev');
-    const nextBtn = document.getElementById('next');
+  const galleryItems = document.querySelectorAll('.gallery-item');
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+  const caption = document.getElementById('caption');
+  let currentIndex = 0;
 
-    let currentIndex = 0;
+  function updateLightbox(index) {
+    currentIndex = (index + galleryItems.length) % galleryItems.length;
+    const item = galleryItems[currentIndex];
+    const image = item.querySelector('img');
+    lightboxImg.src = image.src;
+    lightboxImg.alt = image.alt;
+    caption.textContent = item.querySelector('.photo-caption strong').textContent;
+  }
 
-    const updateLightbox = (index) => {
-        currentIndex = (index + galleryItems.length) % galleryItems.length;
-        const item = galleryItems[currentIndex];
-        const img = item.querySelector('img');
-        const label = item.querySelector('.parchment-label');
-        
-        lightboxImg.src = img.src;
-        caption.innerText = label.innerText;
-    };
+  function openLightbox(index) {
+    updateLightbox(index);
+    lightbox.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
 
-    galleryItems.forEach((item, index) => {
-        item.addEventListener('click', () => {
-            lightbox.style.display = 'flex';
-            updateLightbox(index);
-        });
-    });
+  function closeLightbox() {
+    lightbox.style.display = 'none';
+    document.body.style.overflow = '';
+  }
 
-    const nextImage = () => updateLightbox(currentIndex + 1);
-    const prevImage = () => updateLightbox(currentIndex - 1);
-
-    closeBtn.onclick = () => lightbox.style.display = 'none';
-    nextBtn.onclick = (e) => { e.stopPropagation(); nextImage(); };
-    prevBtn.onclick = (e) => { e.stopPropagation(); prevImage(); };
-
-    document.addEventListener('keydown', (e) => {
-        if (lightbox.style.display === 'flex') {
-            if (e.key === "ArrowRight") nextImage();
-            if (e.key === "ArrowLeft") prevImage();
-            if (e.key === "Escape") lightbox.style.display = 'none';
-        }
-    });
-
-    lightbox.onclick = (e) => { if (e.target === lightbox) lightbox.style.display = 'none'; };
+  galleryItems.forEach((item, index) => item.addEventListener('click', () => openLightbox(index)));
+  document.getElementById('close').addEventListener('click', closeLightbox);
+  document.getElementById('next').addEventListener('click', event => { event.stopPropagation(); updateLightbox(currentIndex + 1); });
+  document.getElementById('prev').addEventListener('click', event => { event.stopPropagation(); updateLightbox(currentIndex - 1); });
+  lightbox.addEventListener('click', event => { if (event.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', event => {
+    if (lightbox.style.display !== 'flex') return;
+    if (event.key === 'ArrowRight') updateLightbox(currentIndex + 1);
+    if (event.key === 'ArrowLeft') updateLightbox(currentIndex - 1);
+    if (event.key === 'Escape') closeLightbox();
+  });
 </script>
-
-<script>document.addEventListener("contextmenu", function(e){ e.preventDefault(); });</script>
+<script>document.addEventListener('contextmenu', function (event) { event.preventDefault(); });</script>
 </body>
 </html>

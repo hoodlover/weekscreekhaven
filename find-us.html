@@ -2,400 +2,274 @@
 <html lang="en">
 <head>
   <link rel="stylesheet" href="/site-interactions.css">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Directions to Weeks Creek Haven | Blue Ridge GA Cabin</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Directions to Weeks Creek Haven | Blue Ridge GA Cabin</title>
   <link rel="icon" href="/webpic/weeks-creek-haven-favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="/webpic/weeks-creek-haven-favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/webpic/weeks-creek-haven-favicon-16.png">
+  <meta name="description" content="Directions to Weeks Creek Haven at 421 Weeks Creek Rd, Blue Ridge, GA. Step-by-step driving guidance, a live map, and arrival tips for your mountain cabin stay.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="canonical" href="https://www.weekscreekhaven.com/find-us.html">
+  <meta property="og:title" content="Find Us | Weeks Creek Haven">
+  <meta property="og:description" content="Step-by-step directions to 421 Weeks Creek Rd in the Aska Adventure Area, Blue Ridge, GA.">
+  <meta property="og:image" content="https://www.weekscreekhaven.com/webpic/Weeks_Creek_Haven_Social_Preview.webp">
+  <meta property="og:url" content="https://www.weekscreekhaven.com/find-us.html">
+  <meta property="og:type" content="website">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <meta name="description" content="Directions to Weeks Creek Haven at 421 Weeks Creek Rd, Blue Ridge, GA. Step-by-step driving guide, local map, and arrival tips for your mountain cabin getaway.">
-    <meta name="robots" content="index,follow,max-image-preview:large">
-    <link rel="canonical" href="https://www.weekscreekhaven.com/find-us.html">
+  <style>
+    :root {
+      --pine: #153f31;
+      --pine-deep: #0d2d23;
+      --rust: #ad603f;
+      --cream: #f7f2e9;
+      --paper: #fffdf8;
+      --ink: #302a25;
+      --muted: #736b63;
+      --line: #ddd1bf;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--cream); color: var(--ink); font-family: 'Montserrat', sans-serif; }
+    h1, h2, h3, h4 { font-family: 'Crimson Text', serif; font-weight: 700; }
+    .route-page { overflow: hidden; background: var(--cream); }
 
-    <meta property="og:title" content="Find Us | Weeks Creek Haven">
-    <meta property="og:description" content="Step-by-step directions to 421 Weeks Creek Rd in the Aska Adventure Area, Blue Ridge, GA.">
-    <meta property="og:image" content="https://www.weekscreekhaven.com/webpic/Weeks_Creek_Haven_Social_Preview.webp">
-    <meta property="og:url" content="https://www.weekscreekhaven.com/find-us.html">
-    <meta property="og:type" content="website">
+    .page-hero {
+      position: relative;
+      min-height: 640px;
+      display: flex;
+      align-items: flex-end;
+      isolation: isolate;
+      background: #1b211d;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      background: url('/gallery/driveway.webp') center 55% / cover no-repeat;
+      transform: scale(1.01);
+    }
+    .page-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(90deg, rgba(9,27,21,.84) 0%, rgba(9,27,21,.5) 48%, rgba(9,27,21,.08) 76%), linear-gradient(0deg, rgba(9,27,21,.62) 0%, transparent 52%);
+    }
+    .hero-inner { width: min(1180px, calc(100% - 48px)); margin: 0 auto; padding: 120px 0 145px; }
+    .eyebrow, .section-kicker { margin: 0 0 16px; color: #e2b582; font-size: .74rem; font-weight: 800; letter-spacing: .22em; text-transform: uppercase; }
+    .hero-title { max-width: 730px; margin: 0; color: #fffdf8; font-size: clamp(3.7rem, 8vw, 7rem); line-height: .9; letter-spacing: -.035em; text-shadow: 0 3px 24px rgba(0,0,0,.28); }
+    .hero-copy { max-width: 580px; margin: 26px 0 0; color: rgba(255,255,255,.86); font-size: clamp(1rem, 1.5vw, 1.22rem); line-height: 1.75; }
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    .route-summary {
+      position: relative;
+      z-index: 4;
+      width: min(1120px, calc(100% - 40px));
+      margin: -76px auto 0;
+      padding: 30px 34px;
+      display: grid;
+      grid-template-columns: minmax(280px, 1fr) auto;
+      gap: 32px;
+      align-items: center;
+      background: rgba(255,253,248,.97);
+      border: 1px solid rgba(221,209,191,.9);
+      border-top: 6px solid var(--pine);
+      border-radius: 22px;
+      box-shadow: 0 24px 70px rgba(50,41,33,.18);
+      backdrop-filter: blur(14px);
+    }
+    .summary-label { margin: 0 0 6px; color: var(--rust); font-size: .7rem; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
+    .address-title { margin: 0; color: var(--pine); font-size: clamp(2rem, 4vw, 3rem); line-height: 1; }
+    .address-sub { margin: 7px 0 0; color: var(--muted); font-size: .95rem; font-weight: 600; }
+    .map-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+    .map-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 46px;
+      padding: 0 17px;
+      border: 1px solid #cfc2af;
+      border-radius: 999px;
+      color: var(--pine);
+      background: #fff;
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .05em;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color .2s ease, background .2s ease, border-color .2s ease, transform .2s ease;
+    }
+    .map-action::after { content: '\2197'; color: var(--rust); font-size: .9rem; }
+    .map-action:hover { color: #fff; background: var(--rust); border-color: var(--rust); transform: translateY(-2px); }
+    .map-action:hover::after { color: #fff; }
 
-    <style>
-        body { font-family: 'Montserrat', sans-serif; color: #fdfaf6; scroll-behavior: smooth; }
-        h1, h2, h3, h4 { font-family: 'Crimson Text', serif; font-weight: 700; }
+    .content-shell { width: min(1120px, calc(100% - 40px)); margin: 0 auto; padding: 110px 0 120px; }
+    .section-kicker { color: var(--rust); margin-bottom: 12px; }
+    .section-title { margin: 0; color: var(--pine); font-size: clamp(2.8rem, 5vw, 4.6rem); line-height: .98; letter-spacing: -.025em; }
+    .section-intro { max-width: 670px; margin: 18px 0 0; color: var(--muted); font-size: 1rem; line-height: 1.75; }
+    .directions-grid { display: grid; grid-template-columns: 1.08fr .92fr; gap: 74px; align-items: start; }
+    .steps { margin-top: 46px; border-top: 1px solid var(--line); }
+    .step { display: grid; grid-template-columns: 54px 1fr; gap: 22px; padding: 25px 0; border-bottom: 1px solid var(--line); }
+    .step-number { color: var(--rust); font-family: 'Crimson Text', serif; font-size: 1.8rem; font-weight: 700; line-height: 1; }
+    .step h3 { margin: -3px 0 6px; color: var(--ink); font-size: 1.45rem; line-height: 1.15; }
+    .step p { margin: 0; color: var(--muted); font-size: .9rem; line-height: 1.7; }
+    .step strong { color: var(--pine); }
 
-        .extra-heavy-shadow {
-            text-shadow: 3px 3px 6px rgba(0,0,0,1), 0px 0px 25px rgba(0,0,0,1), 0px 0px 10px rgba(0,0,0,0.8);
-        }
-        .text-readable { text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
+    .arrival-aside { position: sticky; top: 28px; }
+    .arrival-photo { min-height: 570px; position: relative; overflow: hidden; border-radius: 24px; background: url('/gallery/cabin-sunset.webp') center / cover no-repeat; box-shadow: 0 24px 60px rgba(45,38,31,.18); }
+    .arrival-note { position: absolute; right: 20px; bottom: 20px; left: 20px; padding: 25px; color: #fff; background: rgba(13,45,35,.9); border: 1px solid rgba(255,255,255,.16); border-radius: 16px; backdrop-filter: blur(10px); }
+    .arrival-note .summary-label { color: #e2b582; }
+    .arrival-note h3 { margin: 0 0 8px; font-size: 1.75rem; }
+    .arrival-note p { margin: 0; color: rgba(255,255,255,.78); font-size: .86rem; line-height: 1.65; }
 
-        .bg-wood {
-            background-color: #1a1512;
-            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('webpic/vintage-wooden-board-textured-background.webp');
-            background-attachment: fixed;
-            background-size: cover;
-        }
+    .map-section { margin-top: 120px; }
+    .map-heading { display: flex; justify-content: space-between; gap: 30px; align-items: end; margin-bottom: 32px; }
+    .map-frame { overflow: hidden; padding: 10px; background: #fff; border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 20px 55px rgba(45,38,31,.12); }
+    .map-frame iframe { width: 100%; height: 440px; display: block; border: 0; border-radius: 14px; }
 
-        #mobile-menu {
-            background-image: linear-gradient(rgba(0,0,0,0.95), rgba(0,0,0,0.95)), url('webpic/railroad-tie-texture.webp');
-            background-size: cover;
-        }
+    .tips-section { margin-top: 120px; }
+    .tips-heading { max-width: 720px; }
+    .tips-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 24px; margin-top: 44px; }
+    .tip-card { display: grid; grid-template-columns: 42% 1fr; min-height: 270px; overflow: hidden; background: var(--paper); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 12px 34px rgba(45,38,31,.07); transition: transform .25s ease, box-shadow .25s ease; }
+    .tip-card:hover { transform: translateY(-4px); box-shadow: 0 18px 42px rgba(45,38,31,.12); }
+    .tip-card img { width: 100%; height: 100%; min-height: 270px; object-fit: cover; }
+    .tip-card.sign img { object-position: 52% center; }
+    .tip-content { padding: 30px 27px; }
+    .tip-index { display: block; margin-bottom: 20px; color: var(--rust); font-size: .68rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+    .tip-card h3 { margin: 0 0 10px; color: var(--pine); font-size: 1.75rem; line-height: 1.05; }
+    .tip-card p { margin: 0; color: var(--muted); font-size: .86rem; line-height: 1.7; }
+    .tip-card strong { color: var(--ink); }
 
-        .wood-btn:hover { transform: scale(1.05); }
-        .logo-link:hover .wood-btn { transform: scale(1.0) !important; }
-        .logo-link { position: relative; display: inline-block; background: transparent; }
-        .logo-link .normal-img { opacity: 1; transition: none; }
-        .logo-link .hover-img { position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s ease-in-out; z-index: 2; }
-        .logo-link:hover .hover-img { opacity: 1; }
-        .logo-link:hover .normal-img { opacity: 1; }
-        .nav-link-group a .hover-img { display: none; }
-        .nav-link-group a:hover .normal-img { display: none; }
-        .nav-link-group a:hover .hover-img { display: block; }
-
-        .accent-rust { color: #A45D41; }
-        .parchment { background-color: rgba(244, 238, 224, 0.95); border: 1px solid #dcd3bd; color: #3d3128; }
-
-        /* Hero */
-        .page-hero {
-            position: relative;
-            height: 55vh;
-            min-height: 380px;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            overflow: hidden;
-        }
-        .page-hero-bg {
-            position: absolute;
-            inset: 0;
-            background-image: url('gallery/driveway.webp');
-            background-size: cover;
-            background-position: center 60%;
-        }
-        .page-hero-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(
-                to bottom,
-                rgba(26,21,18,0.25) 0%,
-                rgba(26,21,18,0.15) 40%,
-                rgba(26,21,18,0.85) 100%
-            );
-        }
-        .page-hero-content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            padding: 0 1.5rem 3.5rem;
-        }
-
-        /* Step cards */
-        .step-card {
-            display: flex;
-            gap: 1rem;
-            align-items: flex-start;
-        }
-        .step-num {
-            flex-shrink: 0;
-            width: 2.25rem;
-            height: 2.25rem;
-            background-color: #A45D41;
-            color: #fff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Crimson Text', serif;
-            font-weight: 700;
-            font-size: 1.1rem;
-            margin-top: 0.1rem;
-        }
-
-        /* Arrival tip cards */
-        .tip-card {
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.12);
-            backdrop-filter: blur(6px);
-            border-radius: 1rem;
-            padding: 1.75rem;
-            transition: transform 0.25s ease, background 0.25s ease;
-        }
-        .tip-card:hover {
-            transform: translateY(-4px);
-            background: rgba(255,255,255,0.1);
-        }
-        .tip-icon {
-            font-size: 2.2rem;
-            margin-bottom: 0.75rem;
-            display: block;
-        }
-
-        /* Map embed */
-        .map-container iframe {
-            width: 100%;
-            height: 420px;
-            border: 0;
-            display: block;
-        }
-
-        /* Nav app buttons */
-        .nav-app-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.6rem;
-            padding: 0.85rem 1.75rem;
-            border-radius: 3rem;
-            font-weight: 800;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.45);
-        }
-        .nav-app-btn:hover {
-            transform: translateY(-3px) scale(1.04);
-            filter: brightness(1.1);
-        }
-    </style>
+    @media (max-width: 900px) {
+      .page-hero { min-height: 560px; }
+      .hero-inner { padding-bottom: 125px; }
+      .route-summary { grid-template-columns: 1fr; }
+      .map-actions { justify-content: flex-start; }
+      .directions-grid { grid-template-columns: 1fr; gap: 56px; }
+      .arrival-aside { position: static; }
+      .arrival-photo { min-height: 500px; }
+      .tips-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .page-hero { min-height: 510px; }
+      .page-hero::after { background: linear-gradient(0deg, rgba(9,27,21,.88) 0%, rgba(9,27,21,.34) 72%); }
+      .hero-inner { width: min(100% - 32px, 1180px); padding: 100px 0 112px; }
+      .hero-title { font-size: clamp(3.25rem, 17vw, 4.7rem); }
+      .hero-copy { font-size: .93rem; line-height: 1.6; }
+      .route-summary { width: calc(100% - 24px); margin-top: -64px; padding: 24px 20px; gap: 22px; border-radius: 18px; }
+      .map-actions { display: grid; grid-template-columns: 1fr; }
+      .map-action { justify-content: space-between; }
+      .content-shell { width: calc(100% - 32px); padding: 82px 0 90px; }
+      .directions-grid { gap: 42px; }
+      .steps { margin-top: 34px; }
+      .step { grid-template-columns: 38px 1fr; gap: 14px; padding: 22px 0; }
+      .arrival-photo { min-height: 430px; }
+      .arrival-note { right: 12px; bottom: 12px; left: 12px; padding: 20px; }
+      .map-section, .tips-section { margin-top: 82px; }
+      .map-heading { display: block; }
+      .map-frame iframe { height: 360px; }
+      .tip-card { grid-template-columns: 1fr; }
+      .tip-card img { height: 220px; min-height: 220px; }
+      .tip-content { padding: 25px 23px 29px; }
+    }
+  </style>
 </head>
-<body class="bg-wood">
+<body>
 
 <div id="nav-placeholder"></div>
 <script src="nav.js"></script>
 
-<!-- ═══════════════════ HERO ═══════════════════ -->
-<div class="page-hero">
-    <div class="page-hero-bg"></div>
-    <div class="page-hero-overlay"></div>
-    <div class="page-hero-content">
-        <p class="text-amber-300 uppercase tracking-[0.3em] font-bold text-xs mb-3 extra-heavy-shadow">421 Weeks Creek Rd · Blue Ridge, GA 30513</p>
-        <h1 class="text-5xl md:text-7xl italic text-white extra-heavy-shadow leading-tight">Find Your Way<br>to the Haven</h1>
-        <p class="text-stone-300 font-semibold mt-3 text-readable text-base max-w-xl mx-auto">
-            The drive is scenic — and a little tricky. We've got you covered.
-        </p>
+<div class="route-page">
+  <header class="page-hero">
+    <div class="hero-inner">
+      <p class="eyebrow">Arrival Guide &middot; Blue Ridge, Georgia</p>
+      <h1 class="hero-title">The last few miles, made simple.</h1>
+      <p class="hero-copy">The approach is scenic, quiet, and a little winding. Save the route before leaving town, then use these landmarks for an easy arrival.</p>
     </div>
-</div>
+  </header>
 
-<!-- ═══════════════════ MAIN ═══════════════════ -->
-<main class="max-w-6xl mx-auto px-6 pb-28">
+  <section class="route-summary" aria-label="Cabin address and map links">
+    <div>
+      <p class="summary-label">Your destination</p>
+      <h2 class="address-title">421 Weeks Creek Road</h2>
+      <p class="address-sub">Blue Ridge, Georgia 30513</p>
+    </div>
+    <nav class="map-actions" aria-label="Open directions in your preferred map app">
+      <a class="map-action" href="https://www.google.com/maps/dir/?api=1&amp;destination=421+Weeks+Creek+Rd,+Blue+Ridge,+GA+30513" target="_blank" rel="noopener">Google Maps</a>
+      <a class="map-action" href="https://www.waze.com/ul?q=421+Weeks+Creek+Rd,+Blue+Ridge,+GA+30513&amp;navigate=yes" target="_blank" rel="noopener">Waze</a>
+      <a class="map-action" href="https://maps.apple.com/?daddr=421+Weeks+Creek+Rd,+Blue+Ridge,+GA+30513&amp;dirflg=d" target="_blank" rel="noopener">Apple Maps</a>
+    </nav>
+  </section>
 
-    <!-- ADDRESS + NAV BUTTONS -->
-    <section class="text-center pt-14 pb-12">
-        <div class="inline-block parchment rounded-2xl px-8 py-6 shadow-2xl mb-8">
-            <p class="text-sm uppercase tracking-widest font-bold text-stone-500 mb-1">Your Destination</p>
-            <p class="text-3xl md:text-4xl font-bold" style="font-family:'Crimson Text',serif; color:#3d3128;">421 Weeks Creek Rd</p>
-            <p class="text-lg font-semibold text-stone-600">Blue Ridge, GA &nbsp;30513</p>
+  <main class="content-shell">
+    <section class="directions-grid" aria-labelledby="getting-here-title">
+      <div>
+        <p class="section-kicker">Landmark by landmark</p>
+        <h2 class="section-title" id="getting-here-title">Getting here</h2>
+        <p class="section-intro">Navigation is reliable through most of the drive, but service can fade inside the Aska Adventure Area. Load the route in Blue Ridge and keep these final turns handy.</p>
+        <div class="steps">
+          <article class="step"><div class="step-number">01</div><div><h3>Begin in downtown Blue Ridge</h3><p>Open your preferred map app before leaving town. This is also the best place to pick up groceries or anything you want for the stay.</p></div></article>
+          <article class="step"><div class="step-number">02</div><div><h3>Follow Aska Road south</h3><p>Take Aska Road out of Blue Ridge, just beyond Ace Hardware. Stay on it through the mountain curves until the road ends at a T.</p></div></article>
+          <article class="step"><div class="step-number">03</div><div><h3>Turn left onto Dial Road</h3><p><strong>Van Zandt&rsquo;s Store</strong>, a small country store and grill, will be on your right and confirms you are on the correct route.</p></div></article>
+          <article class="step"><div class="step-number">04</div><div><h3>Cross the Toccoa River</h3><p>After the small bridge, turn right at the next T. Shortly afterward, turn left onto <strong>Weeks Creek Road</strong>.</p></div></article>
+          <article class="step"><div class="step-number">05</div><div><h3>Stay left at the fork</h3><p>Continue into the hollow and stay left when the road divides. The cedar <strong>&ldquo;Welcome Friends&rdquo;</strong> sign marks the driveway on your left.</p></div></article>
         </div>
+      </div>
 
-        <div class="flex flex-wrap justify-center gap-4">
-            <a href="https://www.google.com/maps/dir/?api=1&destination=421+Weeks+Creek+Rd,+Blue+Ridge,+GA+30513"
-               target="_blank"
-               class="nav-app-btn text-white"
-               style="background: #4285F4;">
-                <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                </svg>
-                Google Maps
-            </a>
-            <a href="https://www.waze.com/ul?q=421+Weeks+Creek+Rd,+Blue+Ridge,+GA+30513&navigate=yes"
-               target="_blank"
-               class="nav-app-btn text-white"
-               style="background: #00ccbc;">
-                <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 1.5C6.2 1.5 1.5 6.2 1.5 12S6.2 22.5 12 22.5 22.5 17.8 22.5 12 17.8 1.5 12 1.5zm3.5 14.5c-.6.5-1.3.8-2 .8-.4 0-.8-.1-1.1-.2l-1-.3c-.3-.1-.6-.1-.9 0l-1.6.5c-.2.1-.4 0-.4-.2l.4-1.6c.1-.3 0-.6-.1-.8C8.4 13 8 11.5 8 10c0-2.2 1.8-4 4-4s4 1.8 4 4c0 1-.3 1.9-.9 2.7l.4 3.3zM15 10c0-1.7-1.3-3-3-3s-3 1.3-3 3 1.3 3 3 3 3-1.3 3-3z"/>
-                </svg>
-                Waze
-            </a>
-            <a href="https://maps.apple.com/?daddr=421+Weeks+Creek+Rd,+Blue+Ridge,+GA+30513&dirflg=d"
-               target="_blank"
-               class="nav-app-btn text-white"
-               style="background: #1c1c1e;">
-                <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.4c1.39.07 2.35.8 3.16.82 1.19-.24 2.33-1 3.6-.86 1.54.2 2.7.89 3.44 2.12-3.13 1.87-2.38 5.98.48 7.13-.57 1.5-1.3 2.97-2.68 3.67zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-                </svg>
-                Apple Maps
-            </a>
+      <aside class="arrival-aside">
+        <div class="arrival-photo" role="img" aria-label="Weeks Creek Haven illuminated at dusk">
+          <div class="arrival-note">
+            <p class="summary-label">Before leaving town</p>
+            <h3>Save the route offline.</h3>
+            <p>Cell service becomes inconsistent near the cabin. Once you arrive, high-speed fiber Wi-Fi will bring you back online.</p>
+          </div>
         </div>
+      </aside>
     </section>
 
-    <!-- DIVIDER -->
-    <div class="border-t border-white/10 mb-14"></div>
-
-    <!-- DIRECTIONS + ILLUSTRATED MAP -->
-    <section class="grid md:grid-cols-2 gap-12 items-start mb-14">
-
-        <!-- Step-by-step directions -->
-        <div>
-            <h2 class="text-4xl md:text-5xl italic accent-rust extra-heavy-shadow mb-2">Getting Here</h2>
-            <p class="text-stone-300 font-semibold text-readable mb-8">
-                Mountain GPS is hit-or-miss. These landmarks will keep you on track.
-            </p>
-
-            <div class="space-y-5">
-                <div class="step-card">
-                    <div class="step-num">1</div>
-                    <div>
-                        <p class="font-bold text-white text-readable">Start in Downtown Blue Ridge</p>
-                        <p class="text-stone-300 text-sm font-semibold mt-1 text-readable">Load your GPS before you leave town — cell service fades as you head into the Aska Adventure Area. Stock up on anything you need while you're here or you get lost for a couple of days.</p>
-                    </div>
-                </div>
-
-                <div class="step-card">
-                    <div class="step-num">2</div>
-                    <div>
-                        <p class="font-bold text-white text-readable">Head South on Aska Road</p>
-                        <p class="text-stone-300 text-sm font-semibold mt-1 text-readable">Find and follow Aska Rd south out of Blue Ridge. Just past Ace Hardware.  The road winds through beautiful mountain scenery — stay on it for several miles until it comes to a 'T' in the road.</p>
-                    </div>
-                </div>
-
-                <div class="step-card">
-                    <div class="step-num">3</div>
-                    <div>
-                        <p class="font-bold text-white text-readable">Turn left onto Dial Road</p>
-                        <p class="text-stone-300 text-sm font-semibold mt-1 text-readable">You'll see <strong class="text-amber-200">Van Zandt's Store</strong> — a small country store and grill — on the right.</p>
-                    </div>
-                </div>
-
-                <div class="step-card">
-                    <div class="step-num">4</div>
-                    <div>
-                        <p class="font-bold text-white text-readable">Cross the Toccoa River</p>
-                        <p class="text-stone-300 text-sm font-semibold mt-1 text-readable">A small bridge crosses the Toccoa River. At the 'T' intersection, turn right.  Shortly after, turn left onto <strong class="text-amber-200">Weeks Creek Rd</strong> and follow it into the holler.</p>
-                    </div>
-                </div>
-
-                <div class="step-card">
-                    <div class="step-num">5</div>
-                    <div>
-                        <p class="font-bold text-white text-readable">Stay Left at the Fork — Look for the Sign</p>
-                        <p class="text-stone-300 text-sm font-semibold mt-1 text-readable">When the road splits, <strong class="text-amber-200">stay left</strong>. Watch for our cedar <strong class="text-amber-200">"Welcome Friends"</strong> sign on the left — that's your driveway. You made it!</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Illustrated local map -->
-        <div class="space-y-4">
-            <div onclick="openLocalMapModal()"
-                 class="border-8 border-white rounded-xl overflow-hidden cursor-zoom-in transition-transform duration-300 hover:scale-[1.02]"
-                 style="box-shadow: 0 25px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.1);">
-                <img src="webpic/localmap2.webp"
-                     alt="Illustrated local map showing the route to Weeks Creek Haven via Dial Road, Van Zandt's Store, and the Toccoa River"
-                     class="w-full h-auto block pointer-events-none">
-            </div>
-            <p class="text-sm text-stone-400 font-bold text-center italic text-readable">
-                Local area map — <span class="text-stone-500 not-italic">(tap to enlarge)</span>
-            </p>
-
-            <!-- Cell service callout -->
-            <div class="bg-amber-50 border-l-8 border-amber-500 p-5 rounded-r-xl shadow-xl mt-2">
-                <h4 class="font-extrabold text-amber-900 mb-1 uppercase tracking-tight text-sm">&#128241; No Cell Service Pro-Tip</h4>
-                <p class="text-amber-950 text-sm font-semibold leading-relaxed">
-                    Signal drops significantly once you enter the Aska Adventure Area. <strong>Load your GPS while still in downtown Blue Ridge.</strong> Once you arrive, our High-Speed Fiber Wi-Fi will get you back online instantly.
-                </p>
-            </div>
-        </div>
+    <section class="map-section" aria-labelledby="map-title">
+      <div class="map-heading">
+        <div><p class="section-kicker">Live location</p><h2 class="section-title" id="map-title">Map the drive</h2></div>
+        <p class="section-intro">Use the live map for the overall route and the landmarks above for the final approach.</p>
+      </div>
+      <div class="map-frame">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3293.418047913387!2d-84.23847992427027!3d34.801657472882324!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x885f97305943714b%3A0xc3f58a5e128913b7!2s421%20Weeks%20Creek%20Rd%2C%20Blue%20Ridge%2C%20GA%2030513!5e0!3m2!1sen!2sus!4v1710185000000!5m2!1sen!2sus" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Map to Weeks Creek Haven, 421 Weeks Creek Road, Blue Ridge, Georgia"></iframe>
+      </div>
     </section>
 
-    <!-- DIVIDER -->
-    <div class="border-t border-white/10 mb-14"></div>
-
-    <!-- GOOGLE MAPS EMBED -->
-    <section class="mb-14">
-        <div class="text-center mb-8">
-            <h2 class="text-4xl md:text-5xl italic accent-rust extra-heavy-shadow">Interactive Map</h2>
-        </div>
-        <div class="map-container border-8 border-white rounded-xl overflow-hidden shadow-2xl"
-             style="box-shadow: 0 25px 60px rgba(0,0,0,0.7);">
-            <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3293.418047913387!2d-84.23847992427027!3d34.801657472882324!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x885f97305943714b%3A0xc3f58a5e128913b7!2s421%20Weeks%20Creek%20Rd%2C%20Blue%20Ridge%2C%20GA%2030513!5e0!3m2!1sen!2sus!4v1710185000000!5m2!1sen!2sus"
-                allowfullscreen=""
-                loading="lazy"
-                title="Map to Weeks Creek Haven, 421 Weeks Creek Rd, Blue Ridge GA">
-            </iframe>
-        </div>
+    <section class="tips-section" aria-labelledby="arrival-title">
+      <div class="tips-heading">
+        <p class="section-kicker">Good to know</p>
+        <h2 class="section-title" id="arrival-title">A smooth arrival</h2>
+        <p class="section-intro">Four details that make the transition from mountain road to cabin time a little easier.</p>
+      </div>
+      <div class="tips-grid">
+        <article class="tip-card sign">
+          <img src="/webpic/drivewaysign.webp" alt="Cedar Weeks Creek Haven welcome sign" loading="lazy">
+          <div class="tip-content"><span class="tip-index">Look for this</span><h3>The driveway sign</h3><p>The cedar <strong>&ldquo;Welcome Friends&rdquo;</strong> sign marks the driveway. Stay left at the fork immediately before it.</p></div>
+        </article>
+        <article class="tip-card">
+          <img src="/gallery/driveway.webp" alt="Gravel driveway approaching Weeks Creek Haven" loading="lazy">
+          <div class="tip-content"><span class="tip-index">Final approach</span><h3>Take the curves slowly</h3><p>The final road is narrow, winding, and gravel in places. There is no need to rush; oncoming traffic is uncommon but possible.</p></div>
+        </article>
+        <article class="tip-card">
+          <img src="/gallery/cabin-daylight.webp" alt="Weeks Creek Haven cabin with its parking area" loading="lazy">
+          <div class="tip-content"><span class="tip-index">At the cabin</span><h3>Parking is on site</h3><p>The level parking area beside the cabin comfortably accommodates three vehicles, with room for a fourth when parked carefully.</p></div>
+        </article>
+        <article class="tip-card">
+          <img src="/gallery/cabin-sunset.webp" alt="Weeks Creek Haven warmly lit at dusk" loading="lazy">
+          <div class="tip-content"><span class="tip-index">Arrival time</span><h3>Check-in begins at 4 PM</h3><p>Arriving early? Downtown Blue Ridge, local shops, and the Toccoa River are good places to spend the time before the cabin is ready.</p></div>
+        </article>
+      </div>
     </section>
-
-    <!-- DIVIDER -->
-    <div class="border-t border-white/10 mb-14"></div>
-
-    <!-- ARRIVAL TIPS GRID -->
-    <section>
-        <div class="text-center mb-10">
-            <h2 class="text-4xl md:text-5xl italic accent-rust extra-heavy-shadow">Arrival Tips</h2>
-            <p class="text-stone-300 font-semibold text-readable mt-2">A few things to know before you pull in</p>
-        </div>
-
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
-            <div class="tip-card text-center">
-                <img src="webpic/drivewaysign.webp" alt="Driveway sign" class="w-full rounded-lg mb-4 object-cover" style="max-height:160px;">
-                <h3 class="text-xl italic text-white extra-heavy-shadow mb-2">The Driveway</h3>
-                <p class="text-stone-300 text-sm font-semibold leading-relaxed text-readable">
-                    The driveway is marked by a cedar <strong class="text-amber-200">"Welcome Friends"</strong> sign. When the road forks — stay left. You'll feel the gravel under your wheels — you're almost there!
-                </p>
-            </div>
-
-            <div class="tip-card text-center">
-                <img src="webpic/parking.webp" alt="Parking area at the cabin" class="w-full rounded-lg mb-4 object-cover" style="max-height:160px;">
-                <h3 class="text-xl italic text-white extra-heavy-shadow mb-2">Parking</h3>
-                <p class="text-stone-300 text-sm font-semibold leading-relaxed text-readable">
-                    There's plenty of flat parking - 3 or 4 cars - right at the cabin. Pull in and get settled.
-                </p>
-            </div>
-
-            <div class="tip-card text-center">
-                <img src="webpic/checkintime.webp" alt="Check-in time" class="w-full rounded-lg mb-4 object-cover" style="max-height:160px;">
-                <h3 class="text-xl italic text-white extra-heavy-shadow mb-2">Check-In Time</h3>
-                <p class="text-stone-300 text-sm font-semibold leading-relaxed text-readable">
-                    Check-in begins at <strong class="text-amber-200">4:00 PM</strong>. If you're arriving early, Blue Ridge has great restaurants, shops, and the Toccoa River to explore while you wait.
-                </p>
-            </div>
-
-            <div class="tip-card text-center">
-                <img src="webpic/windy.webp" alt="Winding mountain road" class="w-full rounded-lg mb-4 object-cover" style="max-height:160px;">
-                <h3 class="text-xl italic text-white extra-heavy-shadow mb-2">The Drive</h3>
-                <p class="text-stone-300 text-sm font-semibold leading-relaxed text-readable">
-                    Mountain roads are narrow and winding. Take your time — you're on vacation! The scenery is worth every curve, and the creek sounds waiting for you make it all worthwhile.
-                </p>
-            </div>
-
-        </div>
-    </section>
-
-</main>
-
-<!-- Local Map Fullsize Modal -->
-<div id="localmap-modal"
-     class="hidden fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 backdrop-blur-sm"
-     onclick="closeLocalMapModal()">
-    <span class="absolute top-5 right-10 text-white text-6xl cursor-pointer font-light leading-none">&times;</span>
-    <img src="webpic/localmap2.webp"
-         alt="Illustrated map to Weeks Creek Haven"
-         class="max-w-full max-h-[90vh] rounded-lg shadow-2xl border-4 border-white/20 object-contain">
+  </main>
 </div>
 
 <div id="footer-placeholder"></div>
 <script src="footer.js?v=3"></script>
-
-<script>
-    function openLocalMapModal() {
-        document.getElementById('localmap-modal').classList.remove('hidden');
-        document.getElementById('localmap-modal').style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
-    function closeLocalMapModal() {
-        document.getElementById('localmap-modal').classList.add('hidden');
-        document.getElementById('localmap-modal').style.display = '';
-        document.body.style.overflow = 'auto';
-    }
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') closeLocalMapModal();
-    });
-</script>
-
-<script>document.addEventListener("contextmenu", function(e){ e.preventDefault(); });</script>
+<script>document.addEventListener('contextmenu', function (event) { event.preventDefault(); });</script>
 </body>
 </html>
