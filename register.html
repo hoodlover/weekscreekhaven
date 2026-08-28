@@ -50,11 +50,6 @@
     .card h2 { font-size:2.25rem; color:var(--pine); }
     .helper { color:var(--muted); line-height:1.55; font-size:.82rem; }
     .minimum { display:inline-flex; align-items:center; gap:7px; margin:10px 0 2px; padding:8px 12px; border-radius:999px; background:#e7efe8; color:var(--pine); font-size:.7rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
-    .blocked-dates { margin-top:14px; border:1px solid var(--line); border-radius:9px; background:#fff; }
-    .blocked-dates summary { padding:11px 13px; color:var(--pine); cursor:pointer; font-size:.72rem; font-weight:800; }
-    .blocked-dates-content { padding:0 13px 12px; color:var(--muted); font-size:.72rem; line-height:1.65; }
-    .blocked-date-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px 18px; margin-bottom:7px; color:var(--ink); font-weight:800; }
-    .blocked-dates-content a { color:var(--pine); font-weight:800; }
     .grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
     label { display:block; font-size:.67rem; text-transform:uppercase; letter-spacing:.11em; font-weight:800; margin-top:15px; }
     input,select,textarea { width:100%; margin-top:7px; padding:13px 14px; border:1px solid #cfc4b4; border-radius:9px; background:white; color:var(--ink); font:inherit; outline:none; }
@@ -63,6 +58,40 @@
     legend { padding:0 8px; color:var(--pine); font-family:'Crimson Text',serif; font-size:1.25rem; font-weight:700; }
     .choice { background:#f6f0e6; }
     .choice.unavailable { border-color:#77917d; background:#eef5ef; box-shadow:0 0 0 3px #426d4d1a; }
+    .calendar-picker { margin-top:4px; }
+    .calendar-toolbar { display:grid; grid-template-columns:42px 1fr 42px; align-items:center; gap:10px; margin-bottom:13px; }
+    .calendar-prompt { margin:0; color:var(--pine); text-align:center; font-size:.73rem; font-weight:800; line-height:1.45; }
+    .calendar-nav { width:42px; height:42px; margin:0; padding:0; display:grid; place-items:center; border:1px solid #cfc4b4; border-radius:50%; background:#fff; color:var(--pine); box-shadow:none; font-size:1.2rem; letter-spacing:0; text-transform:none; }
+    .calendar-nav:hover,.calendar-nav:focus-visible { color:white; background:var(--rust); border-color:var(--rust); outline:none; }
+    .calendar-nav:disabled { color:#b5aa9d; background:#eee8de; cursor:not-allowed; opacity:1; }
+    .calendar-months { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .calendar-month { min-width:0; padding:13px; background:#fffdf8; border:1px solid var(--line); border-radius:12px; }
+    .calendar-month h4 { margin:0 0 11px; color:var(--pine); text-align:center; font:700 1.05rem 'Crimson Text',serif; }
+    .calendar-weekdays,.calendar-days { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:4px; }
+    .calendar-weekday { padding:3px 0 6px; color:var(--muted); text-align:center; font-size:.54rem; font-weight:800; text-transform:uppercase; }
+    .calendar-blank { aspect-ratio:1; }
+    .calendar-day { position:relative; width:100%; min-width:0; aspect-ratio:1; margin:0; padding:2px; display:grid; place-items:center; border:1px solid transparent; border-radius:8px; color:var(--ink); background:#f4eee4; box-shadow:none; font:700 .68rem Montserrat,sans-serif; letter-spacing:0; text-transform:none; }
+    .calendar-day:hover:not(:disabled),.calendar-day:focus-visible { color:white; background:var(--rust); outline:none; transform:none; }
+    .calendar-day.is-today { border-color:var(--rust); }
+    .calendar-day.is-blocked { color:#8b8178; background:repeating-linear-gradient(135deg,#ded7ce 0 5px,#eee9e2 5px 10px); text-decoration:line-through; }
+    .calendar-day.is-in-range { color:var(--pine); background:#dce9df; border-radius:3px; }
+    .calendar-day.is-arrival,.calendar-day.is-departure { color:white; background:var(--pine); border-color:var(--pine); border-radius:50%; text-decoration:none; }
+    .calendar-day.is-checkout-only { color:var(--pine); background:linear-gradient(135deg,#dce9df 0 50%,#ded7ce 50%); border-color:#9cae9f; text-decoration:none; }
+    .calendar-day:disabled { opacity:.55; cursor:not-allowed; }
+    .calendar-day.is-blocked:disabled { opacity:1; }
+    .calendar-legend { display:flex; flex-wrap:wrap; gap:8px 14px; margin-top:13px; color:var(--muted); font-size:.59rem; font-weight:700; }
+    .calendar-key { display:inline-flex; align-items:center; gap:6px; }
+    .calendar-swatch { width:13px; height:13px; border-radius:4px; background:#f4eee4; border:1px solid #d8cdbd; }
+    .calendar-swatch.blocked { background:repeating-linear-gradient(135deg,#ded7ce 0 4px,#eee9e2 4px 8px); }
+    .calendar-swatch.selected { background:var(--pine); border-color:var(--pine); }
+    .calendar-swatch.range { background:#dce9df; border-color:#b8cdbd; }
+    .calendar-summary { min-height:44px; margin-top:13px; padding:11px 12px; color:var(--muted); background:#fff; border:1px solid var(--line); border-radius:9px; font-size:.7rem; line-height:1.45; }
+    .calendar-summary strong { color:var(--pine); }
+    .choice-actions { display:flex; justify-content:flex-end; margin-top:10px; }
+    .clear-choice,.choice-toggle { width:auto; margin:0; padding:9px 13px; border:1px solid #cbbdab; background:transparent; color:var(--pine); box-shadow:none; font-size:.61rem; }
+    .clear-choice:hover,.choice-toggle:hover { color:white; background:var(--rust); border-color:var(--rust); }
+    .choice-toggle { display:flex; margin:16px auto 0; }
+    .choice-toggle[hidden] { display:none; }
     .availability-status { margin-top:12px; padding:11px 12px; border-radius:9px; font-size:.74rem; line-height:1.5; font-weight:700; }
     .availability-status.available { color:#255b39; background:#e8f2e9; border:1px solid #b8cdbd; }
     .availability-status.conflict { color:#234d31; background:#dfece2; border:1px solid #9ab5a0; }
@@ -98,13 +127,15 @@
       .card { min-width:0; padding:22px 14px; border-radius:14px; }
       .card h2 { font-size:1.95rem; line-height:1; }
       .minimum { display:flex; width:100%; line-height:1.35; }
-      .grid,.blocked-date-grid { grid-template-columns:1fr; gap:0; }
-      .blocked-date-grid { gap:4px; }
+      .grid { grid-template-columns:1fr; gap:0; }
       input,select,textarea { min-width:0; max-width:100%; }
       fieldset { min-width:0; padding:12px; }
       .stay-quote strong { font-size:1.25rem; }
       .availability-status,.stay-quote { overflow-wrap:anywhere; }
       .confidence-grid { grid-template-columns:1fr; gap:10px; }
+      .calendar-months { grid-template-columns:1fr; }
+      .calendar-month { padding:11px 9px; }
+      .calendar-day { font-size:.72rem; }
     }
   </style>
 </head>
@@ -138,7 +169,6 @@
             <div class="confidence-item"><strong>Secure final step</strong><span>Your stay becomes final only after you approve the details and pay online.</span></div>
           </div>
         </section>
-        <details id="blocked-dates" class="blocked-dates" hidden><summary>See blocked dates</summary><div id="blocked-dates-content" class="blocked-dates-content"></div></details>
         <div id="calendar-selection" class="message picked" hidden role="status"></div>
         <div class="grid">
           <label>Full name<input name="name" autocomplete="name" maxlength="100" required></label>
@@ -147,8 +177,30 @@
           <label>Number of guests<select id="guest-count" name="guests" required><option value="">Choose</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></label>
           <label id="dog-field" hidden>Dogs <small>(approved guests)</small><select id="dog-count" name="dogs"><option value="0">None</option><option value="1">1 dog</option><option value="2">2 dogs</option><option value="3">3 dogs</option><option value="4">4 dogs</option></select></label>
         </div>
-        <fieldset id="choice-1" class="choice"><legend>First choice</legend><div class="grid"><label>Arrival<input name="arrival1" type="date" required></label><label>Departure<input name="departure1" type="date" required></label></div><div id="availability-1" class="availability-status" hidden role="status"></div><div id="quote-1" class="stay-quote" hidden><strong></strong><span></span></div></fieldset>
-        <fieldset id="choice-2" class="choice"><legend>Second choice <small>(optional)</small></legend><div class="grid"><label>Arrival<input name="arrival2" type="date"></label><label>Departure<input name="departure2" type="date"></label></div><div id="availability-2" class="availability-status" hidden role="status"></div><div id="quote-2" class="stay-quote" hidden><strong></strong><span></span></div></fieldset>
+        <fieldset id="choice-1" class="choice">
+          <legend>First choice</legend>
+          <input name="arrival1" type="hidden"><input name="departure1" type="hidden">
+          <div class="calendar-picker" data-calendar="1">
+            <div class="calendar-toolbar"><button class="calendar-nav" type="button" data-calendar-prev="1" aria-label="Show previous months">&#8592;</button><p class="calendar-prompt" id="calendar-prompt-1">Loading live availability&hellip;</p><button class="calendar-nav" type="button" data-calendar-next="1" aria-label="Show next months">&#8594;</button></div>
+            <div class="calendar-months" id="calendar-months-1" aria-live="polite"></div>
+            <div class="calendar-legend"><span class="calendar-key"><i class="calendar-swatch"></i>Available</span><span class="calendar-key"><i class="calendar-swatch blocked"></i>Unavailable night</span><span class="calendar-key"><i class="calendar-swatch selected"></i>Arrival / checkout</span><span class="calendar-key"><i class="calendar-swatch range"></i>Your stay</span></div>
+            <div class="calendar-summary" id="calendar-summary-1">Choose an arrival date, then choose your checkout date.</div>
+          </div>
+          <div id="availability-1" class="availability-status" hidden role="status"></div><div id="quote-1" class="stay-quote" hidden><strong></strong><span></span></div>
+        </fieldset>
+        <button class="choice-toggle" id="add-choice" type="button">Add a second date choice</button>
+        <fieldset id="choice-2" class="choice" hidden>
+          <legend>Second choice <small>(optional)</small></legend>
+          <input name="arrival2" type="hidden"><input name="departure2" type="hidden">
+          <div class="calendar-picker" data-calendar="2">
+            <div class="calendar-toolbar"><button class="calendar-nav" type="button" data-calendar-prev="2" aria-label="Show previous months">&#8592;</button><p class="calendar-prompt" id="calendar-prompt-2">Choose another possible stay.</p><button class="calendar-nav" type="button" data-calendar-next="2" aria-label="Show next months">&#8594;</button></div>
+            <div class="calendar-months" id="calendar-months-2" aria-live="polite"></div>
+            <div class="calendar-legend"><span class="calendar-key"><i class="calendar-swatch"></i>Available</span><span class="calendar-key"><i class="calendar-swatch blocked"></i>Unavailable night</span><span class="calendar-key"><i class="calendar-swatch selected"></i>Arrival / checkout</span><span class="calendar-key"><i class="calendar-swatch range"></i>Your stay</span></div>
+            <div class="calendar-summary" id="calendar-summary-2">Choose an arrival date, then choose your checkout date.</div>
+          </div>
+          <div class="choice-actions"><button class="clear-choice" id="remove-choice" type="button">Remove second choice</button></div>
+          <div id="availability-2" class="availability-status" hidden role="status"></div><div id="quote-2" class="stay-quote" hidden><strong></strong><span></span></div>
+        </fieldset>
         <label class="check"><input id="late-checkout" name="lateCheckout" type="checkbox" value="1"><span><strong>Add noon checkout for $50.</strong> Standard checkout is 11:00 AM. Check-in begins at 4:00 PM.</span></label>
         <div class="grid">
           <label>How did you hear about Weeks Creek Haven?<select name="relationship"><option value="">Choose one</option><option>Family</option><option>Friend</option><option>Friend of a friend</option><option>Previous guest</option><option>Found the cabin online</option><option>Other</option></select></label>
@@ -166,19 +218,72 @@
   <script type="module">
     import { money, quoteStay } from '/pricing.js';
     const form=document.getElementById('booking-form'); const button=document.getElementById('submit'); const message=document.getElementById('form-message');
-    const pricingState={rates:[],unavailable:[],loaded:false,discountQuotes:{},discountTimer:null,discountRequest:0};
+    const pricingState={rates:[],unavailable:[],loaded:false,calendarError:'',discountQuotes:{},discountTimer:null,discountRequest:0};
     const today=new Date(); today.setHours(0,0,0,0); const minimum=today.toISOString().slice(0,10);
     const addDays=(value,days)=>{ const date=new Date(`${value}T12:00:00`); date.setDate(date.getDate()+days); return date.toISOString().slice(0,10); };
     const validDate=(value)=>/^\d{4}-\d{2}-\d{2}$/.test(value||'')&&!Number.isNaN(Date.parse(`${value}T12:00:00`));
     const friendlyDate=(value)=>new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric',year:'numeric'}).format(new Date(`${value}T12:00:00`));
     const rangesOverlap=(first,second)=>first.arrival<second.departure&&second.arrival<first.departure;
-    document.querySelectorAll('input[type="date"]').forEach((input)=>input.min=minimum);
-    for (const pair of [['arrival1','departure1'],['arrival2','departure2']]) {
-      const arrival=form.elements[pair[0]], departure=form.elements[pair[1]];
-      const index=pair[0].slice(-1);
-      arrival.addEventListener('change',()=>{ const firstCheckout=arrival.value ? addDays(arrival.value,1) : minimum; departure.min=firstCheckout; if(arrival.value && (!departure.value || departure.value<firstCheckout)) departure.value=firstCheckout; quoteChanged(index); });
-      departure.addEventListener('change',()=>quoteChanged(index));
+    const monthStart=(date)=>new Date(date.getFullYear(),date.getMonth(),1,12);
+    const monthKey=(date)=>`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}`;
+    const dateKey=(date)=>`${monthKey(date)}-${String(date.getDate()).padStart(2,'0')}`;
+    const addMonths=(date,amount)=>new Date(date.getFullYear(),date.getMonth()+amount,1,12);
+    const firstCalendarMonth=monthStart(today), lastCalendarStart=addMonths(firstCalendarMonth,17);
+    const calendarState={1:{month:firstCalendarMonth},2:{month:firstCalendarMonth}};
+    const weekdays=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const stayNights=(arrival,departure)=>Math.round((Date.parse(`${departure}T12:00:00`)-Date.parse(`${arrival}T12:00:00`))/86400000);
+    const unavailableNight=(value)=>pricingState.unavailable.some((range)=>value>=range.arrival&&value<range.departure);
+    const stayConflicts=(arrival,departure)=>pricingState.unavailable.some((range)=>rangesOverlap({arrival,departure},range));
+    function renderCalendar(index){
+      const months=document.getElementById(`calendar-months-${index}`),prompt=document.getElementById(`calendar-prompt-${index}`),summary=document.getElementById(`calendar-summary-${index}`),arrival=form.elements[`arrival${index}`].value,departure=form.elements[`departure${index}`].value,state=calendarState[index];
+      const previous=document.querySelector(`[data-calendar-prev="${index}"]`),next=document.querySelector(`[data-calendar-next="${index}"]`);
+      months.replaceChildren(); previous.disabled=!pricingState.loaded||monthKey(state.month)<=monthKey(firstCalendarMonth); next.disabled=!pricingState.loaded||monthKey(state.month)>=monthKey(lastCalendarStart);
+      if(!pricingState.loaded){prompt.textContent=pricingState.calendarError||'Loading live availability…';summary.textContent=pricingState.calendarError?'Please refresh the page or open the full availability calendar.':'Reserved and owner-blocked nights will appear here.';return;}
+      prompt.textContent=!arrival?'Choose your arrival date':!departure?'Arrival selected — now choose checkout':'Dates selected — choose a new arrival date to change them';
+      for(let monthOffset=0;monthOffset<2;monthOffset++){
+        const visibleMonth=addMonths(state.month,monthOffset),month=document.createElement('section'),heading=document.createElement('h4'),weekdayRow=document.createElement('div'),days=document.createElement('div');
+        month.className='calendar-month'; heading.textContent=new Intl.DateTimeFormat(undefined,{month:'long',year:'numeric'}).format(visibleMonth); weekdayRow.className='calendar-weekdays'; days.className='calendar-days';
+        weekdays.forEach((label)=>{const day=document.createElement('span');day.className='calendar-weekday';day.textContent=label;weekdayRow.append(day);});
+        for(let blank=0;blank<visibleMonth.getDay();blank++){const spacer=document.createElement('span');spacer.className='calendar-blank';spacer.setAttribute('aria-hidden','true');days.append(spacer);}
+        const dayCount=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()+1,0).getDate();
+        for(let dayNumber=1;dayNumber<=dayCount;dayNumber++){
+          const value=dateKey(new Date(visibleMonth.getFullYear(),visibleMonth.getMonth(),dayNumber,12)),day=document.createElement('button'),isPast=value<minimum,isBlocked=unavailableNight(value),choosingCheckout=Boolean(arrival&&!departure),validCheckout=choosingCheckout&&value>arrival&&!stayConflicts(arrival,value),checkoutOnly=validCheckout&&isBlocked;
+          day.type='button';day.className='calendar-day';day.dataset.calendarDay=value;day.dataset.calendarIndex=index;day.textContent=String(dayNumber);
+          day.disabled=isPast||(choosingCheckout&&value>arrival?!validCheckout:isBlocked);
+          if(value===minimum)day.classList.add('is-today');
+          if(isBlocked)day.classList.add('is-blocked');
+          if(arrival&&departure&&value>arrival&&value<departure)day.classList.add('is-in-range');
+          if(value===arrival)day.classList.add('is-arrival');
+          if(value===departure)day.classList.add('is-departure');
+          if(checkoutOnly)day.classList.add('is-checkout-only');
+          const spoken=new Intl.DateTimeFormat(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'}).format(new Date(`${value}T12:00:00`));
+          const stateLabel=isPast?'past date':checkoutOnly?'available as checkout only':day.disabled&&isBlocked?'unavailable':value===arrival?'selected arrival':value===departure?'selected checkout':'available';
+          day.setAttribute('aria-label',`${spoken}, ${stateLabel}`);day.setAttribute('aria-pressed',String(value===arrival||value===departure));
+          days.append(day);
+        }
+        month.append(heading,weekdayRow,days);months.append(month);
+      }
+      summary.replaceChildren();
+      if(!arrival){summary.textContent='Choose an arrival date, then choose your checkout date.';return;}
+      const strong=document.createElement('strong');
+      if(!departure){strong.textContent=friendlyDate(arrival);summary.append(strong,document.createTextNode(' selected for arrival. Now choose your checkout date.'));return;}
+      const nights=stayNights(arrival,departure);strong.textContent=`${friendlyDate(arrival)} → ${friendlyDate(departure)}`;summary.append(strong,document.createTextNode(` · ${nights} night${nights===1?'':'s'}${form.elements.guests.value?'':' · Choose the guest count above to see the live price.'}`));
     }
+    function renderCalendars(){renderCalendar(1);renderCalendar(2);}
+    function chooseCalendarDate(index,value){
+      if(!pricingState.loaded||value<minimum)return;
+      const arrival=form.elements[`arrival${index}`],departure=form.elements[`departure${index}`];
+      if(!arrival.value||departure.value||value<=arrival.value){if(unavailableNight(value))return;arrival.value=value;departure.value='';}
+      else {if(stayConflicts(arrival.value,value))return;departure.value=value;}
+      delete pricingState.discountQuotes[index];quoteChanged(index);
+    }
+    form.addEventListener('click',(event)=>{
+      const day=event.target.closest('[data-calendar-day]');if(day&&!day.disabled){chooseCalendarDate(day.dataset.calendarIndex,day.dataset.calendarDay);return;}
+      const previous=event.target.closest('[data-calendar-prev]'),next=event.target.closest('[data-calendar-next]');
+      if(previous||next){const index=Number((previous||next).dataset[previous?'calendarPrev':'calendarNext']),amount=previous?-1:1;calendarState[index].month=addMonths(calendarState[index].month,amount);renderCalendar(index);}
+    });
+    document.getElementById('add-choice').addEventListener('click',()=>{const choice=document.getElementById('choice-2');choice.hidden=false;document.getElementById('add-choice').hidden=true;calendarState[2].month=new Date(calendarState[1].month);renderCalendar(2);choice.scrollIntoView({behavior:'smooth',block:'nearest'});});
+    document.getElementById('remove-choice').addEventListener('click',()=>{form.elements.arrival2.value='';form.elements.departure2.value='';document.getElementById('choice-2').hidden=true;document.getElementById('add-choice').hidden=false;document.getElementById('quote-2').hidden=true;document.getElementById('availability-2').hidden=true;delete pricingState.discountQuotes[2];renderCalendar(2);});
     const normalizedPhone=()=>{const digits=String(form.elements.phone.value||'').replace(/\D/g,'');return digits.length===11&&digits.startsWith('1')?digits.slice(1):digits;};
     const quoteSignature=(index)=>`${form.elements[`arrival${index}`].value}|${form.elements[`departure${index}`].value}|${form.elements.guests.value}|${form.elements.dogs.value}|${form.elements.lateCheckout.checked?'1':'0'}|${normalizedPhone()}`;
     function renderQuote(index){
@@ -208,16 +313,7 @@
       status.hidden=false; return conflict;
     }
     function hasAvailabilityConflict(){return [1,2].some((index)=>checkAvailability(index));}
-    function renderBlockedDates(){
-      const details=document.getElementById('blocked-dates'),content=document.getElementById('blocked-dates-content'),future=pricingState.unavailable.filter((range)=>range.departure>=minimum).sort((a,b)=>a.arrival.localeCompare(b.arrival));
-      if(!future.length){details.hidden=true;return;}
-      const ranges=document.createElement('div'); ranges.className='blocked-date-grid';
-      future.forEach((range)=>{const item=document.createElement('div');item.textContent=`${friendlyDate(range.arrival)} to ${friendlyDate(range.departure)}`;ranges.append(item);});
-      const guide=document.createElement('div'); guide.append('Departure dates may be used as a new arrival. For the clearest view, ');
-      const link=document.createElement('a'); link.href='/availability.html'; link.textContent='open the availability calendar'; guide.append(link,document.createTextNode('.'));
-      content.replaceChildren(ranges,guide); details.hidden=false;
-    }
-    function quoteChanged(index){renderQuote(index);checkAvailability(index);scheduleDiscountQuotes();}
+    function quoteChanged(index){renderCalendar(index);renderQuote(index);checkAvailability(index);scheduleDiscountQuotes();}
     function scheduleDiscountQuotes(){clearTimeout(pricingState.discountTimer);pricingState.discountTimer=setTimeout(refreshDiscountQuotes,350);}
     function setDogsVisibility(approved){const field=document.getElementById('dog-field');field.hidden=!approved;if(!approved)form.elements.dogs.value='0';}
     async function refreshDiscountQuotes(){
@@ -235,19 +331,22 @@
     if(selectedGuests&&Number(selectedGuests)>=1&&Number(selectedGuests)<=11)form.elements.guests.value=selectedGuests;
     if(selectedParams.get('lateCheckout')==='1')form.elements.lateCheckout.checked=true;
     if(validDate(selectedArrival)&&validDate(selectedDeparture)&&selectedArrival>=minimum&&selectedDeparture>=addDays(selectedArrival,1)){
-      form.elements.arrival1.value=selectedArrival; form.elements.departure1.min=addDays(selectedArrival,1); form.elements.departure1.value=selectedDeparture;
+      form.elements.arrival1.value=selectedArrival; form.elements.departure1.value=selectedDeparture; calendarState[1].month=monthStart(new Date(`${selectedArrival}T12:00:00`));
       const selectionNote=document.getElementById('calendar-selection'); selectionNote.textContent=`Your calendar selection was added: ${friendlyDate(selectedArrival)} through ${friendlyDate(selectedDeparture)}.`; selectionNote.hidden=false;
     }
-    fetch('/api/availability').then(async(response)=>{const data=await response.json();if(!response.ok)throw new Error(data.error||'Pricing could not be loaded.');pricingState.rates=data.rates||[];pricingState.unavailable=data.unavailable||[];pricingState.loaded=true;renderQuote(1);renderQuote(2);renderBlockedDates();checkAvailability(1);checkAvailability(2);scheduleDiscountQuotes();}).catch(()=>{});
+    renderCalendars();
+    fetch('/api/availability').then(async(response)=>{const data=await response.json();if(!response.ok)throw new Error(data.error||'Pricing could not be loaded.');pricingState.rates=data.rates||[];pricingState.unavailable=data.unavailable||[];pricingState.loaded=true;renderCalendars();renderQuote(1);renderQuote(2);checkAvailability(1);checkAvailability(2);scheduleDiscountQuotes();}).catch((error)=>{pricingState.calendarError=error.message||'Live availability could not be loaded.';renderCalendars();});
     form.addEventListener('submit',async(event)=>{
       event.preventDefault(); message.hidden=true;
+      if(!validDate(form.elements.arrival1.value)||!validDate(form.elements.departure1.value)){message.className='message error';message.textContent='Choose an arrival and checkout date for your first choice.';message.hidden=false;document.getElementById('choice-1').scrollIntoView({behavior:'smooth',block:'center'});return;}
+      if((form.elements.arrival2.value||form.elements.departure2.value)&&(!validDate(form.elements.arrival2.value)||!validDate(form.elements.departure2.value))){message.className='message error';message.textContent='Finish choosing the checkout date for your second choice, or remove that choice.';message.hidden=false;document.getElementById('choice-2').scrollIntoView({behavior:'smooth',block:'center'});return;}
       if(hasAvailabilityConflict()){message.className='message error';message.textContent='One or more date choices are unavailable. Choose different dates or use the availability calendar before sending your request.';message.hidden=false;document.querySelector('.choice.unavailable')?.scrollIntoView({behavior:'smooth',block:'center'});return;}
       button.disabled=true; button.textContent='Sending request...'; document.querySelectorAll('.choice').forEach((choice)=>choice.classList.remove('unavailable'));
       const payload=Object.fromEntries(new FormData(form));
       try {
         const response=await fetch('/api/booking-requests',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
         const data=await response.json().catch(()=>({})); if(!response.ok) { const error=new Error(data.error || 'We could not send your request.'); error.unavailableChoices=data.unavailableChoices; throw error; }
-        form.reset(); setDogsVisibility(false); form.elements.departure1.min=minimum; form.elements.departure2.min=minimum; document.querySelectorAll('.stay-quote').forEach(box=>box.hidden=true); message.className='message success'; message.textContent=data.confirmationSent?'Your request is in. Check your email for confirmation.':'Your request is in. We’ll email you after we review the dates.'; message.hidden=false;
+        form.reset(); setDogsVisibility(false); document.getElementById('choice-2').hidden=true;document.getElementById('add-choice').hidden=false;document.querySelectorAll('.stay-quote,.availability-status').forEach(box=>box.hidden=true);renderCalendars();message.className='message success'; message.textContent=data.confirmationSent?'Your request is in. Check your email for confirmation.':'Your request is in. We’ll email you after we review the dates.'; message.hidden=false;
       } catch(error) { if(Array.isArray(error.unavailableChoices)) error.unavailableChoices.forEach((blocked,index)=>{ if(blocked) document.getElementById(`choice-${index+1}`).classList.add('unavailable'); }); message.className='message error'; message.textContent=error.message; message.hidden=false; }
       finally { button.disabled=false; button.textContent='Send my date choices'; }
     });
