@@ -168,6 +168,7 @@
     .reviews-section { padding: 120px 0; background: var(--paper); }
     .reviews-inner { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
     .reviews-head { display: flex; justify-content: space-between; gap: 35px; align-items: end; margin-bottom: 42px; }
+    .reviews-head .section-title { font-size: clamp(3rem,4.3vw,4.4rem); white-space: nowrap; }
     .reviews-head .section-copy { max-width: 420px; margin: 0; }
     .reviews-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
     .review-card { display: flex; flex-direction: column; min-height: 315px; padding: 30px; background: var(--cream); border: 1px solid var(--line); border-radius: 17px; }
@@ -194,6 +195,7 @@
     .confidence-points span + span::before { content: ''; display: inline-block; width: 4px; height: 4px; margin: 0 14px 2px 0; background: var(--rust); border-radius: 50%; }
 
     @media (max-width: 950px) {
+      .reviews-head .section-title { white-space: normal; }
       .intro-grid, .setting-grid { grid-template-columns: 1fr; }
       .floating-photo { grid-row: 1; margin-top: -165px; }
       .weather-card { grid-template-columns: 1fr; }
