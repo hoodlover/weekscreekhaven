@@ -78,8 +78,13 @@
     .calendar-day.is-blocked { color:#8b8178; background:repeating-linear-gradient(135deg,#ded7ce 0 5px,#eee9e2 5px 10px); text-decoration:line-through; }
     .calendar-day.is-requested { color:#315c73; background:#e5f0f6; border-color:#bfd5e2; text-decoration:none; }
     .calendar-day.is-deposit-pending { color:#214d67; background:repeating-linear-gradient(135deg,#bcd8e7 0 6px,#dcebf3 6px 12px); border-color:#78a9c2; text-decoration:none; }
+    .calendar-day.is-booking-checkout { padding-bottom:9px; color:#766d64; background:#fff; border-color:#cfc4b6; text-decoration:none; }
+    .calendar-day.is-booking-checkout.is-requested { color:#315c73; background:#f4f9fc; border-color:#bfd5e2; }
+    .calendar-day.is-booking-checkout.is-deposit-pending { color:#214d67; background:#f1f7fa; border-color:#78a9c2; }
+    .calendar-day.is-booking-checkout::after { content:'OUT'; position:absolute; right:0; bottom:2px; left:0; color:currentColor; font:800 .27rem/1 Montserrat,sans-serif; letter-spacing:.08em; }
     .calendar-day.is-in-range { color:var(--pine); background:#dce9df; border-radius:3px; }
     .calendar-day.is-arrival,.calendar-day.is-departure { color:white; background:var(--pine); border-color:var(--pine); border-radius:50%; text-decoration:none; }
+    .calendar-day.is-arrival::after,.calendar-day.is-departure::after { display:none; }
     .calendar-day.is-checkout-only { color:var(--pine); background:linear-gradient(135deg,#dce9df 0 50%,#ded7ce 50%); border-color:#9cae9f; text-decoration:none; }
     .calendar-day:disabled { opacity:.55; cursor:not-allowed; }
     .calendar-day.is-blocked:disabled { opacity:1; }
@@ -248,7 +253,13 @@
     const weekdays=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     const stayNights=(arrival,departure)=>Math.round((Date.parse(`${departure}T12:00:00`)-Date.parse(`${arrival}T12:00:00`))/86400000);
     const unavailableNight=(value)=>pricingState.unavailable.some((range)=>value>=range.arrival&&value<range.departure);
-    const requestStateForNight=(value)=>pricingState.requested.find((range)=>range.state==='deposit-pending'&&value>=range.arrival&&value<range.departure)?.state||pricingState.requested.find((range)=>value>=range.arrival&&value<range.departure)?.state||'';
+    const unavailableCheckout=(value)=>!unavailableNight(value)&&pricingState.unavailable.some((range)=>value===range.departure);
+    const requestMarkerForDate=(value)=>{
+      const night=pricingState.requested.find((range)=>range.state==='deposit-pending'&&value>=range.arrival&&value<range.departure)||pricingState.requested.find((range)=>value>=range.arrival&&value<range.departure);
+      if(night)return {state:night.state,checkout:false};
+      const checkout=pricingState.requested.find((range)=>range.state==='deposit-pending'&&value===range.departure)||pricingState.requested.find((range)=>value===range.departure);
+      return checkout?{state:checkout.state,checkout:true}:null;
+    };
     const stayConflicts=(arrival,departure)=>pricingState.unavailable.some((range)=>rangesOverlap({arrival,departure},range));
     function seasonalNote(arrival){
       const season=seasonForDate(arrival),month=Number(arrival.slice(5,7));
@@ -286,19 +297,20 @@
         for(let blank=0;blank<visibleMonth.getDay();blank++){const spacer=document.createElement('span');spacer.className='calendar-blank';spacer.setAttribute('aria-hidden','true');days.append(spacer);}
         const dayCount=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()+1,0).getDate();
         for(let dayNumber=1;dayNumber<=dayCount;dayNumber++){
-          const value=dateKey(new Date(visibleMonth.getFullYear(),visibleMonth.getMonth(),dayNumber,12)),day=document.createElement('button'),isPast=value<minimum,isBlocked=unavailableNight(value),requestState=requestStateForNight(value),choosingCheckout=Boolean(arrival&&!departure),validCheckout=choosingCheckout&&value>arrival&&!stayConflicts(arrival,value),checkoutOnly=validCheckout&&isBlocked;
+          const value=dateKey(new Date(visibleMonth.getFullYear(),visibleMonth.getMonth(),dayNumber,12)),day=document.createElement('button'),isPast=value<minimum,isBlocked=unavailableNight(value),blockedCheckout=unavailableCheckout(value),requestMarker=requestMarkerForDate(value),requestState=requestMarker?.state||'',bookingCheckout=blockedCheckout||Boolean(requestMarker?.checkout),choosingCheckout=Boolean(arrival&&!departure),validCheckout=choosingCheckout&&value>arrival&&!stayConflicts(arrival,value),checkoutOnly=validCheckout&&isBlocked;
           day.type='button';day.className='calendar-day';day.dataset.calendarDay=value;day.dataset.calendarIndex=index;day.textContent=String(dayNumber);
           day.disabled=isPast||(choosingCheckout&&value>arrival?!validCheckout:isBlocked);
           if(value===minimum)day.classList.add('is-today');
           if(isPast)day.classList.add('is-past');
           if(isBlocked)day.classList.add('is-blocked');
           if(requestState&&!isPast)day.classList.add(requestState==='deposit-pending'?'is-deposit-pending':'is-requested');
+          if(bookingCheckout&&!isPast)day.classList.add('is-booking-checkout');
           if(arrival&&departure&&value>arrival&&value<departure)day.classList.add('is-in-range');
           if(value===arrival)day.classList.add('is-arrival');
           if(value===departure)day.classList.add('is-departure');
           if(checkoutOnly)day.classList.add('is-checkout-only');
           const spoken=new Intl.DateTimeFormat(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'}).format(new Date(`${value}T12:00:00`));
-          const stateLabel=isPast?'past date':checkoutOnly?'available as checkout only':value===arrival?'selected arrival':value===departure?'selected checkout':requestState==='deposit-pending'?'deposit pending, temporarily held':requestState==='requested'?'requested, still available':day.disabled&&isBlocked?'unavailable':'available';
+          const stateLabel=isPast?'past date':checkoutOnly?'available as checkout only':value===arrival?'selected arrival':value===departure?'selected checkout':bookingCheckout?'checkout date, available for a new arrival':requestState==='deposit-pending'?'deposit pending, temporarily held':requestState==='requested'?'requested, still available':day.disabled&&isBlocked?'unavailable':'available';
           day.setAttribute('aria-label',`${spoken}, ${stateLabel}`);day.setAttribute('aria-pressed',String(value===arrival||value===departure));
           days.append(day);
         }

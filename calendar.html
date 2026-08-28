@@ -194,6 +194,7 @@
     function finishPriceDrag(){
       if(!dragging)return; dragging=false; $('calendar').classList.remove('price-selecting');
       const arrival=dragStart<dragCurrent?dragStart:dragCurrent,departure=dragStart<dragCurrent?dragCurrent:dragStart,nightCount=daysBetween(arrival,departure);
+      if(nightCount===0){ document.querySelectorAll('.price-selected,.price-checkout').forEach((day)=>day.classList.remove('price-selected','price-checkout')); return; }
       if(nightCount<2){ document.querySelectorAll('.price-selected,.price-checkout').forEach((day)=>day.classList.remove('price-selected','price-checkout')); alert('Select arrival through checkout for at least two nights (three calendar dates).'); return; }
       state.priceSelection={arrival,departure,nightCount}; $('rate-selection-summary').textContent=`${friendlyDate(arrival)} to ${friendlyDate(departure)} · ${nightCount} nights · the last highlighted day is checkout`; $('drag-rate-amount').value=''; $('drag-rate-error').hidden=true; $('rate-dialog').showModal();
     }
