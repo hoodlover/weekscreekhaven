@@ -101,7 +101,7 @@
 
       <!-- Logo image + address + copyright -->
       <div>
-        <img src="webpic/weeks-creek-haven-round-logo.png" alt="Weeks Creek Haven" class="wch-footer-logo">
+        <a href="/index.html" aria-label="Weeks Creek Haven home"><img src="webpic/weeks-creek-haven-round-logo.png" alt="Weeks Creek Haven" class="wch-footer-logo"></a>
         <p class="wch-footer-title">Weeks Creek Haven</p>
         <p class="wch-footer-address">421 Weeks Creek Rd · Blue Ridge, GA 30513</p>
         <p class="wch-footer-copy">&copy; 2026 H &amp; L Havens, LLC · Beautiful Blue Ridge</p>
