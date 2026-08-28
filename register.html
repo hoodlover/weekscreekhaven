@@ -40,6 +40,12 @@
     .steps { margin-top:28px; display:grid; gap:11px; }
     .step { display:flex; gap:12px; align-items:flex-start; font-size:.78rem; line-height:1.55; color:#e7ddd2; }
     .step b { display:grid; place-items:center; flex:0 0 27px; height:27px; border-radius:50%; background:var(--rust); color:white; }
+    .confidence-panel { margin:18px 0 4px; padding:17px; background:#eef3ed; border:1px solid #c7d5ca; border-radius:12px; }
+    .confidence-title { margin:0; color:var(--pine); font:700 1.2rem 'Crimson Text',serif; }
+    .confidence-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:12px; }
+    .confidence-item { padding-left:12px; border-left:3px solid var(--rust); }
+    .confidence-item strong { display:block; color:var(--ink); font-size:.68rem; line-height:1.35; text-transform:uppercase; letter-spacing:.06em; }
+    .confidence-item span { display:block; margin-top:4px; color:var(--muted); font-size:.68rem; line-height:1.45; }
     .card { background:rgba(255,253,248,.98); border-radius:22px; padding:32px; border-top:9px solid var(--pine); box-shadow:0 24px 70px rgba(0,0,0,.45); }
     .card h2 { font-size:2.25rem; color:var(--pine); }
     .helper { color:var(--muted); line-height:1.55; font-size:.82rem; }
@@ -98,6 +104,7 @@
       fieldset { min-width:0; padding:12px; }
       .stay-quote strong { font-size:1.25rem; }
       .availability-status,.stay-quote { overflow-wrap:anywhere; }
+      .confidence-grid { grid-template-columns:1fr; gap:10px; }
     }
   </style>
 </head>
@@ -111,9 +118,10 @@
         <p>Send us the dates you want. Add a second choice if you have one, and we&rsquo;ll check the cabin calendar, confirm pricing, and email you personally before anything is charged.</p>
         <p><a class="home" href="/availability.html">See available dates &amp; nightly rates</a></p>
         <div class="steps">
-          <div class="step"><b>1</b><span>Request one date range, or add an optional second choice.</span></div>
-          <div class="step"><b>2</b><span>We review availability and send the approved dates and total.</span></div>
-          <div class="step"><b>3</b><span>Pay securely online to finalize the reservation.</span></div>
+          <div class="step"><b>1</b><span>Choose one date range, or add an optional second choice, and see the estimated price.</span></div>
+          <div class="step"><b>2</b><span>Send the request without entering a card or paying anything.</span></div>
+          <div class="step"><b>3</b><span>We confirm the dates and email the itemized total and any required agreement.</span></div>
+          <div class="step"><b>4</b><span>Review everything, then pay securely online to finalize the reservation.</span></div>
         </div>
       </section>
 
@@ -122,6 +130,14 @@
         <h2>Tell us what might work</h2>
         <div class="minimum">One-night stays available &middot; two-night minimum charge</div>
         <p class="helper">Choose your dates and guest count to see the price immediately. One-night stays are welcome but billed at the two-night minimum price. This form does not reserve dates or charge you.</p>
+        <section class="confidence-panel" aria-labelledby="confidence-title">
+          <h3 class="confidence-title" id="confidence-title">Book with confidence</h3>
+          <div class="confidence-grid">
+            <div class="confidence-item"><strong>No surprise charge</strong><span>Submitting this form never charges a card or creates an automatic reservation.</span></div>
+            <div class="confidence-item"><strong>Review the real total</strong><span>Dates, required fees, taxes, and any agreement are provided before payment.</span></div>
+            <div class="confidence-item"><strong>Secure final step</strong><span>Your stay becomes final only after you approve the details and pay online.</span></div>
+          </div>
+        </section>
         <details id="blocked-dates" class="blocked-dates" hidden><summary>See blocked dates</summary><div id="blocked-dates-content" class="blocked-dates-content"></div></details>
         <div id="calendar-selection" class="message picked" hidden role="status"></div>
         <div class="grid">
