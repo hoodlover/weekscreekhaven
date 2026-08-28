@@ -147,7 +147,8 @@
 
     .day-section { padding: 125px 0; background: var(--paper); }
     .day-inner { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
-    .day-heading { max-width: 760px; margin-bottom: 50px; }
+    .day-heading { max-width: none; margin-bottom: 50px; }
+    .day-heading .section-title { white-space: nowrap; }
     .day-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
     .day-card { position: relative; min-height: 500px; overflow: hidden; border-radius: 20px; background: #444; box-shadow: 0 16px 40px rgba(48,42,37,.13); }
     .day-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
@@ -196,6 +197,7 @@
 
     @media (max-width: 950px) {
       .reviews-head .section-title { white-space: normal; }
+      .day-heading .section-title { white-space: normal; }
       .intro-grid, .setting-grid { grid-template-columns: 1fr; }
       .floating-photo { grid-row: 1; margin-top: -165px; }
       .weather-card { grid-template-columns: 1fr; }
