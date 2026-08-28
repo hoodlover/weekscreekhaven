@@ -180,8 +180,10 @@
 
     .stay-section { position: relative; min-height: 650px; display: grid; place-items: center; padding: 90px 20px; isolation: isolate; background: var(--pine-deep); }
     .stay-section::before { content: ''; position: absolute; inset: 0; z-index: -2; background: url('/gallery/evening-view.webp') center / cover no-repeat; }
-    .stay-section::after { content: ''; position: absolute; inset: 0; z-index: -1; background: rgba(8,28,21,.76); }
-    .stay-card { max-width: 780px; padding: 58px 62px; color: #fff; text-align: center; background: rgba(13,45,35,.78); border: 1px solid rgba(255,255,255,.18); border-radius: 24px; backdrop-filter: blur(14px); box-shadow: 0 28px 80px rgba(0,0,0,.3); }
+    .stay-section::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg,rgba(7,24,18,.62),rgba(7,24,18,.86)),radial-gradient(circle at 50% 38%,rgba(205,139,86,.2),transparent 40%); }
+    .stay-card { position: relative; max-width: 780px; overflow: hidden; padding: 58px 62px; color: #fff; text-align: center; background: linear-gradient(145deg,rgba(14,48,37,.88),rgba(8,31,24,.82)); border: 1px solid rgba(226,181,130,.32); border-radius: 24px; backdrop-filter: blur(14px); box-shadow: 0 28px 80px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.08); }
+    .stay-card::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at 12% 18%,rgba(226,181,130,.5) 0 1px,transparent 2px),radial-gradient(circle at 86% 25%,rgba(255,255,255,.4) 0 1px,transparent 2px),radial-gradient(circle at 78% 72%,rgba(226,181,130,.38) 0 1px,transparent 2px); }
+    .stay-card > * { position: relative; }
     .stay-card .eyebrow { color: #e2b582; }
     .stay-card h2 { margin: 0; color: #fff; font-size: clamp(3rem, 6vw, 5rem); line-height: .92; }
     .stay-card p { margin: 22px auto 0; color: rgba(255,255,255,.77); line-height: 1.75; }
@@ -343,18 +345,18 @@
     <div class="reviews-inner">
       <div class="reviews-head">
         <div><p class="eyebrow">Guest experiences</p><h2 class="section-title">About Weeks Creek cabin.</h2></div>
-        <p class="section-copy" id="review-summary">Five-star guest experiences and counting.</p>
+        <p class="section-copy" id="review-summary">We can&rsquo;t wait to read the five-star story you&rsquo;ll tell.</p>
       </div>
       <div class="reviews-grid" id="public-review-list" aria-live="polite"></div>
-      <button class="reviews-more" id="show-all-reviews" type="button" hidden>Show all guest reviews</button>
+      <button class="reviews-more" id="show-all-reviews" type="button" hidden>Read more guest stories</button>
     </div>
   </section>
 
   <section class="stay-section" id="book">
     <div class="stay-card">
-      <p class="eyebrow">Private cabin stays &middot; Blue Ridge, Georgia</p>
-      <h2>Bring us two weekends.</h2>
-      <p>Choose the dates that might work, see clear nightly pricing, and send a stay request directly to Lance and Heather. We will check the cabin calendar and reply personally before anything is charged.</p>
+      <p class="eyebrow">A little mountain magic awaits</p>
+      <h2>Your story starts at the creek.</h2>
+      <p>Choose the nights that feel right, see your stay clearly, and request it in a few easy steps. We&rsquo;ll make the details effortless and keep the welcome personal&mdash;right down to the porch light waiting for you.</p>
       <div class="stay-actions"><a class="btn-primary" href="register.html">Request a stay</a><a class="btn-ghost" href="availability.html">Availability &amp; rates</a></div>
       <div class="confidence-note">
         <strong>Request with confidence</strong>
@@ -400,7 +402,7 @@
         list.appendChild(article);
       });
       button.hidden = reviews.length <= 3;
-      button.textContent = expanded ? 'Show fewer reviews' : `Show all ${reviews.length} guest reviews`;
+      button.textContent = expanded ? 'Show fewer guest stories' : 'Read more guest stories';
     }
 
     fetch('/api/public-reviews')
@@ -408,8 +410,7 @@
       .then(data => {
         reviews = data.reviews || [];
         if (!reviews.length) throw new Error('No reviews');
-        const fiveStarCount = reviews.filter(review => review.overall === 5).length;
-        summary.textContent = `${fiveStarCount} five-star guest experience${fiveStarCount === 1 ? '' : 's'} and counting.`;
+        summary.textContent = 'We can\u2019t wait to read the five-star story you\u2019ll tell.';
         renderReviews();
       })
       .catch(() => { section.hidden = true; });
