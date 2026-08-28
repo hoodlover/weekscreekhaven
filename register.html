@@ -21,6 +21,7 @@
   <style>
     :root { --pine:#173f2b; --rust:#a45d41; --cream:#f4eee0; --ink:#332820; --muted:#74685e; --line:#d9cfbf; }
     * { box-sizing:border-box; }
+    [hidden] { display:none !important; }
     body { margin:0; color:var(--ink); font-family:Montserrat,sans-serif; background:#15110e url('webpic/barn.webp') center/cover fixed; }
     a { color:inherit; }
     .page { min-height:100vh; background:linear-gradient(90deg,rgba(15,12,9,.88),rgba(15,12,9,.35) 45%,rgba(15,12,9,.82)); padding:26px 16px 70px; }
@@ -73,6 +74,7 @@
     .calendar-day { position:relative; width:100%; min-width:0; aspect-ratio:1; margin:0; padding:2px; display:grid; place-items:center; border:1px solid transparent; border-radius:8px; color:var(--ink); background:#f4eee4; box-shadow:none; font:700 .68rem Montserrat,sans-serif; letter-spacing:0; text-transform:none; }
     .calendar-day:hover:not(:disabled),.calendar-day:focus-visible { color:white; background:var(--rust); outline:none; transform:none; }
     .calendar-day.is-today { border-color:var(--rust); }
+    .calendar-day.is-past { color:#c4bdb5; background:#fcfbf8; border-color:#f1ece5; }
     .calendar-day.is-blocked { color:#8b8178; background:repeating-linear-gradient(135deg,#ded7ce 0 5px,#eee9e2 5px 10px); text-decoration:line-through; }
     .calendar-day.is-in-range { color:var(--pine); background:#dce9df; border-radius:3px; }
     .calendar-day.is-arrival,.calendar-day.is-departure { color:white; background:var(--pine); border-color:var(--pine); border-radius:50%; text-decoration:none; }
@@ -87,6 +89,11 @@
     .calendar-swatch.range { background:#dce9df; border-color:#b8cdbd; }
     .calendar-summary { min-height:44px; margin-top:13px; padding:11px 12px; color:var(--muted); background:#fff; border:1px solid var(--line); border-radius:9px; font-size:.7rem; line-height:1.45; }
     .calendar-summary strong { color:var(--pine); }
+    .calendar-price { margin-top:10px; padding:12px 13px; display:grid; grid-template-columns:auto 1fr; gap:8px 15px; align-items:center; color:var(--pine); background:#e8f2e9; border:1px solid #b8cdbd; border-radius:10px; }
+    .calendar-price-main span { display:block; color:var(--muted); font-size:.55rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+    .calendar-price-main strong { display:block; margin-top:2px; font:700 1.35rem/1 'Crimson Text',serif; }
+    .calendar-price-detail { color:var(--muted); font-size:.61rem; line-height:1.45; }
+    .calendar-season { grid-column:1/-1; margin:0; padding-top:8px; border-top:1px solid #c9d9cc; color:#41644c; font-size:.65rem; font-weight:700; line-height:1.45; }
     .choice-actions { display:flex; justify-content:flex-end; margin-top:10px; }
     .clear-choice,.choice-toggle { width:auto; margin:0; padding:9px 13px; border:1px solid #cbbdab; background:transparent; color:var(--pine); box-shadow:none; font-size:.61rem; }
     .clear-choice:hover,.choice-toggle:hover { color:white; background:var(--rust); border-color:var(--rust); }
@@ -165,7 +172,7 @@
           <h3 class="confidence-title" id="confidence-title">Book with confidence</h3>
           <div class="confidence-grid">
             <div class="confidence-item"><strong>No surprise charge</strong><span>Submitting this form never charges a card or creates an automatic reservation.</span></div>
-            <div class="confidence-item"><strong>Review the real total</strong><span>Dates, required fees, taxes, and any agreement are provided before payment.</span></div>
+            <div class="confidence-item"><strong>See the full total</strong><span>Dates, required fees, taxes, and any agreement are provided before payment.</span></div>
             <div class="confidence-item"><strong>Secure final step</strong><span>Your stay becomes final only after you approve the details and pay online.</span></div>
           </div>
         </section>
@@ -185,6 +192,7 @@
             <div class="calendar-months" id="calendar-months-1" aria-live="polite"></div>
             <div class="calendar-legend"><span class="calendar-key"><i class="calendar-swatch"></i>Available</span><span class="calendar-key"><i class="calendar-swatch blocked"></i>Unavailable night</span><span class="calendar-key"><i class="calendar-swatch selected"></i>Arrival / checkout</span><span class="calendar-key"><i class="calendar-swatch range"></i>Your stay</span></div>
             <div class="calendar-summary" id="calendar-summary-1">Choose an arrival date, then choose your checkout date.</div>
+            <div class="calendar-price" id="calendar-price-1" hidden><div class="calendar-price-main"><span>Live stay estimate</span><strong></strong></div><div class="calendar-price-detail"></div><p class="calendar-season"></p></div>
           </div>
           <div id="availability-1" class="availability-status" hidden role="status"></div><div id="quote-1" class="stay-quote" hidden><strong></strong><span></span></div>
         </fieldset>
@@ -197,13 +205,14 @@
             <div class="calendar-months" id="calendar-months-2" aria-live="polite"></div>
             <div class="calendar-legend"><span class="calendar-key"><i class="calendar-swatch"></i>Available</span><span class="calendar-key"><i class="calendar-swatch blocked"></i>Unavailable night</span><span class="calendar-key"><i class="calendar-swatch selected"></i>Arrival / checkout</span><span class="calendar-key"><i class="calendar-swatch range"></i>Your stay</span></div>
             <div class="calendar-summary" id="calendar-summary-2">Choose an arrival date, then choose your checkout date.</div>
+            <div class="calendar-price" id="calendar-price-2" hidden><div class="calendar-price-main"><span>Live stay estimate</span><strong></strong></div><div class="calendar-price-detail"></div><p class="calendar-season"></p></div>
           </div>
           <div class="choice-actions"><button class="clear-choice" id="remove-choice" type="button">Remove second choice</button></div>
           <div id="availability-2" class="availability-status" hidden role="status"></div><div id="quote-2" class="stay-quote" hidden><strong></strong><span></span></div>
         </fieldset>
         <label class="check"><input id="late-checkout" name="lateCheckout" type="checkbox" value="1"><span><strong>Add noon checkout for $50.</strong> Standard checkout is 11:00 AM. Check-in begins at 4:00 PM.</span></label>
         <div class="grid">
-          <label>How did you hear about Weeks Creek Haven?<select name="relationship"><option value="">Choose one</option><option>Family</option><option>Friend</option><option>Friend of a friend</option><option>Previous guest</option><option>Found the cabin online</option><option>Other</option></select></label>
+          <label>How did you find us?<select name="relationship"><option value="">Choose one</option><option>Family</option><option>Friend</option><option>Friend of a friend</option><option>Previous guest</option><option>Found the cabin online</option><option>Other</option></select></label>
           <label>Reference (optional)<input name="reference" maxlength="160" placeholder="Who sent you our way?"></label>
         </div>
         <label>Anything we should know?<textarea name="notes" rows="4" maxlength="800" placeholder="Trip occasion, questions, accessibility needs, or a quick hello..."></textarea></label>
@@ -216,7 +225,7 @@
     </main>
   </div>
   <script type="module">
-    import { money, quoteStay } from '/pricing.js';
+    import { money, quoteStay, seasonForDate } from '/pricing.js';
     const form=document.getElementById('booking-form'); const button=document.getElementById('submit'); const message=document.getElementById('form-message');
     const pricingState={rates:[],unavailable:[],loaded:false,calendarError:'',discountQuotes:{},discountTimer:null,discountRequest:0};
     const today=new Date(); today.setHours(0,0,0,0); const minimum=today.toISOString().slice(0,10);
@@ -234,6 +243,28 @@
     const stayNights=(arrival,departure)=>Math.round((Date.parse(`${departure}T12:00:00`)-Date.parse(`${arrival}T12:00:00`))/86400000);
     const unavailableNight=(value)=>pricingState.unavailable.some((range)=>value>=range.arrival&&value<range.departure);
     const stayConflicts=(arrival,departure)=>pricingState.unavailable.some((range)=>rangesOverlap({arrival,departure},range));
+    function seasonalNote(arrival){
+      const season=seasonForDate(arrival),month=Number(arrival.slice(5,7));
+      if(season.id==='thanksgiving')return 'Thanksgiving in the mountains · peak holiday demand';
+      if(season.id==='christmas-new-year')return 'Winter wonderland to Happy New Year · holiday pricing';
+      if(season.id==='october')return 'Leaf season · peak color weekends';
+      if(season.id==='late-september')return 'Leaf season begins · fall demand';
+      if(season.id==='early-september')return 'Early fall value · warm days and cool nights';
+      if(season.id==='november')return 'Late-fall quiet · crisp days and firelight nights';
+      if(season.id==='december')return 'December cabin glow · winter holiday season';
+      if(season.id==='winter')return 'Quiet winter value · peaceful mountain days and gentler seasonal pricing';
+      return month<=5?'Early spring value · cool creek days and lighter seasonal demand':'Summer creek days · long afternoons in our favorite warm-weather season';
+    }
+    function renderCalendarPrice(index,arrival,departure){
+      const panel=document.getElementById(`calendar-price-${index}`),guests=Number(form.elements.guests.value)||1,dogs=Number(form.elements.dogs.value),cached=pricingState.discountQuotes[index];
+      if(!pricingState.loaded||!validDate(arrival)||!validDate(departure)||departure<=arrival){panel.hidden=true;return;}
+      const quote=cached?.signature===quoteSignature(index)?cached.quote:quoteStay({arrival,departure,guests,dogs,lateCheckout:form.elements.lateCheckout.checked,rates:pricingState.rates});
+      if(!quote){panel.hidden=true;return;}
+      panel.querySelector('.calendar-price-main strong').textContent=`${money(quote.totalCents)} before taxes`;
+      panel.querySelector('.calendar-price-detail').textContent=`${money(quote.estimatedGrandTotalCents)} estimated with taxes · ${form.elements.guests.value?`${guests} guest${guests===1?'':'s'}`:'priced for 1–4 guests'} · ${quote.cleaningAdjustmentCents?`${money(quote.cleaningAdjustmentCents)} group cleaning adjustment`:'standard cleaning included'}`;
+      panel.querySelector('.calendar-season').textContent=`${seasonalNote(arrival)} · ${quote.pricingRule}`;
+      panel.hidden=false;
+    }
     function renderCalendar(index){
       const months=document.getElementById(`calendar-months-${index}`),prompt=document.getElementById(`calendar-prompt-${index}`),summary=document.getElementById(`calendar-summary-${index}`),arrival=form.elements[`arrival${index}`].value,departure=form.elements[`departure${index}`].value,state=calendarState[index];
       const previous=document.querySelector(`[data-calendar-prev="${index}"]`),next=document.querySelector(`[data-calendar-next="${index}"]`);
@@ -251,6 +282,7 @@
           day.type='button';day.className='calendar-day';day.dataset.calendarDay=value;day.dataset.calendarIndex=index;day.textContent=String(dayNumber);
           day.disabled=isPast||(choosingCheckout&&value>arrival?!validCheckout:isBlocked);
           if(value===minimum)day.classList.add('is-today');
+          if(isPast)day.classList.add('is-past');
           if(isBlocked)day.classList.add('is-blocked');
           if(arrival&&departure&&value>arrival&&value<departure)day.classList.add('is-in-range');
           if(value===arrival)day.classList.add('is-arrival');
@@ -263,11 +295,12 @@
         }
         month.append(heading,weekdayRow,days);months.append(month);
       }
+      renderCalendarPrice(index,arrival,departure);
       summary.replaceChildren();
       if(!arrival){summary.textContent='Choose an arrival date, then choose your checkout date.';return;}
       const strong=document.createElement('strong');
       if(!departure){strong.textContent=friendlyDate(arrival);summary.append(strong,document.createTextNode(' selected for arrival. Now choose your checkout date.'));return;}
-      const nights=stayNights(arrival,departure);strong.textContent=`${friendlyDate(arrival)} → ${friendlyDate(departure)}`;summary.append(strong,document.createTextNode(` · ${nights} night${nights===1?'':'s'}${form.elements.guests.value?'':' · Choose the guest count above to see the live price.'}`));
+      const nights=stayNights(arrival,departure);strong.textContent=`${friendlyDate(arrival)} → ${friendlyDate(departure)}`;summary.append(strong,document.createTextNode(` · ${nights} night${nights===1?'':'s'}${form.elements.guests.value?'':' · Estimate below uses the 1–4 guest tier.'}`));
     }
     function renderCalendars(){renderCalendar(1);renderCalendar(2);}
     function chooseCalendarDate(index,value){
@@ -318,15 +351,15 @@
     function setDogsVisibility(approved){const field=document.getElementById('dog-field');field.hidden=!approved;if(!approved)form.elements.dogs.value='0';}
     async function refreshDiscountQuotes(){
       const phone=normalizedPhone(),requestId=++pricingState.discountRequest;
-      if(phone.length!==10){pricingState.discountQuotes={};setDogsVisibility(false);renderQuote(1);renderQuote(2);return;}
+      if(phone.length!==10){pricingState.discountQuotes={};setDogsVisibility(false);renderCalendars();renderQuote(1);renderQuote(2);return;}
       let approved=false;
-      await Promise.all([1,2].map(async(index)=>{const arrival=form.elements[`arrival${index}`].value,departure=form.elements[`departure${index}`].value,guests=Number(form.elements.guests.value),dogs=Number(form.elements.dogs.value);if(!guests||!validDate(arrival)||!validDate(departure)||departure<=arrival)return;const signature=quoteSignature(index);try{const response=await fetch('/api/quote',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({arrival,departure,guests,dogs,phone,lateCheckout:form.elements.lateCheckout.checked})}),data=await response.json();if(response.ok&&requestId===pricingState.discountRequest&&signature===quoteSignature(index)){pricingState.discountQuotes[index]={signature,quote:data.quote};approved=approved||Boolean(data.quote?.friendsAndFamilyDiscount);renderQuote(index);}}catch{}}));
+      await Promise.all([1,2].map(async(index)=>{const arrival=form.elements[`arrival${index}`].value,departure=form.elements[`departure${index}`].value,guests=Number(form.elements.guests.value),dogs=Number(form.elements.dogs.value);if(!guests||!validDate(arrival)||!validDate(departure)||departure<=arrival)return;const signature=quoteSignature(index);try{const response=await fetch('/api/quote',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({arrival,departure,guests,dogs,phone,lateCheckout:form.elements.lateCheckout.checked})}),data=await response.json();if(response.ok&&requestId===pricingState.discountRequest&&signature===quoteSignature(index)){pricingState.discountQuotes[index]={signature,quote:data.quote};approved=approved||Boolean(data.quote?.friendsAndFamilyDiscount);renderCalendar(index);renderQuote(index);}}catch{}}));
       if(requestId===pricingState.discountRequest)setDogsVisibility(approved);
     }
     form.elements.guests.addEventListener('change',()=>{quoteChanged(1);quoteChanged(2);});
     form.elements.dogs.addEventListener('change',()=>{quoteChanged(1);quoteChanged(2);});
     form.elements.lateCheckout.addEventListener('change',()=>{quoteChanged(1);quoteChanged(2);});
-    form.elements.phone.addEventListener('input',()=>{setDogsVisibility(false);renderQuote(1);renderQuote(2);scheduleDiscountQuotes();});
+    form.elements.phone.addEventListener('input',()=>{setDogsVisibility(false);renderCalendars();renderQuote(1);renderQuote(2);scheduleDiscountQuotes();});
     const selectedParams=new URLSearchParams(location.search), selectedArrival=selectedParams.get('arrival1'), selectedDeparture=selectedParams.get('departure1'),selectedGuests=selectedParams.get('guests');
     if(selectedGuests&&Number(selectedGuests)>=1&&Number(selectedGuests)<=11)form.elements.guests.value=selectedGuests;
     if(selectedParams.get('lateCheckout')==='1')form.elements.lateCheckout.checked=true;
