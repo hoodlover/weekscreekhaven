@@ -255,14 +255,12 @@
     .pwa-splash { display:none; position:fixed; inset:0; z-index:99999; background:#00111d; align-items:center; justify-content:center; flex-direction:column; gap:18px; color:#f5efe5; text-align:center; }
     .pwa-splash.is-visible { display:flex; }
     .pwa-splash img { width:min(62vw,280px); aspect-ratio:1; object-fit:cover; border-radius:22%; box-shadow:0 18px 50px rgba(0,0,0,.42); }
-    .pwa-splash strong { font-family:'Crimson Text',serif; font-size:1.55rem; letter-spacing:.08em; }
     .pwa-splash.is-leaving { opacity:0; transition:opacity .22s ease; pointer-events:none; }
   </style>
 </head>
 <body>
   <div id="pwa-splash" class="pwa-splash" role="status" aria-label="Opening Weeks Creek Haven">
     <img src="/webpic/wch-main-pwa-512-v1.png" alt="">
-    <strong>Weeks Creek Haven</strong>
   </div>
 <div id="nav-placeholder"></div>
 <script src="nav.js?v=13"></script>
@@ -479,7 +477,7 @@
 </script>
 <script>
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('/friends-sw.js?v=23').catch(() => {}));
+    window.addEventListener('load', () => navigator.serviceWorker.register('/friends-sw.js?v=24').catch(() => {}));
   }
 </script>
 
