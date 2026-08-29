@@ -68,7 +68,7 @@ function invoiceReminders(today, dueDate) {
     : [];
 }
 
-export async function createSquareBookingInvoice({ bookingId, guestName, email, amountCents, depositBaseCents, arrival, discountCents = 0 }) {
+export async function createSquareBookingInvoice({ bookingId, guestName, email, amountCents, depositBaseCents, arrival, discountCents = 0, depositDueDays = 1 }) {
   if (!Number.isInteger(amountCents) || amountCents < 100) throw new Error('The stay total must be at least $1.00.');
   const depositAmountCents = Math.round(Math.max(0, Number(depositBaseCents) || 0) * 0.20);
   if (depositAmountCents < 1 || depositAmountCents > amountCents) throw new Error('The 20% reservation deposit could not be calculated.');
@@ -101,7 +101,7 @@ export async function createSquareBookingInvoice({ bookingId, guestName, email, 
     },
   });
   const today = easternDate();
-  const depositDueDate = shiftDate(today, 1);
+  const depositDueDate = shiftDate(today, Math.max(1, Number(depositDueDays) || 1));
   const balanceDueDate = shiftDate(arrival, -7);
   const fullPaymentRequired = balanceDueDate <= today;
   const balanceCents = amountCents - depositAmountCents;
@@ -132,7 +132,7 @@ export async function createSquareBookingInvoice({ bookingId, guestName, email, 
         payment_requests: paymentRequests,
         invoice_number: `WCH-${bookingId.slice(0, 8).toUpperCase()}`,
         title: 'Weeks Creek Haven private stay',
-        description: `${discountCents ? `Includes a $${(discountCents / 100).toFixed(2)} Weeks Creek Haven discount. ` : ''}${fullPaymentRequired ? 'Because arrival is within seven days, payment in full is due now. ' : 'The 20% reservation deposit is due within 24 hours of approval, and the remaining balance is due seven days before arrival. '}Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the deposit is retained and any remaining amount paid is refunded.`,
+        description: `${discountCents ? `Includes a $${(discountCents / 100).toFixed(2)} Weeks Creek Haven discount. ` : ''}${fullPaymentRequired ? 'Because arrival is within seven days, payment in full is due now. ' : `The 20% reservation deposit is due within ${depositDueDays === 7 ? 'seven days' : '24 hours'} of approval, and the remaining balance is due seven days before arrival. `}Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the deposit is retained and any remaining amount paid is refunded.`,
         sale_or_service_date: arrival,
         accepted_payment_methods: { card: true, square_gift_card: false, bank_account: false, buy_now_pay_later: false, cash_app_pay: false },
       },
