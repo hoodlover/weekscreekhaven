@@ -14,7 +14,6 @@ function dateChoice(request, number) {
   return {
     arrival: isoDate(request.body?.[`arrival${number}`]), departure: isoDate(request.body?.[`departure${number}`]),
     discountRequest: text(request.body?.[`discountRequest${number}`], 160),
-    discountTermsAccepted: ['1', 'true', 'on', true, 1].includes(request.body?.[`discountTermsAccepted${number}`]),
   };
 }
 
@@ -49,9 +48,6 @@ export default async function handler(request, response) {
     const dogs = Math.max(0, Math.min(4, Number(request.body?.dogs) || 0));
     const phone = text(request.body?.phone, 40);
     const lateCheckout = ['1', 'true', 'on', true, 1].includes(request.body?.lateCheckout);
-    for (const [index, choice] of (hasSecondChoice ? [first, second] : [first]).entries()) {
-      if (choice.discountRequest.startsWith('Early booking') && !choice.discountTermsAccepted) return json(response, 400, { error: `Acknowledge that the early-booking discount amount for choice ${index + 1} is non-refundable before sending your request.` });
-    }
     const dateChoices = (hasSecondChoice ? [first, second] : [first]).map((choice) => {
       const standardQuote = quoteStay({ ...choice, guests, dogs, lateCheckout, rates: calendar.rates || [] });
       const quote = applyFriendsAndFamilyDiscount(standardQuote, phone, calendar.discounts || []);
@@ -68,8 +64,8 @@ export default async function handler(request, response) {
       phone, guests, dogs, lateCheckout, pricingVersion: 1,
       friendsAndFamilyDiscount: dateChoices[0].quote.friendsAndFamilyDiscount || null,
       dateChoices, relationship: text(request.body?.relationship, 160),
-      reference: text(request.body?.reference, 160), discountRequest: first.discountRequest, discountTermsAccepted: first.discountTermsAccepted,
-      notes: [...dateChoices.map((choice, index) => choice.discountRequest ? `Choice ${index + 1} requested offer: ${choice.discountRequest}${choice.discountTermsAccepted ? ' · terms accepted' : ''}` : ''), text(request.body?.notes, 800)].filter(Boolean).join('\n'),
+      reference: text(request.body?.reference, 160), discountRequest: first.discountRequest,
+      notes: [...dateChoices.map((choice, index) => choice.discountRequest ? `Choice ${index + 1} requested offer: ${choice.discountRequest}` : ''), text(request.body?.notes, 800)].filter(Boolean).join('\n'),
     };
     await appendBookingRecord({ type: 'requested', createdAt, booking });
     let confirmationSent = false;
@@ -80,7 +76,9 @@ export default async function handler(request, response) {
         ? ` Welcome! Your stay is complimentary: $0 due, with no taxes or government lodging fees.`
         : firstQuote.friendsAndFamilyDiscount
           ? ` Welcome! Your ${firstQuote.friendsAndFamilyDiscount.label} gives you a discounted rate of ${money(dateChoices[0].amountCents)} for choice 1, saving ${money(firstQuote.discountAmountCents)}.`
-          : ` Your current estimate for choice 1 is ${money(dateChoices[0].amountCents)}.`;
+          : firstQuote.earlyBirdDiscount
+            ? ` Your automatic ${firstQuote.earlyBirdDiscount.percentage}% Early Bird price for choice 1 is ${money(dateChoices[0].amountCents)}, saving ${money(firstQuote.earlyBirdDiscountCents)}.`
+            : ` Your current estimate for choice 1 is ${money(dateChoices[0].amountCents)}.`;
       const priceMessage = firstQuote.complimentary
         ? ''
         : ` This price does not include an estimated ${money(firstQuote.estimatedTaxesAndFeesCents)} in taxes and government lodging fees; the estimated amount if booked is ${money(firstQuote.estimatedGrandTotalCents)}. The standard $200 cleaning cost is included.`;
@@ -88,7 +86,9 @@ export default async function handler(request, response) {
         ? '<p style="background:#e8f2e9;padding:14px;border-radius:10px"><strong>Welcome!</strong> This is a complimentary stay: <strong>$0 due</strong>, with no taxes or government lodging fees.</p>'
         : firstQuote.friendsAndFamilyDiscount
           ? `<p style="background:#e8f2e9;padding:14px;border-radius:10px"><strong>Welcome!</strong> Your ${escapeEmailHtml(firstQuote.friendsAndFamilyDiscount.label)} gives you a discounted rate of <strong>${money(dateChoices[0].amountCents)}</strong> for choice 1. You save ${money(firstQuote.discountAmountCents)}.</p>`
-          : `<p>Current choice 1 estimate: <strong>${money(dateChoices[0].amountCents)}</strong></p>`;
+          : firstQuote.earlyBirdDiscount
+            ? `<p style="background:#e8f2e9;padding:14px;border-radius:10px"><strong>Automatic Early Bird:</strong> ${firstQuote.earlyBirdDiscount.percentage}% off is already included. Your choice 1 estimate is <strong>${money(dateChoices[0].amountCents)}</strong>, saving ${money(firstQuote.earlyBirdDiscountCents)}.</p>`
+            : `<p>Current choice 1 estimate: <strong>${money(dateChoices[0].amountCents)}</strong></p>`;
       const priceHtml = firstQuote.complimentary ? '' : `<p>Price does not include <strong>${money(firstQuote.estimatedTaxesAndFeesCents)}</strong> in estimated taxes and government lodging fees.<br>Estimated amount if booked: <strong>${money(firstQuote.estimatedGrandTotalCents)}</strong></p>`;
       try {
         await sendEmail({
