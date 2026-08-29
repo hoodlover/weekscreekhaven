@@ -69,8 +69,10 @@ function invoiceReminders(today, dueDate) {
   return reminders;
 }
 
-export async function createSquareBookingInvoice({ bookingId, guestName, email, amountCents, arrival, discountCents = 0 }) {
-  if (amountCents < 10000) throw new Error('The stay total must be at least the $100 deposit.');
+export async function createSquareBookingInvoice({ bookingId, guestName, email, amountCents, depositBaseCents, arrival, discountCents = 0 }) {
+  if (!Number.isInteger(amountCents) || amountCents < 100) throw new Error('The stay total must be at least $1.00.');
+  const depositAmountCents = Math.round(Math.max(0, Number(depositBaseCents) || 0) * 0.20);
+  if (depositAmountCents < 1 || depositAmountCents > amountCents) throw new Error('The 20% reservation deposit could not be calculated.');
   const nameParts = String(guestName || 'Guest').trim().split(/\s+/);
   const familyName = nameParts.length > 1 ? nameParts.pop() : '';
   const givenName = nameParts.join(' ') || guestName || 'Guest';
@@ -102,11 +104,11 @@ export async function createSquareBookingInvoice({ bookingId, guestName, email, 
   const today = easternDate();
   const balanceDueDate = previousDate(arrival);
   if (balanceDueDate < today) throw new Error('The balance due date has already passed. Choose a later arrival date.');
-  const balanceCents = amountCents - 10000;
+  const balanceCents = amountCents - depositAmountCents;
   const paymentRequests = [{
     request_type: balanceCents ? 'DEPOSIT' : 'BALANCE',
     due_date: today,
-    ...(balanceCents ? { fixed_amount_requested_money: { amount: 10000, currency: 'USD' } } : {}),
+    ...(balanceCents ? { fixed_amount_requested_money: { amount: depositAmountCents, currency: 'USD' } } : {}),
     tipping_enabled: false,
     automatic_payment_source: 'NONE',
   }];
@@ -129,7 +131,7 @@ export async function createSquareBookingInvoice({ bookingId, guestName, email, 
         payment_requests: paymentRequests,
         invoice_number: `WCH-${bookingId.slice(0, 8).toUpperCase()}`,
         title: 'Weeks Creek Haven private stay',
-        description: `${discountCents ? `Includes a $${(discountCents / 100).toFixed(2)} Weeks Creek Haven discount. ` : ''}$100 reservation deposit. Cancel at least two calendar days before check-in for a full refund; no refund after that deadline. Remaining balance is due one day before arrival.`,
+        description: `${discountCents ? `Includes a $${(discountCents / 100).toFixed(2)} Weeks Creek Haven discount. ` : ''}The reservation deposit is 20% of the approved pre-tax stay total. Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the deposit is retained and any remaining amount paid is refunded. Remaining balance is due one day before arrival.`,
         sale_or_service_date: arrival,
         accepted_payment_methods: { card: true, square_gift_card: false, bank_account: false, buy_now_pay_later: false, cash_app_pay: false },
       },
@@ -144,7 +146,7 @@ export async function createSquareBookingInvoice({ bookingId, guestName, email, 
     invoiceId: published.invoice.id,
     orderId: orderResult.order.id,
     customerId: customerResult.customer.id,
-    depositAmountCents: Math.min(amountCents, 10000),
+    depositAmountCents,
     balanceAmountCents: balanceCents,
     balanceDueDate,
   };
@@ -198,7 +200,7 @@ export async function createSquareFriendInvoice({ bookingId, guestName, email, a
         }],
         invoice_number: `WCHF-${bookingId.slice(0, 8).toUpperCase()}`,
         title: 'Weeks Creek Haven friends & family stay',
-        description: 'Friends & family total due now. No reservation deposit or additional balance is required. Cancel at least two calendar days before check-in for a full refund; no refund after that deadline.',
+        description: 'Friends & family total due now. Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, 20% of the approved pre-tax stay total is retained and any remaining payment is refunded.',
         sale_or_service_date: arrival,
         accepted_payment_methods: { card: true, square_gift_card: false, bank_account: false, buy_now_pay_later: false, cash_app_pay: false },
       },

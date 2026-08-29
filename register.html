@@ -106,6 +106,16 @@
     .calendar-deposit-note { margin-top:5px; color:#315c73; font-size:.65rem; line-height:1.4; }
     .calendar-season { grid-column:1/-1; margin:0; padding-top:8px; border-top:1px solid #c9d9cc; color:#41644c; font-size:.65rem; font-weight:700; line-height:1.45; }
     .field-note { display:block; margin-top:6px; color:var(--muted); font-size:.66rem; line-height:1.4; text-transform:none; letter-spacing:0; font-weight:600; }
+    .offer-policy { margin-top:10px; padding:12px 13px; border:1px solid #d8b26d; border-radius:9px; background:#fff5d9; color:#69430e; }
+    .offer-policy .check { margin-top:0; color:#69430e; }
+    .discount-picker { margin-top:10px; padding:12px 13px; border:1px solid #d8cdbd; border-radius:10px; background:#fffdf8; }
+    .discount-picker label { margin-top:0; }
+    .possible-savings { margin:9px 0 0; color:var(--pine); font-size:.7rem; line-height:1.45; font-weight:800; }
+    .discount-guide { margin:18px 0 0; border:1px solid var(--line); border-radius:12px; background:#fffdf8; overflow:hidden; }
+    .discount-guide summary { padding:14px 16px; color:var(--pine); cursor:pointer; font-family:'Crimson Text',serif; font-size:1.18rem; font-weight:700; }
+    .discount-guide-body { padding:0 16px 15px; }
+    .discount-guide-body ul { margin:0; padding-left:19px; color:var(--muted); font-size:.72rem; line-height:1.55; }
+    .discount-guide-body li+li { margin-top:6px; }
     .choice-actions { display:flex; justify-content:flex-end; margin-top:10px; }
     .clear-choice,.choice-toggle { width:auto; margin:0; padding:9px 13px; border:1px solid #cbbdab; background:transparent; color:var(--pine); box-shadow:none; font-size:.61rem; }
     .clear-choice:hover,.choice-toggle:hover { color:white; background:var(--rust); border-color:var(--rust); }
@@ -198,7 +208,7 @@
         <div class="grid">
           <label>Full name<input name="name" autocomplete="name" maxlength="100" required></label>
           <label>Email address<input name="email" type="email" autocomplete="email" maxlength="160" required></label>
-          <label>Phone (optional)<input name="phone" type="tel" autocomplete="tel" maxlength="40"><small class="field-note">Enter your number to see any Friends &amp; Family price saved for you.</small></label>
+          <label>Phone (optional)<input name="phone" type="tel" autocomplete="tel" maxlength="40"><small class="field-note">Friends &amp; family can enter their phone number to see their preferred rate.</small></label>
           <label>Number of guests<select id="guest-count" name="guests" required><option value="">Choose</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></label>
           <label id="dog-field" hidden>Dogs <small>(approved guests)</small><select id="dog-count" name="dogs"><option value="0">None</option><option value="1">1 dog</option><option value="2">2 dogs</option><option value="3">3 dogs</option><option value="4">4 dogs</option></select></label>
         </div>
@@ -211,6 +221,7 @@
             <div class="calendar-legend"><span class="calendar-key"><i class="calendar-swatch"></i>Available</span><span class="calendar-key"><i class="calendar-swatch requested"></i>Requested &middot; no deposit</span><span class="calendar-key"><i class="calendar-swatch deposit-pending"></i>Deposit pending &middot; held</span><span class="calendar-key"><i class="calendar-swatch blocked"></i>Unavailable night</span><span class="calendar-key"><i class="calendar-swatch selected"></i>Arrival / checkout</span><span class="calendar-key"><i class="calendar-swatch range"></i>Your stay</span></div>
             <div class="calendar-summary" id="calendar-summary-1">Choose an arrival date, then choose your checkout date.</div>
             <div class="calendar-price" id="calendar-price-1" hidden><div class="calendar-price-main"><span>Live stay estimate</span><strong></strong></div><div class="calendar-price-detail"><span></span><strong class="calendar-deposit-note"></strong></div><p class="calendar-season"></p></div>
+            <div class="discount-picker"><label>Possible discount<select id="discount-request-1" name="discountRequest1" data-discount-request="1"><option value="">No discount request</option><option>Early booking · 5–15% off · discount amount is non-refundable</option><option>Pay in full · 10% off</option><option>Book direct · 10% off · platform-fee savings passed to you</option><option>Midweek stay · 20% off Sunday–Thursday</option><option>Extended stay · 10% off 4+ nights / 20% off 7+</option><option>Last-minute opening · 15% off within 7 days</option><option>Off-season · 20% off January–March</option><option>Returning guest · 10% off</option><option>Guest referral · 10% for you and 10% for the referring guest</option><option>Rebook before checkout · 15% off the next stay</option></select></label><p id="possible-savings-1" class="possible-savings">Choose dates and an offer to see possible savings.</p><div id="early-booking-policy-1" class="offer-policy" hidden><label class="check"><input id="early-booking-accept-1" name="discountTermsAccepted1" type="checkbox" value="1"><span><strong>Early-booking offer:</strong> The amount saved with this discount is non-refundable. Any remaining paid amount follows the standard cancellation policy.</span></label></div></div>
           </div>
           <div id="availability-1" class="availability-status" hidden role="status"></div><div id="quote-1" class="stay-quote" hidden><strong></strong><span></span></div>
         </fieldset>
@@ -224,6 +235,7 @@
             <div class="calendar-legend"><span class="calendar-key"><i class="calendar-swatch"></i>Available</span><span class="calendar-key"><i class="calendar-swatch requested"></i>Requested &middot; no deposit</span><span class="calendar-key"><i class="calendar-swatch deposit-pending"></i>Deposit pending &middot; held</span><span class="calendar-key"><i class="calendar-swatch blocked"></i>Unavailable night</span><span class="calendar-key"><i class="calendar-swatch selected"></i>Arrival / checkout</span><span class="calendar-key"><i class="calendar-swatch range"></i>Your stay</span></div>
             <div class="calendar-summary" id="calendar-summary-2">Choose an arrival date, then choose your checkout date.</div>
             <div class="calendar-price" id="calendar-price-2" hidden><div class="calendar-price-main"><span>Live stay estimate</span><strong></strong></div><div class="calendar-price-detail"><span></span><strong class="calendar-deposit-note"></strong></div><p class="calendar-season"></p></div>
+            <div class="discount-picker"><label>Possible discount<select id="discount-request-2" name="discountRequest2" data-discount-request="2"><option value="">No discount request</option><option>Early booking · 5–15% off · discount amount is non-refundable</option><option>Pay in full · 10% off</option><option>Book direct · 10% off · platform-fee savings passed to you</option><option>Midweek stay · 20% off Sunday–Thursday</option><option>Extended stay · 10% off 4+ nights / 20% off 7+</option><option>Last-minute opening · 15% off within 7 days</option><option>Off-season · 20% off January–March</option><option>Returning guest · 10% off</option><option>Guest referral · 10% for you and 10% for the referring guest</option><option>Rebook before checkout · 15% off the next stay</option></select></label><p id="possible-savings-2" class="possible-savings">Choose dates and an offer to see possible savings.</p><div id="early-booking-policy-2" class="offer-policy" hidden><label class="check"><input id="early-booking-accept-2" name="discountTermsAccepted2" type="checkbox" value="1"><span><strong>Early-booking offer:</strong> The amount saved with this discount is non-refundable. Any remaining paid amount follows the standard cancellation policy.</span></label></div></div>
           </div>
           <div class="choice-actions"><button class="clear-choice" id="remove-choice" type="button">Remove second choice</button></div>
           <div id="availability-2" class="availability-status" hidden role="status"></div><div id="quote-2" class="stay-quote" hidden><strong></strong><span></span></div>
@@ -233,13 +245,15 @@
           <label>How did you find us?<select name="relationship"><option value="">Choose one</option><option>Family</option><option>Friend</option><option>Friend of a friend</option><option>Previous guest</option><option>Found the cabin online</option><option>Other</option></select></label>
           <label>Reference (optional)<input name="reference" maxlength="160" placeholder="Who sent you our way?"></label>
         </div>
-        <label>Discount request (optional)<select name="discountRequest"><option value="">No discount request</option><option>Early booking · 5–15% based on how far ahead</option><option>Pay in full · 10% off</option><option>Midweek stay · 20% off Sunday–Thursday</option><option>Extended stay · 10% off 4+ nights / 20% off 7+</option><option>Last-minute opening · 15% off within 7 days</option><option>Returning guest · 10% off</option><option>Guest referral · 10% off</option></select><small class="field-note">Choose one. We’ll confirm whether it applies; offers do not stack.</small></label>
+        <details class="discount-guide"><summary>See how you can receive a discounted stay</summary><div class="discount-guide-body"><ul><li><strong>Early booking:</strong> 15% at 90+ days, 10% at 60+ days, or 5% at 30+ days. The amount saved is non-refundable.</li><li><strong>Pay in full:</strong> 10% off when the approved stay is paid in full instead of using the standard deposit.</li><li><strong>Book direct:</strong> 10% off by keeping the stay here instead of paying Airbnb or VRBO platform costs.</li><li><strong>Midweek:</strong> 20% off Sunday–Thursday nights.</li><li><strong>Extended stay:</strong> 10% off 4+ nights or 20% off 7+ nights.</li><li><strong>Last-minute opening:</strong> 15% off an available stay beginning within 7 days.</li><li><strong>Off-season:</strong> 20% off eligible January–March stays.</li><li><strong>Returning guest:</strong> 10% off a future stay.</li><li><strong>Guest referral:</strong> 10% for the new guest and 10% for the guest who referred them.</li><li><strong>Rebook before checkout:</strong> 15% off the next stay when requested before the current checkout day.</li></ul><p class="field-note">Discounts are requests until approved. Offers do not stack, and combined savings never exceed 25%.</p></div></details>
+        <details class="discount-guide"><summary>Cancellation &amp; refund policy</summary><div class="discount-guide-body"><ul><li><strong>Full refund:</strong> Cancel by 4:00 PM Eastern Time on the day before check-in—at least 24 hours before arrival—for a full refund of amounts paid.</li><li><strong>Inside 24 hours:</strong> The reservation deposit—20% of the approved pre-tax stay total—is retained. Any remaining amount paid is refunded.</li><li><strong>Early-booking discounts:</strong> If approved, the dollar amount saved is also non-refundable and is deducted from any cancellation refund.</li><li><strong>How to cancel:</strong> Send written notice by email or text. A cancellation is complete when we receive it and send confirmation.</li><li><strong>Refund timing:</strong> Approved refunds return to the original payment method; bank or card processing time may vary.</li><li><strong>If we must cancel:</strong> If the cabin becomes unavailable and we cannot provide the stay, all amounts paid are refunded.</li></ul><p class="field-note">This is a plain-language summary. The rental agreement provided with an approved booking contains the complete policy.</p></div></details>
+        <details class="discount-guide"><summary>Fannin County guest notice</summary><div class="discount-guide-body"><ul><li><strong>Quiet hours:</strong> Sunday–Thursday, 10:00 PM–6:00 AM; Friday–Saturday, 11:00 PM–6:00 AM. Keep outdoor voices and amplified sound low, and turn outdoor sound equipment off during quiet hours.</li><li><strong>Zero tolerance:</strong> No firearms, explosives, fireworks, uncontained or unattended fires, house parties, keg parties, excessive noise, disruptive behavior, or excessive speeding. A violation may require the group to leave immediately without a refund.</li><li><strong>Parking:</strong> Park only in the designated area on the rental property. Never block a road or right-of-way.</li></ul><p class="field-note">This is the short version of the guest notice displayed at the cabin. The booking packet contains the complete property rules.</p></div></details>
         <label>Anything we should know?<textarea name="notes" rows="4" maxlength="800" placeholder="Trip occasion, questions, accessibility needs, or a quick hello..."></textarea></label>
         <label class="check"><input name="acknowledgement" type="checkbox" required><span>I understand this is a request, not a reservation. Dates and pricing are confirmed by email, and payment plus a rental agreement may be required to finalize the stay.</span></label>
         <label class="honeypot">Website<input name="website" tabindex="-1" autocomplete="off"></label>
         <button id="submit" type="submit">Send my date choices</button>
         <div id="form-message" class="message" hidden role="status"></div>
-        <p class="fine">Displayed estimates include the standard $200 cleaning cost and any larger-group cleaning adjustment. Eligible Friends &amp; Family pricing is applied automatically when the entered phone number matches the private discount list. Dog fees or other required costs appear only when they apply to that rate. Estimated taxes and government lodging fees are shown separately and added when a stay is booked. Cancel at least two calendar days before check-in for a 100% refund; no refund is available after that deadline, including the day before check-in.</p>
+        <p class="fine">Displayed estimates include the standard $200 cleaning cost and any larger-group cleaning adjustment. Eligible Friends &amp; Family pricing is applied automatically when the entered phone number matches the private discount list. Dog fees or other required costs appear only when they apply to that rate. Estimated taxes and government lodging fees are shown separately and added when a stay is booked. Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the 20% reservation deposit is retained and the remaining amount paid is refunded. Approved early-booking savings remain non-refundable.</p>
       </form>
     </main>
   </div>
@@ -281,15 +295,37 @@
       if(season.id==='winter')return 'Quiet winter value · peaceful mountain days and gentler seasonal pricing';
       return month<=5?'Early spring value · cool creek days and lighter seasonal demand':'Summer creek days · long afternoons in our favorite warm-weather season';
     }
+    function possibleOfferPercent(index,quote){
+      const offer=document.getElementById(`discount-request-${index}`).value,arrival=form.elements[`arrival${index}`].value,departure=form.elements[`departure${index}`].value,nights=quote?.actualNights||0;
+      if(!offer||!quote)return 0;
+      if(offer.startsWith('Early booking')){const lead=Math.floor((Date.parse(`${arrival}T12:00:00`)-today.getTime())/86400000);return lead>=90?15:lead>=60?10:lead>=30?5:0;}
+      if(offer.startsWith('Pay in full')||offer.startsWith('Book direct')||offer.startsWith('Returning guest')||offer.startsWith('Guest referral'))return 10;
+      if(offer.startsWith('Rebook before checkout')||offer.startsWith('Last-minute opening'))return offer.startsWith('Last-minute')&&Math.floor((Date.parse(`${arrival}T12:00:00`)-today.getTime())/86400000)>7?0:15;
+      if(offer.startsWith('Extended stay'))return nights>=7?20:nights>=4?10:0;
+      if(offer.startsWith('Off-season')){for(let value=arrival;value<departure;value=addDays(value,1)){const month=Number(value.slice(5,7));if(month<1||month>3)return 0;}return 20;}
+      if(offer.startsWith('Midweek stay')){for(let value=arrival;value<departure;value=addDays(value,1)){const day=new Date(`${value}T12:00:00`).getDay();if(day===5||day===6)return 0;}return 20;}
+      return 0;
+    }
+    function renderPossibleSavings(index,quote){
+      const output=document.getElementById(`possible-savings-${index}`),offer=document.getElementById(`discount-request-${index}`).value;
+      if(!offer){output.textContent='Choose an offer to see possible savings for these dates.';return;}
+      if(!quote){output.textContent='Choose dates to see possible savings.';return;}
+      if(quote.friendsAndFamilyDiscount){output.textContent='Your preferred rate is already applied. Offers do not stack.';return;}
+      const percent=possibleOfferPercent(index,quote);
+      if(!percent){output.textContent='These dates do not currently meet this offer’s listed conditions.';return;}
+      const savings=Math.round(quote.totalCents*percent/100),discounted=Math.max(0,quote.totalCents-savings);
+      output.textContent=`Possible ${percent}% savings: ${money(savings)} · about ${money(discounted)} before taxes if approved.`;
+    }
     function renderCalendarPrice(index,arrival,departure){
       const panel=document.getElementById(`calendar-price-${index}`),guests=Number(form.elements.guests.value)||1,dogs=Number(form.elements.dogs.value),cached=pricingState.discountQuotes[index];
-      if(!pricingState.loaded||!validDate(arrival)||!validDate(departure)||departure<=arrival){panel.hidden=true;return;}
+      if(!pricingState.loaded||!validDate(arrival)||!validDate(departure)||departure<=arrival){panel.hidden=true;renderPossibleSavings(index,null);return;}
       const quote=cached?.signature===quoteSignature(index)?cached.quote:quoteStay({arrival,departure,guests,dogs,lateCheckout:form.elements.lateCheckout.checked,rates:pricingState.rates});
       if(!quote){panel.hidden=true;return;}
       panel.querySelector('.calendar-price-main strong').textContent=`${money(quote.totalCents)} before taxes`;
       panel.querySelector('.calendar-price-detail span').textContent=`${money(quote.estimatedGrandTotalCents)} estimated with taxes · ${form.elements.guests.value?`${guests} guest${guests===1?'':'s'}`:'priced for 1–4 guests'} · ${quote.cleaningAdjustmentCents?`${money(quote.cleaningAdjustmentCents)} group cleaning adjustment`:'standard cleaning included'}`;
-      panel.querySelector('.calendar-deposit-note').textContent=quote.complimentary?'Approved guest stay · no payment required':quote.friendsAndFamilyDiscount?'Approved guest pricing · final payment details follow confirmation':'After approval, a $100 deposit reserves these dates · remaining balance due the day before check-in';
+      panel.querySelector('.calendar-deposit-note').textContent=quote.complimentary?'Approved guest stay · no payment required':quote.friendsAndFamilyDiscount?'Approved guest pricing · final payment details follow confirmation':`After approval, a 20% deposit (about ${money(Math.round(quote.totalCents*.20))}) reserves these dates · remaining balance due the day before check-in`;
       panel.querySelector('.calendar-season').textContent=`${seasonalNote(arrival)} · ${quote.pricingRule}`;
+      renderPossibleSavings(index,quote);
       panel.hidden=false;
     }
     function renderCalendar(index){
@@ -346,7 +382,7 @@
       if(previous||next){const index=Number((previous||next).dataset[previous?'calendarPrev':'calendarNext']),amount=previous?-1:1;calendarState[index].month=addMonths(calendarState[index].month,amount);renderCalendar(index);}
     });
     document.getElementById('add-choice').addEventListener('click',()=>{const choice=document.getElementById('choice-2');choice.hidden=false;document.getElementById('add-choice').hidden=true;calendarState[2].month=new Date(calendarState[1].month);renderCalendar(2);choice.scrollIntoView({behavior:'smooth',block:'nearest'});});
-    document.getElementById('remove-choice').addEventListener('click',()=>{form.elements.arrival2.value='';form.elements.departure2.value='';document.getElementById('choice-2').hidden=true;document.getElementById('add-choice').hidden=false;document.getElementById('quote-2').hidden=true;document.getElementById('availability-2').hidden=true;delete pricingState.discountQuotes[2];renderCalendar(2);});
+    document.getElementById('remove-choice').addEventListener('click',()=>{form.elements.arrival2.value='';form.elements.departure2.value='';form.elements.discountRequest2.value='';form.elements.discountTermsAccepted2.checked=false;document.getElementById('choice-2').hidden=true;document.getElementById('add-choice').hidden=false;document.getElementById('quote-2').hidden=true;document.getElementById('availability-2').hidden=true;delete pricingState.discountQuotes[2];updateOfferPolicy(2);});
     const normalizedPhone=()=>{const digits=String(form.elements.phone.value||'').replace(/\D/g,'');return digits.length===11&&digits.startsWith('1')?digits.slice(1):digits;};
     const quoteSignature=(index)=>`${form.elements[`arrival${index}`].value}|${form.elements[`departure${index}`].value}|${form.elements.guests.value}|${form.elements.dogs.value}|${form.elements.lateCheckout.checked?'1':'0'}|${normalizedPhone()}`;
     function renderQuote(index){
@@ -390,6 +426,9 @@
     form.elements.dogs.addEventListener('change',()=>{quoteChanged(1);quoteChanged(2);});
     form.elements.lateCheckout.addEventListener('change',()=>{quoteChanged(1);quoteChanged(2);});
     form.elements.phone.addEventListener('input',()=>{setDogsVisibility(false);renderCalendars();renderQuote(1);renderQuote(2);scheduleDiscountQuotes();});
+    function updateOfferPolicy(index){const request=document.getElementById(`discount-request-${index}`),policy=document.getElementById(`early-booking-policy-${index}`),accept=document.getElementById(`early-booking-accept-${index}`),early=request.value.startsWith('Early booking');policy.hidden=!early;accept.required=early&&!document.getElementById(`choice-${index}`).hidden;if(!early)accept.checked=false;renderCalendar(index);}
+    document.querySelectorAll('[data-discount-request]').forEach(select=>select.addEventListener('change',()=>updateOfferPolicy(Number(select.dataset.discountRequest))));
+    form.addEventListener('reset',()=>setTimeout(()=>{updateOfferPolicy(1);updateOfferPolicy(2);}));updateOfferPolicy(1);updateOfferPolicy(2);
     const selectedParams=new URLSearchParams(location.search), selectedArrival=selectedParams.get('arrival1'), selectedDeparture=selectedParams.get('departure1'),selectedGuests=selectedParams.get('guests');
     if(selectedGuests&&Number(selectedGuests)>=1&&Number(selectedGuests)<=11)form.elements.guests.value=selectedGuests;
     if(selectedParams.get('lateCheckout')==='1')form.elements.lateCheckout.checked=true;
