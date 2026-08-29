@@ -102,7 +102,7 @@
 
   const pagePath = location.pathname.toLowerCase();
   const showAdminPill = pagePath === '/' || pagePath.endsWith('/index.html') || pagePath.endsWith('/friends-hub.html');
-  const adminPill = showAdminPill ? '<a href="admin.html" class="admin-pill">Admin</a>' : '';
+  const adminPill = showAdminPill ? '<a href="admin.html" class="admin-pill" aria-label="H and L owner administration">H &amp; L</a>' : '';
 
   const navHTML = `
     <!-- ===== TOP NAV BAR ===== -->
