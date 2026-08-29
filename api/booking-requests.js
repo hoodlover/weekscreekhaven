@@ -2,6 +2,7 @@ import { appendBookingRecord, getBookingCalendar, rangesOverlap, unavailableRang
 import { emailConfigured, escapeEmailHtml, sendEmail } from '../_lib/email.js';
 import { json } from '../_lib/security.js';
 import { applyFriendsAndFamilyDiscount, money, quoteStay } from '../pricing.js';
+import { automaticallyApproveBooking } from '../_lib/auto-booking.js';
 
 const text = (value, max = 240) => String(value || '').trim().slice(0, max);
 const emailValue = (value) => {
@@ -68,8 +69,9 @@ export default async function handler(request, response) {
       notes: [...dateChoices.map((choice, index) => choice.discountRequest ? `Choice ${index + 1} requested offer: ${choice.discountRequest}` : ''), text(request.body?.notes, 800)].filter(Boolean).join('\n'),
     };
     await appendBookingRecord({ type: 'requested', createdAt, booking });
-    let confirmationSent = false;
-    if (emailConfigured()) {
+    const approvedBooking=await automaticallyApproveBooking(booking);
+    let confirmationSent = true;
+    if (emailConfigured() && !approvedBooking.autoApproved) {
       const safeName = escapeEmailHtml(name);
       const firstQuote = dateChoices[0].quote;
       const complimentaryMessage = firstQuote.complimentary
@@ -110,7 +112,10 @@ export default async function handler(request, response) {
         console.error('Booking request saved but confirmation email failed.', emailError);
       }
     }
-    return json(response, 201, { ok: true, requestId: booking.id, confirmationSent, quotes: dateChoices.map((choice) => choice.quote) });
+    if (emailConfigured() && process.env.OWNER_EMAIL) {
+      try { await sendEmail({to:process.env.OWNER_EMAIL,toName:'Lance',templateKey:'owner-new-request',templateVariables:{guestName:name,adminUrl:'https://www.weekscreekhaven.com/admin.html'},subject:`Automatically accepted stay for ${name}`,text:`${name}'s stay from ${first.arrival} through ${first.departure} was accepted automatically. Review it in the Admin Hub.`,html:`<p><strong>${escapeEmailHtml(name)}</strong> was automatically accepted for <strong>${first.arrival} through ${first.departure}</strong>.</p><p><a href="https://www.weekscreekhaven.com/admin.html">Review in the Admin Hub</a></p>`}); } catch(error) { console.error('Owner auto-booking alert failed',error); }
+    }
+    return json(response, 201, { ok: true, requestId: booking.id, autoApproved:true, paymentUrl:approvedBooking.paymentUrl, confirmationSent, quotes: dateChoices.map((choice) => choice.quote) });
   } catch (error) {
     console.error(error);
     return json(response, 503, { error: 'We could not save that request. Please try again.' });
