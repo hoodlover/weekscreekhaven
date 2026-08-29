@@ -18,7 +18,7 @@
     input.inputMode = 'numeric';
     input.autocomplete = input.autocomplete || 'tel-national';
     input.maxLength = 14;
-    input.placeholder = input.placeholder || '(555) 555-5555';
+    input.placeholder = input.placeholder || '(555) 867-5309';
     input.value = formatPhone(input.value);
   }
 
