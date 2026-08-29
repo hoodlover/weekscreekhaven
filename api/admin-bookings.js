@@ -103,7 +103,7 @@ export default async function handler(request, response) {
         paymentPlan = 'friends-family-total';
       } else if (amountCents > 0) {
         payment = await createSquareBookingInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, amountCents, depositBaseCents: preTaxAmountCents, arrival: requestedDates.arrival, discountCents: discountAmountCents });
-        paymentPlan = 'deposit-balance';
+        paymentPlan = payment.fullPaymentRequired ? 'full-payment' : 'deposit-balance';
       }
       const changes = {
         status: 'reserved', approvedAt: createdAt, approvedChoice, originalAmountCents, discountAmountCents, amountCents, paymentPlan, complimentary,
@@ -111,9 +111,10 @@ export default async function handler(request, response) {
         stateHotelMotelFeeCents: tax.stateHotelMotelFeeCents, taxesAndFeesCents: tax.estimatedTaxesAndFeesCents,
         paymentUrl: payment?.url || null, squareInvoiceId: payment?.invoiceId || null, squareOrderId: payment?.orderId || null, squareCustomerId: payment?.customerId || null,
         invoiceSentAt: payment ? createdAt : null, bookingPacketSentAt: createdAt,
-        depositAmountCents: paymentPlan === 'deposit-balance' ? payment.depositAmountCents : amountCents,
+        depositAmountCents: payment?.depositAmountCents ?? amountCents,
         balanceAmountCents: paymentPlan === 'deposit-balance' ? payment.balanceAmountCents : 0,
         balanceDueDate: paymentPlan === 'deposit-balance' ? payment.balanceDueDate : null,
+        depositDueDate: paymentPlan === 'deposit-balance' ? payment.depositDueDate : null,
       };
       await appendBookingRecord({ type: 'status', bookingId: booking.id, changes, createdAt });
       const dates = requestedDates;
@@ -124,7 +125,9 @@ export default async function handler(request, response) {
         ? 'This stay is complimentary, so no payment is required.'
         : paymentPlan === 'friends-family-total'
           ? `Your full Friends & Family total of $${(amountCents / 100).toFixed(2)} is due now. Pay here: ${payment.url}`
-          : `A 20% deposit of $${(payment.depositAmountCents / 100).toFixed(2)} reserves the dates, and the remaining $${(payment.balanceAmountCents / 100).toFixed(2)} is due by ${payment.balanceDueDate}. Pay the Square invoice: ${payment.url}`;
+          : paymentPlan === 'full-payment'
+            ? `Because check-in is within seven days, the full $${(amountCents / 100).toFixed(2)} is due now. The 20% cancellation-deposit amount is $${(payment.depositAmountCents / 100).toFixed(2)}. Pay the Square invoice: ${payment.url}`
+            : `A 20% deposit of $${(payment.depositAmountCents / 100).toFixed(2)} is due within 24 hours to reserve the dates. The remaining $${(payment.balanceAmountCents / 100).toFixed(2)} is due by ${payment.balanceDueDate}. Pay the Square invoice: ${payment.url}`;
       const paymentHtml = paymentPlan === 'complimentary'
         ? '<p style="background:#e8f2e9;padding:12px;border-radius:8px"><strong>Complimentary stay:</strong> No payment is required.</p>'
         : `<p><a href="${payment.url}" style="display:inline-block;background:#183c2d;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold;margin:0 8px 8px 0">${paymentPlan === 'friends-family-total' ? 'Pay Friends & Family total' : 'Open Square invoice'}</a></p>`;

@@ -55,18 +55,17 @@ function easternDate() {
   return `${value.year}-${value.month}-${value.day}`;
 }
 
-function previousDate(value) {
+function shiftDate(value, days) {
   const date = new Date(`${value}T12:00:00Z`);
-  date.setUTCDate(date.getUTCDate() - 1);
+  date.setUTCDate(date.getUTCDate() + days);
   return date.toISOString().slice(0, 10);
 }
 
 function invoiceReminders(today, dueDate) {
   const daysUntilDue = Math.round((Date.parse(`${dueDate}T12:00:00Z`) - Date.parse(`${today}T12:00:00Z`)) / 86400000);
-  const reminders = [];
-  if (daysUntilDue > 7) reminders.push({ relative_scheduled_days: -7, message: 'Your Weeks Creek Haven balance is due in one week.' });
-  if (daysUntilDue > 1) reminders.push({ relative_scheduled_days: -1, message: 'Your Weeks Creek Haven balance is due tomorrow.' });
-  return reminders;
+  return daysUntilDue > 1
+    ? [{ relative_scheduled_days: -1, message: 'Your Weeks Creek Haven balance is due tomorrow.' }]
+    : [];
 }
 
 export async function createSquareBookingInvoice({ bookingId, guestName, email, amountCents, depositBaseCents, arrival, discountCents = 0 }) {
@@ -102,23 +101,25 @@ export async function createSquareBookingInvoice({ bookingId, guestName, email, 
     },
   });
   const today = easternDate();
-  const balanceDueDate = previousDate(arrival);
-  if (balanceDueDate < today) throw new Error('The balance due date has already passed. Choose a later arrival date.');
+  const depositDueDate = shiftDate(today, 1);
+  const balanceDueDate = shiftDate(arrival, -7);
+  const fullPaymentRequired = balanceDueDate <= today;
   const balanceCents = amountCents - depositAmountCents;
-  const paymentRequests = [{
-    request_type: balanceCents ? 'DEPOSIT' : 'BALANCE',
-    due_date: today,
-    ...(balanceCents ? { fixed_amount_requested_money: { amount: depositAmountCents, currency: 'USD' } } : {}),
+  const paymentRequests = fullPaymentRequired ? [{
+    request_type: 'BALANCE', due_date: today, tipping_enabled: false, automatic_payment_source: 'NONE',
+  }] : [{
+    request_type: 'DEPOSIT',
+    due_date: depositDueDate,
+    fixed_amount_requested_money: { amount: depositAmountCents, currency: 'USD' },
     tipping_enabled: false,
     automatic_payment_source: 'NONE',
-  }];
-  if (balanceCents) paymentRequests.push({
+  }, {
     request_type: 'BALANCE',
     due_date: balanceDueDate,
     tipping_enabled: false,
     automatic_payment_source: 'NONE',
     reminders: invoiceReminders(today, balanceDueDate),
-  });
+  }];
   const invoiceResult = await squareRequest('/v2/invoices', {
     method: 'POST',
     body: {
@@ -131,7 +132,7 @@ export async function createSquareBookingInvoice({ bookingId, guestName, email, 
         payment_requests: paymentRequests,
         invoice_number: `WCH-${bookingId.slice(0, 8).toUpperCase()}`,
         title: 'Weeks Creek Haven private stay',
-        description: `${discountCents ? `Includes a $${(discountCents / 100).toFixed(2)} Weeks Creek Haven discount. ` : ''}The reservation deposit is 20% of the approved pre-tax stay total. Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the deposit is retained and any remaining amount paid is refunded. Remaining balance is due one day before arrival.`,
+        description: `${discountCents ? `Includes a $${(discountCents / 100).toFixed(2)} Weeks Creek Haven discount. ` : ''}${fullPaymentRequired ? 'Because arrival is within seven days, payment in full is due now. ' : 'The 20% reservation deposit is due within 24 hours of approval, and the remaining balance is due seven days before arrival. '}Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the deposit is retained and any remaining amount paid is refunded.`,
         sale_or_service_date: arrival,
         accepted_payment_methods: { card: true, square_gift_card: false, bank_account: false, buy_now_pay_later: false, cash_app_pay: false },
       },
@@ -147,8 +148,10 @@ export async function createSquareBookingInvoice({ bookingId, guestName, email, 
     orderId: orderResult.order.id,
     customerId: customerResult.customer.id,
     depositAmountCents,
-    balanceAmountCents: balanceCents,
+    balanceAmountCents: fullPaymentRequired ? 0 : balanceCents,
     balanceDueDate,
+    depositDueDate,
+    fullPaymentRequired,
   };
 }
 

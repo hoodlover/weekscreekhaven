@@ -12,7 +12,7 @@ export default async function handler(request, response) {
       if (status === 'pending' && Date.parse(booking.createdAt) >= requestCutoff) {
         return (booking.dateChoices || []).map(({ arrival, departure }) => ({ arrival, departure, state: 'requested' }));
       }
-      if (status === 'reserved' && booking.paymentRequirementMet !== true && (!booking.paymentPlan || booking.paymentPlan === 'deposit-balance')) {
+      if (status === 'reserved' && booking.paymentRequirementMet !== true && booking.paymentPlan !== 'complimentary') {
         const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0];
         return dates ? [{ arrival: dates.arrival, departure: dates.departure, state: 'deposit-pending' }] : [];
       }
