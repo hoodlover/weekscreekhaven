@@ -137,7 +137,7 @@ function exactOwnerTotal(arrival, departure, rates = []) {
   return rates.filter((rate) => rate.pricingMode === 'total' && rate.arrival === arrival && rate.departure === departure).at(-1) || null;
 }
 
-export function quoteStay({ arrival, departure, guests = 1, dogs = 0, rates = [], lateCheckout = false }) {
+export function quoteStay({ arrival, departure, guests = 1, dogs = 0, rates = [], lateCheckout = false, pricingDate = new Date().toISOString().slice(0, 10) }) {
   if (!validDate(arrival) || !validDate(departure) || departure <= arrival) return null;
   const actualNights = daysBetween(arrival, departure);
   if (actualNights < 1) return null;
@@ -196,6 +196,10 @@ export function quoteStay({ arrival, departure, guests = 1, dogs = 0, rates = []
   const cleaningAdjustmentCents = Math.max(0, cleaningCents - PRICING_CONFIG.includedCleaningCents);
   const lateCheckoutSelected = lateCheckout === true || lateCheckout === 'true' || lateCheckout === 'on' || lateCheckout === 1 || lateCheckout === '1';
   const lateCheckoutCents = lateCheckoutSelected ? PRICING_CONFIG.lateCheckoutCents : 0;
+  const standardTotalCents = lodgingCents + cleaningAdjustmentCents + lateCheckoutCents;
+  const leadDays = Math.floor((Date.parse(`${arrival}T12:00:00Z`) - Date.parse(`${pricingDate}T12:00:00Z`)) / 86400000);
+  const earlyBirdPercentage = leadDays >= 90 ? 15 : leadDays >= 60 ? 10 : leadDays >= 30 ? 5 : 0;
+  const earlyBirdDiscountCents = earlyBirdPercentage ? Math.round(standardTotalCents * earlyBirdPercentage / 100) : 0;
   return withEstimatedTaxesAndFees({
     arrival,
     departure,
@@ -214,8 +218,12 @@ export function quoteStay({ arrival, departure, guests = 1, dogs = 0, rates = []
     checkoutTime: lateCheckoutSelected ? 'noon' : '11:00 AM',
     lateCheckout: lateCheckoutSelected,
     lateCheckoutCents,
-    discountCents: 0,
-    totalCents: lodgingCents + cleaningAdjustmentCents + lateCheckoutCents,
+    standardTotalCents,
+    discountAmountCents: earlyBirdDiscountCents,
+    discountCents: earlyBirdDiscountCents,
+    earlyBirdDiscountCents,
+    earlyBirdDiscount: earlyBirdPercentage ? { percentage: earlyBirdPercentage, leadDays, label: `Automatic Early Bird · ${earlyBirdPercentage}% off` } : null,
+    totalCents: standardTotalCents - earlyBirdDiscountCents,
     nightly,
   });
 }
@@ -240,9 +248,10 @@ export function applyFriendsAndFamilyDiscount(quote, phone, discounts = []) {
   const dogFeeCents = !noChargeStay && rule.chargeDogFee ? quote.dogs * Math.ceil(quote.actualNights / 2) * 2500 : 0;
   const lateCheckoutFeeCents = !noChargeStay && rule.chargeLateCheckout ? quote.lateCheckoutCents : 0;
   const customFeeCents = noChargeStay ? 0 : Math.max(0, Number(rule.customFeeCents) || 0);
-  const removedCleaningCents = rule.chargeCleaning ? Math.min(quote.totalCents, quote.includedCleaningCents + quote.cleaningAdjustmentCents) : 0;
+  const publicTotalCents = Number(quote.standardTotalCents ?? quote.totalCents);
+  const removedCleaningCents = rule.chargeCleaning ? Math.min(publicTotalCents, quote.includedCleaningCents + quote.cleaningAdjustmentCents) : 0;
   const removedLateCheckoutCents = rule.chargeLateCheckout ? quote.lateCheckoutCents : 0;
-  const discountableCents = Math.max(0, quote.totalCents - removedCleaningCents - removedLateCheckoutCents);
+  const discountableCents = Math.max(0, publicTotalCents - removedCleaningCents - removedLateCheckoutCents);
   let discountedStayCents = discountableCents;
   if (noChargeStay) {
     discountedStayCents = 0;
@@ -255,12 +264,14 @@ export function applyFriendsAndFamilyDiscount(quote, phone, discounts = []) {
     discountedStayCents = Math.min(discountableCents, roundUpCents(Math.max(0, Number(rule.flatTotalCents) || 0)));
   }
   const passThroughCents = cleaningFeeCents + dogFeeCents + lateCheckoutFeeCents + customFeeCents;
-  const standardTotalCents = quote.totalCents + dogFeeCents + customFeeCents;
+  const standardTotalCents = publicTotalCents + dogFeeCents + customFeeCents;
   const discountedTotalCents = discountedStayCents + passThroughCents;
   const discountAmountCents = Math.max(0, standardTotalCents - discountedTotalCents);
   return withEstimatedTaxesAndFees({
     ...quote,
     standardTotalCents,
+    earlyBirdDiscount: null,
+    earlyBirdDiscountCents: 0,
     discountAmountCents,
     discountCents: discountAmountCents,
     totalCents: discountedTotalCents,
