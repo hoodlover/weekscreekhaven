@@ -1,0 +1,26 @@
+{
+  "name": "Weeks Creek Haven",
+  "short_name": "WCH",
+  "id": "/",
+  "description": "Weeks Creek Haven — a private creekside cabin in Blue Ridge, Georgia.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#00111d",
+  "theme_color": "#00111d",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/webpic/wch-main-pwa-192-v1.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/webpic/wch-main-pwa-512-v1.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

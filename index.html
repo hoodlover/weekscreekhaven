@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blue Ridge GA Cabin Rental | Weeks Creek Haven</title>
-  <link rel="icon" href="/webpic/weeks-creek-haven-favicon.ico" sizes="any">
+  <link rel="icon" href="/webpic/weeks-creek-haven-favicon.ico" sizes="any">\n  <link rel="manifest" href="/site-manifest.json?v=1">\n  <link rel="apple-touch-icon" sizes="180x180" href="/webpic/wch-main-apple-180-v1.png">\n  <meta name="theme-color" content="#00111d">
   <link rel="icon" type="image/png" sizes="32x32" href="/webpic/weeks-creek-haven-favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/webpic/weeks-creek-haven-favicon-16.png">
   <meta name="description" content="Rent Weeks Creek Haven, a private creekside cabin in Blue Ridge, Georgia. Sleeps 11 with four bedrooms, a hot tub, fiber Wi-Fi, and an Aska Adventure Area location.">
@@ -460,6 +460,11 @@
   window.addEventListener('DOMContentLoaded', updateHomeWeather);
   window.addEventListener('load', () => document.getElementById('hero-bg').classList.add('loaded'));
   document.addEventListener('contextmenu', event => event.preventDefault());
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('/friends-sw.js?v=21').catch(() => {}));
+  }
 </script>
 </body>
 </html>
