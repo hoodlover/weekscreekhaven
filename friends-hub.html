@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex,nofollow">
-    <title>WCH Guest Guide | Weeks Creek Haven</title>
+    <title>Weeks Creek Guest Guide | Weeks Creek Haven</title>
   <link rel="icon" href="/webpic/weeks-creek-haven-favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="/webpic/weeks-creek-haven-favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/webpic/weeks-creek-haven-favicon-16.png">
-    <link rel="manifest" href="/manifest.json?v=20">
+    <link rel="manifest" href="/manifest.json?v=21">
     <meta name="theme-color" content="#A45D41">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="WCH Guest Guide">
+    <meta name="apple-mobile-web-app-title" content="Weeks Creek Guest Guide">
     <link rel="apple-touch-icon" sizes="192x192" href="/webpic/pwa-wch-192-v3.png">
     <meta name="msapplication-TileImage" content="/webpic/pwa-wch-512-v3.png">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -224,7 +224,7 @@
     </style>
 </head>
 <body>
-    <div id="guest-pwa-splash" class="guest-pwa-splash" role="status" aria-label="Opening WCH Guest Guide">
+    <div id="guest-pwa-splash" class="guest-pwa-splash" role="status" aria-label="Opening Weeks Creek Guest Guide">
         <img src="/webpic/pwa-wch-512-v4.png" alt="">
     </div>
 
@@ -266,7 +266,7 @@
 
 <!-- Header -->
 <header class="max-w-5xl mx-auto text-center pt-36 pb-6 px-4">
-    <h1 class="text-5xl md:text-7xl font-bold mb-2 extra-heavy-shadow text-[#f4eee0]" style="font-variant:small-caps;">WCH Guest Guide</h1>
+    <h1 class="text-5xl md:text-7xl font-bold mb-2 extra-heavy-shadow text-[#f4eee0]" style="font-variant:small-caps;">Weeks Creek Guest Guide</h1>
     <p class="text-lg italic text-stone-300 extra-heavy-shadow">Weeks Creek Haven &mdash;<br>Everything you need, one page.</p>
     <div class="h-1 w-24 bg-[#A45D41] mx-auto mt-4 mb-2"></div>
     <a href="/admin.html" class="inline-block mt-4 text-[10px] uppercase tracking-[0.18em] font-bold text-stone-400 hover:text-[#d4a373] transition">Owner Admin</a>
@@ -281,7 +281,7 @@
             <div class="flex items-center gap-3 mb-3">
                 <img src="webpic/pwa-wch-192-v3.png" alt="Install App" class="w-14 h-14 object-contain flex-shrink-0">
                 <div class="flex-1">
-                    <p class="font-black text-[#d4a373] text-sm uppercase tracking-wide leading-tight">Install WCH Guest Guide on Your Phone</p>
+                    <p class="font-black text-[#d4a373] text-sm uppercase tracking-wide leading-tight">Install Weeks Creek Guest Guide on Your Phone</p>
                     <p class="text-stone-400 text-xs mt-0.5">Works like an app — offline-ready, no App Store needed</p>
                 </div>
                 <button onclick="dismissPWABanner()" class="text-stone-400 hover:text-white text-3xl leading-none font-light flex-shrink-0 ml-1" aria-label="Dismiss">&times;</button>
@@ -1880,8 +1880,8 @@ document.addEventListener('keydown', e => {
 <script>
 // Register service worker
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/friends-sw.js?v=24')
-        .then(() => console.log('WCH Guest Guide SW registered'))
+    navigator.serviceWorker.register('/friends-sw.js?v=25')
+        .then(() => console.log('Weeks Creek Guest Guide SW registered'))
         .catch(e => console.error('SW error:', e));
 }
 
@@ -1913,7 +1913,7 @@ function installPWA() {
     deferredInstallPrompt.prompt();
     deferredInstallPrompt.userChoice.then(choice => {
         if (choice.outcome === 'accepted') {
-            showToast('📲 WCH Guest Guide installed! Find it on your home screen.', 4000);
+            showToast('📲 Weeks Creek Guest Guide installed! Find it on your home screen.', 4000);
             dismissPWABanner();
         }
         deferredInstallPrompt = null;
