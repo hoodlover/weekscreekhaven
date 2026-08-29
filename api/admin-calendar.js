@@ -33,7 +33,8 @@ export default async function handler(request, response) {
       const departure = date(request.body?.departure);
       if (!arrival || !departure || departure <= arrival) return json(response, 400, { error: 'Choose a valid start and end date.' });
       if (unavailableRanges(await getBookingCalendar()).some((range) => rangesOverlap({ arrival, departure }, range))) return json(response, 409, { error: 'Those dates already include a reservation, booking, or owner block.' });
-      const block = { id: crypto.randomUUID(), arrival, departure, label: text(request.body?.label, 100) || 'Owner hold', createdAt };
+      const holdType = request.body?.holdType === 'flexible' ? 'flexible' : 'firm';
+      const block = { id: crypto.randomUUID(), arrival, departure, label: text(request.body?.label, 100) || 'Owner hold', holdType, createdAt };
       await appendBookingRecord({ type: 'block_created', block, createdAt });
       return json(response, 201, { block });
     }

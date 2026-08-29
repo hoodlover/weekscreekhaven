@@ -61,7 +61,8 @@ export default async function handler(request, response) {
       phone, guests, dogs, lateCheckout, pricingVersion: 1,
       friendsAndFamilyDiscount: dateChoices[0].quote.friendsAndFamilyDiscount || null,
       dateChoices, relationship: text(request.body?.relationship, 160),
-      reference: text(request.body?.reference, 160), notes: text(request.body?.notes, 800),
+      reference: text(request.body?.reference, 160), discountRequest: text(request.body?.discountRequest, 160),
+      notes: [text(request.body?.discountRequest, 160) ? `Requested offer: ${text(request.body?.discountRequest, 160)}` : '', text(request.body?.notes, 800)].filter(Boolean).join('\n'),
     };
     await appendBookingRecord({ type: 'requested', createdAt, booking });
     let confirmationSent = false;
@@ -92,7 +93,7 @@ export default async function handler(request, response) {
         if (process.env.OWNER_EMAIL) {
           await sendEmail({
             to: process.env.OWNER_EMAIL, toName: 'Lance', subject: `New cabin request from ${name}`,
-            text: `${name} requested ${first.arrival} to ${first.departure} (${money(dateChoices[0].amountCents)})${hasSecondChoice ? `, or ${second.arrival} to ${second.departure} (${money(dateChoices[1].amountCents)})` : ''}.${dateChoices[0].quote.friendsAndFamilyDiscount ? ` Friends & Family rule applied: ${dateChoices[0].quote.friendsAndFamilyDiscount.label}, saving ${money(dateChoices[0].quote.discountAmountCents)} on choice 1.` : ''}${lateCheckout ? ' Includes the $50 noon checkout option.' : ' Standard 11:00 AM checkout.'} Review it in the Admin Hub.`,
+            text: `${name} requested ${first.arrival} to ${first.departure} (${money(dateChoices[0].amountCents)})${hasSecondChoice ? `, or ${second.arrival} to ${second.departure} (${money(dateChoices[1].amountCents)})` : ''}.${booking.discountRequest ? ` Requested offer: ${booking.discountRequest}.` : ''}${dateChoices[0].quote.friendsAndFamilyDiscount ? ` Friends & Family rule applied: ${dateChoices[0].quote.friendsAndFamilyDiscount.label}, saving ${money(dateChoices[0].quote.discountAmountCents)} on choice 1.` : ''}${lateCheckout ? ' Includes the $50 noon checkout option.' : ' Standard 11:00 AM checkout.'} Review it in the Admin Hub.`,
             html: `<p><strong>${safeName}</strong> submitted a new cabin request for ${guests} guest${guests === 1 ? '' : 's'}${dogs?` and ${dogs} dog${dogs===1?'':'s'}`:''}.</p><p>Choice 1: ${first.arrival} to ${first.departure} · <strong>${money(dateChoices[0].amountCents)}</strong>${hasSecondChoice ? `<br>Choice 2: ${second.arrival} to ${second.departure} · <strong>${money(dateChoices[1].amountCents)}</strong>` : ''}</p>${dateChoices[0].quote.friendsAndFamilyDiscount ? `<p><strong>${escapeEmailHtml(dateChoices[0].quote.friendsAndFamilyDiscount.label)} applied:</strong> ${money(dateChoices[0].quote.discountAmountCents)} savings on choice 1.</p>` : ''}<p>${lateCheckout ? '<strong>$50 noon checkout requested.</strong>' : 'Standard 11:00 AM checkout.'} Check-in is 4:00 PM.</p><p><a href="https://www.weekscreekhaven.com/admin.html">Review in the Admin Hub</a></p>`,
           });
         }

@@ -97,5 +97,5 @@ export function unavailableRanges(calendar) {
     const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0];
     return dates ? [{ ...dates, type: status, label: booking.name, bookingId: booking.id }] : [];
   });
-  return [...bookingRanges, ...calendar.blocks.map((block) => ({ ...block, type: 'blocked' }))];
+  return [...bookingRanges, ...calendar.blocks.filter((block) => block.holdType !== 'flexible').map((block) => ({ ...block, type: 'blocked' }))];
 }

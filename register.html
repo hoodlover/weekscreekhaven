@@ -105,6 +105,7 @@
     .calendar-price-detail span,.calendar-deposit-note { display:block; }
     .calendar-deposit-note { margin-top:5px; color:#315c73; font-size:.65rem; line-height:1.4; }
     .calendar-season { grid-column:1/-1; margin:0; padding-top:8px; border-top:1px solid #c9d9cc; color:#41644c; font-size:.65rem; font-weight:700; line-height:1.45; }
+    .field-note { display:block; margin-top:6px; color:var(--muted); font-size:.66rem; line-height:1.4; text-transform:none; letter-spacing:0; font-weight:600; }
     .choice-actions { display:flex; justify-content:flex-end; margin-top:10px; }
     .clear-choice,.choice-toggle { width:auto; margin:0; padding:9px 13px; border:1px solid #cbbdab; background:transparent; color:var(--pine); box-shadow:none; font-size:.61rem; }
     .clear-choice:hover,.choice-toggle:hover { color:white; background:var(--rust); border-color:var(--rust); }
@@ -154,6 +155,12 @@
       .calendar-months { grid-template-columns:1fr; }
       .calendar-month { padding:11px 9px; }
       .calendar-day { font-size:.72rem; }
+      .calendar-price { grid-template-columns:1fr; gap:7px; padding:11px 12px; }
+      .calendar-price-main { display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+      .calendar-price-main strong { margin-top:0; text-align:right; font-size:1.18rem; }
+      .calendar-price-detail { font-size:.59rem; }
+      .calendar-deposit-note { margin-top:4px; font-size:.61rem; }
+      .calendar-season { padding-top:7px; font-size:.6rem; }
     }
   </style>
 </head>
@@ -191,7 +198,7 @@
         <div class="grid">
           <label>Full name<input name="name" autocomplete="name" maxlength="100" required></label>
           <label>Email address<input name="email" type="email" autocomplete="email" maxlength="160" required></label>
-          <label>Phone (optional)<input name="phone" type="tel" autocomplete="tel" maxlength="40"></label>
+          <label>Phone (optional)<input name="phone" type="tel" autocomplete="tel" maxlength="40"><small class="field-note">Enter your number to see any Friends &amp; Family price saved for you.</small></label>
           <label>Number of guests<select id="guest-count" name="guests" required><option value="">Choose</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></label>
           <label id="dog-field" hidden>Dogs <small>(approved guests)</small><select id="dog-count" name="dogs"><option value="0">None</option><option value="1">1 dog</option><option value="2">2 dogs</option><option value="3">3 dogs</option><option value="4">4 dogs</option></select></label>
         </div>
@@ -226,6 +233,7 @@
           <label>How did you find us?<select name="relationship"><option value="">Choose one</option><option>Family</option><option>Friend</option><option>Friend of a friend</option><option>Previous guest</option><option>Found the cabin online</option><option>Other</option></select></label>
           <label>Reference (optional)<input name="reference" maxlength="160" placeholder="Who sent you our way?"></label>
         </div>
+        <label>Discount request (optional)<select name="discountRequest"><option value="">No discount request</option><option>Early booking · 5–15% based on how far ahead</option><option>Pay in full · 10% off</option><option>Midweek stay · 20% off Sunday–Thursday</option><option>Extended stay · 10% off 4+ nights / 20% off 7+</option><option>Last-minute opening · 15% off within 7 days</option><option>Returning guest · 10% off</option><option>Guest referral · 10% off</option></select><small class="field-note">Choose one. We’ll confirm whether it applies; offers do not stack.</small></label>
         <label>Anything we should know?<textarea name="notes" rows="4" maxlength="800" placeholder="Trip occasion, questions, accessibility needs, or a quick hello..."></textarea></label>
         <label class="check"><input name="acknowledgement" type="checkbox" required><span>I understand this is a request, not a reservation. Dates and pricing are confirmed by email, and payment plus a rental agreement may be required to finalize the stay.</span></label>
         <label class="honeypot">Website<input name="website" tabindex="-1" autocomplete="off"></label>
@@ -290,7 +298,8 @@
       months.replaceChildren(); previous.disabled=!pricingState.loaded||monthKey(state.month)<=monthKey(firstCalendarMonth); next.disabled=!pricingState.loaded||monthKey(state.month)>=monthKey(lastCalendarStart);
       if(!pricingState.loaded){prompt.textContent=pricingState.calendarError||'Loading live availability…';summary.textContent=pricingState.calendarError?'Please refresh the page or open the full availability calendar.':'Reserved and owner-blocked nights will appear here.';return;}
       prompt.textContent=!arrival?'Choose your arrival date':!departure?'Arrival selected — now choose checkout':'Dates selected — choose a new arrival date to change them';
-      for(let monthOffset=0;monthOffset<2;monthOffset++){
+      const visibleMonthCount=window.matchMedia('(max-width:560px)').matches?1:2;
+      for(let monthOffset=0;monthOffset<visibleMonthCount;monthOffset++){
         const visibleMonth=addMonths(state.month,monthOffset),month=document.createElement('section'),heading=document.createElement('h4'),weekdayRow=document.createElement('div'),days=document.createElement('div');
         month.className='calendar-month'; heading.textContent=new Intl.DateTimeFormat(undefined,{month:'long',year:'numeric'}).format(visibleMonth); weekdayRow.className='calendar-weekdays'; days.className='calendar-days';
         weekdays.forEach((label)=>{const day=document.createElement('span');day.className='calendar-weekday';day.textContent=label;weekdayRow.append(day);});
