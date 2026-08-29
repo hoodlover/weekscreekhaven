@@ -2,6 +2,7 @@ import { appendBookingRecord, getBookingRequests } from '../_lib/booking-store.j
 import { sendEmail } from '../_lib/email.js';
 import { refreshSquareBooking } from '../_lib/payment-sync.js';
 import { createAgreementToken, createReviewToken, json } from '../_lib/security.js';
+import { cancelSquareInvoice } from '../_lib/square.js';
 
 function easternToday() {
   const parts = new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
@@ -37,8 +38,17 @@ export default async function handler(request, response) {
       const packetUrl=`https://www.weekscreekhaven.com/booking-packet.html?token=${encodeURIComponent(createAgreementToken(booking.id,365*86400))}`;
       const reviewUrl=`https://www.weekscreekhaven.com/review.html?token=${encodeURIComponent(createReviewToken(booking.id))}`;
       const common={ guestName:booking.name, arrival:dates.arrival, departure:dates.departure, checkout:booking.lateCheckout?'noon':'11:00 AM', packetUrl, paymentUrl:booking.paymentUrl||packetUrl, depositAmount:money(booking.depositAmountCents), balanceAmount:money(booking.squareBalanceCents ?? booking.balanceAmountCents), reviewUrl, bookingUrl:'https://www.weekscreekhaven.com/register.html' };
+      if (booking.earlyBirdExpiresAt && !booking.earlyBirdExpiredAt && Date.now() >= Date.parse(booking.earlyBirdExpiresAt) && (!booking.paymentRequirementMet || !booking.agreementAcceptedAt)) {
+        if (booking.squareInvoiceId) { try { await cancelSquareInvoice(booking.squareInvoiceId); } catch { /* record expiration even if Square already closed the invoice */ } }
+        const expiredAt=new Date().toISOString();
+        await appendBookingRecord({ type:'status', bookingId:booking.id, changes:{status:'expired',earlyBirdExpiredAt:expiredAt,paymentUrl:null}, createdAt:expiredAt });
+        await scheduledSend(booking,'early-bird-expired',{...common,bookingUrl:'https://www.weekscreekhaven.com/register.html'},'earlyBirdExpiredEmailSentAt');
+        sent++;
+        continue;
+      }
       const approvalAge=booking.approvedAt ? Date.now()-Date.parse(booking.approvedAt) : 0;
-      if (booking.paymentPlan==='deposit-balance' && !booking.paymentRequirementMet && approvalAge>=18*3600000 && !booking.depositReminderSentAt) sent+=await scheduledSend(booking,'deposit-reminder',common,'depositReminderSentAt');
+      const depositReminderAge=booking.earlyBirdExpiresAt ? 6*86400000 : 18*3600000;
+      if (booking.paymentPlan==='deposit-balance' && !booking.paymentRequirementMet && approvalAge>=depositReminderAge && !booking.depositReminderSentAt) sent+=await scheduledSend(booking,'deposit-reminder',common,'depositReminderSentAt');
       else if (booking.paymentPlan==='deposit-balance' && !booking.paymentRequirementMet && booking.depositReminderSentAt && Date.now()-Date.parse(booking.depositReminderSentAt)>=20*3600000) sent+=await scheduledSend(booking,'deposit-grace',common,'depositGraceSentAt');
       if (booking.paymentPlan==='deposit-balance' && !booking.paymentFullyPaid && booking.balanceDueDate && today===shiftDate(booking.balanceDueDate,-1)) sent+=await scheduledSend(booking,'balance-reminder',common,'balanceReminderSentAt');
       if (booking.paymentPlan==='deposit-balance' && !booking.paymentFullyPaid && booking.balanceDueDate && today>booking.balanceDueDate) sent+=await scheduledSend(booking,'balance-grace',common,'balanceGraceSentAt');
