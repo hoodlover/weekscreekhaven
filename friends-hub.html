@@ -8,7 +8,7 @@
   <link rel="icon" href="/webpic/weeks-creek-haven-favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="/webpic/weeks-creek-haven-favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/webpic/weeks-creek-haven-favicon-16.png">
-    <link rel="manifest" href="/manifest.json?v=17">
+    <link rel="manifest" href="/manifest.json?v=19">
     <meta name="theme-color" content="#A45D41">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1840,7 +1840,7 @@ document.addEventListener('keydown', e => {
 <script>
 // Register service worker
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/friends-sw.js')
+    navigator.serviceWorker.register('/friends-sw.js?v=19')
         .then(() => console.log('Friends Hub SW registered'))
         .catch(e => console.error('SW error:', e));
 }
