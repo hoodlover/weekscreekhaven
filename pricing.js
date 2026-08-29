@@ -199,7 +199,19 @@ export function quoteStay({ arrival, departure, guests = 1, dogs = 0, rates = []
   const standardTotalCents = lodgingCents + cleaningAdjustmentCents + lateCheckoutCents;
   const leadDays = Math.floor((Date.parse(`${arrival}T12:00:00Z`) - Date.parse(`${pricingDate}T12:00:00Z`)) / 86400000);
   const earlyBirdPercentage = leadDays >= 90 ? 15 : leadDays >= 60 ? 10 : leadDays >= 30 ? 5 : 0;
-  const earlyBirdDiscountCents = earlyBirdPercentage ? Math.round(standardTotalCents * earlyBirdPercentage / 100) : 0;
+  const allMidweek=Array.from({length:actualNights},(_,index)=>new Date(`${addDays(arrival,index)}T12:00:00Z`).getUTCDay()).every(day=>day!==5&&day!==6);
+  const allOffSeason=Array.from({length:actualNights},(_,index)=>Number(addDays(arrival,index).slice(5,7))<=3);
+  const promotions=[
+    {id:'book-direct',label:'Automatic Book Direct',percentage:10},
+    ...(earlyBirdPercentage?[{id:'early-bird',label:'Automatic Early Bird',percentage:earlyBirdPercentage}]:[]),
+    ...(allMidweek?[{id:'midweek',label:'Automatic Midweek Stay',percentage:20}]:[]),
+    ...(actualNights>=4?[{id:'extended',label:'Automatic Extended Stay',percentage:actualNights>=7?20:10}]:[]),
+    ...(leadDays>=0&&leadDays<=7?[{id:'last-minute',label:'Automatic Last-minute Opening',percentage:15}]:[]),
+    ...(allOffSeason?[{id:'off-season',label:'Automatic Off-season Stay',percentage:20}]:[]),
+  ];
+  const bestPromotion=promotions.sort((a,b)=>b.percentage-a.percentage)[0];
+  const promotionDiscountCents=Math.round(standardTotalCents*bestPromotion.percentage/100);
+  const earlyBirdDiscountCents=bestPromotion.id==='early-bird'?promotionDiscountCents:0;
   return withEstimatedTaxesAndFees({
     arrival,
     departure,
@@ -219,11 +231,12 @@ export function quoteStay({ arrival, departure, guests = 1, dogs = 0, rates = []
     lateCheckout: lateCheckoutSelected,
     lateCheckoutCents,
     standardTotalCents,
-    discountAmountCents: earlyBirdDiscountCents,
-    discountCents: earlyBirdDiscountCents,
+    discountAmountCents: promotionDiscountCents,
+    discountCents: promotionDiscountCents,
+    automaticPromotion: bestPromotion,
     earlyBirdDiscountCents,
     earlyBirdDiscount: earlyBirdPercentage ? { percentage: earlyBirdPercentage, leadDays, label: `Automatic Early Bird · ${earlyBirdPercentage}% off` } : null,
-    totalCents: standardTotalCents - earlyBirdDiscountCents,
+    totalCents: standardTotalCents - promotionDiscountCents,
     nightly,
   });
 }
@@ -272,6 +285,7 @@ export function applyFriendsAndFamilyDiscount(quote, phone, discounts = []) {
     standardTotalCents,
     earlyBirdDiscount: null,
     earlyBirdDiscountCents: 0,
+    automaticPromotion: null,
     discountAmountCents,
     discountCents: discountAmountCents,
     totalCents: discountedTotalCents,
