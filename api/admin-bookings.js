@@ -86,14 +86,19 @@ export default async function handler(request, response) {
       return json(response, 200, { ok: true, status: 'reserved', complimentary: true });
     }
     if (action === 'approve') {
-      const originalAmountCents = Math.round(Number(request.body?.amount) * 100);
-      const discountAmountCents = Math.round(Number(request.body?.discount || 0) * 100);
+      const approvedQuote = booking.dateChoices?.[Number(request.body?.dateChoice) === 2 ? 1 : 0]?.quote;
+      const earlyBirdDiscountCents = approvedQuote?.friendsAndFamilyDiscount ? 0 : Math.max(0, Number(approvedQuote?.earlyBirdDiscountCents) || 0);
+      const enteredAmountCents = Math.round(Number(request.body?.amount) * 100);
+      const additionalDiscountCents = Math.round(Number(request.body?.discount || 0) * 100);
+      const originalAmountCents = enteredAmountCents + earlyBirdDiscountCents;
+      const discountAmountCents = earlyBirdDiscountCents + additionalDiscountCents;
       const approvedChoice = Number(request.body?.dateChoice) === 2 ? 1 : 0;
-      if (!Number.isInteger(originalAmountCents) || originalAmountCents < 0 || !Number.isInteger(discountAmountCents) || discountAmountCents < 0 || discountAmountCents > originalAmountCents) return json(response, 400, { error: 'Enter a valid stay price and optional discount.' });
+      if (!Number.isInteger(enteredAmountCents) || enteredAmountCents < 0 || !Number.isInteger(additionalDiscountCents) || additionalDiscountCents < 0 || additionalDiscountCents > enteredAmountCents) return json(response, 400, { error: 'Enter a valid stay price and optional additional discount.' });
       const requestedDates = booking.dateChoices?.[approvedChoice];
       const conflicts = unavailableRanges(await getBookingCalendar()).filter((range) => range.bookingId !== booking.id);
       if (!requestedDates || conflicts.some((range) => rangesOverlap(requestedDates, range))) return json(response, 409, { error: 'Those dates are no longer available. Choose the other date option or update the calendar.' });
-      const preTaxAmountCents = originalAmountCents - discountAmountCents;
+      const preTaxAmountCents = enteredAmountCents - additionalDiscountCents;
+      const earlyBirdExpiresAt = earlyBirdDiscountCents ? new Date(Date.parse(createdAt) + 7 * 86400000).toISOString() : null;
       const complimentary = preTaxAmountCents === 0 && (requestedDates.complimentary === true || requestedDates.quote?.complimentary === true || booking.friendsAndFamilyDiscount?.discountType === 'complimentary');
       const tax = withEstimatedTaxesAndFees({ totalCents: preTaxAmountCents, actualNights: Math.max(1, daysBetween(requestedDates.arrival, requestedDates.departure)), complimentary });
       const amountCents = tax.estimatedGrandTotalCents;
@@ -103,11 +108,11 @@ export default async function handler(request, response) {
         payment = await createSquareFriendInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, amountCents, arrival: requestedDates.arrival });
         paymentPlan = 'friends-family-total';
       } else if (amountCents > 0) {
-        payment = await createSquareBookingInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, amountCents, depositBaseCents: preTaxAmountCents, arrival: requestedDates.arrival, discountCents: discountAmountCents });
+        payment = await createSquareBookingInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, amountCents, depositBaseCents: preTaxAmountCents, arrival: requestedDates.arrival, discountCents: discountAmountCents, depositDueDays: earlyBirdDiscountCents ? 7 : 1 });
         paymentPlan = payment.fullPaymentRequired ? 'full-payment' : 'deposit-balance';
       }
       const changes = {
-        status: 'reserved', approvedAt: createdAt, approvedChoice, originalAmountCents, discountAmountCents, amountCents, paymentPlan, complimentary,
+        status: 'reserved', approvedAt: createdAt, approvedChoice, originalAmountCents, discountAmountCents, additionalDiscountCents, earlyBirdDiscountCents, earlyBirdPercentage: approvedQuote?.earlyBirdDiscount?.percentage || null, earlyBirdExpiresAt, amountCents, paymentPlan, complimentary,
         preTaxAmountCents, salesTaxCents: tax.salesTaxCents, lodgingTaxCents: tax.lodgingTaxCents,
         stateHotelMotelFeeCents: tax.stateHotelMotelFeeCents, taxesAndFeesCents: tax.estimatedTaxesAndFeesCents,
         paymentUrl: payment?.url || null, squareInvoiceId: payment?.invoiceId || null, squareOrderId: payment?.orderId || null, squareCustomerId: payment?.customerId || null,
@@ -128,7 +133,7 @@ export default async function handler(request, response) {
           ? `Your full Friends & Family total of $${(amountCents / 100).toFixed(2)} is due now. Pay here: ${payment.url}`
           : paymentPlan === 'full-payment'
             ? `Because check-in is within seven days, the full $${(amountCents / 100).toFixed(2)} is due now. The 20% cancellation-deposit amount is $${(payment.depositAmountCents / 100).toFixed(2)}. Pay the Square invoice: ${payment.url}`
-            : `A 20% deposit of $${(payment.depositAmountCents / 100).toFixed(2)} is due within 24 hours to reserve the dates. The remaining $${(payment.balanceAmountCents / 100).toFixed(2)} is due by ${payment.balanceDueDate}. Pay the Square invoice: ${payment.url}`;
+            : `A 20% deposit of $${(payment.depositAmountCents / 100).toFixed(2)} is due within ${earlyBirdDiscountCents ? 'seven days' : '24 hours'} to reserve the dates. ${earlyBirdDiscountCents ? `Sign the rental agreement and pay by ${earlyBirdExpiresAt.slice(0,10)} to keep your automatic ${approvedQuote.earlyBirdDiscount.percentage}% Early Bird price; otherwise it expires and the stay must be repriced or rebooked. ` : ''}The remaining $${(payment.balanceAmountCents / 100).toFixed(2)} is due by ${payment.balanceDueDate}. Pay the Square invoice: ${payment.url}`;
       const paymentHtml = paymentPlan === 'complimentary'
         ? '<p style="background:#e8f2e9;padding:12px;border-radius:8px"><strong>Complimentary stay:</strong> No payment is required.</p>'
         : `<p><a href="${payment.url}" style="display:inline-block;background:#183c2d;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold;margin:0 8px 8px 0">${paymentPlan === 'friends-family-total' ? 'Pay Friends & Family total' : 'Open Square invoice'}</a></p>`;
