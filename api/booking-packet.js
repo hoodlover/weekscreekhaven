@@ -21,6 +21,8 @@ export default async function handler(request, response) {
       departure: dates.departure || '',
       guests: booking.guests || 1,
       totalCents: Number(booking.amountCents) || 0,
+      stayAmountCents: Number(booking.stayAmountCents ?? booking.amountCents) || 0,
+      securityDepositCents: Number(booking.securityDepositCents) || 0,
       status: booking.status || 'pending',
       checkInTime: '4:00 PM',
       checkoutTime: booking.lateCheckout ? 'noon' : '11:00 AM',

@@ -1,9 +1,9 @@
 import { appendBookingRecord, getBookingRequests } from '../_lib/booking-store.js';
 import { finalizeBookingFlow } from '../_lib/booking-finalization.js';
-import { anonymizeIp, json, verifyAgreementToken } from '../_lib/security.js';
+import { anonymizeIp, enforceRateLimit, json, rateLimitJson, sameOriginRequest, verifyAgreementToken } from '../_lib/security.js';
 
-export const AGREEMENT_VERSION = '2026-08-27-fannin';
-export const AGREEMENT_VERSION_LABEL = 'August 27, 2026 · Fannin County edition';
+export const AGREEMENT_VERSION = '2026-08-29-direct-guest';
+export const AGREEMENT_VERSION_LABEL = 'August 29, 2026 · Direct guest edition';
 
 async function context(rawToken) {
   const token = verifyAgreementToken(rawToken);
@@ -22,6 +22,7 @@ function bookingDetails({ booking, dates }) {
     arrival: dates?.arrival || '',
     departure: dates?.departure || '',
     totalCents: Number(booking.amountCents) || Number(dates?.amountCents) || 0,
+    securityDepositCents: Number(booking.securityDepositCents) || 0,
     discountCents: Number(booking.discountAmountCents) || 0,
     acceptedAt: booking.agreementAcceptedAt || null,
     acceptedBy: booking.agreementAcceptedBy || '',
@@ -39,6 +40,9 @@ export default async function handler(request, response) {
     if (!result) return json(response, 404, { error: 'This rental agreement link is invalid or has expired.' });
     if (request.method === 'GET') return json(response, 200, bookingDetails(result), { 'Cache-Control': 'no-store' });
     if (request.method !== 'POST') return json(response, 405, { error: 'Method not allowed.' });
+    if (!sameOriginRequest(request)) return json(response, 403, { error: 'Open the agreement from your private booking packet.' });
+    const rate = enforceRateLimit(request, 'agreement-signing', 10, 60 * 60 * 1000);
+    if (!rate.allowed) return rateLimitJson(response, rate);
     if (result.booking.agreementAcceptedAt) return json(response, 409, { error: 'This rental agreement has already been accepted.' });
     const acceptedBy = String(request.body?.acceptedBy || '').trim().slice(0, 100);
     if (acceptedBy.length < 2 || request.body?.accepted !== true || request.body?.electronicConsent !== true) {

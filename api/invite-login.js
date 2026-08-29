@@ -1,10 +1,13 @@
 import { appendAccessRecord, getAccessRecords, getInvites } from '../_lib/invite-store.js';
-import { INVITE_COOKIE, anonymizeIp, cookieHeader, createSession, json, normalizePasscode, verifyPasscode } from '../_lib/security.js';
+import { INVITE_COOKIE, anonymizeIp, cookieHeader, createSession, enforceRateLimit, json, normalizePasscode, rateLimitJson, sameOriginRequest, verifyPasscode } from '../_lib/security.js';
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default async function handler(request, response) {
   if (request.method !== 'POST') return json(response, 405, { error: 'Method not allowed.' });
+  if (!sameOriginRequest(request)) return json(response, 403, { error: 'Open the Guest Guide sign-in from this website.' });
+  const rate = enforceRateLimit(request, 'invite-login', 10, 15 * 60 * 1000);
+  if (!rate.allowed) return rateLimitJson(response, rate);
   try {
     const passcode = normalizePasscode(request.body?.passcode);
     const visitorName = String(request.body?.visitorName || '').trim().slice(0, 80);

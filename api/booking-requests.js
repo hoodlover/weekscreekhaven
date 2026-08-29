@@ -1,6 +1,6 @@
 import { appendBookingRecord, getBookingCalendar, rangesOverlap, unavailableRanges } from '../_lib/booking-store.js';
 import { emailConfigured, escapeEmailHtml, sendEmail } from '../_lib/email.js';
-import { json } from '../_lib/security.js';
+import { enforceRateLimit, json, rateLimitJson, sameOriginRequest } from '../_lib/security.js';
 import { applyFriendsAndFamilyDiscount, money, quoteStay } from '../pricing.js';
 import { automaticallyApproveBooking } from '../_lib/auto-booking.js';
 
@@ -24,8 +24,15 @@ function nights(choice) {
 
 export default async function handler(request, response) {
   if (request.method !== 'POST') return json(response, 405, { error: 'Method not allowed.' });
+  if (!sameOriginRequest(request)) return json(response, 403, { error: 'Please submit your booking directly from weekscreekhaven.com.' });
+  const rate = enforceRateLimit(request, 'public-booking', 5, 60 * 60 * 1000);
+  if (!rate.allowed) return rateLimitJson(response, rate);
   try {
     if (text(request.body?.website, 100)) return json(response, 200, { ok: true });
+  const formStartedAt = Number(request.body?.formStartedAt);
+  if (!Number.isFinite(formStartedAt) || Date.now() - formStartedAt < 2000 || Date.now() - formStartedAt > 6 * 60 * 60 * 1000) {
+    return json(response, 400, { error: 'Please refresh the booking page and try again.' });
+  }
     const name = text(request.body?.name, 100);
     const email = emailValue(request.body?.email);
     const first = dateChoice(request, 1);
@@ -48,6 +55,23 @@ export default async function handler(request, response) {
     const guests = Math.max(1, Math.min(11, Number(request.body?.guests) || 1));
     const dogs = Math.max(0, Math.min(4, Number(request.body?.dogs) || 0));
     const phone = text(request.body?.phone, 40);
+  const phoneDigits = phone.replace(/\D/g, '').replace(/^1(?=\d{10}$)/, '');
+  const billingAddress = text(request.body?.billingAddress, 160);
+  const billingCity = text(request.body?.billingCity, 80);
+  const billingState = text(request.body?.billingState, 2).toUpperCase();
+  const billingPostalCode = text(request.body?.billingPostalCode, 10);
+  const guestNames = text(request.body?.guestNames, 500);
+  const vehicleCount = Math.max(0, Math.min(6, Number(request.body?.vehicleCount) || 0));
+  const ageConfirmed = ['1', 'true', 'on', true, 1].includes(request.body?.ageConfirmed);
+  const primaryGuestStaying = ['1', 'true', 'on', true, 1].includes(request.body?.primaryGuestStaying);
+  const privacyAccepted = ['1', 'true', 'on', true, 1].includes(request.body?.privacyAccepted);
+  if (phoneDigits.length !== 10 || !billingAddress || !billingCity || !/^[A-Z]{2}$/.test(billingState) || !/^\d{5}(?:-\d{4})?$/.test(billingPostalCode)) {
+    return json(response, 400, { error: 'Add a valid phone number and complete billing address.' });
+  }
+  if (!ageConfirmed || !primaryGuestStaying || !privacyAccepted) {
+    return json(response, 400, { error: 'Confirm the primary guest, minimum age, and privacy notice.' });
+  }
+  if (guests > 1 && guestNames.length < 2) return json(response, 400, { error: 'List the other registered guests in your party.' });
     const lateCheckout = ['1', 'true', 'on', true, 1].includes(request.body?.lateCheckout);
     const dateChoices = (hasSecondChoice ? [first, second] : [first]).map((choice) => {
       const standardQuote = quoteStay({ ...choice, guests, dogs, lateCheckout, rates: calendar.rates || [] });
@@ -62,7 +86,9 @@ export default async function handler(request, response) {
     const createdAt = new Date().toISOString();
     const booking = {
       id: crypto.randomUUID(), status: 'pending', createdAt, name, email,
-      phone, guests, dogs, lateCheckout, pricingVersion: 1,
+      phone, billingAddress, billingCity, billingState, billingPostalCode, guestNames, vehicleCount,
+      ageConfirmed, primaryGuestStaying, privacyAcceptedAt: createdAt,
+      guests, dogs, lateCheckout, pricingVersion: 2,
       friendsAndFamilyDiscount: dateChoices[0].quote.friendsAndFamilyDiscount || null,
       dateChoices, relationship: text(request.body?.relationship, 160),
       reference: text(request.body?.reference, 160), discountRequest: first.discountRequest,

@@ -34,8 +34,15 @@ async function validSession(token, expectedRole) {
 }
 
 export default async function middleware(request) {
+  const pathname = new URL(request.url).pathname;
+  const ownerOnly = pathname === '/owner-emergency-handbook' || pathname === '/owner-emergency-handbook.html';
   const adminSession = await validSession(cookieValue(request, ADMIN_COOKIE), 'admin');
   if (adminSession) return next();
+  if (ownerOnly) {
+    const login = new URL('/admin.html', request.url);
+    login.searchParams.set('returnTo', pathname);
+    return Response.redirect(login, 302);
+  }
   const session = await validSession(cookieValue(request, INVITE_COOKIE), 'invite');
   if (session) {
     const statusUrl = new URL('/api/invite-status', request.url);
@@ -53,5 +60,5 @@ export default async function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/friends-hub', '/friends-hub.html', '/welcome-friends', '/welcome-friends.html'],
+  matcher: ['/friends-hub', '/friends-hub.html', '/welcome-friends', '/welcome-friends.html', '/owner-emergency-handbook', '/owner-emergency-handbook.html'],
 };

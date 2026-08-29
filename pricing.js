@@ -7,6 +7,7 @@ export const PRICING_CONFIG = Object.freeze({
   salesTaxRate: 0.07,
   lodgingTaxRate: 0.06,
   stateHotelMotelFeePerNightCents: 500,
+  refundableSecurityDepositCents: 30000,
   cleaningTiers: Object.freeze([
     Object.freeze({ minGuests: 1, maxGuests: 4, amountCents: 20000 }),
     Object.freeze({ minGuests: 5, maxGuests: 8, amountCents: 22500 }),
@@ -122,6 +123,9 @@ export function withEstimatedTaxesAndFees(quote) {
   const lodgingTaxCents = complimentary ? 0 : Math.round(taxableSubtotalCents * PRICING_CONFIG.lodgingTaxRate);
   const stateHotelMotelFeeCents = complimentary ? 0 : Math.max(0, Number(quote?.actualNights) || 0) * PRICING_CONFIG.stateHotelMotelFeePerNightCents;
   const estimatedTaxesAndFeesCents = salesTaxCents + lodgingTaxCents + stateHotelMotelFeeCents;
+  const refundableSecurityDepositCents = complimentary ? 0 : PRICING_CONFIG.refundableSecurityDepositCents;
+  const estimatedGrandTotalCents = taxableSubtotalCents + estimatedTaxesAndFeesCents;
+  const estimatedAmountDueCents = estimatedGrandTotalCents + refundableSecurityDepositCents;
   return {
     ...quote,
     taxableSubtotalCents,
@@ -129,7 +133,9 @@ export function withEstimatedTaxesAndFees(quote) {
     lodgingTaxCents,
     stateHotelMotelFeeCents,
     estimatedTaxesAndFeesCents,
-    estimatedGrandTotalCents: taxableSubtotalCents + estimatedTaxesAndFeesCents,
+    refundableSecurityDepositCents,
+    estimatedGrandTotalCents,
+    estimatedAmountDueCents,
   };
 }
 
@@ -200,7 +206,7 @@ export function quoteStay({ arrival, departure, guests = 1, dogs = 0, rates = []
   const leadDays = Math.floor((Date.parse(`${arrival}T12:00:00Z`) - Date.parse(`${pricingDate}T12:00:00Z`)) / 86400000);
   const earlyBirdPercentage = leadDays >= 90 ? 15 : leadDays >= 60 ? 10 : leadDays >= 30 ? 5 : 0;
   const allMidweek=Array.from({length:actualNights},(_,index)=>new Date(`${addDays(arrival,index)}T12:00:00Z`).getUTCDay()).every(day=>day!==5&&day!==6);
-  const allOffSeason=Array.from({length:actualNights},(_,index)=>Number(addDays(arrival,index).slice(5,7))<=3);
+  const allOffSeason=Array.from({length:actualNights},(_,index)=>addDays(arrival,index)).every((date)=>Number(date.slice(5,7))<=3);
   const promotions=[
     {id:'book-direct',label:'Automatic Book Direct',percentage:10},
     ...(earlyBirdPercentage?[{id:'early-bird',label:'Automatic Early Bird',percentage:earlyBirdPercentage}]:[]),

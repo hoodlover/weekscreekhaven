@@ -18,7 +18,8 @@
     { href: 'need-to-know.html',   label: 'Need to Know' },
     { href: 'find-us.html',        label: 'Find Us'      },
     { href: 'gallery.html',        label: 'Gallery'      },
-    { href: 'important-info.html', label: 'Friends Hub' },
+    { href: 'important-info.html', label: 'Guest Guide' },
+    { href: 'privacy.html',      label: 'Privacy'      },
   ];
 
   // ── Figure out which page we're on ──────────────────────

@@ -68,8 +68,10 @@ function invoiceReminders(today, dueDate) {
     : [];
 }
 
-export async function createSquareBookingInvoice({ bookingId, guestName, email, amountCents, depositBaseCents, arrival, discountCents = 0, depositDueDays = 1 }) {
+export async function createSquareBookingInvoice({ bookingId, guestName, email, address = {}, amountCents, securityDepositCents = 30000, depositBaseCents, arrival, discountCents = 0, depositDueDays = 1 }) {
   if (!Number.isInteger(amountCents) || amountCents < 100) throw new Error('The stay total must be at least $1.00.');
+  const stayChargeCents = amountCents - securityDepositCents;
+  if (!Number.isInteger(stayChargeCents) || stayChargeCents < 100) throw new Error('The refundable security deposit could not be itemized.');
   const depositAmountCents = Math.round(Math.max(0, Number(depositBaseCents) || 0) * 0.20);
   if (depositAmountCents < 1 || depositAmountCents > amountCents) throw new Error('The 20% reservation deposit could not be calculated.');
   const nameParts = String(guestName || 'Guest').trim().split(/\s+/);
@@ -82,6 +84,13 @@ export async function createSquareBookingInvoice({ bookingId, guestName, email, 
       given_name: givenName,
       ...(familyName ? { family_name: familyName } : {}),
       email_address: email,
+      address: {
+        address_line_1: String(address.line1 || '').slice(0, 160),
+        locality: String(address.city || '').slice(0, 80),
+        administrative_district_level_1: String(address.state || '').slice(0, 2),
+        postal_code: String(address.postalCode || '').slice(0, 10),
+        country: 'US',
+      },
       reference_id: bookingId,
     },
   });
@@ -95,7 +104,11 @@ export async function createSquareBookingInvoice({ bookingId, guestName, email, 
         line_items: [{
           name: `Weeks Creek Haven stay for ${guestName}`,
           quantity: '1',
-          base_price_money: { amount: amountCents, currency: 'USD' },
+          base_price_money: { amount: stayChargeCents, currency: 'USD' },
+        }, {
+          name: 'Refundable security deposit',
+          quantity: '1',
+          base_price_money: { amount: securityDepositCents, currency: 'USD' },
         }],
       },
     },
@@ -132,7 +145,7 @@ export async function createSquareBookingInvoice({ bookingId, guestName, email, 
         payment_requests: paymentRequests,
         invoice_number: `WCH-${bookingId.slice(0, 8).toUpperCase()}`,
         title: 'Weeks Creek Haven private stay',
-        description: `${discountCents ? `Includes a $${(discountCents / 100).toFixed(2)} Weeks Creek Haven discount. ` : ''}${fullPaymentRequired ? 'Because arrival is within seven days, payment in full is due now. ' : `The 20% reservation deposit is due within ${depositDueDays === 7 ? 'seven days' : '24 hours'} of approval, and the remaining balance is due seven days before arrival. `}Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the deposit is retained and any remaining amount paid is refunded.`,
+        description: `${discountCents ? `Includes a $${(discountCents / 100).toFixed(2)} Weeks Creek Haven discount. ` : ''}${fullPaymentRequired ? 'Because arrival is within seven days, payment in full is due now. ' : `The 20% reservation deposit is due within ${depositDueDays === 7 ? 'seven days' : '24 hours'} of approval, and the remaining balance is due seven days before arrival. `}Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund of amounts paid. Inside 24 hours, the 20% reservation deposit is retained and the remaining amount paid is refunded. The separately listed $300 security deposit is normally refunded within seven days after checkout, less any documented damage, missing property, rule-violation costs, or excessive cleaning.`,
         sale_or_service_date: arrival,
         accepted_payment_methods: { card: true, square_gift_card: false, bank_account: false, buy_now_pay_later: false, cash_app_pay: false },
       },
@@ -152,12 +165,15 @@ export async function createSquareBookingInvoice({ bookingId, guestName, email, 
     balanceDueDate,
     depositDueDate,
     fullPaymentRequired,
+    securityDepositCents,
   };
 }
 
-export async function createSquareFriendInvoice({ bookingId, guestName, email, amountCents, arrival }) {
+export async function createSquareFriendInvoice({ bookingId, guestName, email, amountCents, securityDepositCents = 30000, arrival }) {
   if (!Number.isInteger(amountCents) || amountCents < 100) throw new Error('The friend invoice total must be at least $1.00.');
   if (!email) throw new Error('Add an email address before sending a friend invoice.');
+  const stayChargeCents = amountCents - securityDepositCents;
+  if (!Number.isInteger(stayChargeCents) || stayChargeCents < 0) throw new Error('The refundable security deposit could not be itemized.');
   const nameParts = String(guestName || 'Guest').trim().split(/\s+/);
   const familyName = nameParts.length > 1 ? nameParts.pop() : '';
   const givenName = nameParts.join(' ') || guestName || 'Guest';
@@ -181,7 +197,11 @@ export async function createSquareFriendInvoice({ bookingId, guestName, email, a
         line_items: [{
           name: `Weeks Creek Haven friends & family stay for ${guestName}`,
           quantity: '1',
-          base_price_money: { amount: amountCents, currency: 'USD' },
+          base_price_money: { amount: stayChargeCents, currency: 'USD' },
+        }, {
+          name: 'Refundable security deposit',
+          quantity: '1',
+          base_price_money: { amount: securityDepositCents, currency: 'USD' },
         }],
       },
     },
@@ -203,7 +223,7 @@ export async function createSquareFriendInvoice({ bookingId, guestName, email, a
         }],
         invoice_number: `WCHF-${bookingId.slice(0, 8).toUpperCase()}`,
         title: 'Weeks Creek Haven friends & family stay',
-        description: 'Friends & family total due now. Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, 20% of the approved pre-tax stay total is retained and any remaining payment is refunded.',
+        description: 'Friends & family total due now. The separately listed $300 security deposit is refundable under the rental agreement. Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, 20% of the approved pre-tax stay total is retained and the remaining payment is refunded.',
         sale_or_service_date: arrival,
         accepted_payment_methods: { card: true, square_gift_card: false, bank_account: false, buy_now_pay_later: false, cash_app_pay: false },
       },
@@ -219,6 +239,7 @@ export async function createSquareFriendInvoice({ bookingId, guestName, email, a
     orderId: orderResult.order.id,
     customerId: customerResult.customer.id,
     amountCents,
+    securityDepositCents,
   };
 }
 

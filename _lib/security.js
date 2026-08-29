@@ -166,6 +166,46 @@ export function requireInvite(request) {
   return verifySession(parseCookies(request)[INVITE_COOKIE], 'invite');
 }
 
+
+const RATE_BUCKETS = globalThis.__wchRateBuckets || new Map();
+globalThis.__wchRateBuckets = RATE_BUCKETS;
+
+function requestAddress(request) {
+  const forwarded = String(request.headers?.['x-forwarded-for'] || request.headers?.get?.('x-forwarded-for') || '').split(',')[0].trim();
+  return forwarded || request.socket?.remoteAddress || 'unknown';
+}
+
+export function enforceRateLimit(request, scope, limit = 10, windowMs = 15 * 60 * 1000) {
+  const now = Date.now();
+  const key = `${scope}:${anonymizeIp(requestAddress(request))}`;
+  const recent = (RATE_BUCKETS.get(key) || []).filter((timestamp) => now - timestamp < windowMs);
+  if (recent.length >= limit) {
+    const retryAfterSeconds = Math.max(1, Math.ceil((windowMs - (now - recent[0])) / 1000));
+    RATE_BUCKETS.set(key, recent);
+    return { allowed: false, retryAfterSeconds };
+  }
+  recent.push(now);
+  RATE_BUCKETS.set(key, recent);
+  if (RATE_BUCKETS.size > 2000) {
+    for (const [bucketKey, timestamps] of RATE_BUCKETS) {
+      if (!timestamps.some((timestamp) => now - timestamp < windowMs)) RATE_BUCKETS.delete(bucketKey);
+    }
+  }
+  return { allowed: true, retryAfterSeconds: 0 };
+}
+
+export function sameOriginRequest(request) {
+  const origin = String(request.headers?.origin || request.headers?.get?.('origin') || '');
+  if (!origin) return true;
+  const host = String(request.headers?.['x-forwarded-host'] || request.headers?.host || request.headers?.get?.('x-forwarded-host') || request.headers?.get?.('host') || '').split(',')[0].trim();
+  try { return new URL(origin).host === host; } catch { return false; }
+}
+
+export function rateLimitJson(response, result) {
+  response.setHeader('Retry-After', String(result.retryAfterSeconds || 60));
+  return json(response, 429, { error: 'Too many attempts. Please wait a few minutes and try again.' });
+}
+
 export function json(response, status, body, extraHeaders = {}) {
   response.status(status);
   for (const [name, value] of Object.entries(extraHeaders)) response.setHeader(name, value);

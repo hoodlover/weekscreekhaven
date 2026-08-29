@@ -130,8 +130,8 @@
           <img src="buttons/cabin-gallery-hover.webp" alt="Gallery" class="wood-btn hover-img">
         </a>
         <a href="important-info.html?v=12">
-          <img src="buttons/friends-info.webp"       alt="Friends Hub" class="wood-btn normal-img">
-          <img src="buttons/friends-info-hover.webp" alt="Friends Hub" class="wood-btn hover-img">
+          <img src="buttons/friends-info.webp"       alt="Guest Guide" class="wood-btn normal-img">
+          <img src="buttons/friends-info-hover.webp" alt="Guest Guide" class="wood-btn hover-img">
         </a>
       </div>
 
@@ -153,7 +153,7 @@
       <a href="find-us.html">      <img src="buttons/find-cabin.webp"   alt="Find Us"      class="wood-btn"></a>
       <a href="checkout.html">     <img src="buttons/check.webp"        alt="Checkout"     class="wood-btn"></a>
       <a href="gallery.html">      <img src="buttons/cabin-gallery.webp" alt="Gallery"     class="wood-btn"></a>
-      <a href="important-info.html?v=12"><img src="buttons/friends-info.webp" alt="Friends Hub" class="wood-btn"></a>
+      <a href="important-info.html?v=12"><img src="buttons/friends-info.webp" alt="Guest Guide" class="wood-btn"></a>
     </div>
   `;
 
