@@ -45,6 +45,7 @@ export default async function handler(request, response) {
       await sendEmail({
         to: booking.email,
         toName: booking.name,
+        templateKey:'refund-issued', templateVariables:{ guestName:booking.name, refundAmount:amountText, refundReason:reason },
         subject: 'A Weeks Creek Haven refund was issued',
         text: `Hi ${booking.name},\n\nWe issued a ${amountText} refund through Square. Reason: ${reason}.\n\nSquare will return the funds to the original payment method. Processing time depends on the bank or card issuer.`,
         html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Your refund was issued</h1><p>Hi ${escapeEmailHtml(booking.name)},</p><p>We issued a <strong>${amountText}</strong> refund through Square.</p><p><strong>Reason:</strong> ${escapeEmailHtml(reason)}</p><p>Square will return the funds to the original payment method. Processing time depends on the bank or card issuer.</p></div>`,

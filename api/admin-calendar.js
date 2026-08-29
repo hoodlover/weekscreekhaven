@@ -123,6 +123,7 @@ export default async function handler(request, response) {
           await sendEmail({
             to: booking.email,
             toName: booking.name,
+            templateKey:'reservation-cancelled', templateVariables:{ guestName:booking.name, arrival:choice?.arrival || 'your scheduled arrival', departure:choice?.departure || 'your scheduled departure' },
             subject: 'Your Weeks Creek Haven reservation was cancelled',
             text: `Hi ${booking.name},\n\nYour Weeks Creek Haven reservation${choice ? ` from ${choice.arrival} to ${choice.departure}` : ''} has been cancelled. Those dates are no longer being held for you.\n\nIf a payment or refund needs attention, we will follow up separately. If this was unexpected or you would like to request different dates, please reply to this email and we will help.`,
             html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Reservation cancelled</h1><p>Hi ${escapeEmailHtml(booking.name)},</p><p>Your Weeks Creek Haven reservation${choice ? ` for <strong>${choice.arrival} through ${choice.departure}</strong>` : ''} has been cancelled. Those dates are no longer being held for you.</p><p>If a payment or refund needs attention, we will follow up separately. If this was unexpected or you would like to request different dates, please reply to this email and we will help.</p></div>`,

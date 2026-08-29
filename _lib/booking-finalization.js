@@ -26,6 +26,7 @@ async function paymentWelcome(booking, url) {
   await sendEmail({
     to: booking.email,
     toName: booking.name,
+    templateKey: 'payment-received', templateVariables: { guestName:booking.name, arrival:dates.arrival, departure:dates.departure, packetUrl:url },
     subject: 'Payment received — finish your Weeks Creek Haven booking',
     text: `Hi ${booking.name},\n\nWe received your required payment for ${dates.arrival} through ${dates.departure}. Your dates are reserved.\n\nOpen your private booking packet to sign the rental agreement and download your paperwork: ${url}\n\nOnce the agreement is signed, your stay will be marked Booked automatically.`,
     html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Payment received</h1><p>Hi ${safeName},</p><p>We received your required payment for <strong>${dates.arrival} through ${dates.departure}</strong>. Your dates are reserved.</p><p><a href="${url}" style="display:inline-block;background:#183c2d;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Open your booking packet</a></p><p>Sign the rental agreement and download your paperwork there. Once the agreement is signed, your stay will be marked <strong>Booked</strong> automatically.</p></div>`,
@@ -39,6 +40,7 @@ async function bookedWelcome(booking, url) {
   await sendEmail({
     to: booking.email,
     toName: booking.name,
+    templateKey: 'booking-confirmed', templateVariables: { guestName:booking.name, arrival:dates.arrival, departure:dates.departure, checkout, packetUrl:url },
     subject: 'You’re booked at Weeks Creek Haven',
     text: `Hi ${booking.name},\n\nYou’re officially booked for ${dates.arrival} through ${dates.departure}. Check-in begins at 4:00 PM and checkout is ${checkout}.\n\nYour private booking packet contains your signed agreement, booking summary, and downloadable cabin information: ${url}\n\nWe’re excited to welcome you to the Haven!`,
     html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">You’re booked!</h1><p>Hi ${safeName},</p><p>Your Weeks Creek Haven stay is confirmed for <strong>${dates.arrival} through ${dates.departure}</strong>.</p><p>Check-in: <strong>4:00 PM</strong><br>Checkout: <strong>${checkout}</strong></p><p><a href="${url}" style="display:inline-block;background:#183c2d;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Open your welcome packet</a></p><p>Your signed agreement, booking summary, and downloadable cabin information are all kept there. We’re excited to welcome you to the Haven!</p></div>`,

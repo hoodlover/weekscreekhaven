@@ -63,7 +63,22 @@ async function sendWithSender({ to, toName, subject, text, html, attachments }) 
   return { ...result, provider: 'sender' };
 }
 
-export async function sendEmail({ to, toName = '', subject, text, html, attachments = [], idempotencyKey = '' }) {
+export async function sendEmail({ to, toName = '', subject, text, html, attachments = [], idempotencyKey = '', templateKey = '', templateVariables = {} }) {
+  if (templateKey) {
+    try {
+      const [{ getBookingCalendar }, { mergeEmailTemplates, renderTemplate }] = await Promise.all([import('./booking-store.js'), import('./email-library.js')]);
+      const template = mergeEmailTemplates((await getBookingCalendar()).emailTemplates).find(item => item.id === templateKey);
+      if (template && template.enabled !== false) {
+        subject = renderTemplate(template.subject || subject, templateVariables);
+        if (template.body) {
+          text = renderTemplate(template.body, templateVariables);
+          html = `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px">${text.split(/\n{2,}/).map(part => `<p>${escapeEmailHtml(part).replace(/\n/g, '<br>')}</p>`).join('')}</div>`;
+        }
+      } else if (template?.enabled === false) return { skipped: true, templateKey };
+    } catch (error) {
+      console.error(`Email template ${templateKey} could not be loaded; using the built-in copy.`, error);
+    }
+  }
   if (process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL) {
     return sendWithResend({ to, toName, subject, text, html, attachments, idempotencyKey });
   }
