@@ -9,7 +9,7 @@ export default async function handler(request, response) {
     const requestCutoff = Date.now() - 48 * 60 * 60 * 1000;
     const requested = calendar.bookings.flatMap((booking) => {
       const status = booking.status === 'approved' ? 'reserved' : booking.status;
-      if (status === 'pending' && Date.parse(booking.createdAt) >= requestCutoff) {
+      if (['pending','pending-payment'].includes(status) && Date.parse(booking.createdAt) >= requestCutoff) {
         return (booking.dateChoices || []).map(({ arrival, departure }) => ({ arrival, departure, state: 'requested' }));
       }
       if (status === 'reserved' && booking.paymentRequirementMet !== true && booking.paymentPlan !== 'complimentary') {
