@@ -25,10 +25,11 @@
     .page { min-height:100vh; background:linear-gradient(rgba(15,12,9,.7),rgba(15,12,9,.88)); padding:22px 14px 60px; }
     .top,.shell { width:min(1240px,100%); margin:auto; }
     .top { display:flex; justify-content:space-between; align-items:center; gap:16px; color:white; margin-bottom:20px; }
-    .brand { display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; font-size:.75rem; }
-    .brand img { width:68px; height:68px; object-fit:contain; }
+    .brand { display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; font-size:clamp(.95rem,2vw,1.22rem); }
+    .brand img { width:76px; height:76px; object-fit:contain; }
     .top-actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
     .top-actions a { text-decoration:none; border:1px solid #ffffff66; background:#0003; padding:9px 14px; border-radius:999px; font-size:.66rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
+    .top-actions .admin-pill { order:99; background:rgba(10,35,24,.82); border-color:#a8c8b2; }
     .panel { background:rgba(255,253,248,.985); border-radius:22px; padding:clamp(20px,3vw,34px); box-shadow:0 24px 70px #0008; }
     .head { display:flex; align-items:end; justify-content:space-between; gap:20px; padding-bottom:24px; border-bottom:1px solid var(--line); }
     .eyebrow { color:var(--rust); text-transform:uppercase; letter-spacing:.2em; font-size:.65rem; font-weight:800; }
@@ -91,12 +92,12 @@
     .bottom-month-actions { display:flex; justify-content:center; margin:16px 0 0; }
     .message { padding:30px; text-align:center; color:#8a2f2f; font-weight:700; }
     @media(max-width:900px) { .booking-layout { grid-template-columns:1fr; } .quote-card { position:static; } }
-    @media(max-width:640px) { .page { padding:8px 5px 34px; } .top { padding:5px 7px; } .brand img { width:52px; height:52px; } .brand { font-size:.62rem; } .top-actions a:first-child { display:none; } .panel { padding:18px 9px; border-radius:16px; } .head { align-items:flex-start; flex-direction:column; padding:6px 7px 20px; } h1 { font-size:2.85rem; } .booking-layout { gap:17px; padding-top:18px; } .calendar-title { padding:0 4px; } .calendar-title h2 { font-size:1.7rem; } .month-actions button { padding:9px 11px; } .day { min-height:72px; padding:6px; } .day-price { margin-top:10px; font-size:.83rem; } .day-kind { font-size:.4rem; letter-spacing:0; } .unavailable .day-kind { display:none; } .weekdays div { font-size:.52rem; } .quote-card { padding:19px; } .legend { padding:0 3px; } }
+    @media(max-width:640px) { .page { padding:8px 5px 34px; } .top { padding:5px 7px; } .brand img { width:58px; height:58px; } .brand { font-size:.86rem; line-height:1.15; } .top-actions a:first-child { display:none; } .panel { padding:18px 9px; border-radius:16px; } .head { align-items:flex-start; flex-direction:column; padding:6px 7px 20px; } h1 { font-size:2.85rem; } .booking-layout { gap:17px; padding-top:18px; } .calendar-title { padding:0 4px; } .calendar-title h2 { font-size:1.7rem; } .month-actions button { padding:9px 11px; } .day { min-height:72px; padding:6px; } .day-price { margin-top:10px; font-size:.83rem; } .day-kind { font-size:.4rem; letter-spacing:0; } .unavailable .day-kind { display:none; } .weekdays div { font-size:.52rem; } .quote-card { padding:19px; } .legend { padding:0 3px; } }
   </style>
 </head>
 <body>
   <div class="page">
-    <header class="top"><div class="brand"><a href="/index.html" aria-label="Weeks Creek Haven home"><img src="webpic/weeks-creek-haven-round-logo.png" alt="Weeks Creek Haven"></a>Weeks Creek Haven</div><nav class="top-actions"><a href="/register.html">Book available dates</a><a href="/index.html">Home</a></nav></header>
+    <header class="top"><div class="brand"><a href="/index.html" aria-label="Weeks Creek Haven home"><img src="webpic/weeks-creek-haven-round-logo.png" alt="Weeks Creek Haven"></a>Weeks Creek Haven</div><nav class="top-actions"><a href="/register.html">Book available dates</a><a href="/index.html">Home</a><a class="admin-pill" href="/admin.html">H &amp; L</a></nav></header>
     <main class="shell panel">
       <div class="head"><div><div class="eyebrow">Private stays &middot; Blue Ridge, Georgia</div><h1>Plan your stay</h1><div class="minimum">One-night stays available &middot; two-night minimum charge</div><p class="intro">Choose an arrival date, then tap your checkout date. Your exact stay estimate updates instantly—even when your dates continue onto the next calendar row.</p></div><a class="cta" href="/register.html">Book available dates</a></div>
       <div class="booking-layout">

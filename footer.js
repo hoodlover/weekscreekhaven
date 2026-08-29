@@ -78,7 +78,7 @@
         object-fit: contain;
         filter: drop-shadow(0 8px 18px rgba(0,0,0,.5));
       }
-      .wch-footer-title { margin: 0 0 3px; color: white; font: 700 1.7rem/1 'Crimson Text', Georgia, serif; }
+      .wch-footer-title { margin: 0 0 5px; color: white; font: 700 clamp(2rem,4vw,2.45rem)/1 'Crimson Text', Georgia, serif; }
       .wch-footer-address { margin: 0 0 8px; color: #eee6da; font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
       .wch-footer-copy { margin: 0; color: #cfc6b9; font-size: .6rem; letter-spacing: .09em; text-transform: uppercase; }
       .wch-footer-version { margin: 8px 0 0; color: rgba(255,255,255,.38); font-size: .52rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
@@ -107,7 +107,7 @@
         <p class="wch-footer-title">Weeks Creek Haven</p>
         <p class="wch-footer-address">421 Weeks Creek Rd · Blue Ridge, GA 30513</p>
         <p class="wch-footer-copy">&copy; 2026 H &amp; L Havens, LLC · Beautiful Blue Ridge</p>
-        <p class="wch-footer-version" aria-label="Website version">Version 31.226.1201</p>
+        <p class="wch-footer-version" aria-label="Website version">Version 31.226.1202</p>
       </div>
 
     </footer>

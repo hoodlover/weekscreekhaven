@@ -135,13 +135,13 @@
         </a>
       </div>
 
-      ${adminPill}
-
       <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none p-2 bg-black/20 rounded-lg border border-white/20">
         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path id="menu-icon-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
       </button>
+
+      ${adminPill}
     </nav>
 
     <!-- ===== MOBILE FULL-SCREEN MENU ===== -->
