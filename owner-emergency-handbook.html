@@ -13,14 +13,8 @@
 <header><img src="/webpic/guestfolder.webp" alt="Weeks Creek Haven guest folder"><div><div>OWNER COPY · KEEP PRIVATE</div><h1>Emergency Handbook</h1><p>Fast decisions for Lance, Heather, and the local response team when a guest stay goes sideways.</p></div></header>
 <div class="body">
   <p class="alert"><strong>Life safety comes first.</strong> For fire, medical emergency, suspected gas or carbon monoxide, active crime, or immediate danger: tell the guest to leave the hazard area and call <strong>911</strong>. Do not troubleshoot a life-threatening situation by text.</p>
-  <div class="actions"><button class="button" onclick="window.print()">Print / Save PDF</button><a class="button" href="/admin.html">Command Center</a></div>
-  <section class="card"><h2>Fill these contacts before public launch</h2><div class="contacts">
-    <p>Primary owner: <span class="fill">ADD NUMBER</span></p><p>Backup owner: <span class="fill">ADD NUMBER</span></p>
-    <p>Local 24/7 contact: <span class="fill">ADD NAME/NUMBER</span></p><p>Cleaner/turnover: <span class="fill">ADD NAME/NUMBER</span></p>
-    <p>Locksmith: <span class="fill">ADD NAME/NUMBER</span></p><p>HVAC/electrical: <span class="fill">ADD NAME/NUMBER</span></p>
-    <p>Plumber/septic: <span class="fill">ADD NAME/NUMBER</span></p><p>Hot tub service: <span class="fill">ADD NAME/NUMBER</span></p>
-    <p>Power utility/outage: <span class="fill">ADD NUMBER/URL</span></p><p>Insurance emergency claim: <span class="fill">ADD POLICY/NUMBER</span></p>
-  </div></section>
+  <div class="actions"><button class="button" onclick="window.print()">Print / Save PDF</button><a class="button" href="/admin.html">Command Center</a><a class="button" href="/property-people.html">Update contacts</a></div>
+  <section class="card"><h2>Emergency &amp; service contacts</h2><p class="fine">Shared with Property &amp; People. Update a person there once and the handbook uses the new information automatically.</p><div id="live-contacts" class="contacts"><p>Loading saved contacts…</p></div></section>
   <div class="grid" style="margin-top:13px">
     <section class="card"><h2>First five minutes</h2><ol><li>Ask: “Is everyone safe right now?”</li><li>Get the caller’s name, cabin location, callback number, and exact problem.</li><li>For immediate danger, direct them to 911 and safe evacuation.</li><li>Time-stamp the report and save photos/messages.</li><li>Notify the local contact and decide who owns the response.</li></ol></section>
     <section class="card"><h2>Lockout or access failure</h2><ul><li>Verify the primary guest and reservation dates.</li><li>Confirm the correct door and code instructions.</li><li>Issue a temporary code only through the approved lock system.</li><li>If unresolved in 15 minutes, dispatch the local contact or locksmith.</li><li>Never disclose a permanent owner code.</li></ul></section>
@@ -34,4 +28,8 @@
   <section class="card" style="margin-top:13px"><h2>Decision authority</h2><p>Local responders may spend up to <span class="fill">ADD LIMIT</span> for urgent life-safety/property protection without additional approval. Guest credits up to <span class="fill">ADD LIMIT</span> may be approved by <span class="fill">ADD NAME</span>. Larger refunds, relocation, stay termination, police contact for a non-emergency, and insurance claims require Lance or Heather unless delay creates immediate danger.</p></section>
   <section class="card" style="margin-top:13px"><h2>Incident log</h2><table class="log"><thead><tr><th>Time</th><th>Who reported</th><th>What happened</th><th>Action/owner</th><th>Follow-up</th></tr></thead><tbody><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr></tbody></table></section>
   <p class="fine">Draft owner operating page · August 29, 2026. Complete all red blanks, confirm vendors and insurance instructions, then print one copy for the property operations folder. This is an operational aid, not emergency-services or legal advice.</p>
-</div></main></body></html>
+</div></main><script>
+const esc=(value)=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+const phoneHref=(value)=>String(value||'').replace(/[^\d+]/g,'');
+fetch('/api/admin-property-people',{cache:'no-store'}).then(async response=>{const data=await response.json();if(!response.ok)throw new Error(data.error||'Contacts unavailable.');const contacts=data.contractors||[];document.getElementById('live-contacts').innerHTML=contacts.length?contacts.map(item=>{const missing=!item.phone&&!item.email;return `<article><strong>${esc(item.category)}</strong><br>${esc(item.name)}${item.phone?`<br><a href="tel:${esc(phoneHref(item.phone))}">${esc(item.phone)}</a>`:''}${item.email?`<br><a href="mailto:${esc(item.email)}">${esc(item.email)}</a>`:''}${missing?'<br><a href="/property-people.html">Add contact details</a>':''}</article>`;}).join(''):'<p>No service contacts have been added yet. <a href="/property-people.html">Add them now.</a></p>';}).catch(()=>{document.getElementById('live-contacts').innerHTML='<p>Sign in through the <a href="/admin.html">Command Center</a> to load the private contact directory.</p>';});
+</script></body></html>
