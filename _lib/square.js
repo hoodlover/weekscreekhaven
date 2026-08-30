@@ -68,7 +68,8 @@ function invoiceReminders(today, dueDate) {
     : [];
 }
 
-export async function createSquareBookingInvoice({ bookingId, guestName, email, address = {}, amountCents, securityDepositCents = 30000, depositBaseCents, arrival, discountCents = 0, depositDueDays = 1 }) {
+export async function createSquareBookingInvoice({ bookingId, guestName, email, address = {}, amountCents, securityDepositCents = 30000, depositBaseCents, arrival, discountCents = 0, depositDueDays = 1, revisionKey = '' }) {
+  const revisionSuffix = revisionKey ? `-r${String(revisionKey).replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 24)}` : '';
   if (!Number.isInteger(amountCents) || amountCents < 100) throw new Error('The stay total must be at least $1.00.');
   const stayChargeCents = amountCents - securityDepositCents;
   if (!Number.isInteger(stayChargeCents) || stayChargeCents < 100) throw new Error('The refundable security deposit could not be itemized.');
@@ -97,7 +98,7 @@ export async function createSquareBookingInvoice({ bookingId, guestName, email, 
   const orderResult = await squareRequest('/v2/orders', {
     method: 'POST',
     body: {
-      idempotency_key: `wch-order-${bookingId}`,
+      idempotency_key: `wch-order-${bookingId}${revisionSuffix}`,
       order: {
         location_id: process.env.SQUARE_LOCATION_ID,
         reference_id: bookingId,
@@ -136,14 +137,14 @@ export async function createSquareBookingInvoice({ bookingId, guestName, email, 
   const invoiceResult = await squareRequest('/v2/invoices', {
     method: 'POST',
     body: {
-      idempotency_key: `wch-invoice-${bookingId}`,
+      idempotency_key: `wch-invoice-${bookingId}${revisionSuffix}`,
       invoice: {
         location_id: process.env.SQUARE_LOCATION_ID,
         order_id: orderResult.order.id,
         primary_recipient: { customer_id: customerResult.customer.id },
         delivery_method: 'EMAIL',
         payment_requests: paymentRequests,
-        invoice_number: `WCH-${bookingId.slice(0, 8).toUpperCase()}`,
+        invoice_number: `WCH-${bookingId.slice(0, 8).toUpperCase()}${revisionKey ? `-R${revisionKey}` : ''}`,
         title: 'Weeks Creek Haven private stay',
         description: `${discountCents ? `Includes a $${(discountCents / 100).toFixed(2)} Weeks Creek Haven discount. ` : ''}${fullPaymentRequired ? 'Because arrival is within seven days, payment in full is due now. ' : `The 20% reservation deposit is due within ${depositDueDays === 7 ? 'seven days' : '24 hours'} of approval, and the remaining balance is due seven days before arrival. `}Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund of amounts paid. Inside 24 hours, the 20% reservation deposit is retained and the remaining amount paid is refunded. The separately listed $300 security deposit is normally refunded within seven days after checkout, less any documented damage, missing property, rule-violation costs, or excessive cleaning.`,
         sale_or_service_date: arrival,
@@ -153,7 +154,7 @@ export async function createSquareBookingInvoice({ bookingId, guestName, email, 
   });
   const published = await squareRequest(`/v2/invoices/${encodeURIComponent(invoiceResult.invoice.id)}/publish`, {
     method: 'POST',
-    body: { version: invoiceResult.invoice.version, idempotency_key: `wch-publish-${bookingId}` },
+    body: { version: invoiceResult.invoice.version, idempotency_key: `wch-publish-${bookingId}${revisionSuffix}` },
   });
   return {
     url: published.invoice.public_url,
@@ -169,7 +170,8 @@ export async function createSquareBookingInvoice({ bookingId, guestName, email, 
   };
 }
 
-export async function createSquareFriendInvoice({ bookingId, guestName, email, amountCents, securityDepositCents = 30000, arrival }) {
+export async function createSquareFriendInvoice({ bookingId, guestName, email, amountCents, securityDepositCents = 30000, arrival, revisionKey = '' }) {
+  const revisionSuffix = revisionKey ? `-r${String(revisionKey).replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 24)}` : '';
   if (!Number.isInteger(amountCents) || amountCents < 100) throw new Error('The friend invoice total must be at least $1.00.');
   if (!email) throw new Error('Add an email address before sending a friend invoice.');
   const stayChargeCents = amountCents - securityDepositCents;
@@ -190,7 +192,7 @@ export async function createSquareFriendInvoice({ bookingId, guestName, email, a
   const orderResult = await squareRequest('/v2/orders', {
     method: 'POST',
     body: {
-      idempotency_key: `wch-friend-order-${bookingId}`,
+      idempotency_key: `wch-friend-order-${bookingId}${revisionSuffix}`,
       order: {
         location_id: process.env.SQUARE_LOCATION_ID,
         reference_id: bookingId,
@@ -209,7 +211,7 @@ export async function createSquareFriendInvoice({ bookingId, guestName, email, a
   const invoiceResult = await squareRequest('/v2/invoices', {
     method: 'POST',
     body: {
-      idempotency_key: `wch-friend-invoice-${bookingId}`,
+      idempotency_key: `wch-friend-invoice-${bookingId}${revisionSuffix}`,
       invoice: {
         location_id: process.env.SQUARE_LOCATION_ID,
         order_id: orderResult.order.id,
@@ -221,7 +223,7 @@ export async function createSquareFriendInvoice({ bookingId, guestName, email, a
           tipping_enabled: false,
           automatic_payment_source: 'NONE',
         }],
-        invoice_number: `WCHF-${bookingId.slice(0, 8).toUpperCase()}`,
+        invoice_number: `WCHF-${bookingId.slice(0, 8).toUpperCase()}${revisionKey ? `-R${revisionKey}` : ''}`,
         title: 'Weeks Creek Haven friends & family stay',
         description: 'Friends & family total due now. The separately listed $300 security deposit is refundable under the rental agreement. Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, 20% of the approved pre-tax stay total is retained and the remaining payment is refunded.',
         sale_or_service_date: arrival,
@@ -231,7 +233,7 @@ export async function createSquareFriendInvoice({ bookingId, guestName, email, a
   });
   const published = await squareRequest(`/v2/invoices/${encodeURIComponent(invoiceResult.invoice.id)}/publish`, {
     method: 'POST',
-    body: { version: invoiceResult.invoice.version, idempotency_key: `wch-friend-publish-${bookingId}` },
+    body: { version: invoiceResult.invoice.version, idempotency_key: `wch-friend-publish-${bookingId}${revisionSuffix}` },
   });
   return {
     url: published.invoice.public_url,

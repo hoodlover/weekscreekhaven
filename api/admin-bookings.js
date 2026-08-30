@@ -2,10 +2,14 @@ import { appendBookingRecord, getBookingCalendar, getBookingRequests, rangesOver
 import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
 import { getInvites } from '../_lib/invite-store.js';
 import { createAgreementToken, createReviewToken, json, requireAdmin } from '../_lib/security.js';
-import { createSquareBookingInvoice, createSquareFriendInvoice, squareStatus } from '../_lib/square.js';
+import { cancelSquareInvoice, createSquareBookingInvoice, createSquareFriendInvoice, getSquareInvoice, squareStatus } from '../_lib/square.js';
 import { refreshSquareBooking } from '../_lib/payment-sync.js';
 import { findBookingInvite } from '../_lib/booking-invite.js';
 import { daysBetween, PRICING_CONFIG, quoteStay, withEstimatedTaxesAndFees } from '../pricing.js';
+
+function completedInvoiceCents(invoice) {
+  return (invoice?.payment_requests || []).reduce((sum, paymentRequest) => sum + (Number(paymentRequest.total_completed_amount_money?.amount) || 0), 0);
+}
 
 function bookingPacketUrl(bookingId) {
   const token = createAgreementToken(bookingId, 365 * 86400);
@@ -144,6 +148,61 @@ export default async function handler(request, response) {
         html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Your booking packet</h1><p>Hi ${safeName},</p><p>We approved <strong>${dates.arrival} through ${dates.departure}</strong>.</p><p>Check-in: <strong>4:00 PM</strong><br>Checkout: <strong>${booking.lateCheckout ? 'noon ($50 late checkout included)' : '11:00 AM'}</strong></p><p>Approved total: <strong>$${(amountCents / 100).toFixed(2)}</strong></p>${paymentHtml}<p><a href="${packetUrl}" style="display:inline-block;background:#a45d41;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Open booking packet</a></p><p>Track payment, sign the rental agreement, and download your paperwork from the packet.</p><p style="background:#fff0cc;padding:12px;border-radius:8px"><strong>Cancellation policy:</strong> Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the 20% reservation deposit is retained and any remaining amount paid is refunded.</p><p>Your reservation is final after ${paymentPlan === 'complimentary' ? 'the rental agreement is accepted' : 'payment is made and the rental agreement is accepted'}.</p></div>`,
       });
       return json(response, 200, { ok: true, paymentUrl: payment?.url || null, complimentary: paymentPlan === 'complimentary' });
+    }
+    if (action === 'revise-unpaid-price') {
+      if (!booking.email) return json(response, 400, { error: 'This guest does not have an email address for the replacement invoice.' });
+      if (['cancelled', 'declined'].includes(booking.status)) return json(response, 409, { error: 'A canceled or declined booking cannot be repriced.' });
+      const currentInvoice = booking.squareInvoiceId ? await getSquareInvoice(booking.squareInvoiceId) : null;
+      const paidCents = completedInvoiceCents(currentInvoice);
+      if (paidCents > 0 || booking.paymentRequirementMet) return json(response, 409, { error: 'This invoice already has a payment. Use the refund or credit controls instead.' });
+      const revisedPreTaxAmountCents = Math.round(Number(request.body?.revisedPreTaxAmount) * 100);
+      if (!Number.isInteger(revisedPreTaxAmountCents) || revisedPreTaxAmountCents < 100) return json(response, 400, { error: 'Enter a revised pre-tax stay price of at least $1.00.' });
+      const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || booking.dateChoices?.[0];
+      if (!dates?.arrival || !dates?.departure) return json(response, 400, { error: 'The selected stay dates could not be found.' });
+      const previousPreTaxAmountCents = Number(booking.preTaxAmountCents) || 0;
+      const ownerPriceAdjustmentCents = previousPreTaxAmountCents - revisedPreTaxAmountCents;
+      const securityDepositCents = Number.isInteger(Number(booking.securityDepositCents)) ? Number(booking.securityDepositCents) : 30000;
+      const tax = withEstimatedTaxesAndFees({ totalCents: revisedPreTaxAmountCents, actualNights: Math.max(1, daysBetween(dates.arrival, dates.departure)) });
+      const stayAmountCents = tax.estimatedGrandTotalCents;
+      const amountCents = stayAmountCents + securityDepositCents;
+      const invoiceRevision = (Number(booking.invoiceRevision) || 0) + 1;
+      if (currentInvoice && !['CANCELED', 'PAID', 'REFUNDED'].includes(currentInvoice.status)) await cancelSquareInvoice(booking.squareInvoiceId);
+      const isFriendInvoice = Boolean(booking.friendsAndFamilyDiscount) || String(booking.paymentPlan || '').includes('friend');
+      const payment = isFriendInvoice
+        ? await createSquareFriendInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, amountCents, securityDepositCents, arrival: dates.arrival, revisionKey: invoiceRevision })
+        : await createSquareBookingInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, address: { line1: booking.billingAddress, city: booking.billingCity, state: booking.billingState, postalCode: booking.billingPostalCode }, amountCents, securityDepositCents, depositBaseCents: revisedPreTaxAmountCents, arrival: dates.arrival, discountCents: Math.max(0, Number(booking.discountAmountCents) || 0) + Math.max(0, ownerPriceAdjustmentCents), depositDueDays: booking.earlyBirdDiscountCents ? 7 : 1, revisionKey: invoiceRevision });
+      const paymentPlan = isFriendInvoice ? 'friends-family-total' : payment.fullPaymentRequired ? 'full-payment' : 'deposit-balance';
+      const invoiceHistory = [...(booking.invoiceHistory || []), ...(booking.squareInvoiceId ? [{ invoiceId: booking.squareInvoiceId, orderId: booking.squareOrderId || null, paymentUrl: booking.paymentUrl || null, replacedAt: createdAt, amountCents: Number(booking.amountCents) || 0 }] : [])];
+      const changes = {
+        status: 'pending-payment', previousPreTaxAmountCents, preTaxAmountCents: revisedPreTaxAmountCents, stayAmountCents, securityDepositCents, amountCents,
+        ownerPriceAdjustmentCents, ownerPriceAdjustedAt: createdAt, invoiceRevision, invoiceHistory,
+        salesTaxCents: tax.salesTaxCents, lodgingTaxCents: tax.lodgingTaxCents, stateHotelMotelFeeCents: tax.stateHotelMotelFeeCents, taxesAndFeesCents: tax.estimatedTaxesAndFeesCents,
+        paymentPlan, paymentUrl: payment.url, squareInvoiceId: payment.invoiceId, squareOrderId: payment.orderId, squareCustomerId: payment.customerId,
+        invoiceSentAt: createdAt, squareInvoiceStatus: 'UNPAID', squarePaidCents: 0, squareBalanceCents: amountCents, paymentRequirementMet: false, paymentFullyPaid: false,
+        depositAmountCents: payment.depositAmountCents ?? amountCents, balanceAmountCents: paymentPlan === 'deposit-balance' ? payment.balanceAmountCents : 0,
+        balanceDueDate: paymentPlan === 'deposit-balance' ? payment.balanceDueDate : null, depositDueDate: paymentPlan === 'deposit-balance' ? payment.depositDueDate : null,
+      };
+      await appendBookingRecord({ type: 'status', bookingId: booking.id, changes, createdAt });
+      return json(response, 200, { ok: true, amountCents, ownerPriceAdjustmentCents, paymentUrl: payment.url });
+    }
+    if (action === 'cancel-unpaid') {
+      if (['cancelled', 'declined'].includes(booking.status)) return json(response, 409, { error: 'This booking is already canceled or declined.' });
+      const currentInvoice = booking.squareInvoiceId ? await getSquareInvoice(booking.squareInvoiceId) : null;
+      const paidCents = completedInvoiceCents(currentInvoice);
+      if (paidCents > 0 || booking.paymentRequirementMet) return json(response, 409, { error: 'A payment has already been received. Use the refund controls instead of unpaid cancellation.' });
+      if (currentInvoice && !['CANCELED', 'PAID', 'REFUNDED'].includes(currentInvoice.status)) await cancelSquareInvoice(booking.squareInvoiceId);
+      const reason = String(request.body?.reason || 'Canceled before payment').trim().slice(0, 192);
+      await appendBookingRecord({ type: 'status', bookingId: booking.id, changes: { status: 'cancelled', cancelledAt: createdAt, cancellationReason: reason, paymentUrl: null, squareInvoiceStatus: 'CANCELED' }, createdAt });
+      if (booking.email) {
+        const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || booking.dateChoices?.[0] || {};
+        await sendEmail({
+          to: booking.email, toName: booking.name, templateKey: 'booking-cancelled', templateVariables: { guestName: booking.name, arrival: dates.arrival || '', departure: dates.departure || '', reason },
+          subject: 'Your Weeks Creek Haven booking was canceled',
+          text: `Hi ${booking.name},\n\nYour unpaid Weeks Creek Haven booking for ${dates.arrival || 'the selected dates'} through ${dates.departure || ''} has been canceled. The Square invoice is no longer payable, and no payment was collected.\n\nReason: ${reason}\n\nYou are welcome to choose new dates anytime.`,
+          html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Booking canceled</h1><p>Hi ${escapeEmailHtml(booking.name)},</p><p>Your unpaid booking for <strong>${escapeEmailHtml(dates.arrival || 'the selected dates')} through ${escapeEmailHtml(dates.departure || '')}</strong> has been canceled.</p><p>The Square invoice is no longer payable, and no payment was collected.</p><p><strong>Reason:</strong> ${escapeEmailHtml(reason)}</p><p>You are welcome to choose new dates anytime.</p></div>`,
+        });
+      }
+      return json(response, 200, { ok: true, status: 'cancelled' });
     }
     if (action === 'send-friend-invoice') {
       if (booking.source !== 'direct-invite' || !['reserved', 'booked'].includes(booking.status)) return json(response, 409, { error: 'Friend invoices are available after the invitee selects a stay.' });
