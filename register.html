@@ -151,6 +151,14 @@
     .stay-quote.discounted strong { color:#7a4b13; }
     .stay-quote[hidden],.message[hidden] { display:none; }
     .fine { border-top:1px solid var(--line); margin-top:22px; padding-top:17px; font-size:.69rem; line-height:1.6; color:var(--muted); }
+    .confirmation-dialog { width:min(560px,calc(100% - 24px)); max-height:calc(100vh - 28px); overflow:auto; padding:0; border:0; border-top:9px solid var(--pine); border-radius:18px; color:var(--ink); background:#fffdf8; box-shadow:0 25px 80px #0009; }
+    .confirmation-dialog::backdrop { background:rgba(15,12,9,.78); }
+    .confirmation-dialog-inner { padding:24px; }
+    .confirmation-dialog h2 { margin:5px 0 14px; color:var(--pine); font-size:2rem; }
+    .confirmation-copy { margin:0; padding:15px; border-radius:11px; color:var(--ink); background:#f4eee4; white-space:pre-wrap; font:600 .75rem/1.55 Montserrat,sans-serif; }
+    .confirmation-actions { display:grid; gap:8px; margin-top:16px; }
+    .confirmation-actions a,.confirmation-actions button { width:100%; margin:0; padding:14px 18px; display:block; border-radius:999px; text-align:center; text-decoration:none; }
+    .confirmation-actions a { color:white; background:var(--pine); font-size:.8rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; box-shadow:0 8px 18px rgba(23,63,43,.25); }
     @media(max-width:850px) { .layout { grid-template-columns:1fr; } .intro { position:static; padding:20px 8px; } .intro h1 { max-width:650px; } }
     @media(max-width:560px) {
       .page { padding:12px 8px 44px; }
@@ -267,9 +275,12 @@
       </form>
     </main>
   </div>
+  <dialog id="confirmation-dialog" class="confirmation-dialog"><div class="confirmation-dialog-inner"><div class="eyebrow">Weeks Creek Haven</div><h2 id="confirmation-title">Request received</h2><pre id="confirmation-copy" class="confirmation-copy"></pre><div class="confirmation-actions"><a id="my-booking-link" href="/booking-packet.html">My Booking</a><button id="confirmation-close" type="button">Close</button></div></div></dialog>
   <script type="module">
     import { money, quoteStay, seasonForDate } from '/pricing.js';
     const form=document.getElementById('booking-form'); const button=document.getElementById('submit'); const message=document.getElementById('form-message');
+    const confirmationDialog=document.getElementById('confirmation-dialog'),confirmationTitle=document.getElementById('confirmation-title'),confirmationCopy=document.getElementById('confirmation-copy'),myBookingLink=document.getElementById('my-booking-link'),confirmationClose=document.getElementById('confirmation-close');
+    confirmationClose.addEventListener('click',()=>confirmationDialog.close());
     const pricingState={rates:[],unavailable:[],requested:[],loaded:false,calendarError:'',discountQuotes:{},discountTimer:null,discountRequest:0};
     const today=new Date(); today.setHours(0,0,0,0); const minimum=today.toISOString().slice(0,10);
     const addDays=(value,days)=>{ const date=new Date(`${value}T12:00:00`); date.setDate(date.getDate()+days); return date.toISOString().slice(0,10); };
@@ -479,7 +490,7 @@
           '',
           'You may screenshot this confirmation.'
         ].filter(line=>line!==null&&line!==undefined).join('\n');
-        form.reset(); form.elements.formStartedAt.value=String(Date.now()); setDogsVisibility(false); updateBookingIntent(); document.querySelectorAll('.stay-quote,.availability-status').forEach(box=>box.hidden=true);renderCalendars();message.className='message success'; message.textContent=questionsOnly?'Your questions and selected dates were sent to the owners. No invoice was created.':'Checkout received. Your screenshot-ready confirmation is shown, and your invoice and rental agreement were emailed.'; message.hidden=false; alert(confirmation);
+        form.reset(); form.elements.formStartedAt.value=String(Date.now()); setDogsVisibility(false); updateBookingIntent(); document.querySelectorAll('.stay-quote,.availability-status').forEach(box=>box.hidden=true);renderCalendars();message.className='message success'; message.textContent=questionsOnly?'Your questions and selected dates were sent to the owners. No invoice was created.':'Checkout received. Your screenshot-ready confirmation is shown, and your invoice and rental agreement were emailed.'; message.hidden=false; confirmationTitle.textContent=questionsOnly?'Inquiry received':'Booking checkout received'; confirmationCopy.textContent=confirmation; myBookingLink.hidden=questionsOnly||!data.bookingPacketUrl; confirmationClose.hidden=!questionsOnly&&Boolean(data.bookingPacketUrl); if(data.bookingPacketUrl)myBookingLink.href=data.bookingPacketUrl; confirmationDialog.showModal();
       } catch(error) { if(Array.isArray(error.unavailableChoices)) error.unavailableChoices.forEach((blocked,index)=>{ if(blocked) document.getElementById(`choice-${index+1}`).classList.add('unavailable'); }); message.className='message error'; message.textContent=error.message; message.hidden=false; }
       finally { button.disabled=false; updateBookingIntent(); }
     });
