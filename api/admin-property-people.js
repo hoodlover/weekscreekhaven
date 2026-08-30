@@ -70,6 +70,7 @@ const requiredContacts = [
   ['Cleaning','Cleaner / turnover'],['Garbage','Garbage / trash service'],['Locksmith','Locksmith'],
   ['HVAC','HVAC service'],['Electrical','Electrician'],['Plumbing','Plumber'],['Septic','Septic service'],
   ['Hot Tub','Hot tub service'],['Power Utility','Power utility / outage'],['Insurance','Insurance emergency claim'],
+  ['Police / Sheriff','Police / sheriff non-emergency'],['Fire & Rescue','Fire & rescue'],['Hospital / Emergency Care','Hospital / emergency care'],
 ];
 
 async function contractorsWithRequiredPlaceholders() {
