@@ -11,6 +11,11 @@ function completedInvoiceCents(invoice) {
   return (invoice?.payment_requests || []).reduce((sum, paymentRequest) => sum + (Number(paymentRequest.total_completed_amount_money?.amount) || 0), 0);
 }
 
+function validEmail(value) {
+  const email = String(value || '').trim().toLowerCase();
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : '';
+}
+
 function bookingPacketUrl(bookingId) {
   const token = createAgreementToken(bookingId, 365 * 86400);
   return `https://www.weekscreekhaven.com/booking-packet.html?token=${encodeURIComponent(token)}`;
@@ -87,6 +92,19 @@ export default async function handler(request, response) {
     if (!booking) return json(response, 404, { error: 'Booking request not found.' });
     const action = String(request.body?.action || '');
     const createdAt = new Date().toISOString();
+    if (action === 'correct-guest-contact') {
+      const email = validEmail(request.body?.email);
+      const name = String(request.body?.name || '').trim().slice(0, 100);
+      const inviteId = String(request.body?.inviteId || '').trim();
+      if (!email || name.length < 2) return json(response, 400, { error: 'Add the correct guest name and email address.' });
+      if (inviteId) {
+        const invite = (await getInvites()).find((item) => item.id === inviteId && !item.revokedAt);
+        if (!invite) return json(response, 400, { error: 'That active invite could not be found.' });
+        if (invite.recipientEmail && invite.recipientEmail.toLowerCase() !== email) return json(response, 409, { error: 'The entered email does not match that invitation.' });
+      }
+      await appendBookingRecord({ type: 'status', bookingId: booking.id, changes: { name, email, inviteId: inviteId || null, source: inviteId ? 'invite-booking' : booking.source, guestContactCorrectedAt: createdAt }, createdAt });
+      return json(response, 200, { ok: true, name, email, inviteId: inviteId || null });
+    }
     if (action === 'archive') {
       if (!['declined', 'cancelled'].includes(booking.status)) return json(response, 409, { error: 'Only declined or canceled bookings can be archived.' });
       await appendBookingRecord({ type: 'status', bookingId: booking.id, changes: { archivedAt: createdAt }, createdAt });
