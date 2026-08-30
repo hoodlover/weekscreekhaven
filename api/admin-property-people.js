@@ -83,7 +83,7 @@ async function contractorsWithRequiredPlaceholders() {
     await appendPropertyRecord({ type:'contractor_created', contractor, createdAt });
     contractors.push(contractor);
   }
-  return contractors.sort((a,b)=>{\n    const ownerOrder = Number(b.category === 'Primary owner') - Number(a.category === 'Primary owner');\n    return ownerOrder || String(a.category).localeCompare(String(b.category)) || String(a.name).localeCompare(String(b.name));\n  });
+  return contractors.sort((a,b)=>String(a.category).localeCompare(String(b.category))||String(a.name).localeCompare(String(b.name)));
 }
 
 function contractorFrom(body, current = {}) {
