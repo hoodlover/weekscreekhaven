@@ -165,6 +165,27 @@
         .arrival-command { padding: 1rem; border: 1px solid #d9cbb8; border-radius: .8rem; background: #f7f1e7; }
         .arrival-command strong { color: #183c2d; }
         .arrival-command p { margin-top: .25rem; color: #706257; font-size: .76rem; line-height: 1.45; }
+
+        /* Cabin guide: the same calm, practical visual system as Check In. */
+        .guide-stack { display: grid; gap: 1rem; }
+        .guide-layout { display: grid; gap: 1.25rem; align-items: center; }
+        .guide-copy { display: grid; gap: .7rem; color: #62564c; font-size: .86rem; line-height: 1.6; }
+        .guide-copy strong { color: #30271f; }
+        .guide-photo {
+            width: 100%; max-height: 440px; object-fit: cover; border: 1px solid #d9cbb8;
+            border-radius: .85rem; box-shadow: 0 8px 20px rgba(54,39,27,.16); cursor: zoom-in;
+        }
+        .guide-photo-note { margin-top: .45rem; color: #83766b; font-size: .68rem; text-align: center; }
+        .guide-note-grid { display: grid; gap: .75rem; }
+        .guide-note {
+            padding: 1rem; border: 1px solid #dfd3c1; border-radius: .85rem;
+            background: #faf6ee; color: #62564c; font-size: .78rem; line-height: 1.5;
+        }
+        .guide-note h3 { margin-bottom: .35rem; color: #183c2d; font-family: Georgia, serif; font-size: 1.05rem; }
+        .guide-list { display: grid; gap: .35rem; margin-top: .4rem; }
+        .guide-list li { position: relative; padding-left: .9rem; }
+        .guide-list li::before { content: ''; position: absolute; left: 0; top: .62em; width: 4px; height: 4px; border-radius: 50%; background: #a45d41; }
+        .guide-bidet { max-width: 315px; margin-inline: auto; }
         @media (min-width: 768px) {
             .arrival-access-grid { grid-template-columns: minmax(0,1fr) 110px; align-items: start; }
             .arrival-wifi-card { width: 110px; justify-self: end; }
@@ -175,6 +196,9 @@
             .arrival-step-grid, .arrival-command-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
             .arrival-alexa-layout { grid-template-columns: minmax(250px,.75fr) minmax(0,1.6fr); align-items: stretch; }
             .arrival-alexa-photo { height: 100%; min-height: 250px; }
+            .guide-layout { grid-template-columns: minmax(0,1.25fr) minmax(250px,.75fr); gap: 2rem; }
+            .guide-layout.guide-image-first { grid-template-columns: minmax(250px,.75fr) minmax(0,1.25fr); }
+            .guide-note-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
         }
 
         /* Lightbox */
@@ -388,7 +412,7 @@
 <div id="tab-bar" class="max-w-5xl mx-auto px-4">
     <div class="flex gap-1 overflow-x-auto pb-0">
         <button class="tab-btn active" onclick="switchTab('checkin',this)">Check In</button>
-        <button class="tab-btn" onclick="switchTab('scoop',this)">The Scoop</button>
+        <button class="tab-btn" onclick="switchTab('scoop',this)">Cabin Guide</button>
         <button class="tab-btn" onclick="switchTab('provisions',this)">Provisions</button>
         <button class="tab-btn" onclick="switchTab('checkout',this)">Check Out</button>
         <button class="tab-btn" onclick="switchTab('guestbook',this)">Guest Book</button>
@@ -504,25 +528,22 @@
         </div><!-- end tab-checkin -->
 
 
-        <!-- ==================== TAB 2: THE SCOOP ==================== -->
+        <!-- ==================== TAB 2: CABIN GUIDE ==================== -->
         <div id="tab-scoop" class="tab-panel space-y-8">
 
-            <!-- Jump Nav -->
-            <div class="parchment p-4 rounded-xl shadow border border-stone-200">
-                <p class="text-xs font-black uppercase tracking-widest text-stone-400 mb-3 text-center">Jump to a section</p>
-                <div class="flex flex-wrap justify-center gap-2">
-                    <a href="#scoop-hottub" class="inline-flex items-center gap-1 px-4 py-2 bg-stone-100 hover:bg-[#A45D41] hover:text-white rounded-full text-xs font-black uppercase tracking-wide transition border border-stone-200">&#9832; Hot Tub</a>
-                    <a href="#scoop-safety" class="inline-flex items-center gap-1 px-4 py-2 bg-stone-100 hover:bg-[#A45D41] hover:text-white rounded-full text-xs font-black uppercase tracking-wide transition border border-stone-200">&#128062; Safety</a>
-                    <a href="#scoop-bugs" class="inline-flex items-center gap-1 px-4 py-2 bg-stone-100 hover:bg-[#A45D41] hover:text-white rounded-full text-xs font-black uppercase tracking-wide transition border border-stone-200">&#128027; Bugs</a>
-                    <a href="#scoop-bears" class="inline-flex items-center gap-1 px-4 py-2 bg-stone-100 hover:bg-[#A45D41] hover:text-white rounded-full text-xs font-black uppercase tracking-wide transition border border-stone-200">&#128465; Bear Bins</a>
-                    <a href="#scoop-kitchen" class="inline-flex items-center gap-1 px-4 py-2 bg-stone-100 hover:bg-[#A45D41] hover:text-white rounded-full text-xs font-black uppercase tracking-wide transition border border-stone-200">&#128701; Sink &amp; Throne</a>
-                </div>
-            </div>
+            <section class="arrival-intro">
+                <p class="arrival-kicker">Cabin know-how</p>
+                <h2>A few things worth knowing.</h2>
+                <p>Simple guidance for the hot tub, mountain wildlife, trash, and the cabin&rsquo;s septic system&mdash;all together in one easy place.</p>
+            </section>
 
             <!-- Hot Tub -->
-            <div id="scoop-hottub" class="parchment p-6 md:p-8 rounded-xl shadow-lg border-t-4 border-[#A45D41]">
-                <h2 class="section-title">Hot Tub &amp; Spa</h2>
-                <div class="space-y-2 text-sm leading-relaxed mb-6">
+            <section id="scoop-hottub" class="arrival-section">
+                <div class="arrival-section-head">
+                    <div><p class="arrival-kicker">Relax safely</p><h2 class="section-title">Hot Tub &amp; Spa</h2></div>
+                </div>
+                <div class="guide-layout">
+                  <div class="guide-copy">
                     <p><strong>On Arrival:</strong> Crank it to <strong>104&deg;F</strong> the moment you drop your bags &mdash; it takes a solid 2+ hours to get there. Future you (holding a drink at 10 PM) will be extremely grateful. On departure, set it back to <strong>80&deg;F</strong> for the next crew.</p>
                     <p><strong>Soak Time:</strong> Limit to 15 minutes. Step out if you feel lightheaded.</p>
                     <p><strong>Towels:</strong> Use the dedicated large towels in the entertainment room &mdash; not the bathroom ones.</p>
@@ -532,16 +553,24 @@
                     <p><strong>Alcohol &amp; Hot Tubs:</strong> Heat + booze = dizzy fast. You&rsquo;ve been warned.</p>
                     <p><strong>Glassware:</strong> No glass near the hot tub. Use the plastic cups provided.</p>
                     <p><strong>Lower Spa Tub:</strong> Jets out of order &mdash; tub itself is fully usable.</p>
+                  </div>
+                  <div>
+                    <img src="info/HotTub.webp" alt="Hot tub and cover lifter guide" onclick="openLightbox(this.src)" class="guide-photo">
+                    <p class="guide-photo-note">Tap the image to enlarge the hot tub and cover-lifter guide.</p>
+                  </div>
                 </div>
-                <img src="info/HotTub.webp" onclick="openLightbox(this.src)" class="zoom-card border-4 border-[#4a4747] rounded shadow-2xl w-full max-w-lg mx-auto block">
-                <p class="text-center text-xs mt-2 italic text-stone-500">Click to expand Hot Tub &amp; Cover Lifter Guide</p>
-            </div>
+            </section>
 
             <!-- Mountain Safety -->
-            <div id="scoop-safety" class="parchment p-6 md:p-8 rounded-xl shadow-lg grid md:grid-cols-2 gap-8 items-center border-t-4 border-[#A45D41]">
+            <section id="scoop-safety" class="arrival-section">
+              <div class="guide-layout guide-image-first">
                 <div>
+                    <img src="info/05_Safety.webp" alt="Mountain safety guide" onclick="openLightbox(this.src)" class="guide-photo">
+                </div>
+                <div>
+                    <p class="arrival-kicker">Outside the cabin</p>
                     <h2 class="section-title">Mountain Safety</h2>
-                    <div class="space-y-2 text-sm leading-relaxed">
+                    <div class="guide-copy">
                         <p><strong>Black Bears:</strong> Active year-round. Never feed them. Make noise, back away slowly. No food outside &mdash; ever.</p>
                         <p><strong>Other Wildlife:</strong> Coyotes, deer, wild turkeys. Keep distance, don&rsquo;t feed.</p>
                         <p><strong>Snakes:</strong> Watch your step on trails, wood piles, tall grass. Copperheads are real. Leave them alone.</p>
@@ -551,41 +580,42 @@
                         <p><strong>Emergencies:</strong> 911 still works. Nearest hospital: Fannin Regional, ~15 min.</p>
                     </div>
                 </div>
-                <div>
-                    <img src="info/05_Safety.webp" onclick="openLightbox(this.src)" class="zoom-card border-4 border-[#4a4747] rounded shadow-2xl w-full">
-                </div>
-            </div>
+              </div>
+            </section>
 
             <!-- Bugs -->
-            <div id="scoop-bugs" class="parchment p-6 md:p-8 rounded-xl shadow-lg border-t-4 border-[#A45D41]">
-                <h2 class="section-title">Bugs</h2>
-                <div class="grid md:grid-cols-2 gap-6 items-start">
-                    <div class="space-y-2 text-sm leading-relaxed">
-                        <p class="font-black text-stone-800">Yep. Cabin in the woods. Bugs be buggin&rsquo;.</p>
+            <section id="scoop-bugs" class="arrival-section">
+                <div class="arrival-section-head">
+                    <div><p class="arrival-kicker">Cabin in the woods</p><h2 class="section-title">Bugs &amp; Ticks</h2></div>
+                </div>
+                <div class="guide-note-grid">
+                    <div class="guide-copy">
+                        <p><strong>Yep. Cabin in the woods. Bugs be buggin&rsquo;.</strong></p>
                         <p>This is their turf &mdash; we just have better furniture and working Wi-Fi. A little mountain attitude goes a long way out here.</p>
                         <p><strong>Bring:</strong> Bug spray, DEET if you mean serious business, a citronella candle if you want to feel fancy while losing.</p>
                         <p><strong>Pro tip:</strong> Just hand the whole situation to your 9-year-old. They like bugs. They&rsquo;ll sort it out and probably make a new friend in the process.</p>
                         <p><strong>Ticks:</strong> Do a quick once-over after hiking through tall grass or brush. Tweezers are in the first aid kit &mdash; use them, not your fingers.</p>
                         <p><strong>Inside the cabin:</strong> The occasional spider or rogue moth is harmless and deeply offended by the screaming. Show some respect.</p>
                     </div>
-                    <div class="bg-stone-100 rounded-xl p-5 border border-stone-200 space-y-2 text-sm">
-                        <p class="font-black text-stone-800 uppercase tracking-wide text-xs mb-3">The Bug Survival Kit</p>
-                        <div class="flex items-start gap-2"><span class="text-[#A45D41] font-black mt-0.5">&#9679;</span><span>Bug spray &mdash; DEET for serious situations, lemon eucalyptus if you&rsquo;re a naturalist</span></div>
-                        <div class="flex items-start gap-2"><span class="text-[#A45D41] font-black mt-0.5">&#9679;</span><span>Deodorant &mdash; doubles as mild deterrent for those committed to smelling good while losing</span></div>
-                        <div class="flex items-start gap-2"><span class="text-[#A45D41] font-black mt-0.5">&#9679;</span><span>Mountain attitude: unbothered, undefeated</span></div>
-                        <div class="flex items-start gap-2"><span class="text-[#A45D41] font-black mt-0.5">&#9679;</span><span>One willing 9-year-old &mdash; fearless, curious, and has nothing to lose</span></div>
+                    <div class="guide-note">
+                        <h3>The bug survival kit</h3>
+                        <ul class="guide-list">
+                            <li>Bug spray &mdash; DEET for serious situations, lemon eucalyptus if you&rsquo;re a naturalist.</li>
+                            <li>Deodorant &mdash; a mild deterrent for those committed to smelling good while losing.</li>
+                            <li>Mountain attitude: unbothered, undefeated.</li>
+                            <li>One willing 9-year-old &mdash; fearless, curious, and has nothing to lose.</li>
+                        </ul>
                     </div>
                 </div>
-            </div>
+            </section>
 
             <!-- Bear Bins -->
-            <div id="scoop-bears" class="parchment p-6 md:p-8 rounded-xl shadow-lg grid md:grid-cols-2 gap-8 items-center border-t-4 border-[#A45D41]">
+            <section id="scoop-bears" class="arrival-section">
+              <div class="guide-layout">
                 <div>
-                    <img id="bear-bin-img" src="webpic/trash.webp" onclick="openLightbox(this.src)" class="zoom-card border-4 border-[#4a4747] rounded shadow-2xl w-full" onmouseover="bearBinHover()">
-                </div>
-                <div>
+                    <p class="arrival-kicker">Keep wildlife outside</p>
                     <h2 class="section-title">Garbage &amp; Bear Bins</h2>
-                    <div class="space-y-2 text-sm leading-relaxed">
+                    <div class="guide-copy">
                         <p><strong>Opening:</strong> Pinch both side handles inward at the same time, then lift. Takes force &mdash; that&rsquo;s the point.</p>
                         <p><strong>Closing:</strong> Press down firmly until it clicks locked on both sides.</p>
                         <p><strong>Bag it first.</strong> Always. Every time.</p>
@@ -595,73 +625,58 @@
                         <p><strong>Full can?</strong> Extra bags under the kitchen sink.</p>
                     </div>
                 </div>
-            </div>
+                <div>
+                    <img id="bear-bin-img" src="webpic/trash.webp" alt="Bear-proof trash bin" onclick="openLightbox(this.src)" class="guide-photo" onmouseover="bearBinHover()">
+                </div>
+              </div>
+            </section>
 
             <!-- Sink & Throne / Septic -->
-            <div id="scoop-kitchen" class="parchment p-6 md:p-8 rounded-xl shadow-lg border-t-4 border-amber-700">
-                <h2 class="section-title">The Sink &amp; The Throne</h2>
-                <p class="text-sm font-black text-stone-800 mb-4">Quick PSA: the septic tank is not a garbage disposal. It&rsquo;s a slow-going digestive system with no sense of humor and a long memory. Be kind to it.</p>
-                <div class="grid md:grid-cols-2 gap-5">
-
-                    <!-- Kitchen Sink column -->
-                    <div class="space-y-3">
-                        <p class="font-black text-amber-800 text-xs uppercase tracking-widest border-b border-amber-200 pb-1">&#127836; Kitchen Sink</p>
-                        <p class="text-xs text-stone-600">If it isn&rsquo;t water or soap, it belongs in the trash. The can is literally right there &mdash; they&rsquo;re basically partners at this point.</p>
-                        <div class="bg-red-50 border border-red-200 p-3 rounded">
-                            <p class="font-black text-red-800 text-xs uppercase tracking-wide mb-2">&#10060; Keep Out of the Drain</p>
-                            <ul class="space-y-1 text-stone-700 text-xs">
-                                <li>Food scraps &amp; grease</li>
-                                <li>Coffee grounds</li>
-                                <li>Paper towels</li>
-                                <li>Anything solid, chunky, or questionable</li>
-                            </ul>
-                        </div>
-                        <div class="bg-green-50 border border-green-200 p-3 rounded">
-                            <p class="font-black text-green-800 text-xs uppercase tracking-wide mb-2">&#10003; Fair Game</p>
-                            <ul class="space-y-1 text-stone-700 text-xs">
-                                <li>Water</li>
-                                <li>Dish soap &amp; rinse water</li>
-                                <li>Good vibes</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- Throne column -->
-                    <div class="space-y-3">
-                        <p class="font-black text-amber-800 text-xs uppercase tracking-widest border-b border-amber-200 pb-1">&#128701; The Throne</p>
-                        <p class="text-xs text-stone-600">The toilet is on the same septic system. Treat it with the same respect. &ldquo;Flushable&rdquo; wipes are a marketing lie &mdash; they will absolutely not be forgiven.</p>
-                        <div class="bg-red-50 border border-red-200 p-3 rounded">
-                            <p class="font-black text-red-800 text-xs uppercase tracking-wide mb-2">&#10060; Do Not Flush</p>
-                            <ul class="space-y-1 text-stone-700 text-xs">
-                                <li>&ldquo;Flushable&rdquo; wipes (they&rsquo;re not &mdash; they&rsquo;re liars)</li>
-                                <li>Paper towels</li>
-                                <li>Feminine products</li>
-                                <li>Anything that isn&rsquo;t TP</li>
-                            </ul>
-                        </div>
-                        <div class="bg-green-50 border border-green-200 p-3 rounded">
-                            <p class="font-black text-green-800 text-xs uppercase tracking-wide mb-2">&#10003; Throne-Approved</p>
-                            <ul class="space-y-1 text-stone-700 text-xs">
-                                <li>Septic-safe TP (provided &mdash; please use it)</li>
-                                <li>Water</li>
-                                <li>That&rsquo;s genuinely it</li>
-                            </ul>
-                        </div>
-                    </div>
-
+            <section id="scoop-kitchen" class="arrival-section">
+                <div class="arrival-section-head">
+                    <div><p class="arrival-kicker">Septic-smart basics</p><h2 class="section-title">Kitchen &amp; Bathroom</h2></div>
                 </div>
-                <p class="text-xs text-stone-500 italic mt-4">A happy septic means a happy cabin. Your future self and the next three families are quietly counting on you.</p>
-            </div>
+                <p class="guide-copy mb-4">The cabin uses a septic system, so a little care goes a long way. If it is not water, soap, or toilet paper, please put it in the trash.</p>
+                <div class="guide-note-grid">
+                    <div class="guide-note">
+                        <h3>At the kitchen sink</h3>
+                        <p>Water, dish soap, and rinse water are fine. Please keep these out of the drain:</p>
+                        <ul class="guide-list">
+                            <li>Food scraps and grease</li>
+                            <li>Coffee grounds</li>
+                            <li>Paper towels</li>
+                            <li>Anything solid or chunky</li>
+                        </ul>
+                    </div>
+                    <div class="guide-note">
+                        <h3>In the bathroom</h3>
+                        <p>Only septic-safe toilet paper should be flushed. Please put these in the trash:</p>
+                        <ul class="guide-list">
+                            <li>&ldquo;Flushable&rdquo; wipes</li>
+                            <li>Paper towels</li>
+                            <li>Feminine products</li>
+                            <li>Anything other than toilet paper</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
 
             <!-- BIDET BEAR (moved here from Check Out) -->
-            <div class="parchment p-8 rounded-2xl shadow-xl border-4 border-[#A45D41] max-w-2xl mx-auto text-center">
-                <h2 class="section-title text-center">The Refreshing Cabin Spritz Bidet</h2>
-                <div class="overflow-hidden rounded-xl shadow-2xl mb-5 max-w-xs mx-auto border-2 border-stone-300">
-                    <img id="bidet-bear" src="webpic/bidet.webp" alt="Bidet" class="w-full h-auto object-cover hover:scale-[1.04] transition-transform duration-500 cursor-pointer" onclick="bidetClick()">
+            <section class="arrival-section">
+              <div class="guide-layout guide-image-first">
+                <div class="guide-bidet">
+                    <img id="bidet-bear" src="webpic/bidet.webp" alt="Cabin bidet guide" class="guide-photo" onclick="bidetClick()">
                 </div>
-                <p class="text-xl font-black text-stone-900 italic drop-shadow">&ldquo;Don&rsquo;t forget to check out the bidet for the freshest end-of-poo experience ever.&rdquo;</p>
-                <p class="egg-hint mt-2">the bear knows... click him</p>
-            </div>
+                <div>
+                    <p class="arrival-kicker">A cabin extra</p>
+                    <h2 class="section-title">Using the Bidet</h2>
+                    <div class="guide-copy">
+                        <p>The bidet is ready if you would like to use it. Start with the lowest setting, stay seated, and increase the water pressure slowly until it feels comfortable.</p>
+                        <p>When you are finished, return the control to the off position. The toilet works normally if you prefer not to use the bidet.</p>
+                    </div>
+                </div>
+              </div>
+            </section>
         </div>
 
 
