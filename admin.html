@@ -65,7 +65,7 @@
     .tab.external { background:#fff; border-color:var(--line); color:var(--pine); }
     .count-badge { display:inline-grid; place-items:center; min-width:20px; height:20px; margin-left:6px; padding:0 6px; border-radius:999px; background:#8a2f2f; color:white; font-size:.6rem; vertical-align:middle; }
     .count-badge[hidden] { display:none !important; }
-    .tab-panel { display:none; min-width:0; padding:28px; }
+    .tab-panel { display:none; min-width:0; padding:28px; scroll-margin-top:12px; }
     .tab-panel.active { display:block; grid-column:2; }
     #panel-invites.active { display:grid; grid-template-columns:minmax(285px,360px) minmax(0,1fr); gap:24px; align-items:start; }
     .content .ghost,.create .ghost { color:var(--pine); background:white; border-color:var(--line); }
@@ -701,7 +701,7 @@
       const message = `You’re invited to the Weeks Creek Haven Friends Hub.${options?`\n\nStay choices:\n${options}\n\nEach deadline applies only to that option. If it expires, that date is freed for others while your other unexpired choices stay available. Choosing one releases the rest.`:''}\n\nOpen: ${location.origin}/important-info.html\nPasscode: ${codeSuffix(state.newInvite.passcode)}\n\nThe sign-in page already supplies WCH-. Enter your name and these 8 characters to unlock the cabin guide${options?' and choose your stay':''}.`;
       await navigator.clipboard.writeText(message); $('copy-invite').textContent='Message copied'; setTimeout(()=>$('copy-invite').textContent='Copy message',1400);
     });
-    document.querySelector('.tabs').addEventListener('click',(event)=>{ const tab=event.target.closest('[data-tab]'); if(!tab)return; document.querySelectorAll('.tab,.tab-panel').forEach(el=>el.classList.remove('active')); tab.classList.add('active'); $(`panel-${tab.dataset.tab}`).classList.add('active'); if(tab.dataset.tab==='accounting'&&!state.accountingLoaded)loadAccounting(); if(tab.dataset.tab==='activity'){ try{localStorage.setItem('wch_seen_activity',new Date().toISOString());}catch{} render(); } });
+    document.querySelector('.tabs').addEventListener('click',(event)=>{ const tab=event.target.closest('[data-tab]'); if(!tab)return; document.querySelectorAll('.tab,.tab-panel').forEach(el=>el.classList.remove('active')); tab.classList.add('active'); const panel=$(`panel-${tab.dataset.tab}`);panel.classList.add('active'); if(tab.dataset.tab==='accounting'&&!state.accountingLoaded)loadAccounting(); if(tab.dataset.tab==='activity'){ try{localStorage.setItem('wch_seen_activity',new Date().toISOString());}catch{} render(); } requestAnimationFrame(()=>panel.scrollIntoView({behavior:'smooth',block:'start'})); });
     document.querySelector('.stats').addEventListener('click',(event)=>{const link=event.target.closest('[data-summary-link]');if(!link)return;const kind=link.dataset.summaryLink;state.showArchivedBookings=false;state.bookingFilter=kind==='requests'?'new':'all';state.bookingSort=kind==='upcoming'?'arrival':'attention';document.querySelectorAll('.tab,.tab-panel').forEach(el=>el.classList.remove('active'));document.querySelector('[data-tab="bookings"]').classList.add('active');$('panel-bookings').classList.add('active');render();$('booking-list').scrollIntoView({behavior:'smooth',block:'start'});});
     $('accounting-year').addEventListener('change',renderAccounting);
     $('refresh-accounting').addEventListener('click',loadAccounting);
