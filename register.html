@@ -226,9 +226,9 @@
         </section>
         <div id="calendar-selection" class="message picked" hidden role="status"></div>
         <div class="grid">
+          <label>Mobile phone<input name="phone" type="tel" autocomplete="tel" maxlength="40" placeholder="555 867-5309" required><small class="field-note">Enter this first. It checks Friends &amp; Family pricing and helps recognize returning guests.</small></label>
+          <label>Email address<input name="email" type="email" autocomplete="email" maxlength="160" required><small class="field-note">Returning details fill only when both phone and email match a prior booking.</small></label>
           <label>Primary guest legal name<input name="name" autocomplete="name" maxlength="100" required><small class="field-note">Must match the booking guest’s photo ID if verification is requested.</small></label>
-          <label>Email address<input name="email" type="email" autocomplete="email" maxlength="160" required></label>
-          <label>Mobile phone<input name="phone" type="tel" autocomplete="tel" maxlength="40" placeholder="555 867-5309" required><small class="field-note">Used for booking and stay communication. Friends &amp; family preferred pricing appears automatically when recognized.</small></label>
           <label>Number of guests<select id="guest-count" name="guests" required><option value="">Choose</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></label>
           <label id="dog-field" hidden>Dogs <small>(approved guests)</small><select id="dog-count" name="dogs"><option value="0">None</option><option value="1">1 dog</option><option value="2">2 dogs</option><option value="3">3 dogs</option><option value="4">4 dogs</option></select></label>
         </div>
@@ -443,7 +443,11 @@
     form.elements.guests.addEventListener('change',()=>quoteChanged(1));
     form.elements.dogs.addEventListener('change',()=>quoteChanged(1));
     form.elements.lateCheckout.addEventListener('change',()=>quoteChanged(1));
-    form.elements.phone.addEventListener('input',()=>{setDogsVisibility(false);renderCalendars();renderQuote(1);scheduleDiscountQuotes();});
+    let returningGuestTimer=0,returningGuestSignature='';
+    async function restoreReturningGuest(){const phone=String(form.elements.phone.value||'').replace(/\D/g,'').replace(/^1(?=\d{10}$)/,''),email=String(form.elements.email.value||'').trim().toLowerCase(),signature=`${phone}|${email}`;if(phone.length!==10||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||signature===returningGuestSignature)return;returningGuestSignature=signature;try{const response=await fetch('/api/returning-guest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,email})}),data=await response.json();if(!response.ok||!data.found)return;for(const [name,value] of Object.entries(data.profile||{})){const field=form.elements[name];if(field&&!field.value&&value!==''&&value!==null)field.value=String(value);}message.className='message success';message.textContent='Welcome back! We filled in the booking details saved from your previous stay.';message.hidden=false;}catch{}}
+    function scheduleReturningGuest(){clearTimeout(returningGuestTimer);returningGuestTimer=setTimeout(restoreReturningGuest,450);}
+    form.elements.phone.addEventListener('input',()=>{setDogsVisibility(false);renderCalendars();renderQuote(1);scheduleDiscountQuotes();scheduleReturningGuest();});
+    form.elements.email.addEventListener('input',scheduleReturningGuest);
     const ownerQuestionField=document.getElementById('owner-question-field'),ownerQuestions=form.elements.ownerQuestions;
     function updateBookingIntent(){const intent=form.elements.bookingIntent.value,wantsQuestions=intent==='questions';ownerQuestionField.hidden=!wantsQuestions;ownerQuestions.required=wantsQuestions;button.textContent=wantsQuestions?'Send questions to owners':'Start secure checkout';}
     form.elements.bookingIntent.forEach(input=>input.addEventListener('change',updateBookingIntent));
