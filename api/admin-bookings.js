@@ -32,11 +32,18 @@ function stayEmailVariables(booking) {
   const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || booking.dateChoices?.[0] || {};
   const packetUrl = bookingPacketUrl(booking.id);
   const noCleaner = Boolean(booking.friendsAndFamilyDiscount) && booking.friendsAndFamilyDiscount.chargeCleaning !== true;
+  const reviewUrl = `https://www.weekscreekhaven.com/review.html?token=${encodeURIComponent(createReviewToken(booking.id))}`;
+  const refund = (booking.refunds || []).at(-1) || {};
   return {
     guestName:booking.name, arrival:dates.arrival || '', departure:dates.departure || '', checkout:booking.lateCheckout?'noon':'11:00 AM', packetUrl,
     paymentUrl:booking.paymentUrl || packetUrl, depositAmount:`$${((Number(booking.depositAmountCents)||0)/100).toFixed(2)}`,
     balanceAmount:`$${((Number(booking.squareBalanceCents ?? booking.balanceAmountCents)||0)/100).toFixed(2)}`,
-    bookingUrl:'https://www.weekscreekhaven.com/register.html', referralCode:booking.referralCode || '',
+    bookingUrl:'https://www.weekscreekhaven.com/register.html', reviewUrl, referralCode:booking.referralCode || '',
+    total:`$${((Number(booking.amountCents)||0)/100).toFixed(2)}`, securityDeposit:`$${((Number(booking.securityDepositCents)||0)/100).toFixed(2)}`,
+    paymentText:booking.paymentRequirementMet?'Required payment has been received.':`Payment details: ${booking.paymentUrl || packetUrl}`,
+    nextStep:booking.agreementAcceptedAt?'Your agreement is signed. Review the packet for the latest stay details.':'Please open the packet and sign the rental agreement.',
+    refundAmount:`$${((Number(refund.amountCents)||0)/100).toFixed(2)}`, refundReason:refund.reason || 'Owner-approved adjustment',
+    hubUrl:booking.welcomePreviewUrl || packetUrl, inviteCode:booking.invitePasscode || '',
     checkoutChecklistUrl:noCleaner?'https://www.weekscreekhaven.com/checkout.html':packetUrl,
     checkoutExtraSteps:noCleaner?'Friends & Family checkout — no cleaner is scheduled after this stay. Please strip used beds, clean the bathrooms you used, complete at least one load of linens, and leave the cabin ready for the next adventure. Don’t let the door hit you on the way out — say “Alexa, Going Home” for the quick exit routine.':'Your cleaner will handle beds, bathrooms, and laundry. Please do not strip the beds.',
   };
@@ -335,6 +342,19 @@ export default async function handler(request, response) {
       });
       await appendBookingRecord({ type:'status', bookingId:booking.id, changes:{ lastManualStayEmailId:template.id, lastManualStayEmailSentAt:createdAt }, createdAt });
       return json(response, 200, { ok:true, templateName:template.name });
+    }
+    if (action === 'send-booking-template') {
+      if (!booking.email) return json(response, 400, { error: 'This booking does not have a guest email address.' });
+      if (String(process.env.OWNER_EMAIL || '').trim().toLowerCase() === String(booking.email).trim().toLowerCase()) return json(response, 409, { error: 'This booking still uses the owner email. Correct the guest email before sending.' });
+      const calendar = await getBookingCalendar();
+      const template = mergeEmailTemplates(calendar.emailTemplates).find(item => item.id === String(request.body?.templateId || '') && item.audience === 'Guest' && item.enabled !== false);
+      if (!template) return json(response, 400, { error: 'Choose an active guest email from the library.' });
+      await sendEmail({
+        to:booking.email, toName:booking.name, templateKey:template.id, templateVariables:stayEmailVariables(booking),
+        subject:template.subject || 'Weeks Creek Haven booking update', text:template.body || `Hi ${booking.name},\n\nHere is an update about your Weeks Creek Haven booking.`,
+      });
+      await appendBookingRecord({ type:'status', bookingId:booking.id, changes:{ lastManualEmailId:template.id, lastManualEmailSentAt:createdAt }, createdAt });
+      return json(response, 200, { ok:true, templateName:template.name, guestName:booking.name });
     }
     if (action === 'decline') {
       await appendBookingRecord({ type: 'status', bookingId: booking.id, changes: { status: 'declined', declinedAt: createdAt }, createdAt });
