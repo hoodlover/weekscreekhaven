@@ -74,7 +74,12 @@ const requiredContacts = [
 ];
 
 async function contractorsWithRequiredPlaceholders() {
-  const contractors = await getContractors();
+  const contractors = (await getContractors()).map((item) => {
+    if (item.name === 'ABR Locksmiths') return { ...item, category: 'Locksmith' };
+    if (item.name === 'TDS Telecom') return { ...item, category: 'Phone & Internet' };
+    if (item.category === 'Other') return { ...item, category: 'Disaster & Suicide Contacts' };
+    return item;
+  });
   const categories = new Set(contractors.map((item) => String(item.category || '').toLowerCase()));
   const createdAt = new Date().toISOString();
   for (const [category, name] of requiredContacts) {
@@ -83,7 +88,10 @@ async function contractorsWithRequiredPlaceholders() {
     await appendPropertyRecord({ type:'contractor_created', contractor, createdAt });
     contractors.push(contractor);
   }
-  return contractors.sort((a,b)=>String(a.category).localeCompare(String(b.category))||String(a.name).localeCompare(String(b.name)));
+  return contractors.sort((a,b)=>{
+    const ownerOrder = Number(b.category === 'Primary owner') - Number(a.category === 'Primary owner');
+    return ownerOrder || String(a.category).localeCompare(String(b.category)) || String(a.name).localeCompare(String(b.name));
+  });
 }
 
 function contractorFrom(body, current = {}) {
@@ -91,7 +99,7 @@ function contractorFrom(body, current = {}) {
   if (name.length < 2) throw new Error('Add the contractor or company name.');
   const parsedEmail = email(body?.email);
   if (parsedEmail === null) throw new Error('Enter a valid email address or leave it blank.');
-  return { ...current, id: current.id || crypto.randomUUID(), name, category: text(body?.category, 60) || 'Other', phone: text(body?.phone, 60), email: parsedEmail, services: text(body?.services, 1500), scheduling: text(body?.scheduling, 1500), notes: text(body?.notes, 2000), updatedAt: new Date().toISOString(), createdAt: current.createdAt || new Date().toISOString() };
+  return { ...current, id: current.id || crypto.randomUUID(), name, category: text(body?.category, 60) || 'Disaster & Suicide Contacts', phone: text(body?.phone, 60), email: parsedEmail, services: text(body?.services, 1500), scheduling: text(body?.scheduling, 1500), notes: text(body?.notes, 2000), updatedAt: new Date().toISOString(), createdAt: current.createdAt || new Date().toISOString() };
 }
 
 export default async function handler(request, response) {
