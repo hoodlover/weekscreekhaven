@@ -52,15 +52,26 @@ export default async function handler(request, response) {
           bookingPacketUrl: bookingPacketUrl(booking.id),
           invitePasscode: invite?.passcode || '',
           welcomePreviewUrl: invite ? `/api/admin-preview-invite?inviteId=${encodeURIComponent(invite.id)}` : '',
-          dateChoices: (booking.dateChoices || []).map((choice) => {
+          dateChoices: (booking.dateChoices || []).map((choice, choiceIndex) => {
             const calculatedQuote = choice.quote
               ? withEstimatedTaxesAndFees(choice.quote)
               : quoteStay({ ...choice, guests: booking.guests || 1, dogs: booking.dogs || 0, lateCheckout: booking.lateCheckout, rates: calendar.rates || [] });
+            const isApprovedChoice = choiceIndex === (Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0);
+            const revisedTotalCents = Number(booking.preTaxAmountCents);
+            const displayedQuote = isApprovedChoice && !['pending', 'offered', 'declined', 'cancelled'].includes(booking.status) && Number.isInteger(revisedTotalCents)
+              ? withEstimatedTaxesAndFees({
+                  ...calculatedQuote,
+                  totalCents: revisedTotalCents,
+                  standardTotalCents: Number(booking.originalAmountCents) || calculatedQuote?.standardTotalCents || calculatedQuote?.totalCents || revisedTotalCents,
+                  discountAmountCents: Math.max(0, (Number(booking.originalAmountCents) || calculatedQuote?.standardTotalCents || calculatedQuote?.totalCents || revisedTotalCents) - revisedTotalCents),
+                  discountCents: Math.max(0, (Number(booking.originalAmountCents) || calculatedQuote?.standardTotalCents || calculatedQuote?.totalCents || revisedTotalCents) - revisedTotalCents),
+                })
+              : calculatedQuote;
             return {
               ...choice,
               calculatedQuote: choice.complimentary
-                ? withEstimatedTaxesAndFees({ ...calculatedQuote, totalCents: 0, complimentary: true })
-                : calculatedQuote,
+                ? withEstimatedTaxesAndFees({ ...displayedQuote, totalCents: 0, complimentary: true })
+                : displayedQuote,
             };
           }),
         };
@@ -155,12 +166,17 @@ export default async function handler(request, response) {
       const currentInvoice = booking.squareInvoiceId ? await getSquareInvoice(booking.squareInvoiceId) : null;
       const paidCents = completedInvoiceCents(currentInvoice);
       if (paidCents > 0 || booking.paymentRequirementMet) return json(response, 409, { error: 'This invoice already has a payment. Use the refund or credit controls instead.' });
-      const revisedPreTaxAmountCents = Math.round(Number(request.body?.revisedPreTaxAmount) * 100);
+      const enteredPreTaxAmountCents = Math.round(Number(request.body?.revisedPreTaxAmount) * 100);
+      const enteredDiscountCents = Math.round(Number(request.body?.discountAmount || 0) * 100);
+      const revisedPreTaxAmountCents = enteredPreTaxAmountCents - enteredDiscountCents;
+      if (!Number.isInteger(enteredDiscountCents) || enteredDiscountCents < 0) return json(response, 400, { error: 'Enter the discount as a valid dollar amount.' });
       if (!Number.isInteger(revisedPreTaxAmountCents) || revisedPreTaxAmountCents < 100) return json(response, 400, { error: 'Enter a revised pre-tax stay price of at least $1.00.' });
       const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || booking.dateChoices?.[0];
       if (!dates?.arrival || !dates?.departure) return json(response, 400, { error: 'The selected stay dates could not be found.' });
       const previousPreTaxAmountCents = Number(booking.preTaxAmountCents) || 0;
       const ownerPriceAdjustmentCents = previousPreTaxAmountCents - revisedPreTaxAmountCents;
+      const originalAmountCents = Number(booking.originalAmountCents) || previousPreTaxAmountCents;
+      const discountAmountCents = Math.max(0, originalAmountCents - revisedPreTaxAmountCents);
       const securityDepositCents = Number.isInteger(Number(booking.securityDepositCents)) ? Number(booking.securityDepositCents) : 30000;
       const tax = withEstimatedTaxesAndFees({ totalCents: revisedPreTaxAmountCents, actualNights: Math.max(1, daysBetween(dates.arrival, dates.departure)) });
       const stayAmountCents = tax.estimatedGrandTotalCents;
@@ -170,12 +186,12 @@ export default async function handler(request, response) {
       const isFriendInvoice = Boolean(booking.friendsAndFamilyDiscount) || String(booking.paymentPlan || '').includes('friend');
       const payment = isFriendInvoice
         ? await createSquareFriendInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, amountCents, securityDepositCents, arrival: dates.arrival, revisionKey: invoiceRevision })
-        : await createSquareBookingInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, address: { line1: booking.billingAddress, city: booking.billingCity, state: booking.billingState, postalCode: booking.billingPostalCode }, amountCents, securityDepositCents, depositBaseCents: revisedPreTaxAmountCents, arrival: dates.arrival, discountCents: Math.max(0, Number(booking.discountAmountCents) || 0) + Math.max(0, ownerPriceAdjustmentCents), depositDueDays: booking.earlyBirdDiscountCents ? 7 : 1, revisionKey: invoiceRevision });
+        : await createSquareBookingInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, address: { line1: booking.billingAddress, city: booking.billingCity, state: booking.billingState, postalCode: booking.billingPostalCode }, amountCents, securityDepositCents, depositBaseCents: revisedPreTaxAmountCents, arrival: dates.arrival, discountCents: discountAmountCents, depositDueDays: booking.earlyBirdDiscountCents ? 7 : 1, revisionKey: invoiceRevision });
       const paymentPlan = isFriendInvoice ? 'friends-family-total' : payment.fullPaymentRequired ? 'full-payment' : 'deposit-balance';
       const invoiceHistory = [...(booking.invoiceHistory || []), ...(booking.squareInvoiceId ? [{ invoiceId: booking.squareInvoiceId, orderId: booking.squareOrderId || null, paymentUrl: booking.paymentUrl || null, replacedAt: createdAt, amountCents: Number(booking.amountCents) || 0 }] : [])];
       const changes = {
-        status: 'pending-payment', previousPreTaxAmountCents, preTaxAmountCents: revisedPreTaxAmountCents, stayAmountCents, securityDepositCents, amountCents,
-        ownerPriceAdjustmentCents, ownerPriceAdjustedAt: createdAt, invoiceRevision, invoiceHistory,
+        status: 'pending-payment', previousPreTaxAmountCents, originalAmountCents, preTaxAmountCents: revisedPreTaxAmountCents, stayAmountCents, securityDepositCents, amountCents,
+        discountAmountCents, ownerPriceAdjustmentCents, ownerPriceAdjustedAt: createdAt, invoiceRevision, invoiceHistory,
         salesTaxCents: tax.salesTaxCents, lodgingTaxCents: tax.lodgingTaxCents, stateHotelMotelFeeCents: tax.stateHotelMotelFeeCents, taxesAndFeesCents: tax.estimatedTaxesAndFeesCents,
         paymentPlan, paymentUrl: payment.url, squareInvoiceId: payment.invoiceId, squareOrderId: payment.orderId, squareCustomerId: payment.customerId,
         invoiceSentAt: createdAt, squareInvoiceStatus: 'UNPAID', squarePaidCents: 0, squareBalanceCents: amountCents, paymentRequirementMet: false, paymentFullyPaid: false,
