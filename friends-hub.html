@@ -374,6 +374,13 @@
     <p class="egg-hint mt-1">psst... try the konami code</p>
 </header>
 
+<div id="personalized-guide-note" class="max-w-5xl mx-auto px-4 mb-3" hidden>
+    <div class="dark-card rounded-xl px-5 py-3 text-center" style="border-color:rgba(212,163,115,0.35);">
+        <p id="personalized-stay-summary" class="text-[#f4eee0] text-sm font-bold"></p>
+        <a href="/friends-hub.html" class="inline-block mt-1 text-[10px] uppercase tracking-[0.14em] text-stone-400 hover:text-[#d4a373] transition">Not your booking? Open the general guide</a>
+    </div>
+</div>
+
 <!-- PWA Banner: slides up once, click × to dismiss -->
 <div id="pwa-banner">
     <div class="dark-card border-t-2 px-5 py-4 shadow-2xl" style="border-color:rgba(164,93,65,0.6);">
@@ -447,7 +454,7 @@
 
             <section class="arrival-intro">
                 <p class="arrival-kicker">Arrival essentials</p>
-                <h2>Settle in without hunting for answers.</h2>
+                <h2 id="guest-welcome-title">Settle in without hunting for answers.</h2>
                 <p>Your door code, Wi-Fi, and the few things worth doing when you first arrive are all right here.</p>
             </section>
 
@@ -740,7 +747,7 @@
 
             <section class="arrival-intro">
                 <p class="arrival-kicker">Friends &amp; family checkout</p>
-                <h2 class="checkout-single-line">Leave the Haven ready for the next visit.</h2>
+                <h2 id="guest-checkout-title" class="checkout-single-line">Leave the Haven ready for the next visit.</h2>
                 <p>There is no set checkout time for friends and family. If we need the cabin by a certain time, Lance or Heather will let you know personally.</p>
             </section>
 
@@ -814,7 +821,11 @@
                     </div>
                     <div>
                         <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-1">Your name</label>
-                        <input type="text" name="guest_names" class="maint-input" placeholder="Your name" required>
+                        <input id="checkout-guest-name" type="text" name="guest_names" autocomplete="name" class="maint-input" placeholder="Your name" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-1">Phone number</label>
+                        <input id="checkout-guest-phone" type="tel" name="guest_phone" autocomplete="tel" class="maint-input" placeholder="Your phone number">
                     </div>
                     <label class="departure-form-choice">
                         <input type="checkbox" name="cleanliness_confirm" value="yes" required>
@@ -1292,17 +1303,55 @@ fetchForm('checkout-form',    'checkout-submit',    'checkout-sending',    'chec
 fetchForm('guestbook-form',   'guestbook-submit',   'guestbook-sending',   'guestbook-error',   '/thank-you-guestbook.html');
 fetchForm('maintenance-form', 'maintenance-submit', 'maintenance-sending', 'maintenance-error', '/thank-you-maintenance.html');
 
-// Show the guest's booking packet when this guide is opened through an invitation.
+function formatGuestStayDate(value) {
+    if (!value) return '';
+    return new Intl.DateTimeFormat('en-US', { month:'short', day:'numeric', year:'numeric', timeZone:'UTC' }).format(new Date(`${value}T12:00:00Z`));
+}
+
+function personalizeGuestGuide(profile, packetUrl = '') {
+    const firstName = profile.guestName || profile.name || '';
+    const fullName = profile.guestFullName || profile.name || firstName;
+    const phone = profile.guestPhone || profile.phone || '';
+    if (firstName) {
+        document.getElementById('guest-welcome-title').textContent = `Welcome to the Haven, ${firstName}.`;
+        document.getElementById('guest-checkout-title').textContent = `Safe travels, ${firstName} & crew.`;
+    }
+    document.getElementById('checkout-guest-name').value = fullName;
+    document.getElementById('checkout-guest-phone').value = phone;
+    const dates = profile.arrival && profile.departure ? `${formatGuestStayDate(profile.arrival)} – ${formatGuestStayDate(profile.departure)}` : '';
+    if (firstName || dates) {
+        document.getElementById('personalized-stay-summary').textContent = [firstName ? `${firstName}'s private guest guide` : '', dates].filter(Boolean).join(' · ');
+        document.getElementById('personalized-guide-note').hidden = false;
+    }
+    if (packetUrl) {
+        const packet = document.getElementById('hub-booking-packet');
+        packet.href = packetUrl;
+        packet.hidden = false;
+    }
+}
+
+// Personalize only when a valid private booking token or invite session is present.
 async function loadGuestBookingTools() {
     try {
+        const token = new URLSearchParams(location.search).get('token') || '';
+        if (token) {
+            const response = await fetch(`/api/booking-packet?token=${encodeURIComponent(token)}`, { cache:'no-store' });
+            const data = await response.json().catch(() => ({}));
+            if (response.ok) {
+                personalizeGuestGuide(data, `/booking-packet.html?token=${encodeURIComponent(token)}`);
+                return;
+            }
+        }
         const response = await fetch('/api/invite-profile', { cache:'no-store' });
         const data = await response.json();
         if (!response.ok) return;
-        if (data.bookingPacketUrl) {
-            const packet = document.getElementById('hub-booking-packet');
-            packet.href = data.bookingPacketUrl;
-            packet.hidden = false;
-        }
+        personalizeGuestGuide({
+            guestName: data.bookingProfile?.guestName || data.visitorName || '',
+            guestFullName: data.bookingProfile?.guestName || data.visitorName || '',
+            guestPhone: data.bookingProfile?.phone || '',
+            arrival: data.bookingProfile?.arrival || '',
+            departure: data.bookingProfile?.departure || '',
+        }, data.bookingPacketUrl || '');
     } catch { /* The Hub remains usable if profile details are temporarily unavailable. */ }
 }
 loadGuestBookingTools();

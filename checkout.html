@@ -158,7 +158,8 @@
                     </div>
                 </div>
                 <div><label class="field-label" for="checkout-notes">Anything broken, unfinished, or worth improving?</label><textarea id="checkout-notes" name="maintenance_issue" rows="3" class="field" placeholder="Tell us what happened or what would make the next stay better."></textarea></div>
-                <div><label class="field-label" for="guest-name">Your name</label><input id="guest-name" type="text" name="guest_names" class="field" placeholder="Your name" required></div>
+                <div><label class="field-label" for="guest-name">Your name</label><input id="guest-name" type="text" name="guest_names" autocomplete="name" class="field" placeholder="Your name" required></div>
+                <div><label class="field-label" for="guest-phone">Phone number</label><input id="guest-phone" type="tel" name="guest_phone" autocomplete="tel" class="field" placeholder="Your phone number"></div>
                 <label class="choice"><input type="checkbox" name="cleanliness_confirm" value="yes" required><span>I completed the checkout steps that apply to my stay.</span></label>
                 <div class="quick-exit md:ml-auto md:max-w-md"><span>Quick exit routine</span><strong>&ldquo;Alexa, Going Home&rdquo;</strong></div>
                 <button type="submit" class="send-button">Send Checkout Report</button>
@@ -184,6 +185,19 @@ if (cleanerScheduled) {
     document.getElementById('checkout-heading').textContent = 'A few quick steps before you go.';
     document.getElementById('checkout-timing').textContent = 'Your cleaner is scheduled and will handle beds, bathrooms, and laundry. Your confirmed checkout time is in your booking details.';
 }
+
+async function loadCheckoutGuest() {
+    if (!checkoutToken) return;
+    try {
+        const response = await fetch(`/api/booking-packet?token=${encodeURIComponent(checkoutToken)}`, { cache:'no-store' });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) return;
+        document.getElementById('guest-name').value = data.guestFullName || data.guestName || '';
+        document.getElementById('guest-phone').value = data.guestPhone || '';
+        if (data.guestName) document.getElementById('checkout-heading').textContent = `Safe travels, ${data.guestName} & crew.`;
+    } catch { /* Keep the generic form available if booking details cannot load. */ }
+}
+loadCheckoutGuest();
 
 const friendBoxIds = ['linens','bathrooms','dishes','fridge','trash','fireplace','hottub','lights','lockup','walkthrough'];
 friendBoxIds.forEach(id => document.getElementById(id)?.addEventListener('change', () => {
