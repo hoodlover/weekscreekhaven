@@ -1,6 +1,6 @@
 import { appendBookingRecord, getBookingCalendar, rangesOverlap, unavailableRanges } from '../_lib/booking-store.js';
 import { emailConfigured, escapeEmailHtml, sendEmail } from '../_lib/email.js';
-import { enforceRateLimit, json, rateLimitJson, sameOriginRequest } from '../_lib/security.js';
+import { createAgreementToken, enforceRateLimit, json, rateLimitJson, sameOriginRequest } from '../_lib/security.js';
 import { applyFriendsAndFamilyDiscount, money, quoteStay } from '../pricing.js';
 import { automaticallyApproveBooking } from '../_lib/auto-booking.js';
 
@@ -139,7 +139,8 @@ export default async function handler(request, response) {
     if (bookingIntent!=='questions' && emailConfigured() && process.env.OWNER_EMAIL) {
       try { await sendEmail({to:process.env.OWNER_EMAIL,toName:'Lance',templateKey:'owner-new-request',templateVariables:{guestName:name,adminUrl:'https://www.weekscreekhaven.com/admin.html'},subject:`Automatically accepted stay for ${name}`,text:`${name}'s stay from ${first.arrival} through ${first.departure} was accepted automatically. Review it in the Admin Hub.`,html:`<p><strong>${escapeEmailHtml(name)}</strong> was automatically accepted for <strong>${first.arrival} through ${first.departure}</strong>.</p><p><a href="https://www.weekscreekhaven.com/admin.html">Review in the Admin Hub</a></p>`}); } catch(error) { console.error('Owner auto-booking alert failed',error); }
     }
-    return json(response, 201, { ok: true, requestId: booking.id, autoApproved:Boolean(approvedBooking.autoApproved), questionsOnly:bookingIntent==='questions', paymentUrl:approvedBooking.paymentUrl||null, confirmationSent, quotes: dateChoices.map((choice) => choice.quote) });
+    const bookingPacketUrl = bookingIntent === 'questions' ? null : `/booking-packet.html?token=${encodeURIComponent(createAgreementToken(booking.id, 365 * 86400))}`;
+    return json(response, 201, { ok: true, requestId: booking.id, autoApproved:Boolean(approvedBooking.autoApproved), questionsOnly:bookingIntent==='questions', paymentUrl:approvedBooking.paymentUrl||null, bookingPacketUrl, confirmationSent, quotes: dateChoices.map((choice) => choice.quote) });
   } catch (error) {
     console.error(error);
     return json(response, 503, { error: 'We could not save that request. Please try again.' });
