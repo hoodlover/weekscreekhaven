@@ -207,8 +207,9 @@
     @media (max-width:560px) {
       .shell { width:calc(100% - 8px); padding:6px 0 38px; }
       .topbar { align-items:stretch; flex-direction:column; gap:6px; margin-bottom:8px; }
-      .brand { flex:0 0 auto; gap:7px; min-width:0; }
-      .brand img { width:55px; height:55px; }
+      .brand { flex:0 0 auto; align-items:center; gap:8px; min-width:0; }
+      .brand a { flex:0 0 72px; width:72px; height:72px; display:grid; place-items:center; }
+      .brand img { width:72px; height:72px; display:block; object-fit:contain; }
       h1 { font-size:1.55rem; line-height:.88; }
       h1 .command-title { font-size:.59em; }
       .eyebrow { font-size:.5rem; letter-spacing:.1em; }
