@@ -458,7 +458,7 @@
       try {
         const response=await fetch('/api/booking-requests',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
         const data=await response.json().catch(()=>({})); if(!response.ok) { const error=new Error(data.error || 'We could not create your checkout.'); error.unavailableChoices=data.unavailableChoices; throw error; }
-        const quote=data.quotes?.[0],questionsOnly=payload.bookingIntent==='questions',confirmation=[
+        const quote=data.quotes?.[0],questionsOnly=payload.bookingIntent==='questions',reservationDepositCents=quote?.complimentary?0:Math.round((Number(quote?.totalCents)||0)*.20),confirmation=[
           questionsOnly?'WEEKS CREEK HAVEN — QUESTION REQUEST RECEIVED':'WEEKS CREEK HAVEN — CHECKOUT RECEIVED',
           '',
           `Confirmation: ${data.requestId||'Created'}`,
@@ -469,6 +469,11 @@
           '',
           questionsOnly?'STATUS: Sent to the owners for a reply':'STATUS: Payment and agreement pending',
           questionsOnly?'No invoice was created. Lance or Heather will respond to your questions. This inquiry expires and is archived after 48 hours.':'Your Square invoice and signing packet have been emailed.',
+          questionsOnly?null:'',
+          questionsOnly?null:'100% REFUND POLICY',
+          questionsOnly?null:'Cancel by 4:00 PM Eastern on the day before check-in (at least 24 hours before arrival) for a 100% refund of all amounts paid.',
+          questionsOnly?null:'',
+          questionsOnly?null:`INSIDE 24 HOURS: ${money(reservationDepositCents)} will be retained as the reservation deposit. This same amount is retained even if you paid the invoice in full; all remaining amounts paid will be refunded.`,
           '',
           'IMPORTANT: These dates remain available to others until both payment and the rental agreement are complete. The first guest to complete both steps locks in the dates.',
           '',
