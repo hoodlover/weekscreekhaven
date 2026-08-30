@@ -1,6 +1,7 @@
 node_modules/
 .env
 .env.local
+.env.owner-report.local
 api/config.json
 config.json
 .claude/
