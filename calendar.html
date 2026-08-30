@@ -90,11 +90,20 @@
     .dialog-actions button { border:1px solid var(--line); border-radius:999px; padding:10px 16px; font-weight:800; }
     .dialog-actions .save { background:var(--pine); color:white; border-color:var(--pine); }
     .calendar-bottom-actions { display:flex; justify-content:center; margin-top:15px; }
+    body.embed { background:transparent; }
+    body.embed .shell { width:100%; padding:0; }
+    body.embed .topbar { display:none; }
+    body.embed .layout { grid-template-columns:minmax(0,1fr) 280px; gap:12px; }
+    body.embed .calendar-wrap { padding:18px; }
+    body.embed .calendar-intro { padding-bottom:16px; margin-bottom:17px; }
+    body.embed .calendar-intro h2 { font-size:3rem; }
+    body.embed .day { min-height:96px; padding:7px 7px 27px; }
     @media(max-width:1000px) { .layout { grid-template-columns:1fr; } .sidebar { grid-template-columns:1fr 1fr; } }
-    @media(max-width:700px) { .shell { width:min(100% - 10px,1500px); padding-top:10px; } .calendar-panel { overflow:hidden; } .calendar-wrap { min-width:0; padding:14px 8px; } .calendar-intro { padding:0 4px 12px; margin-bottom:12px; } .calendar-intro h2 { font-size:2.35rem; } .calendar-intro p { display:none; } .calendar-head { align-items:flex-end; } .calendar-head h2 { font-size:1.65rem; } .month-actions { gap:4px; } .month-actions button { padding:7px 9px; font-size:.68rem; } .sidebar { grid-template-columns:1fr; } .topbar { align-items:flex-start; } .brand img { width:70px; height:70px; } .day { min-height:62px; padding:4px 3px 17px; } .day-number { width:17px; height:17px; font-size:.62rem; margin-bottom:2px; } .event { padding:3px; margin:1px 0; font-size:.48rem; } .event-note,.event-arrival-details { display:none; } .day-rate { left:3px; bottom:4px; max-width:calc(100% - 6px); font-size:.48rem; } .weekdays div { padding:6px 1px; font-size:.5rem; } }
+    @media(max-width:700px) { .shell { width:min(100% - 10px,1500px); padding-top:10px; } body.embed .layout { grid-template-columns:1fr; } .calendar-panel { overflow:hidden; } .calendar-wrap { min-width:0; padding:14px 8px; } .calendar-intro { padding:0 4px 12px; margin-bottom:12px; } .calendar-intro h2 { font-size:2.35rem; } .calendar-intro p { display:none; } .calendar-head { align-items:flex-end; } .calendar-head h2 { font-size:1.65rem; } .month-actions { gap:4px; } .month-actions button { padding:7px 9px; font-size:.68rem; } .sidebar { grid-template-columns:1fr; } .topbar { align-items:flex-start; } .brand img { width:70px; height:70px; } .day { min-height:62px; padding:4px 3px 17px; } .day-number { width:17px; height:17px; font-size:.62rem; margin-bottom:2px; } .event { padding:3px; margin:1px 0; font-size:.48rem; } .event-note,.event-arrival-details { display:none; } .day-rate { left:3px; bottom:4px; max-width:calc(100% - 6px); font-size:.48rem; } .weekdays div { padding:6px 1px; font-size:.5rem; } }
   </style>
 </head>
 <body>
+  <script>if(window.self!==window.top||new URLSearchParams(location.search).has('embed'))document.body.classList.add('embed');</script>
   <main class="shell">
     <header class="topbar">
       <div class="brand"><a href="/index.html" aria-label="Weeks Creek Haven home"><img src="webpic/weeks-creek-haven-round-logo.png" alt="Weeks Creek Haven"></a><div><div class="eyebrow">Private owner tools</div><h1>Cabin Calendar</h1></div></div>

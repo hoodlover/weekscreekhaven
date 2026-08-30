@@ -67,13 +67,16 @@
     .count-badge[hidden] { display:none !important; }
     .tab-panel { display:none; min-width:0; padding:28px; scroll-margin-top:12px; }
     .tab-panel.active { display:block; grid-column:2; }
+    #panel-calendar.active { padding:0; overflow:hidden; }
+    .calendar-frame { display:block; width:100%; min-height:1120px; border:0; background:#f4eee0; }
     #panel-invites.active { display:grid; grid-template-columns:minmax(285px,360px) minmax(0,1fr); gap:24px; align-items:start; }
     .content .ghost,.create .ghost { color:var(--pine); background:white; border-color:var(--line); }
-    .invite { display:grid; grid-template-columns:minmax(150px,1fr) minmax(175px,.8fr) auto; gap:16px; align-items:center; padding:17px 0; border-bottom:1px solid #e9e1d5; }
+    .invite { display:grid; grid-template-columns:minmax(150px,1fr) minmax(260px,1.15fr) auto; gap:16px; align-items:center; padding:17px 0; border-bottom:1px solid #e9e1d5; }
     .invite:last-child,.activity:last-child { border-bottom:0; }
     .invite h3 { font-family:Montserrat,sans-serif; font-size:.94rem; }
     .meta { color:var(--muted); font-size:.72rem; margin-top:5px; line-height:1.45; }
-    .passcode { display:flex; align-items:center; gap:8px; }
+    .passcode { display:flex; min-width:0; align-items:center; gap:8px; flex-wrap:wrap; }
+    .passcode .ghost { white-space:normal; text-align:center; }
     code { background:#eee7da; border:1px dashed #bda989; padding:8px 10px; border-radius:7px; font-weight:800; color:#61381f; user-select:all; }
     .copy { border:0; background:transparent; color:var(--rust); font-weight:800; font-size:.72rem; }
     .badge { display:inline-block; margin-left:6px; padding:3px 7px; border-radius:999px; background:#e0efe5; color:#276141; font-size:.6rem; text-transform:uppercase; font-weight:800; }
@@ -341,7 +344,7 @@
             <nav class="tabs" aria-label="Owner command center menu">
               <div class="nav-group-label">Daily work</div>
               <button class="tab active" data-tab="bookings">Bookings &amp; payments <span id="booking-badge" class="count-badge" hidden></span></button>
-              <a id="open-calendar" href="/calendar.html" class="tab external" hidden>Calendar</a>
+              <button id="open-calendar" class="tab" data-tab="calendar" hidden>Calendar</button>
               <button class="tab" data-tab="emails">Guest email timeline</button>
               <button class="tab" data-tab="invites">Guest access &amp; invites</button>
 
@@ -360,6 +363,7 @@
           </div>
           <div id="panel-invites" class="tab-panel"><div id="invite-list"></div></div>
           <div id="panel-bookings" class="tab-panel active"><div id="square-status" class="square-status"></div><div id="booking-notice" class="booking-notice" hidden role="status" aria-live="polite"><span id="booking-notice-text"></span><button id="dismiss-booking-notice" type="button" aria-label="Dismiss message">Close</button></div><div id="booking-list"></div></div>
+          <div id="panel-calendar" class="tab-panel"><iframe class="calendar-frame" title="Cabin calendar" data-src="/calendar.html?embed=1"></iframe></div>
           <div id="panel-emails" class="tab-panel"><div class="email-library-head"><div><h3>Guest email timeline</h3><p class="helper">Emails are grouped in the order a booking moves from request to follow-up. Open any email to edit it or resend it to a matching guest.</p></div><button id="add-email-template" class="primary" type="button">Add a new email</button></div><div id="email-new" class="email-new" hidden></div><div id="email-library" class="email-library"></div></div>
           <div id="panel-accounting" class="tab-panel"><div class="accounting-controls"><div><h3>Stay accounting</h3><p class="helper">Private owner report for Lance and Heather · quarters follow the check-in date.</p></div><div style="display:flex;gap:8px;align-items:end"><label>Fiscal year<select id="accounting-year"></select></label><button id="refresh-accounting" class="ghost" type="button">Refresh Square fees</button></div></div><div id="accounting-summary"></div><div id="accounting-detail"></div><div class="accounting-note">Taxes shown are 7% Georgia/Fannin sales tax, 6% Fannin County lodging tax, and the $5 Georgia hotel-motel fee for each occupied night. Square fees are the actual processing fees returned by Square. This is a bookkeeping helper, not a filed tax return.</div></div>
           <div id="panel-pricing" class="tab-panel"><div class="pricing-layout"><div><h3>Automatic seasonal prices</h3><p class="helper">Weekend prices include the standard $200 cleaning cost. Weeknight, two-night, five-night and weekly prices are derived automatically and rounded up to the next $5.</p><div id="pricing-seasons" class="pricing-seasons"></div></div><div class="calculator"><h3>Try a stay</h3><div class="calculator-grid"><label>Arrival<input id="calc-arrival" type="date"></label><label>Checkout<input id="calc-departure" type="date"></label></div><div class="calculator-grid"><label>Guests<select id="calc-guests"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></label><label>Dogs<select id="calc-dogs"><option value="0">None</option><option value="1">1 dog</option><option value="2">2 dogs</option><option value="3">3 dogs</option><option value="4">4 dogs</option></select></label></div><label>Phone for discount preview<input id="calc-phone" type="tel" placeholder="(770) 555-0123"></label><label class="checkline"><input id="calc-late-checkout" type="checkbox"><span>Add noon checkout · $50</span></label><div id="calculator-result" class="calculator-result"><span class="helper">Choose dates to see the full calculation.</span></div></div></div></div>
@@ -456,7 +460,6 @@
         if (notify && state.initialized) sendBrowserAlert((bookingData.bookings||[]).filter(item=>!state.knownBookingIds.has(item.id)),(data.access||[]).filter(item=>!state.knownAccessIds.has(item.id)));
         state.invites = data.invites; state.access = data.access;
         state.bookings = bookingData.bookings || [];
-        if(!state.initialized) state.bookings.filter(item=>(item.status||'pending')==='pending').forEach(item=>state.openBookingIds.add(item.id));
         state.reviews = reviewData.reviews || []; state.square = bookingData.square || {}; state.rates=bookingData.rates||[]; state.discounts=discountData.discounts||[]; state.emails=emailData.templates||[]; state.emailTriggers=emailData.availableTriggers||[]; state.pricing=bookingData.pricing||PRICING_CONFIG;
         state.knownBookingIds = new Set(state.bookings.map(item=>item.id)); state.knownAccessIds = new Set(state.access.map(item=>item.id)); state.initialized=true;
         $('login').style.display = 'none'; $('dashboard').style.display = 'block'; $('open-calendar').hidden = false; $('open-hub').hidden = false; $('open-handbook').hidden = false; $('enable-alerts').hidden=false; $('logout').hidden = false; updateAlertButton();
@@ -719,7 +722,7 @@
       const message = `You’re invited to the Weeks Creek Haven Friends Hub.${options?`\n\nStay choices:\n${options}\n\nEach deadline applies only to that option. If it expires, that date is freed for others while your other unexpired choices stay available. Choosing one releases the rest.`:''}\n\nOpen: ${location.origin}/important-info.html\nPasscode: ${codeSuffix(state.newInvite.passcode)}\n\nThe sign-in page already supplies WCH-. Enter your name and these 8 characters to unlock the cabin guide${options?' and choose your stay':''}.`;
       await navigator.clipboard.writeText(message); $('copy-invite').textContent='Message copied'; setTimeout(()=>$('copy-invite').textContent='Copy message',1400);
     });
-    document.querySelector('.tabs').addEventListener('click',(event)=>{ const tab=event.target.closest('[data-tab]'); if(!tab)return; document.querySelectorAll('.tab,.tab-panel').forEach(el=>el.classList.remove('active')); tab.classList.add('active'); const panel=$(`panel-${tab.dataset.tab}`);panel.classList.add('active'); if(tab.dataset.tab==='accounting'&&!state.accountingLoaded)loadAccounting(); if(tab.dataset.tab==='activity'){ try{localStorage.setItem('wch_seen_activity',new Date().toISOString());}catch{} render(); } requestAnimationFrame(()=>panel.scrollIntoView({behavior:'smooth',block:'start'})); });
+    document.querySelector('.tabs').addEventListener('click',(event)=>{ const tab=event.target.closest('[data-tab]'); if(!tab)return; document.querySelectorAll('.tab,.tab-panel').forEach(el=>el.classList.remove('active')); tab.classList.add('active'); const panel=$(`panel-${tab.dataset.tab}`);panel.classList.add('active'); if(tab.dataset.tab==='calendar'){const frame=panel.querySelector('.calendar-frame');if(frame&&!frame.hasAttribute('src'))frame.src=frame.dataset.src;} if(tab.dataset.tab==='accounting'&&!state.accountingLoaded)loadAccounting(); if(tab.dataset.tab==='activity'){ try{localStorage.setItem('wch_seen_activity',new Date().toISOString());}catch{} render(); } requestAnimationFrame(()=>panel.scrollIntoView({behavior:'smooth',block:'start'})); });
     document.querySelector('.stats').addEventListener('click',(event)=>{const link=event.target.closest('[data-summary-link]');if(!link)return;const kind=link.dataset.summaryLink;state.showArchivedBookings=false;state.bookingFilter=kind==='requests'?'new':'all';state.bookingSort=kind==='upcoming'?'arrival':'attention';document.querySelectorAll('.tab,.tab-panel').forEach(el=>el.classList.remove('active'));document.querySelector('[data-tab="bookings"]').classList.add('active');$('panel-bookings').classList.add('active');render();$('booking-list').scrollIntoView({behavior:'smooth',block:'start'});});
     $('accounting-year').addEventListener('change',renderAccounting);
     $('refresh-accounting').addEventListener('click',loadAccounting);

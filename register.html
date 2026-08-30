@@ -26,7 +26,7 @@
     a { color:inherit; }
     .page { min-height:100vh; background:linear-gradient(90deg,rgba(15,12,9,.88),rgba(15,12,9,.35) 45%,rgba(15,12,9,.82)); padding:26px 16px 70px; }
     .top { width:min(1120px,100%); margin:0 auto 24px; display:flex; justify-content:space-between; align-items:center; gap:15px; color:white; }
-    .brand { display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; font-size:clamp(1rem,2vw,1.28rem); }
+    .brand { display:flex; align-items:center; gap:12px; font-family:'Crimson Text',serif; font-weight:700; letter-spacing:.08em; text-transform:uppercase; font-size:clamp(1rem,2vw,1.28rem); }
     .brand-name { display:flex; gap:.35em; }
     .brand img { width:78px; height:78px; object-fit:contain; }
     .top-actions { position:relative; display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; padding-top:48px; }
@@ -160,6 +160,7 @@
     .confirmation-actions { display:grid; gap:8px; margin-top:16px; }
     .confirmation-actions a,.confirmation-actions button { width:100%; margin:0; padding:14px 18px; display:block; border-radius:999px; text-align:center; text-decoration:none; }
     .confirmation-actions a { color:white; background:var(--pine); font-size:.8rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; box-shadow:0 8px 18px rgba(23,63,43,.25); }
+    @media(min-width:851px) { .brand { font-size:clamp(1.35rem,2.4vw,1.75rem); } .intro h1 { font-size:clamp(3.15rem,5vw,4.25rem); } }
     @media(max-width:850px) { .layout { grid-template-columns:1fr; } .intro { position:static; padding:20px 8px; } .intro h1 { max-width:650px; } }
     @media(max-width:560px) {
       .page { padding:12px 8px 44px; }
