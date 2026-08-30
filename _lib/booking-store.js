@@ -92,12 +92,7 @@ export function unavailableRanges(calendar) {
   const today = `${todayValues.year}-${todayValues.month}-${todayValues.day}`;
   const bookingRanges = calendar.bookings.flatMap((booking) => {
     const status = booking.status === 'approved' ? 'reserved' : booking.status;
-    if (status === 'offered') return (booking.dateChoices || []).flatMap((dates, index) => (
-      !dates.expiresOn || dates.expiresOn >= today
-        ? [{ ...dates, type: 'reserved', label: booking.name, bookingId: booking.id, dateChoice: index + 1 }]
-        : []
-    ));
-    if (!['reserved', 'booked'].includes(status)) return [];
+    if (status !== 'booked') return [];
     const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0];
     return dates ? [{ ...dates, type: status, label: booking.name, bookingId: booking.id }] : [];
   });
