@@ -150,6 +150,7 @@
         button.arrival-secret:hover, button.arrival-secret:focus-visible { border-color: #a45d41; background: white; transform: translateY(-1px); outline: none; }
         .arrival-secret span { display: block; color: #78695d; font-size: .65rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
         .arrival-secret strong { display: block; margin-top: .2rem; color: #183c2d; font-size: clamp(1.35rem, 3vw, 2rem); letter-spacing: .02em; }
+        .arrival-secret .arrival-copy-hint { margin-top: .25rem; color: #a45d41; font-size: .58rem; letter-spacing: .08em; }
         .arrival-tip { margin-top: 1rem; padding: .85rem 1rem; border-left: 4px solid #d7aa76; background: #fbf4e7; color: #5e5147; font-size: .82rem; line-height: 1.55; }
         .arrival-wifi-card { overflow: hidden; border: 1px solid #d9cbb8; border-radius: 1rem; background: #fffdf8; box-shadow: 0 10px 24px rgba(54,39,27,.12); }
         .arrival-wifi-card img { width: 100%; height: 100%; min-height: 320px; object-fit: cover; cursor: zoom-in; }
@@ -417,17 +418,18 @@
                     <p class="arrival-kicker">Cabin access</p>
                     <h2 class="section-title">Door &amp; Internet</h2>
                     <div class="arrival-secret-list">
-                        <button class="arrival-secret" type="button" onclick="doorCodeClick()" title="Copy door code">
-                            <span>Cabin door code · tap to copy</span>
+                        <div class="arrival-secret">
+                            <span>Cabin door code</span>
                             <strong id="door-code">22246</strong>
-                        </button>
+                        </div>
                         <div class="arrival-secret">
                             <span>Wi-Fi network</span>
                             <strong>WeeksCreekHaven</strong>
                         </div>
                         <button class="arrival-secret" type="button" onclick="copyWifi()" title="Copy Wi-Fi password">
-                            <span>Password · tap to copy</span>
+                            <span>Password</span>
                             <strong id="wifi-pass">creeklife</strong>
+                            <span class="arrival-copy-hint">Tap to copy</span>
                         </button>
                     </div>
                     <p class="arrival-tip"><strong>To unlock:</strong> Enter the door code, press the checkmark, then push the door inward. <strong>To lock:</strong> Close the door and pull it toward you so the deadbolt lines up.</p>
@@ -1570,18 +1572,6 @@ checkboxIds.forEach(id => {
         if (allChecked) showToast('✓ All done! You absolute rockstar. 🏔', 4000);
     });
 });
-
-// ============================
-// COPY DOOR CODE
-// ============================
-let doorClicks = 0;
-function doorCodeClick() {
-    navigator.clipboard?.writeText('22246').catch(()=>{});
-    doorClicks++;
-    if (doorClicks === 1) showToast('📋 Door code copied! 22246 then ✓');
-    else if (doorClicks === 3) showToast('You already got it. Get off your phone and go inside. 😄');
-    else if (doorClicks === 7) showToast('SEVEN times? The door code is 22246. GO. INSIDE.');
-}
 
 // ============================
 // COPY WIFI PASSWORD
