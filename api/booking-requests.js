@@ -80,6 +80,7 @@ export default async function handler(request, response) {
       return json(response, 409, { error: `Your ${choices} overlaps dates that are already reserved. Please choose another option.`, unavailableChoices });
     }
     const createdAt = new Date().toISOString();
+    const inquiryExpiresAt = bookingIntent === 'questions' ? new Date(Date.parse(createdAt) + 48 * 60 * 60 * 1000).toISOString() : null;
     const booking = {
       id: crypto.randomUUID(), status: 'pending', createdAt, name, email,
       phone, billingAddress, billingCity, billingState, billingPostalCode, guestNames, vehicleCount,
@@ -88,7 +89,7 @@ export default async function handler(request, response) {
       friendsAndFamilyDiscount: dateChoices[0].quote.friendsAndFamilyDiscount || null,
       dateChoices, relationship: text(request.body?.relationship, 160),
       reference: text(request.body?.reference, 160), discountRequest: first.discountRequest,
-      bookingIntent, ownerQuestions,
+      bookingIntent, ownerQuestions, inquiryExpiresAt,
       notes: [first.discountRequest ? `Requested offer: ${first.discountRequest}` : '', ownerQuestions ? `Questions for owners: ${ownerQuestions}` : '', text(request.body?.notes, 800)].filter(Boolean).join('\n'),
     };
     await appendBookingRecord({ type: 'requested', createdAt, booking });
@@ -119,7 +120,7 @@ export default async function handler(request, response) {
         await sendEmail({
           to: email, toName: name, subject: bookingIntent==='questions'?'We received your Weeks Creek Haven questions':'We received your Weeks Creek Haven date request',
           templateKey:'request-received', templateVariables:{ guestName:name },
-          text: bookingIntent==='questions'?`Hi ${name},\n\nWe received your selected dates (${first.arrival} through ${first.departure}) and your questions:\n\n${ownerQuestions}\n\nNo invoice was created. Lance or Heather will respond. These dates remain available until payment and the rental agreement are complete.\n\nThank you!`:`Hi ${name},\n\nWe received your selected stay dates for Weeks Creek Haven.${complimentaryMessage}${priceMessage}${lateCheckout && !firstQuote.complimentary ? ' Your estimate includes the $50 noon checkout option.' : ' Standard checkout is 11:00 AM.'} Check-in begins at 4:00 PM. The dates lock after payment and the rental agreement are both complete.\n\nThank you!`,
+          text: bookingIntent==='questions'?`Hi ${name},\n\nWe received your selected dates (${first.arrival} through ${first.departure}) and your questions:\n\n${ownerQuestions}\n\nNo invoice was created. Lance or Heather will respond. This inquiry remains active for 48 hours, then is automatically archived and removed from the calendar.\n\nThank you!`:`Hi ${name},\n\nWe received your selected stay dates for Weeks Creek Haven.${complimentaryMessage}${priceMessage}${lateCheckout && !firstQuote.complimentary ? ' Your estimate includes the $50 noon checkout option.' : ' Standard checkout is 11:00 AM.'} Check-in begins at 4:00 PM. The dates lock after payment and the rental agreement are both complete.\n\nThank you!`,
           html: bookingIntent==='questions'?`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">We received your questions</h1><p>Hi ${safeName},</p><p>We received your selected dates: <strong>${first.arrival} through ${first.departure}</strong>.</p><p><strong>Your questions:</strong><br>${escapeEmailHtml(ownerQuestions)}</p><p>No invoice was created. Lance or Heather will respond. These dates remain available until payment and the rental agreement are complete.</p></div>`:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">We got your checkout</h1><p>Hi ${safeName},</p><p>We received your selected stay dates for Weeks Creek Haven.</p>${complimentaryHtml}${priceHtml}<p><span style="color:#74685e">${firstQuote.complimentary?'No payment required':`Standard $200 cleaning cost included · ${lateCheckout ? '$50 noon checkout included' : '11:00 AM checkout'}`} · 4:00 PM check-in</span></p><p><strong>Your dates lock after payment and the rental agreement are both complete.</strong></p><p>Thanks for thinking of the Haven!</p></div>`,
         });
         confirmationSent = true;
