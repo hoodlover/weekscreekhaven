@@ -65,6 +65,25 @@ const compliance = [
 
 const text = (value, max = 1000) => String(value || '').trim().slice(0, max);
 const email = (value) => { const result = text(value, 160).toLowerCase(); return !result || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(result) ? result : null; };
+const requiredContacts = [
+  ['Primary owner','Primary owner'],['Backup owner','Backup owner'],['Local 24/7 Contact','Local 24/7 contact'],
+  ['Cleaning','Cleaner / turnover'],['Garbage','Garbage / trash service'],['Locksmith','Locksmith'],
+  ['HVAC','HVAC service'],['Electrical','Electrician'],['Plumbing','Plumber'],['Septic','Septic service'],
+  ['Hot Tub','Hot tub service'],['Power Utility','Power utility / outage'],['Insurance','Insurance emergency claim'],
+];
+
+async function contractorsWithRequiredPlaceholders() {
+  const contractors = await getContractors();
+  const categories = new Set(contractors.map((item) => String(item.category || '').toLowerCase()));
+  const createdAt = new Date().toISOString();
+  for (const [category, name] of requiredContacts) {
+    if (categories.has(category.toLowerCase())) continue;
+    const contractor = { id:`required-${category.toLowerCase().replace(/[^a-z0-9]+/g,'-')}`, name:`Needed: ${name}`, category, phone:'', email:'', services:'', scheduling:'', notes:'Add this contact once confirmed. It will automatically appear in the Emergency Handbook.', createdAt, updatedAt:createdAt };
+    await appendPropertyRecord({ type:'contractor_created', contractor, createdAt });
+    contractors.push(contractor);
+  }
+  return contractors.sort((a,b)=>String(a.category).localeCompare(String(b.category))||String(a.name).localeCompare(String(b.name)));
+}
 
 function contractorFrom(body, current = {}) {
   const name = text(body?.name, 100);
@@ -77,7 +96,7 @@ function contractorFrom(body, current = {}) {
 export default async function handler(request, response) {
   if (!requireAdmin(request)) return json(response, 401, { error: 'Please sign in as the site owner.' });
   try {
-    if (request.method === 'GET') return json(response, 200, { contractors: await getContractors(), neighbors, unlistedAddresses, poa, compliance }, { 'Cache-Control': 'no-store' });
+    if (request.method === 'GET') return json(response, 200, { contractors: await contractorsWithRequiredPlaceholders(), neighbors, unlistedAddresses, poa, compliance }, { 'Cache-Control': 'no-store' });
     const createdAt = new Date().toISOString();
     if (request.method === 'POST') {
       const contractor = contractorFrom(request.body);
