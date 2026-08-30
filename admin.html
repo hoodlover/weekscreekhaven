@@ -316,10 +316,13 @@
           <input id="invite-label" placeholder="The Smith family" maxlength="80" required>
           <label for="recipient-email">Guest email (optional)</label>
           <input id="recipient-email" type="email" placeholder="friend@example.com" autocomplete="off" maxlength="160">
+          <label for="recipient-phone">Guest phone number (recommended)</label>
+          <input id="recipient-phone" type="tel" placeholder="(555) 867-5309" autocomplete="tel" maxlength="40">
+          <p class="helper">If this matches someone in your Friends &amp; Family pricing list, their private rate is applied automatically when they choose dates.</p>
           <label class="checkline"><input id="send-invite-email" type="checkbox" checked> Email the invitation as soon as it is created</label>
           <label>Invitation offer</label>
           <label class="checkline"><input id="invite-complimentary" type="checkbox"><span><strong>Complimentary stay</strong> · no rent, taxes, government lodging fees, or required charges</span></label>
-          <p class="helper">Leave this unchecked for their saved Friends &amp; Family rate. Make sure their phone number is in the private pricing list; their rate appears when they use that number while choosing dates.</p>
+          <p class="helper">Leave this unchecked for their saved Friends &amp; Family rate. Make sure the phone number above matches the one in your private pricing list.</p>
           <label for="welcome-message">Personal welcome (optional)</label>
           <textarea id="welcome-message" rows="6" maxlength="500">Hey! We&rsquo;d really love for you to enjoy some time away at Weeks Creek Haven. Pick any open dates that work for you&mdash;midweek or a weekend&mdash;and come enjoy a relaxed getaway in Blue Ridge. There are no strings attached. We care about you and would simply love to share this place with you so you can slow down, breathe, and enjoy some mountain time.</textarea>
           <label for="invite-photos">Welcome photos (optional)</label>
@@ -499,7 +502,7 @@
         const inactive = isInactive(invite);
         const emailButton = invite.recipientEmail ? `<button class="copy" data-email-invite="${escapeHtml(invite.id)}">Email</button>` : '';
         const stayDetails=(invite.stayOptions||[]).length?(invite.stayOptions||[]).map((option,index)=>`<br>Option ${index+1}: ${formatStayDate(option.arrival)}–${formatStayDate(option.departure)}${option.costCents?` · $${(option.costCents/100).toFixed(2)}`:''}${option.expiresOn?` · choose by ${formatStayDate(option.expiresOn)}`:''}${invite.selectedStayChoice===index?' · SELECTED':''}`).join(''):`<br>${invite.complimentary?'Complimentary open-date invitation':'Open-date invitation · saved Friends & Family pricing'}`;
-        return `<article class="invite"><div><h3>${escapeHtml(invite.label)} <span class="badge ${inactive?'off':''}">${inactive?'inactive':'active'}</span></h3><div class="meta">Created ${formatDate(invite.createdAt)}${invite.recipientEmail?`<br>${escapeHtml(invite.recipientEmail)}`:''}${invite.expiresAt?`<br>Invite expires ${formatDate(invite.expiresAt)}`:''}${stayDetails}<br>${invite.accessCount} recorded entr${invite.accessCount===1?'y':'ies'}${invite.notes?` &middot; ${escapeHtml(invite.notes)}`:''}</div></div><div class="passcode"><code>${escapeHtml(invite.passcode)}</code><button class="copy" data-copy="${escapeHtml(codeSuffix(invite.passcode))}">Copy</button><a class="ghost" href="/api/admin-preview-invite?inviteId=${encodeURIComponent(invite.id)}" target="_blank" rel="noopener">Open welcome page</a>${emailButton}</div>${inactive?'<span></span>':`<button class="danger" data-revoke="${escapeHtml(invite.id)}">Revoke</button>`}</article>`;
+        return `<article class="invite"><div><h3>${escapeHtml(invite.label)} <span class="badge ${inactive?'off':''}">${inactive?'inactive':'active'}</span></h3><div class="meta">Created ${formatDate(invite.createdAt)}${invite.recipientEmail?`<br>${escapeHtml(invite.recipientEmail)}`:''}${invite.recipientPhone?`<br>${escapeHtml(formatPhone(invite.recipientPhone))}`:''}${invite.expiresAt?`<br>Invite expires ${formatDate(invite.expiresAt)}`:''}${stayDetails}<br>${invite.accessCount} recorded entr${invite.accessCount===1?'y':'ies'}${invite.notes?` &middot; ${escapeHtml(invite.notes)}`:''}</div></div><div class="passcode"><code>${escapeHtml(invite.passcode)}</code><button class="copy" data-copy="${escapeHtml(codeSuffix(invite.passcode))}">Copy</button><a class="ghost" href="/api/admin-preview-invite?inviteId=${encodeURIComponent(invite.id)}" target="_blank" rel="noopener">Open welcome page</a>${emailButton}</div>${inactive?'<span></span>':`<button class="danger" data-revoke="${escapeHtml(invite.id)}">Revoke</button>`}</article>`;
       }).join('') : '<div class="empty">No invites yet. Create the first one on the left.</div>';
       [...document.querySelectorAll('#invite-list .invite')].forEach((card,index) => {
         const photos = orderedInvites[index]?.photos || [];
@@ -636,7 +639,7 @@
         const expiration = $('expires').value ? new Date(`${$('expires').value}T23:59:59`).toISOString() : null;
         const recipientEmail = $('recipient-email').value.trim();
         const shouldEmail = recipientEmail && $('send-invite-email').checked;
-        const data = await request('/api/admin-invites',{method:'POST',body:JSON.stringify({label:$('invite-label').value,recipientEmail,welcomeMessage:$('welcome-message').value,expiresAt:expiration,maxUses:$('max-uses').value,notes:$('notes').value,complimentary:$('invite-complimentary').checked,stayOptions:[]})});
+        const data = await request('/api/admin-invites',{method:'POST',body:JSON.stringify({label:$('invite-label').value,recipientEmail,recipientPhone:$('recipient-phone').value,welcomeMessage:$('welcome-message').value,expiresAt:expiration,maxUses:$('max-uses').value,notes:$('notes').value,complimentary:$('invite-complimentary').checked,stayOptions:[]})});
         createdInvite=data.invite;
         for (let index=0;index<files.length;index++) {
           submit.textContent=`Uploading photo ${index+1} of ${files.length}...`;
@@ -718,7 +721,7 @@
     $('booking-list').addEventListener('change',(event)=>{const filter=event.target.closest('[data-booking-filter]');if(filter){state.bookingFilter=filter.value;render();return;}const sort=event.target.closest('[data-booking-sort]');if(sort){state.bookingSort=sort.value;render();return;}const select=event.target.closest('[data-booking-choice]');if(!select)return;const card=select.closest('[data-booking-card]'),booking=state.bookings.find(item=>item.id===card.dataset.bookingCard),quote=booking?.dateChoices?.[Number(select.value)-1]?.calculatedQuote,input=card.querySelector('[data-booking-amount]');if(quote&&input)input.value=(quote.totalCents/100).toFixed(2);});
     $('copy-invite').addEventListener('click', async () => {
       if(!state.newInvite) return;
-      const offer=state.newInvite.complimentary?'This stay is our treat, with no rent, taxes, government lodging fees, or required charges.':'Your saved Friends & Family rate will appear when you enter the phone number we have for you.';
+      const offer=state.newInvite.complimentary?'This stay is our treat, with no rent, taxes, government lodging fees, or required charges.':state.newInvite.recipientPhone?'We saved your phone number with this invitation, and any matching private Friends & Family rate will appear automatically as you choose dates.':'Your saved Friends & Family rate will appear automatically if your phone number matches our private list.';
       const message = `${state.newInvite.welcomeMessage||'We’d love for you to enjoy some time at Weeks Creek Haven.'}\n\nUse your private invitation to see the live calendar and pick any open dates that work for you. ${offer}\n\nOpen: ${location.origin}/important-info.html\nPasscode: ${codeSuffix(state.newInvite.passcode)}\n\nThe sign-in page already supplies WCH-. Enter your name and these 8 characters to open your welcome and choose your dates.`;
       await navigator.clipboard.writeText(message); $('copy-invite').textContent='Message copied'; setTimeout(()=>$('copy-invite').textContent='Copy message',1400);
     });

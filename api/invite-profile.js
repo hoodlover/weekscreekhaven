@@ -18,11 +18,14 @@ export default async function handler(request, response) {
     const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
     const todayValues = Object.fromEntries(parts.map((part) => [part.type, part.value]));
     const today = `${todayValues.year}-${todayValues.month}-${todayValues.day}`;
+    const invitePhone = String(booking?.phone || invite.recipientPhone || '').replace(/\D/g, '').replace(/^1(?=\d{10}$)/, '');
+    const privatePricingConnected = invitePhone.length === 10 && (calendar.discounts || []).some((rule) => rule.matchType === 'phone' && rule.target === invitePhone);
     return json(response, 200, {
       visitorName: session.visitorName,
       inviteLabel: invite.label,
       welcomeMessage: invite.welcomeMessage || '',
       complimentary: invite.complimentary === true,
+      privatePricingConnected,
       stayOptions: (invite.stayOptions || []).map((option, index) => {
         const selected = Boolean(booking && ['reserved', 'booked'].includes(booking.status) && booking.approvedChoice === index);
         return { ...option, expired: !selected && Boolean(option.expiresOn && option.expiresOn < today), selected };
@@ -30,7 +33,7 @@ export default async function handler(request, response) {
       stayStatus: booking?.status || null,
       selectedStayChoice: booking && ['reserved', 'booked'].includes(booking.status) ? booking.approvedChoice : null,
       bookingPacketUrl: packetReady ? `/booking-packet.html?token=${encodeURIComponent(createAgreementToken(booking.id, 365 * 86400))}` : '',
-      bookingProfile: { guestName: booking?.name || invite.label, email: booking?.email || invite.recipientEmail || '', guests: booking?.guests || 1, arrival: chosenStay?.arrival || '', departure: chosenStay?.departure || '' },
+      bookingProfile: { guestName: booking?.name || invite.label, email: booking?.email || invite.recipientEmail || '', phone: booking?.phone || invite.recipientPhone || '', guests: booking?.guests || 1, arrival: chosenStay?.arrival || '', departure: chosenStay?.departure || '' },
       photos: (invite.photos || []).map((photo) => ({ id: photo.id })),
     }, { 'Cache-Control': 'no-store' });
   } catch (error) {

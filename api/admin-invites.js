@@ -12,6 +12,11 @@ function safeEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : '';
 }
 
+function safePhone(value) {
+  const digits = String(value || '').replace(/\D/g, '').replace(/^1(?=\d{10}$)/, '');
+  return digits.length === 10 ? digits : '';
+}
+
 function safeDate(value) {
   return /^\d{4}-\d{2}-\d{2}$/.test(String(value || '')) ? String(value) : '';
 }
@@ -65,6 +70,9 @@ export default async function handler(request, response) {
     if (request.method === 'POST') {
       const label = safeText(request.body?.label, 80);
       if (label.length < 2) return json(response, 400, { error: 'Add the friend or family name for this invite.' });
+      const suppliedPhone = safeText(request.body?.recipientPhone, 40);
+      const recipientPhone = safePhone(suppliedPhone);
+      if (suppliedPhone && !recipientPhone) return json(response, 400, { error: 'Enter a complete 10-digit guest phone number or leave it blank.' });
       const passcode = generatePasscode();
       const passcodeHash = hashPasscode(passcode);
       const createdAt = new Date().toISOString();
@@ -89,6 +97,7 @@ export default async function handler(request, response) {
         id: inviteId, label, passcode, ...passcodeHash, createdAt, expiresAt,
         notes: safeText(request.body?.notes, 240),
         recipientEmail: safeEmail(request.body?.recipientEmail),
+        recipientPhone,
         welcomeMessage: safeText(request.body?.welcomeMessage, 500),
         complimentary: request.body?.complimentary === true,
         stayOptions: options.map(({ arrival, departure, costCents, complimentary, expiresOn }) => ({ arrival, departure, costCents, complimentary, expiresOn })),
@@ -99,7 +108,7 @@ export default async function handler(request, response) {
       if (options.length) {
         const booking = {
           id: bookingId, inviteId, source: 'direct-invite', status: 'offered', createdAt,
-          name: label, email: invite.recipientEmail, phone: '', guests: 1,
+          name: label, email: invite.recipientEmail, phone: invite.recipientPhone, guests: 1,
           dateChoices: options.map(({ arrival, departure, costCents, complimentary, expiresOn }) => ({ arrival, departure, amountCents: complimentary ? 0 : (costCents || undefined), complimentary, expiresOn })),
           notes: invite.notes,
         };

@@ -52,7 +52,7 @@ export default async function handler(request, response) {
     const unavailable = unavailableRanges(calendar);
     const guests = Math.max(1, Math.min(11, Number(request.body?.guests) || 1));
     const dogs = Math.max(0, Math.min(4, Number(request.body?.dogs) || 0));
-    const phone = text(request.body?.phone, 40);
+    const phone = text(activeInvite?.recipientPhone || request.body?.phone, 40);
   const phoneDigits = phone.replace(/\D/g, '').replace(/^1(?=\d{10}$)/, '');
   const billingAddress = text(request.body?.billingAddress, 160);
   const billingCity = text(request.body?.billingCity, 80);

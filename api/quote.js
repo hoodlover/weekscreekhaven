@@ -26,7 +26,8 @@ export default async function handler(request, response) {
       rates: calendar.rates || [],
     });
     if (!standardQuote) return json(response, 400, { error: 'Choose a valid arrival and checkout date.' });
-    const discountedQuote = applyFriendsAndFamilyDiscount(standardQuote, request.method === 'POST' ? input.phone : '', calendar.discounts || []);
+    const pricingPhone = activeInvite?.recipientPhone || (request.method === 'POST' ? input.phone : '');
+    const discountedQuote = applyFriendsAndFamilyDiscount(standardQuote, pricingPhone, calendar.discounts || []);
     const quote = applyInviteComplimentary(discountedQuote, activeInvite);
     return json(response, 200, { quote }, { 'Cache-Control': request.method === 'POST' || input.phone ? 'private, no-store' : 'public, max-age=0, s-maxage=60, stale-while-revalidate=300' });
   } catch (error) {
