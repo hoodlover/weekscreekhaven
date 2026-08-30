@@ -30,6 +30,7 @@ Use these instructions for all work in this repository.
 - Use `guests/weeks-creek-haven-friends-family-welcome-5x5.png` as the default invitation welcome image whenever no personal invitation photo is uploaded; personal uploads override it.
 - Keep guest-facing invitation wording in the Personal Welcome so it appears on the welcome page and invitation email. The “Notes from Heather & Lance” field is owner-only.
 - The invitation list defaults to active and future invites. Archive expired, completed, and test invitations without deleting them; archived invite passcodes must not work unless restored.
+- Keep the Guest Guide check-in tab focused on quick arrival essentials. The pre-arrival concierge belongs in the booking packet only; do not duplicate that form in the Guest Guide.
 - Draft unusual guest communications for owner review. Never send them without the owner's explicit approval.
 
 ## Verification and safety

@@ -117,6 +117,56 @@
         .logo-link:hover .wood-btn { transform: scale(1.0) !important; }
         .logo-link .normal-img { opacity: 1; transition: none; }
 
+        /* Check-in: calm arrival dashboard with the essentials first. */
+        .arrival-intro {
+            padding: clamp(1.25rem, 3vw, 2rem);
+            border-radius: 1rem;
+            color: #f8f1e5;
+            background:
+                linear-gradient(115deg, rgba(24,60,45,.97), rgba(39,77,57,.9)),
+                url('webpic/railroad-tie-texture.webp') center/cover;
+            box-shadow: 0 14px 30px rgba(38,29,22,.2);
+        }
+        .arrival-kicker { color: #e5b67e; font-size: .7rem; font-weight: 900; letter-spacing: .18em; text-transform: uppercase; }
+        .arrival-intro h2 { margin: .35rem 0 .65rem; color: white; font-family: Georgia, serif; font-size: clamp(1.9rem, 4vw, 3rem); line-height: 1.05; }
+        .arrival-intro p { max-width: 44rem; color: #e8dfd1; line-height: 1.65; }
+        .arrival-access-grid { display: grid; gap: 1rem; }
+        .arrival-access-card, .arrival-section {
+            border: 1px solid #d9cbb8;
+            border-radius: 1rem;
+            background: rgba(255,253,248,.96);
+            box-shadow: 0 10px 24px rgba(54,39,27,.12);
+        }
+        .arrival-access-card { padding: clamp(1.25rem, 3vw, 2rem); }
+        .arrival-section { padding: clamp(1.25rem, 3vw, 2rem); }
+        .arrival-section-head { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+        .arrival-section-head p { max-width: 30rem; color: #76695e; font-size: .85rem; line-height: 1.55; }
+        .arrival-secret-list { display: grid; gap: .7rem; margin-top: 1.1rem; }
+        .arrival-secret {
+            width: 100%; padding: .95rem 1rem; border: 1px solid #ddd0bd; border-radius: .8rem;
+            background: #f7f1e7; text-align: left; transition: border-color .15s, transform .15s, background .15s;
+        }
+        button.arrival-secret { cursor: pointer; }
+        button.arrival-secret:hover, button.arrival-secret:focus-visible { border-color: #a45d41; background: white; transform: translateY(-1px); outline: none; }
+        .arrival-secret span { display: block; color: #78695d; font-size: .65rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+        .arrival-secret strong { display: block; margin-top: .2rem; color: #183c2d; font-size: clamp(1.35rem, 3vw, 2rem); letter-spacing: .02em; }
+        .arrival-tip { margin-top: 1rem; padding: .85rem 1rem; border-left: 4px solid #d7aa76; background: #fbf4e7; color: #5e5147; font-size: .82rem; line-height: 1.55; }
+        .arrival-wifi-card { overflow: hidden; border: 1px solid #d9cbb8; border-radius: 1rem; background: #fffdf8; box-shadow: 0 10px 24px rgba(54,39,27,.12); }
+        .arrival-wifi-card img { width: 100%; height: 100%; min-height: 320px; object-fit: cover; cursor: zoom-in; }
+        .arrival-step-grid { display: grid; grid-template-columns: 1fr; gap: .75rem; }
+        .arrival-step-card { display: grid; grid-template-columns: 46px 1fr; gap: .9rem; align-items: start; min-height: 104px; padding: 1rem; border: 1px solid #dfd3c1; border-radius: .85rem; background: #faf6ee; }
+        .arrival-step-number { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: #183c2d; color: #e9c08f; font-family: Georgia, serif; font-size: .85rem; font-weight: 800; letter-spacing: .04em; }
+        .arrival-step-card h3 { color: #183c2d; font-family: Georgia, serif; font-size: 1.05rem; line-height: 1.15; }
+        .arrival-step-card p { margin-top: .3rem; color: #6b5f54; font-size: .76rem; line-height: 1.45; }
+        .arrival-command-grid { display: grid; gap: .7rem; }
+        .arrival-command { padding: 1rem; border: 1px solid #d9cbb8; border-radius: .8rem; background: #f7f1e7; }
+        .arrival-command strong { color: #183c2d; }
+        .arrival-command p { margin-top: .25rem; color: #706257; font-size: .76rem; line-height: 1.45; }
+        @media (min-width: 768px) {
+            .arrival-access-grid { grid-template-columns: minmax(0,.85fr) minmax(0,1.15fr); }
+            .arrival-step-grid, .arrival-command-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+        }
+
         /* Lightbox */
         #lightbox { display: none; position: fixed; z-index: 200; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.93); justify-content: center; align-items: center; }
         #lightbox-img { max-width: 90%; max-height: 90%; border: 3px solid #4a4747; border-radius: 4px; }
@@ -345,168 +395,97 @@
         <!-- ==================== TAB 1: CHECK IN ==================== -->
         <div id="tab-checkin" class="tab-panel active space-y-8">
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <section class="arrival-intro">
+                <p class="arrival-kicker">Arrival essentials</p>
+                <h2>Settle in without hunting for answers.</h2>
+                <p>Your door code, Wi-Fi, and the few things worth doing when you first arrive are all right here.</p>
+            </section>
+
+            <div class="arrival-access-grid">
 
                 <!-- Access block -->
-                <div class="parchment p-6 rounded-xl shadow-lg space-y-5 border-t-4 border-[#A45D41]">
-                    <h2 class="section-title">Entry &amp; Internet</h2>
-                    <div>
-                        <p class="text-xs uppercase tracking-widest text-stone-500 font-bold">Cabin Door Code</p>
-                        <div class="flex items-center gap-4 mt-2">
-                            <p id="door-code" class="text-5xl font-mono font-black text-stone-900 cursor-pointer hover:text-[#A45D41] transition select-all" onclick="doorCodeClick()" title="Click me...">22246</p>
-                            <span class="text-stone-400 italic text-sm font-bold">then</span>
-                            <img src="webpic/checkmark.webp" alt="checkmark" class="h-12 w-12 rounded-full border-2 border-[#A45D41] hover:scale-110 transition-transform shadow-lg">
+                <section class="arrival-access-card">
+                    <p class="arrival-kicker">Cabin access</p>
+                    <h2 class="section-title">Door &amp; Internet</h2>
+                    <div class="arrival-secret-list">
+                        <button class="arrival-secret" type="button" onclick="doorCodeClick()" title="Copy door code">
+                            <span>Cabin door code · tap to copy</span>
+                            <strong id="door-code">22246</strong>
+                        </button>
+                        <div class="arrival-secret">
+                            <span>Wi-Fi network</span>
+                            <strong>WeeksCreekHaven</strong>
                         </div>
-                        <p class="text-[10px] text-stone-400 italic mt-1">click the code to copy</p>
+                        <button class="arrival-secret" type="button" onclick="copyWifi()" title="Copy Wi-Fi password">
+                            <span>Password · tap to copy</span>
+                            <strong id="wifi-pass">creeklife</strong>
+                        </button>
                     </div>
-                    <div>
-                        <p class="text-xs uppercase tracking-widest text-stone-500 font-bold">Wi-Fi Network</p>
-                        <p class="text-2xl font-bold text-stone-900">WeeksCreekHaven</p>
-                        <p class="text-xs uppercase tracking-widest text-stone-500 mt-3 font-bold">Password</p>
-                        <p id="wifi-pass" class="text-2xl font-bold text-stone-900 cursor-pointer hover:text-[#A45D41] transition" onclick="copyWifi()" title="Click to copy">creeklife</p>
-                        <p class="text-[10px] text-stone-400 italic mt-1">click the password to copy</p>
-                    </div>
-                    <img src="webpic/wifi.webp" alt="WiFi" class="rounded-lg shadow-xl w-full border border-stone-200 hover:scale-[1.02] transition-transform zoom-card" onclick="openLightbox(this.src)">
-                </div>
+                    <p class="arrival-tip"><strong>To unlock:</strong> Enter the door code, then press the checkmark on the keypad. Pull the door toward you gently if the lock needs a little help lining up.</p>
+                </section>
 
-                <!-- Cabin feature grid -->
-                <div class="parchment p-6 rounded-xl shadow-lg border-t-4 border-[#A45D41]">
-                    <h2 class="section-title">Welcome to Blue Ridge!</h2>
-                    <div class="grid grid-cols-3 gap-2">
-                        <div class="flex flex-col gap-1 group">
-                            <div class="bg-[#A45D41]/20 p-1 rounded text-center text-[10px] font-black uppercase text-stone-700 border border-stone-300">Hot Tub</div>
-                            <img src="webpic/hottub.webp" onclick="openLightbox(this.src)" class="rounded shadow-md w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-zoom-in border border-stone-200">
-                        </div>
-                        <div class="flex flex-col gap-1 group">
-                            <div class="bg-[#A45D41]/20 p-1 rounded text-center text-[10px] font-black uppercase text-stone-700 border border-stone-300">98&quot; TV</div>
-                            <img src="webpic/bigtv.webp" onclick="openLightbox(this.src)" class="rounded shadow-md w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-zoom-in border border-stone-200">
-                        </div>
-                        <div class="flex flex-col gap-1 group">
-                            <div class="bg-[#A45D41]/20 p-1 rounded text-center text-[10px] font-black uppercase text-stone-700 border border-stone-300">Fireplace</div>
-                            <img src="webpic/fire.webp" onclick="openLightbox(this.src)" class="rounded shadow-md w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-zoom-in border border-stone-200">
-                        </div>
-                        <div class="flex flex-col gap-1 group">
-                            <div class="bg-[#A45D41]/20 p-1 rounded text-center text-[10px] font-black uppercase text-stone-700 border border-stone-300">Firepit</div>
-                            <img src="webpic/firepit.webp" onclick="openLightbox(this.src)" class="rounded shadow-md w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-zoom-in border border-stone-200">
-                        </div>
-                        <div class="flex flex-col gap-1 group">
-                            <div class="bg-[#A45D41]/20 p-1 rounded text-center text-[10px] font-black uppercase text-stone-700 border border-stone-300">Porch Swing</div>
-                            <img src="webpic/porchswing.webp" onclick="openLightbox(this.src)" class="rounded shadow-md w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-zoom-in border border-stone-200">
-                        </div>
-                        <div class="flex flex-col gap-1 group">
-                            <div class="bg-[#A45D41]/20 p-1 rounded text-center text-[10px] font-black uppercase text-stone-700 border border-stone-300">Streamside</div>
-                            <img src="webpic/heathers.webp" onclick="openLightbox(this.src)" class="rounded shadow-md w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-zoom-in border border-stone-200">
-                        </div>
-                    </div>
-                </div>
+                <section class="arrival-wifi-card">
+                    <img src="webpic/wifi.webp" alt="Weeks Creek Haven Wi-Fi sign" onclick="openLightbox(this.src)">
+                </section>
             </div>
 
-            <!-- Alexa -->
-            <div class="parchment p-6 rounded-xl shadow-lg border-t-4 border-[#A45D41]">
-                <h2 class="section-title">Alexa Commands</h2>
-                <div class="flex justify-center mb-5">
-                    <div class="flex gap-1 overflow-hidden rounded-lg shadow-xl border border-stone-300 max-w-md w-full hover:scale-[1.01] transition-transform">
-                        <img src="webpic/alexa.webp" alt="Alexa" class="w-1/2 h-auto object-cover">
-                        <img src="webpic/alexa2.webp" alt="Alexa" class="w-1/2 h-auto object-cover">
-                    </div>
+            <!-- First arrival steps -->
+            <section class="arrival-section">
+                <div class="arrival-section-head">
+                    <div><p class="arrival-kicker">First things first</p><h2 class="section-title">Your First 30 Minutes</h2></div>
+                    <p>Four quick moves, then put the phone down and enjoy the cabin.</p>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div class="p-4 bg-stone-800 rounded border border-stone-600 shadow">
-                        <p class="text-[#d4a373] font-black">&ldquo;ALEXA, Cabin on/off&rdquo;</p>
-                        <p class="text-xs text-stone-300 font-bold mt-1">Toggle main area lights</p>
-                    </div>
-                    <div class="p-4 bg-stone-800 rounded border border-stone-600 shadow">
-                        <p class="text-[#d4a373] font-black">&ldquo;ALEXA, Set fireside to 30%&rdquo;</p>
-                        <p class="text-xs text-stone-300 font-bold mt-1">Perfect watching atmosphere</p>
-                    </div>
-                    <div class="p-4 bg-stone-800 rounded border border-stone-600 shadow">
-                        <p class="text-[#d4a373] font-black">&ldquo;ALEXA, Going out&rdquo;</p>
-                        <p class="text-xs text-stone-300 font-bold mt-1">Locks and lights secure in 30s</p>
-                    </div>
-                    <div class="p-4 bg-stone-800 rounded border border-stone-600 shadow">
-                        <p class="text-[#d4a373] font-black">&ldquo;ALEXA, Cabin Den on/off&rdquo;</p>
-                        <p class="text-xs text-stone-300 font-bold mt-1">Lights in the lower lounge — great for late nights down there</p>
-                    </div>
-                    <div class="p-4 bg-stone-800 rounded border border-stone-600 shadow">
-                        <p class="text-[#d4a373] font-black">&ldquo;ALEXA, Set the mood&rdquo;</p>
-                        <p class="text-xs text-stone-300 font-bold mt-1">Low lights, movie mode. Imaginary popcorn and Red Vines not included — bring your own.</p>
-                    </div>
-                    <div id="burn-card" class="p-4 bg-red-950 rounded border border-red-700 shadow cursor-pointer select-none" onclick="burnClick()" title="Don't.">
-                        <p class="text-white font-black italic">&ldquo;Don&rsquo;t say Alexa, burn it down&rdquo;</p>
-                        <p class="text-[11px] text-red-300 font-black uppercase tracking-tighter mt-1">NO &#128293; &mdash; <span class="text-red-400 font-normal italic">click at your own risk</span></p>
-                    </div>
+                <div class="arrival-step-grid">
+                    <article class="arrival-step-card">
+                        <span class="arrival-step-number">01</span>
+                        <div><h3>Pick your room</h3><p>Drop the bags, choose your beds, and settle in. Fresh linens and towels are ready for you.</p></div>
+                    </article>
+                    <article class="arrival-step-card">
+                        <span class="arrival-step-number">02</span>
+                        <div><h3>Warm the hot tub</h3><p>Set it to <strong>104&deg;F</strong> when you arrive and allow two or more hours to warm. Return it to <strong>80&deg;F</strong> at checkout.</p></div>
+                    </article>
+                    <article class="arrival-step-card">
+                        <span class="arrival-step-number">03</span>
+                        <div><h3>Wake up the cabin</h3><p>Say <strong>&ldquo;Alexa, Cabin on&rdquo;</strong> to bring on the main-area lights.</p></div>
+                    </article>
+                    <article class="arrival-step-card">
+                        <span class="arrival-step-number">04</span>
+                        <div><h3>Make yourself at home</h3><p>Use the kitchen and help yourself to the snacks and drinks we left for your stay.</p></div>
+                    </article>
                 </div>
-            </div>
+            </section>
 
-            <!-- Your First 30 Minutes -->
-            <div class="parchment p-6 rounded-xl shadow-lg border-t-4 border-[#A45D41]">
-                <h2 class="section-title">Your First 30 Minutes</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div class="bg-stone-100 p-4 rounded border-l-4 border-[#A45D41]">
-                        <p class="font-black text-stone-900 text-sm mb-1">&#128716; Claim Your Bed. Now.</p>
-                        <p class="text-xs text-stone-600">The loft sleeps like a dream. The pull-out does not. First come, first served &mdash; this is not a democracy and there are no participation trophies.</p>
-                    </div>
-                    <div class="bg-stone-100 p-4 rounded border-l-4 border-[#A45D41]">
-                        <p class="font-black text-stone-900 text-sm mb-1">&#127789; Hot Tub: Start the Clock</p>
-                        <p class="text-xs text-stone-600">Crank it to <strong>104&deg;F</strong> right when you arrive &mdash; it takes 2+ hours to hit peak soak temperature. Don&rsquo;t be the group that discovers this at 10 PM. On departure, drop it back to <strong>80&deg;F</strong> for the next crew.</p>
-                    </div>
-                    <div class="bg-stone-100 p-4 rounded border-l-4 border-[#A45D41]">
-                        <p class="font-black text-stone-900 text-sm mb-1">&#128483; &ldquo;Alexa, Cabin On&rdquo;</p>
-                        <p class="text-xs text-stone-600">One command. All the lights come to life. That&rsquo;s it &mdash; you&rsquo;re basically a wizard now. &ldquo;Cabin off&rdquo; does the reverse when you head out.</p>
-                    </div>
-                    <div class="bg-stone-100 p-4 rounded border-l-4 border-[#A45D41]">
-                        <p class="font-black text-stone-900 text-sm mb-1">&#127829; The Fridge Is Fair Game</p>
-                        <p class="text-xs text-stone-600">Help yourself to anything in there. If something looks like a science experiment in progress, feel free to be the hero who ends it. Cherry Diet Coke? Gone. You&rsquo;re welcome.</p>
-                    </div>
+            <!-- Existing cabin photos -->
+            <section class="arrival-section">
+                <div class="arrival-section-head">
+                    <div><p class="arrival-kicker">Cabin favorites</p><h2 class="section-title">Welcome to Blue Ridge</h2></div>
+                    <p>A quick look at the spaces waiting for you.</p>
                 </div>
-            </div>
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="flex flex-col gap-1 group"><div class="bg-[#A45D41]/20 p-1 rounded text-center text-[10px] font-black uppercase text-stone-700 border border-stone-300">Hot Tub</div><img src="webpic/hottub.webp" onclick="openLightbox(this.src)" alt="Hot tub" class="rounded shadow-md w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-zoom-in border border-stone-200"></div>
+                    <div class="flex flex-col gap-1 group"><div class="bg-[#A45D41]/20 p-1 rounded text-center text-[10px] font-black uppercase text-stone-700 border border-stone-300">98&quot; TV</div><img src="webpic/bigtv.webp" onclick="openLightbox(this.src)" alt="98-inch television" class="rounded shadow-md w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-zoom-in border border-stone-200"></div>
+                    <div class="flex flex-col gap-1 group"><div class="bg-[#A45D41]/20 p-1 rounded text-center text-[10px] font-black uppercase text-stone-700 border border-stone-300">Fireplace</div><img src="webpic/fire.webp" onclick="openLightbox(this.src)" alt="Fireplace" class="rounded shadow-md w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-zoom-in border border-stone-200"></div>
+                    <div class="flex flex-col gap-1 group"><div class="bg-[#A45D41]/20 p-1 rounded text-center text-[10px] font-black uppercase text-stone-700 border border-stone-300">Firepit</div><img src="webpic/firepit.webp" onclick="openLightbox(this.src)" alt="Firepit" class="rounded shadow-md w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-zoom-in border border-stone-200"></div>
+                    <div class="flex flex-col gap-1 group"><div class="bg-[#A45D41]/20 p-1 rounded text-center text-[10px] font-black uppercase text-stone-700 border border-stone-300">Porch Swing</div><img src="webpic/porchswing.webp" onclick="openLightbox(this.src)" alt="Porch swing" class="rounded shadow-md w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-zoom-in border border-stone-200"></div>
+                    <div class="flex flex-col gap-1 group"><div class="bg-[#A45D41]/20 p-1 rounded text-center text-[10px] font-black uppercase text-stone-700 border border-stone-300">Streamside</div><img src="webpic/heathers.webp" onclick="openLightbox(this.src)" alt="Streamside seating" class="rounded shadow-md w-full aspect-square object-cover group-hover:scale-105 transition-transform cursor-zoom-in border border-stone-200"></div>
+                </div>
+            </section>
 
-        <!-- Pre-Arrival Concierge -->
-        <div class="parchment rounded-2xl shadow-xl border-t-4 border-[#A45D41] overflow-hidden">
-            <div class="px-7 pt-7 pb-5 border-b border-stone-200">
-                <div class="flex items-center gap-3 mb-2">
-                    <span class="text-2xl">&#9993;</span>
-                    <h3 class="text-3xl text-[#A45D41] italic" style="font-variant:small-caps;">Pre-Arrival Concierge</h3>
+            <!-- Alexa shortcuts -->
+            <section class="arrival-section">
+                <div class="arrival-section-head">
+                    <div><p class="arrival-kicker">Hands-free shortcuts</p><h2 class="section-title">Useful Alexa Commands</h2></div>
+                    <p>The cabin routines handle the main lights so you do not need to search for switches.</p>
                 </div>
-                <p class="text-stone-500 text-sm leading-relaxed">Let us know you're coming! Drop your arrival details and any special requests — we'll make sure everything is ready when you pull up.</p>
-            </div>
-            <form id="pre-arrival-form" action="https://formspree.io/f/mzdjnprj" method="POST" class="px-7 py-6 space-y-5">
-                <input type="hidden" name="form_type" value="Pre-Arrival Concierge">
-                <input type="hidden" name="name">
-                <input type="hidden" name="email">
-                <input type="hidden" name="stay_dates">
-                <input type="hidden" name="guest_count">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Estimated arrival</label>
-                        <input type="text" name="arrival_time" placeholder="Around 5:00 PM" class="maint-input">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Travel update</label>
-                        <input type="text" name="travel_update" placeholder="On schedule, arriving late, road question..." class="maint-input">
-                    </div>
+                <div class="arrival-command-grid">
+                    <div class="arrival-command"><strong>&ldquo;Alexa, Cabin on&rdquo;</strong><p>Turns on the main-area lights.</p></div>
+                    <div class="arrival-command"><strong>&ldquo;Alexa, Cabin off&rdquo;</strong><p>Turns off the main-area lights.</p></div>
+                    <div class="arrival-command"><strong>&ldquo;Alexa, Set fireside to 30%&rdquo;</strong><p>Dims the fireside lights for movies or a quieter evening.</p></div>
+                    <div class="arrival-command"><strong>&ldquo;Alexa, Cabin Den on&rdquo;</strong><p>Turns on the lights in the lower lounge.</p></div>
+                    <div class="arrival-command"><strong>&ldquo;Alexa, Going out&rdquo;</strong><p>Starts the leaving routine for lights and locks.</p></div>
+                    <div class="arrival-command"><strong>&ldquo;Alexa, Set the mood&rdquo;</strong><p>Sets the cabin lighting for movie night.</p></div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Departure update (optional)</label>
-                        <input type="text" name="departure_time" placeholder="Only if your plans changed" class="maint-input">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Backup contact (optional)</label>
-                        <input type="text" name="emergency_contact" placeholder="Name and cell number" class="maint-input">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Special Requests or Questions</label>
-                    <textarea name="message" rows="3" placeholder="Celebrating something? Need gear? Anything we should know before you arrive?" class="maint-input"></textarea>
-                </div>
-                <button type="submit" id="pre-arrival-submit" class="w-full bg-[#A45D41] text-white font-black py-4 rounded-xl hover:bg-[#8b4a32] transition shadow-lg uppercase tracking-widest text-sm">
-                    Send Pre-Arrival Info
-                </button>
-                <p id="pre-arrival-sending" class="hidden text-center text-stone-500 text-sm italic">Sending... hang tight</p>
-                <p id="pre-arrival-error" class="hidden text-center text-red-600 text-sm font-bold">Something went wrong — try texting Lance at 770.549.9358</p>
-            </form>
-        </div>
+            </section>
 
         </div><!-- end tab-checkin -->
 
@@ -1453,10 +1432,7 @@ fetchForm('checkout-form',    'checkout-submit',    'checkout-sending',    'chec
 fetchForm('guestbook-form',   'guestbook-submit',   'guestbook-sending',   'guestbook-error',   '/thank-you-guestbook.html');
 fetchForm('maintenance-form', 'maintenance-submit', 'maintenance-sending', 'maintenance-error', '/thank-you-maintenance.html');
 
-// ============================
-// PRE-ARRIVAL FORM — fetch submit + redirect
-// ============================
-const preArrivalForm = document.getElementById('pre-arrival-form');
+// Show the guest's booking packet when this guide is opened through an invitation.
 async function loadGuestBookingTools() {
     try {
         const response = await fetch('/api/invite-profile', { cache:'no-store' });
@@ -1467,58 +1443,9 @@ async function loadGuestBookingTools() {
             packet.href = data.bookingPacketUrl;
             packet.hidden = false;
         }
-        const profile = data.bookingProfile || {};
-        if (preArrivalForm) {
-            preArrivalForm.elements.name.value = profile.guestName || data.inviteLabel || data.visitorName || '';
-            preArrivalForm.elements.email.value = profile.email || '';
-            preArrivalForm.elements.stay_dates.value = profile.arrival && profile.departure ? `${profile.arrival} to ${profile.departure}` : '';
-            preArrivalForm.elements.guest_count.value = profile.guests || '';
-        }
     } catch { /* The Hub remains usable if profile details are temporarily unavailable. */ }
 }
 loadGuestBookingTools();
-if (preArrivalForm) {
-    preArrivalForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const btn = document.getElementById('pre-arrival-submit');
-        const sending = document.getElementById('pre-arrival-sending');
-        const error = document.getElementById('pre-arrival-error');
-        btn.classList.add('hidden');
-        sending.classList.remove('hidden');
-        error.classList.add('hidden');
-        try {
-            // Build a plain object from form fields
-            const data = {};
-            new FormData(preArrivalForm).forEach((val, key) => {
-                if (data[key]) {
-                    data[key] = [].concat(data[key], val);
-                } else {
-                    data[key] = val;
-                }
-            });
-            const res = await fetch(preArrivalForm.action, {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            });
-            const json = await res.json().catch(() => ({}));
-            console.log('Formspree response:', res.status, json);
-            if (res.ok) {
-                window.location.href = '/welcome-you.html';
-            } else {
-                throw new Error(json.error || 'bad response');
-            }
-        } catch(err) {
-            console.error('Pre-arrival submit error:', err);
-            sending.classList.add('hidden');
-            btn.classList.remove('hidden');
-            error.classList.remove('hidden');
-        }
-    });
-}
 
 // ============================
 // TAB SWITCHING
@@ -1889,7 +1816,7 @@ document.addEventListener('keydown', e => {
 <script>
 // Register service worker
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/friends-sw.js?v=31')
+    navigator.serviceWorker.register('/friends-sw.js?v=32')
         .then(() => console.log('Weeks Creek Guest Guide SW registered'))
         .catch(e => console.error('SW error:', e));
 }
