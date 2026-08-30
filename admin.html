@@ -410,9 +410,9 @@
       if(status==='pending'||String(booking.source||'').includes('inquiry'))['request_submitted','inquiry_received'].forEach(item=>triggers.add(item));
       if(['offered','reserved'].includes(status))['invite_sent','stay_selected','booking_approved','packet_requested'].forEach(item=>triggers.add(item));
       if(['reserved','pending-payment'].includes(status)&&booking.agreementAcceptedAt&&!booking.paymentRequirementMet)triggers.add('manual_signed_unpaid');
-      if(['reserved','pending-payment'].includes(status)&&!booking.paymentRequirementMet){triggers.add('manual_selected_unpaid');triggers.add('deposit_reminder');triggers.add('deposit_grace');}
+      if(['reserved','pending-payment'].includes(status)&&!booking.paymentRequirementMet){triggers.add('manual_selected_unpaid');triggers.add('scheduled_deposit_reminder');triggers.add('scheduled_deposit_overdue');}
       if(['reserved','booked'].includes(status)&&booking.paymentRequirementMet&&!booking.agreementAcceptedAt)triggers.add('payment_requirement_met');
-      if(['reserved','booked'].includes(status)&&booking.paymentPlan==='deposit-balance'&&!booking.paymentFullyPaid){triggers.add('balance_reminder');triggers.add('balance_overdue');}
+      if(['reserved','booked'].includes(status)&&booking.paymentPlan==='deposit-balance'&&!booking.paymentFullyPaid){triggers.add('scheduled_balance_reminder');triggers.add('scheduled_balance_overdue');}
       if(status==='booked'&&before){triggers.add('booking_finalized');triggers.add('scheduled_before_arrival');}
       if(status==='booked'&&during)['scheduled_checkin_day','scheduled_midstay','scheduled_checkout_day'].forEach(item=>triggers.add(item));
       if((status==='booked'&&after)||status==='completed')['scheduled_checkout_day','scheduled_after_checkout','review_requested','scheduled_return_offer'].forEach(item=>triggers.add(item));
