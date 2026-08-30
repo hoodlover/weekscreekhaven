@@ -1,8 +1,9 @@
 import { appendBookingRecord, getBookingCalendar, rangesOverlap, unavailableRanges } from '../_lib/booking-store.js';
 import { emailConfigured, escapeEmailHtml, sendEmail } from '../_lib/email.js';
-import { createAgreementToken, enforceRateLimit, json, rateLimitJson, sameOriginRequest } from '../_lib/security.js';
+import { createAgreementToken, enforceRateLimit, json, rateLimitJson, requireInvite, sameOriginRequest } from '../_lib/security.js';
 import { applyFriendsAndFamilyDiscount, money, quoteStay } from '../pricing.js';
 import { automaticallyApproveBooking } from '../_lib/auto-booking.js';
+import { getInvites } from '../_lib/invite-store.js';
 
 const text = (value, max = 240) => String(value || '').trim().slice(0, max);
 const emailValue = (value) => {
@@ -33,8 +34,11 @@ export default async function handler(request, response) {
   if (!Number.isFinite(formStartedAt) || Date.now() - formStartedAt < 2000 || Date.now() - formStartedAt > 6 * 60 * 60 * 1000) {
     return json(response, 400, { error: 'Please refresh the booking page and try again.' });
   }
-    const name = text(request.body?.name, 100);
-    const email = emailValue(request.body?.email);
+    const inviteSession = requireInvite(request);
+    const invites = inviteSession && !String(inviteSession.visitorName || '').includes('owner preview') ? await getInvites() : [];
+    const activeInvite = invites.find((item) => item.id === inviteSession?.inviteId && !item.revokedAt && (!item.expiresAt || Date.parse(item.expiresAt) >= Date.now()));
+    const name = text(activeInvite?.label || request.body?.name, 100);
+    const email = emailValue(activeInvite?.recipientEmail || request.body?.email);
     const first = dateChoice(request, 1);
     if (name.length < 2 || !email) return json(response, 400, { error: 'Add your name and a valid email address.' });
     if (!first.arrival || !first.departure || first.departure <= first.arrival) {
@@ -83,6 +87,7 @@ export default async function handler(request, response) {
     const inquiryExpiresAt = bookingIntent === 'questions' ? new Date(Date.parse(createdAt) + 48 * 60 * 60 * 1000).toISOString() : null;
     const booking = {
       id: crypto.randomUUID(), status: 'pending', createdAt, name, email,
+      inviteId: activeInvite?.id || null, source: activeInvite ? 'invite-booking' : 'public-booking',
       phone, billingAddress, billingCity, billingState, billingPostalCode, guestNames, vehicleCount,
       ageConfirmed, primaryGuestStaying, privacyAcceptedAt: createdAt,
       guests, dogs, lateCheckout, pricingVersion: 2,
