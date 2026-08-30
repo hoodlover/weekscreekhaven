@@ -381,7 +381,7 @@
   </main>
   <script type="module">
     import { applyFriendsAndFamilyDiscount, money, PRICING_CONFIG, quoteStay, weekPlan } from '/pricing.js';
-    const state = { invites: [], access: [], bookings: [], reviews: [], rates: [], discounts: [], discountNameFilter: '', discountTypeFilter: 'all', emails: [], emailTriggers: [], accounting: [], accountingLoaded: false, showArchivedBookings: false, bookingFilter: 'all', bookingSort: 'attention', openBookingIds: new Set(), pricing: PRICING_CONFIG, square: {}, knownBookingIds: new Set(), knownAccessIds: new Set(), initialized: false, newInvite: null };
+    const state = { invites: [], access: [], bookings: [], reviews: [], rates: [], discounts: [], discountNameFilter: '', discountTypeFilter: 'all', emails: [], emailTriggers: [], accounting: [], accountingLoaded: false, showArchivedBookings: false, bookingFilter: 'all', bookingSort: 'arrival', openBookingIds: new Set(), pricing: PRICING_CONFIG, square: {}, knownBookingIds: new Set(), knownAccessIds: new Set(), initialized: false, newInvite: null };
     const $ = (id) => document.getElementById(id);
     $('panel-invites').prepend($('invite-form'));
     const discountFilters=document.createElement('div');discountFilters.className='discount-editor-grid';discountFilters.innerHTML='<label>Filter by name<input id="discount-filter-name" type="search" placeholder="Start typing a name"></label><label>Filter by discount<select id="discount-filter-type"><option value="all">All discounts</option><option value="percentage">Percentage off</option><option value="amount">Dollar amount off</option><option value="flat">Whole-stay price</option><option value="complimentary">Complimentary</option></select></label>';$('discount-list').before(discountFilters);
