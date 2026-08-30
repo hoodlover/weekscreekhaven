@@ -43,9 +43,10 @@
     .error { color:var(--danger); background:#fff1f1; padding:10px 12px; border-radius:8px; font-size:.82rem; font-weight:700; margin-top:12px; }
     .dashboard { display:none; }
     .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:13px; margin-bottom:16px; }
-    .stat { padding:20px; }
-    .stat strong { display:block; font-family:'Crimson Text',serif; color:var(--pine); font-size:2.2rem; line-height:1; }
-    .stat span { color:var(--muted); text-transform:uppercase; font-size:.66rem; font-weight:800; letter-spacing:.12em; }
+    .stat { width:100%; min-height:74px; margin:0; padding:11px 14px; display:flex; align-items:center; gap:10px; border:1px solid var(--line); color:var(--ink); background:rgba(255,253,248,.98); text-align:left; text-transform:none; letter-spacing:0; box-shadow:0 8px 22px #0003; cursor:pointer; }
+    .stat:hover,.stat:focus-visible { border-color:var(--rust); background:#fff8ed; outline:3px solid #d8b26d55; transform:translateY(-1px); }
+    .stat strong { flex:0 0 auto; display:block; font-family:'Crimson Text',serif; color:var(--pine); font-size:1.8rem; line-height:1; }
+    .stat span { color:var(--muted); text-transform:uppercase; font-size:.59rem; line-height:1.2; font-weight:800; letter-spacing:.08em; }
     .main-grid { display:block; }
     .create { padding:22px; position:static; box-shadow:none; background:#f8f3ea; }
     .create h2,.content h2 { font-size:1.8rem; color:var(--pine); }
@@ -217,9 +218,9 @@
       .panel { border-radius:12px; }
       .stats { grid-template-columns:repeat(3,minmax(0,1fr)); gap:5px; margin-bottom:8px; }
       .stats .stat:last-child { grid-column:auto; }
-      .stat { min-height:64px; display:flex; flex-direction:column; justify-content:center; padding:7px 6px; }
-      .stat strong { font-size:1.25rem; }
-      .stat span { font-size:.46rem; line-height:1.2; letter-spacing:.045em; }
+      .stat { min-height:50px; justify-content:center; gap:5px; padding:6px 5px; border-radius:12px; }
+      .stat strong { font-size:1.3rem; }
+      .stat span { font-size:.43rem; line-height:1.15; letter-spacing:.035em; }
       .create,.section-head,.tab-panel { padding:15px; }
       .section-head h2 { margin-bottom:10px; }
       .tabs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; overflow:visible; padding:0; }
@@ -278,9 +279,9 @@
 
     <section id="dashboard" class="dashboard">
       <div class="stats">
-        <div class="panel stat"><strong id="active-count">0</strong><span>Booking requests</span></div>
-        <div class="panel stat"><strong id="visit-count">0</strong><span>Upcoming stays</span></div>
-        <div class="panel stat"><strong id="recent-count">0</strong><span>Items needing attention</span></div>
+        <button class="panel stat" type="button" data-summary-link="requests" aria-label="Show booking requests"><strong id="active-count">0</strong><span>Booking requests</span></button>
+        <button class="panel stat" type="button" data-summary-link="upcoming" aria-label="Show upcoming stays"><strong id="visit-count">0</strong><span>Upcoming stays</span></button>
+        <button class="panel stat" type="button" data-summary-link="attention" aria-label="Show items needing attention"><strong id="recent-count">0</strong><span>Needs attention</span></button>
       </div>
       <div class="main-grid">
         <form id="invite-form" class="panel create">
@@ -644,6 +645,7 @@
       await navigator.clipboard.writeText(message); $('copy-invite').textContent='Message copied'; setTimeout(()=>$('copy-invite').textContent='Copy message',1400);
     });
     document.querySelector('.tabs').addEventListener('click',(event)=>{ const tab=event.target.closest('[data-tab]'); if(!tab)return; document.querySelectorAll('.tab,.tab-panel').forEach(el=>el.classList.remove('active')); tab.classList.add('active'); $(`panel-${tab.dataset.tab}`).classList.add('active'); if(tab.dataset.tab==='accounting'&&!state.accountingLoaded)loadAccounting(); if(tab.dataset.tab==='activity'){ try{localStorage.setItem('wch_seen_activity',new Date().toISOString());}catch{} render(); } });
+    document.querySelector('.stats').addEventListener('click',(event)=>{const link=event.target.closest('[data-summary-link]');if(!link)return;const kind=link.dataset.summaryLink;state.showArchivedBookings=false;state.bookingFilter=kind==='requests'?'new':'all';state.bookingSort=kind==='upcoming'?'arrival':'attention';document.querySelectorAll('.tab,.tab-panel').forEach(el=>el.classList.remove('active'));document.querySelector('[data-tab="bookings"]').classList.add('active');$('panel-bookings').classList.add('active');render();$('booking-list').scrollIntoView({behavior:'smooth',block:'start'});});
     $('accounting-year').addEventListener('change',renderAccounting);
     $('refresh-accounting').addEventListener('click',loadAccounting);
     $('accounting-detail').addEventListener('change',async(event)=>{ const control=event.target.closest('[data-accounting-writeoff],[data-accounting-cleaning]'); if(!control)return; const row=control.closest('[data-accounting-booking]'),writeOff=row.querySelector('[data-accounting-writeoff]').checked,cleaning=row.querySelector('[data-accounting-cleaning]').value,status=row.querySelector('.accounting-save-state'); status.textContent='Saving…'; row.querySelectorAll('input').forEach(input=>input.disabled=true); try{await request('/api/admin-accounting',{method:'PATCH',body:JSON.stringify({bookingId:row.dataset.accountingBooking,writeOff,cleaningFee:cleaning})});status.textContent='Saved';await loadAccounting();}catch(error){status.textContent=error.message;row.querySelectorAll('input').forEach(input=>input.disabled=false);} });
