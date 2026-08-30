@@ -120,15 +120,16 @@
         if(data.bookingPacketUrl){const packet=document.getElementById('booking-packet-link');packet.href=data.bookingPacketUrl;packet.hidden=false;}
         renderStayChoices(data);
         const customPhoto = escapeText(data.inviteLabel).toLowerCase() === 'do vibers' ? '/guests/DO_Vibers.webp' : '';
+        const defaultPhoto = '/guests/weeks-creek-haven-friends-family-welcome-5x5.png';
         const photos = data.photos || [];
         const photoBox = document.getElementById('photos');
-        photoBox.className = customPhoto ? 'photos count-1 feature-art' : `photos count-${Math.max(1, photos.length)}`;
+        photoBox.className = customPhoto || !photos.length ? 'photos count-1 feature-art' : `photos count-${photos.length}`;
         if (customPhoto) {
           photoBox.innerHTML = `<img src="${customPhoto}" alt="Welcome to Weeks Creek Haven, DO Vibers">`;
         } else if (photos.length) {
           photoBox.innerHTML = photos.map((photo,index) => `<img src="/api/invite-photo?photoId=${encodeURIComponent(photo.id)}" alt="Welcome photo ${index + 1}">`).join('');
         } else {
-          photoBox.innerHTML = '<img src="gallery/creek-listening-spot.webp" alt="Weeks Creek Haven stream and bridge">';
+          photoBox.innerHTML = `<img src="${defaultPhoto}" alt="Welcome to Weeks Creek Haven Friends and Family in beautiful Blue Ridge">`;
         }
         document.getElementById('loading').hidden = true;
         document.getElementById('welcome-card').hidden = false;
