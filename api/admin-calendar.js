@@ -9,6 +9,7 @@ import { findBookingInvite } from '../_lib/booking-invite.js';
 const text = (value, max = 120) => String(value || '').trim().slice(0, max);
 const date = (value) => /^\d{4}-\d{2}-\d{2}$/.test(String(value || '')) ? String(value) : '';
 const nights = (arrival, departure) => Math.round((Date.parse(`${departure}T00:00:00Z`) - Date.parse(`${arrival}T00:00:00Z`)) / 86400000);
+const addDays = (value, amount) => new Date(Date.parse(`${value}T12:00:00Z`) + amount * 86400000).toISOString().slice(0, 10);
 
 export default async function handler(request, response) {
   if (!requireAdmin(request)) return json(response, 401, { error: 'Please sign in as the site owner.' });
@@ -30,8 +31,9 @@ export default async function handler(request, response) {
     const createdAt = new Date().toISOString();
     if (request.method === 'POST') {
       const arrival = date(request.body?.arrival);
-      const departure = date(request.body?.departure);
-      if (!arrival || !departure || departure <= arrival) return json(response, 400, { error: 'Choose a valid start and end date.' });
+      const lastHeldDate = date(request.body?.departure);
+      if (!arrival || !lastHeldDate || lastHeldDate < arrival) return json(response, 400, { error: 'Choose a valid first and last day for the hold.' });
+      const departure = addDays(lastHeldDate, 1);
       if (unavailableRanges(await getBookingCalendar()).some((range) => rangesOverlap({ arrival, departure }, range))) return json(response, 409, { error: 'Those dates already include a reservation, booking, or owner block.' });
       const holdType = request.body?.holdType === 'flexible' ? 'flexible' : 'firm';
       const block = { id: crypto.randomUUID(), arrival, departure, label: text(request.body?.label, 100) || 'Owner hold', holdType, createdAt };
@@ -89,8 +91,9 @@ export default async function handler(request, response) {
       if (!booking) return json(response, 404, { error: 'Booking request not found.' });
       if (action === 'edit-booking') {
         const arrival = date(request.body?.arrival);
-        const departure = date(request.body?.departure);
-        if (!arrival || !departure || departure <= arrival) return json(response, 400, { error: 'Choose a valid arrival and checkout date.' });
+        const lastHeldDate = date(request.body?.departure);
+        if (!arrival || !lastHeldDate || lastHeldDate < arrival) return json(response, 400, { error: 'Choose a valid first and last day for the hold.' });
+        const departure = addDays(lastHeldDate, 1);
         const requestedChoice = Math.max(0, Number(request.body?.dateChoice || 1) - 1);
         const choiceIndex = ['pending', 'offered'].includes(booking.status) ? requestedChoice : (Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0);
         const dateChoices = (booking.dateChoices || []).map((choice) => ({ ...choice }));
