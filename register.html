@@ -147,11 +147,11 @@
     @media(max-width:850px) { .layout { grid-template-columns:1fr; } .intro { position:static; padding:20px 8px; } .intro h1 { max-width:650px; } }
     @media(max-width:560px) {
       .page { padding:12px 8px 44px; }
-      .top { align-items:flex-start; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+      .top { position:relative; align-items:flex-start; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
       .brand { gap:8px; font-size:.88rem; line-height:1.15; }
-      .brand img { width:58px; height:58px; }
-      .top-actions { width:100%; gap:5px; justify-content:flex-end; padding-top:0; }
-      .admin-pill { top:-88px; }
+      .brand img { width:76px; height:76px; }
+      .top-actions { position:static; width:100%; gap:5px; justify-content:flex-end; padding-top:0; }
+      .admin-pill { top:20px; right:0; padding:10px 17px; }
       .home { padding:8px 10px; font-size:.56rem; }
       .intro { padding:14px 6px 18px; }
       h1 { font-size:clamp(2.55rem,12vw,3.15rem); margin:12px 0 18px; }
@@ -184,14 +184,14 @@
       <section class="intro">
         <div class="eyebrow">Your Blue Ridge stay</div>
         <h1><span class="hero-line">Pick your dates.</span><span class="hero-line">Picture the rest.</span></h1>
-        <p>Choose available dates and see the complete price immediately. Your checkout packet, Square invoice, and rental agreement are created when you continue—your dates remain open to others until the required deposit is paid.</p>
+        <p>Choose available dates and see the complete price immediately. Your checkout packet, Square invoice, and rental agreement are created when you continue—your dates remain open to others until payment and the agreement are complete.</p>
         <p><a class="home" href="/availability.html">See available dates &amp; nightly rates</a></p>
         <h3 class="next-title">What happens next</h3>
         <div class="steps">
-          <div class="step"><b>1</b><span>Choose available dates and review the stay price, taxes, government fees, and separate $300 refundable security deposit.</span></div>
+          <div class="step"><b>1</b><span>Choose available dates and review the stay price, taxes, government fees, and any applicable refundable security deposit.</span></div>
           <div class="step"><b>2</b><span>Continue to receive your private booking packet, Square invoice, and rental agreement immediately.</span></div>
-          <div class="step"><b>3</b><span>Your dates remain available to other guests until the required 20% reservation deposit is paid—the first completed deposit secures them.</span></div>
-          <div class="step"><b>4</b><span>Sign the agreement by the displayed deadline. The remaining balance is due seven days before check-in.</span></div>
+          <div class="step"><b>3</b><span>Your dates remain available to other guests until both the required payment and rental agreement are complete.</span></div>
+          <div class="step"><b>4</b><span>The first guest to complete both steps locks in the dates. The remaining balance is due seven days before check-in.</span></div>
         </div>
       </section>
 
@@ -199,13 +199,13 @@
         <div class="eyebrow">Secure direct booking</div>
         <h2>Choose your stay by the creek</h2>
         <div class="minimum">One-night stays available &middot; two-night minimum charge</div>
-        <p class="helper">Choose your dates and guest count to see the price immediately. One-night stays are welcome but billed at the two-night minimum price. Continuing creates your checkout packet but does not charge a card. Your dates are secured only when the required deposit is paid.</p>
+        <p class="helper">Choose your dates and guest count to see the price immediately. One-night stays are welcome but billed at the two-night minimum price. Continuing creates your checkout packet but does not charge a card. Your dates are secured only after both payment and the rental agreement are complete.</p>
         <section class="confidence-panel" aria-labelledby="confidence-title">
           <h3 class="confidence-title" id="confidence-title">Book with confidence</h3>
           <div class="confidence-grid">
             <div class="confidence-item"><strong>No surprise charge</strong><span>Continuing never charges a card. You choose when to pay securely through Square.</span></div>
-            <div class="confidence-item"><strong>See the full total</strong><span>The live estimate includes stay charges, taxes, government fees, and the separate refundable deposit.</span></div>
-            <div class="confidence-item"><strong>Secure final step</strong><span>The first completed deposit secures the dates; the signed agreement completes the booking.</span></div>
+            <div class="confidence-item"><strong>See the full total</strong><span>The live estimate includes stay charges, taxes, government fees, and any applicable refundable deposit.</span></div>
+            <div class="confidence-item"><strong>Secure final step</strong><span>The first guest to complete payment and the signed agreement secures the dates.</span></div>
           </div>
         </section>
         <div id="calendar-selection" class="message picked" hidden role="status"></div>
