@@ -36,20 +36,13 @@ export default async function handler(request, response) {
     const name = text(request.body?.name, 100);
     const email = emailValue(request.body?.email);
     const first = dateChoice(request, 1);
-    const second = dateChoice(request, 2);
     if (name.length < 2 || !email) return json(response, 400, { error: 'Add your name and a valid email address.' });
     if (!first.arrival || !first.departure || first.departure <= first.arrival) {
-      return json(response, 400, { error: 'Choose a valid first arrival and departure.' });
+      return json(response, 400, { error: 'Choose a valid arrival and departure.' });
     }
     if (nights(first) < 1) return json(response, 400, { error: 'Choose at least one night. One-night stays are billed at the two-night minimum price.' });
-    const hasSecondChoice = Boolean(second.arrival || second.departure);
-    if (hasSecondChoice && (!second.arrival || !second.departure || second.departure <= second.arrival)) {
-      return json(response, 400, { error: 'Complete both dates for your optional second choice.' });
-    }
-    if (hasSecondChoice && nights(second) < 1) return json(response, 400, { error: 'Every date choice must include at least one night.' });
     const today = new Date().toISOString().slice(0, 10);
-    if (first.arrival < today || (hasSecondChoice && second.arrival < today)) return json(response, 400, { error: 'Arrival dates must be in the future.' });
-    if (hasSecondChoice && first.arrival === second.arrival && first.departure === second.departure) return json(response, 400, { error: 'Please give us two different date choices.' });
+    if (first.arrival < today) return json(response, 400, { error: 'Arrival dates must be in the future.' });
     const calendar = await getBookingCalendar();
     const unavailable = unavailableRanges(calendar);
     const guests = Math.max(1, Math.min(11, Number(request.body?.guests) || 1));
@@ -65,15 +58,18 @@ export default async function handler(request, response) {
   const ageConfirmed = ['1', 'true', 'on', true, 1].includes(request.body?.ageConfirmed);
   const primaryGuestStaying = ['1', 'true', 'on', true, 1].includes(request.body?.primaryGuestStaying);
   const privacyAccepted = ['1', 'true', 'on', true, 1].includes(request.body?.privacyAccepted);
+  const bookingIntent = request.body?.bookingIntent === 'questions' ? 'questions' : 'checkout';
+  const ownerQuestions = text(request.body?.ownerQuestions, 1000);
   if (phoneDigits.length !== 10 || !billingAddress || !billingCity || !/^[A-Z]{2}$/.test(billingState) || !/^\d{5}(?:-\d{4})?$/.test(billingPostalCode)) {
     return json(response, 400, { error: 'Add a valid phone number and complete billing address.' });
   }
   if (!ageConfirmed || !primaryGuestStaying || !privacyAccepted) {
     return json(response, 400, { error: 'Confirm the primary guest, minimum age, and privacy notice.' });
   }
+  if (bookingIntent === 'questions' && ownerQuestions.length < 2) return json(response, 400, { error: 'Add your question for the owners.' });
   if (guests > 1 && guestNames.length < 2) return json(response, 400, { error: 'List the other registered guests in your party.' });
     const lateCheckout = ['1', 'true', 'on', true, 1].includes(request.body?.lateCheckout);
-    const dateChoices = (hasSecondChoice ? [first, second] : [first]).map((choice) => {
+    const dateChoices = [first].map((choice) => {
       const standardQuote = quoteStay({ ...choice, guests, dogs, lateCheckout, rates: calendar.rates || [] });
       const quote = applyFriendsAndFamilyDiscount(standardQuote, phone, calendar.discounts || []);
       return { ...choice, amountCents: quote.totalCents, quote };
@@ -92,10 +88,11 @@ export default async function handler(request, response) {
       friendsAndFamilyDiscount: dateChoices[0].quote.friendsAndFamilyDiscount || null,
       dateChoices, relationship: text(request.body?.relationship, 160),
       reference: text(request.body?.reference, 160), discountRequest: first.discountRequest,
-      notes: [...dateChoices.map((choice, index) => choice.discountRequest ? `Choice ${index + 1} requested offer: ${choice.discountRequest}` : ''), text(request.body?.notes, 800)].filter(Boolean).join('\n'),
+      bookingIntent, ownerQuestions,
+      notes: [first.discountRequest ? `Requested offer: ${first.discountRequest}` : '', ownerQuestions ? `Questions for owners: ${ownerQuestions}` : '', text(request.body?.notes, 800)].filter(Boolean).join('\n'),
     };
     await appendBookingRecord({ type: 'requested', createdAt, booking });
-    const approvedBooking=await automaticallyApproveBooking(booking);
+    const approvedBooking=bookingIntent==='questions'?booking:await automaticallyApproveBooking(booking);
     let confirmationSent = true;
     if (emailConfigured() && !approvedBooking.autoApproved) {
       const safeName = escapeEmailHtml(name);
@@ -103,45 +100,45 @@ export default async function handler(request, response) {
       const complimentaryMessage = firstQuote.complimentary
         ? ` Welcome! Your stay is complimentary: $0 due, with no taxes or government lodging fees.`
         : firstQuote.friendsAndFamilyDiscount
-          ? ` Welcome! Your ${firstQuote.friendsAndFamilyDiscount.label} gives you a discounted rate of ${money(dateChoices[0].amountCents)} for choice 1, saving ${money(firstQuote.discountAmountCents)}.`
+          ? ` Welcome! Your ${firstQuote.friendsAndFamilyDiscount.label} gives you a discounted rate of ${money(dateChoices[0].amountCents)}, saving ${money(firstQuote.discountAmountCents)}.`
           : firstQuote.earlyBirdDiscount
-            ? ` Your automatic ${firstQuote.earlyBirdDiscount.percentage}% Early Bird price for choice 1 is ${money(dateChoices[0].amountCents)}, saving ${money(firstQuote.earlyBirdDiscountCents)}.`
-            : ` Your current estimate for choice 1 is ${money(dateChoices[0].amountCents)}.`;
+            ? ` Your automatic ${firstQuote.earlyBirdDiscount.percentage}% Early Bird price is ${money(dateChoices[0].amountCents)}, saving ${money(firstQuote.earlyBirdDiscountCents)}.`
+            : ` Your current estimate is ${money(dateChoices[0].amountCents)}.`;
       const priceMessage = firstQuote.complimentary
         ? ''
         : ` This price does not include an estimated ${money(firstQuote.estimatedTaxesAndFeesCents)} in taxes and government lodging fees; the estimated amount if booked is ${money(firstQuote.estimatedGrandTotalCents)}. The standard $200 cleaning cost is included.`;
       const complimentaryHtml = firstQuote.complimentary
         ? '<p style="background:#e8f2e9;padding:14px;border-radius:10px"><strong>Welcome!</strong> This is a complimentary stay: <strong>$0 due</strong>, with no taxes or government lodging fees.</p>'
         : firstQuote.friendsAndFamilyDiscount
-          ? `<p style="background:#e8f2e9;padding:14px;border-radius:10px"><strong>Welcome!</strong> Your ${escapeEmailHtml(firstQuote.friendsAndFamilyDiscount.label)} gives you a discounted rate of <strong>${money(dateChoices[0].amountCents)}</strong> for choice 1. You save ${money(firstQuote.discountAmountCents)}.</p>`
+          ? `<p style="background:#e8f2e9;padding:14px;border-radius:10px"><strong>Welcome!</strong> Your ${escapeEmailHtml(firstQuote.friendsAndFamilyDiscount.label)} gives you a discounted rate of <strong>${money(dateChoices[0].amountCents)}</strong>. You save ${money(firstQuote.discountAmountCents)}.</p>`
           : firstQuote.earlyBirdDiscount
-            ? `<p style="background:#e8f2e9;padding:14px;border-radius:10px"><strong>Automatic Early Bird:</strong> ${firstQuote.earlyBirdDiscount.percentage}% off is already included. Your choice 1 estimate is <strong>${money(dateChoices[0].amountCents)}</strong>, saving ${money(firstQuote.earlyBirdDiscountCents)}.</p>`
-            : `<p>Current choice 1 estimate: <strong>${money(dateChoices[0].amountCents)}</strong></p>`;
+            ? `<p style="background:#e8f2e9;padding:14px;border-radius:10px"><strong>Automatic Early Bird:</strong> ${firstQuote.earlyBirdDiscount.percentage}% off is already included. Your estimate is <strong>${money(dateChoices[0].amountCents)}</strong>, saving ${money(firstQuote.earlyBirdDiscountCents)}.</p>`
+            : `<p>Current estimate: <strong>${money(dateChoices[0].amountCents)}</strong></p>`;
       const priceHtml = firstQuote.complimentary ? '' : `<p>Price does not include <strong>${money(firstQuote.estimatedTaxesAndFeesCents)}</strong> in estimated taxes and government lodging fees.<br>Estimated amount if booked: <strong>${money(firstQuote.estimatedGrandTotalCents)}</strong></p>`;
       try {
         await sendEmail({
-          to: email, toName: name, subject: 'We received your Weeks Creek Haven date request',
+          to: email, toName: name, subject: bookingIntent==='questions'?'We received your Weeks Creek Haven questions':'We received your Weeks Creek Haven date request',
           templateKey:'request-received', templateVariables:{ guestName:name },
-          text: `Hi ${name},\n\nWe received your preferred date${hasSecondChoice ? ' choices' : ' choice'} for Weeks Creek Haven.${complimentaryMessage}${priceMessage}${lateCheckout && !firstQuote.complimentary ? ' Your estimate includes the $50 noon checkout option.' : ' Standard checkout is 11:00 AM.'} Check-in begins at 4:00 PM. This is a request, not a confirmed reservation.\n\nThank you!`,
-          html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">We got your request</h1><p>Hi ${safeName},</p><p>We received your preferred date${hasSecondChoice ? ' choices' : ' choice'} for Weeks Creek Haven.</p>${complimentaryHtml}${priceHtml}<p><span style="color:#74685e">${firstQuote.complimentary?'No payment required':`Standard $200 cleaning cost included · ${lateCheckout ? '$50 noon checkout included' : '11:00 AM checkout'}`} · 4:00 PM check-in</span></p><p><strong>This is a request, not a confirmed reservation.</strong> We’ll review the calendar and get back to you with availability and next steps.</p><p>Thanks for thinking of the Haven!</p></div>`,
+          text: bookingIntent==='questions'?`Hi ${name},\n\nWe received your selected dates (${first.arrival} through ${first.departure}) and your questions:\n\n${ownerQuestions}\n\nNo invoice was created. Lance or Heather will respond. These dates remain available until payment and the rental agreement are complete.\n\nThank you!`:`Hi ${name},\n\nWe received your selected stay dates for Weeks Creek Haven.${complimentaryMessage}${priceMessage}${lateCheckout && !firstQuote.complimentary ? ' Your estimate includes the $50 noon checkout option.' : ' Standard checkout is 11:00 AM.'} Check-in begins at 4:00 PM. The dates lock after payment and the rental agreement are both complete.\n\nThank you!`,
+          html: bookingIntent==='questions'?`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">We received your questions</h1><p>Hi ${safeName},</p><p>We received your selected dates: <strong>${first.arrival} through ${first.departure}</strong>.</p><p><strong>Your questions:</strong><br>${escapeEmailHtml(ownerQuestions)}</p><p>No invoice was created. Lance or Heather will respond. These dates remain available until payment and the rental agreement are complete.</p></div>`:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">We got your checkout</h1><p>Hi ${safeName},</p><p>We received your selected stay dates for Weeks Creek Haven.</p>${complimentaryHtml}${priceHtml}<p><span style="color:#74685e">${firstQuote.complimentary?'No payment required':`Standard $200 cleaning cost included · ${lateCheckout ? '$50 noon checkout included' : '11:00 AM checkout'}`} · 4:00 PM check-in</span></p><p><strong>Your dates lock after payment and the rental agreement are both complete.</strong></p><p>Thanks for thinking of the Haven!</p></div>`,
         });
         confirmationSent = true;
         if (process.env.OWNER_EMAIL) {
           await sendEmail({
             to: process.env.OWNER_EMAIL, toName: 'Lance', subject: `New cabin request from ${name}`,
             templateKey:'owner-new-request', templateVariables:{ guestName:name, adminUrl:'https://www.weekscreekhaven.com/admin.html' },
-            text: `${name} requested ${first.arrival} to ${first.departure} (${money(dateChoices[0].amountCents)})${hasSecondChoice ? `, or ${second.arrival} to ${second.departure} (${money(dateChoices[1].amountCents)})` : ''}.${dateChoices.map((choice,index)=>choice.discountRequest?` Choice ${index+1} requested offer: ${choice.discountRequest}.`:'').join('')}${dateChoices[0].quote.friendsAndFamilyDiscount ? ` Friends & Family rule applied: ${dateChoices[0].quote.friendsAndFamilyDiscount.label}, saving ${money(dateChoices[0].quote.discountAmountCents)} on choice 1.` : ''}${lateCheckout ? ' Includes the $50 noon checkout option.' : ' Standard 11:00 AM checkout.'} Review it in the Admin Hub.`,
-            html: `<p><strong>${safeName}</strong> submitted a new cabin request for ${guests} guest${guests === 1 ? '' : 's'}${dogs?` and ${dogs} dog${dogs===1?'':'s'}`:''}.</p><p>Choice 1: ${first.arrival} to ${first.departure} · <strong>${money(dateChoices[0].amountCents)}</strong>${hasSecondChoice ? `<br>Choice 2: ${second.arrival} to ${second.departure} · <strong>${money(dateChoices[1].amountCents)}</strong>` : ''}</p>${dateChoices[0].quote.friendsAndFamilyDiscount ? `<p><strong>${escapeEmailHtml(dateChoices[0].quote.friendsAndFamilyDiscount.label)} applied:</strong> ${money(dateChoices[0].quote.discountAmountCents)} savings on choice 1.</p>` : ''}<p>${lateCheckout ? '<strong>$50 noon checkout requested.</strong>' : 'Standard 11:00 AM checkout.'} Check-in is 4:00 PM.</p><p><a href="https://www.weekscreekhaven.com/admin.html">Review in the Admin Hub</a></p>`,
+            text: `${name} selected ${first.arrival} to ${first.departure} (${money(dateChoices[0].amountCents)}).${bookingIntent==='questions'?` Questions: ${ownerQuestions}`:''}${first.discountRequest?` Requested offer: ${first.discountRequest}.`:''}${dateChoices[0].quote.friendsAndFamilyDiscount ? ` Friends & Family rule applied: ${dateChoices[0].quote.friendsAndFamilyDiscount.label}, saving ${money(dateChoices[0].quote.discountAmountCents)}.` : ''}${lateCheckout ? ' Includes the $50 noon checkout option.' : ' Standard 11:00 AM checkout.'} Review it in the Admin Hub.`,
+            html: `<p><strong>${safeName}</strong> submitted ${bookingIntent==='questions'?'dates and questions':'a new cabin checkout'} for ${guests} guest${guests === 1 ? '' : 's'}${dogs?` and ${dogs} dog${dogs===1?'':'s'}`:''}.</p><p>${first.arrival} to ${first.departure} · <strong>${money(dateChoices[0].amountCents)}</strong></p>${bookingIntent==='questions'?`<p><strong>Questions:</strong><br>${escapeEmailHtml(ownerQuestions)}</p>`:''}${dateChoices[0].quote.friendsAndFamilyDiscount ? `<p><strong>${escapeEmailHtml(dateChoices[0].quote.friendsAndFamilyDiscount.label)} applied:</strong> ${money(dateChoices[0].quote.discountAmountCents)} savings.</p>` : ''}<p>${lateCheckout ? '<strong>$50 noon checkout requested.</strong>' : 'Standard 11:00 AM checkout.'} Check-in is 4:00 PM.</p><p><a href="https://www.weekscreekhaven.com/admin.html">Review in the Admin Hub</a></p>`,
           });
         }
       } catch (emailError) {
         console.error('Booking request saved but confirmation email failed.', emailError);
       }
     }
-    if (emailConfigured() && process.env.OWNER_EMAIL) {
+    if (bookingIntent!=='questions' && emailConfigured() && process.env.OWNER_EMAIL) {
       try { await sendEmail({to:process.env.OWNER_EMAIL,toName:'Lance',templateKey:'owner-new-request',templateVariables:{guestName:name,adminUrl:'https://www.weekscreekhaven.com/admin.html'},subject:`Automatically accepted stay for ${name}`,text:`${name}'s stay from ${first.arrival} through ${first.departure} was accepted automatically. Review it in the Admin Hub.`,html:`<p><strong>${escapeEmailHtml(name)}</strong> was automatically accepted for <strong>${first.arrival} through ${first.departure}</strong>.</p><p><a href="https://www.weekscreekhaven.com/admin.html">Review in the Admin Hub</a></p>`}); } catch(error) { console.error('Owner auto-booking alert failed',error); }
     }
-    return json(response, 201, { ok: true, requestId: booking.id, autoApproved:true, paymentUrl:approvedBooking.paymentUrl, confirmationSent, quotes: dateChoices.map((choice) => choice.quote) });
+    return json(response, 201, { ok: true, requestId: booking.id, autoApproved:Boolean(approvedBooking.autoApproved), questionsOnly:bookingIntent==='questions', paymentUrl:approvedBooking.paymentUrl||null, confirmationSent, quotes: dateChoices.map((choice) => choice.quote) });
   } catch (error) {
     console.error(error);
     return json(response, 503, { error: 'We could not save that request. Please try again.' });
