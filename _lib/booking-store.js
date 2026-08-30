@@ -83,7 +83,7 @@ export async function getBookingCalendar() {
     blocks: [...blocks.values()].sort((a, b) => a.arrival.localeCompare(b.arrival)),
     defaultNightlyRateCents,
     rates: [...rates.values()].sort((a, b) => a.arrival.localeCompare(b.arrival)),
-    discounts: [...discounts.values()].sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt))),
+    discounts: [...discounts.values()].map((discount) => ({ ...discount, chargeCleaning: false })).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt))),
     emailTemplates: [...emailTemplates.values()],
   };
 }
