@@ -1342,15 +1342,15 @@
                 </div>
 
                 <!-- Hospital -->
-                <div class="parchment rounded-xl p-5 border-l-4 border-red-600 shadow">
+                <div class="parchment rounded-xl p-5 border-l-4 border-red-600 shadow" data-emergency-card="Hospital / Emergency Care">
                     <div class="flex items-start gap-3">
                         <img src="webpic/hospicon.png" alt="Hospital" class="w-12 h-12 object-contain flex-shrink-0">
                         <div>
                             <p class="font-black text-red-700 text-sm uppercase tracking-wide mb-1">Closest Hospital &mdash; ~31 min</p>
-                            <p class="font-bold text-stone-800 text-base">Fannin Regional Hospital</p>
-                            <p class="text-stone-600 text-sm">2855 Old Hwy 5 North, Blue Ridge, GA 30513</p>
+                            <p class="font-bold text-stone-800 text-base" data-emergency-name>Blue Ridge Medical Center</p>
+                            <p class="text-stone-600 text-sm" data-emergency-detail>2855 Old Hwy 5 North, Blue Ridge, GA 30513</p>
                             <div class="flex gap-3 mt-2 flex-wrap">
-                                <a href="tel:7066323711" class="inline-flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white font-black text-xs px-4 py-2 rounded-full transition">&#128222; (706) 632-3711</a>
+                                <a href="tel:7066323711" data-emergency-phone class="inline-flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white font-black text-xs px-4 py-2 rounded-full transition">&#128222; (706) 632-3711</a>
                                 <a href="tel:911" class="inline-flex items-center gap-1 bg-stone-800 hover:bg-black text-white font-black text-xs px-4 py-2 rounded-full transition">&#128680; Call 911</a>
                             </div>
                         </div>
@@ -1358,19 +1358,28 @@
                 </div>
 
                 <!-- Police -->
-                <div class="parchment rounded-xl p-5 border-l-4 border-blue-700 shadow">
+                <div class="parchment rounded-xl p-5 border-l-4 border-blue-700 shadow" data-emergency-card="Police / Sheriff">
                     <div class="flex items-start gap-3">
                         <img src="webpic/policon.png" alt="Police" class="w-12 h-12 object-contain flex-shrink-0">
                         <div>
                             <p class="font-black text-blue-800 text-sm uppercase tracking-wide mb-1">Closest Police Station</p>
-                            <p class="font-bold text-stone-800 text-base">Blue Ridge Police Dept.</p>
-                            <p class="text-stone-600 text-sm">301 Church Street, Blue Ridge, GA 30513</p>
+                            <p class="font-bold text-stone-800 text-base" data-emergency-name>Blue Ridge Police Department</p>
+                            <p class="text-stone-600 text-sm" data-emergency-detail>Non-emergency dispatch</p>
                             <div class="flex gap-3 mt-2 flex-wrap">
-                                <a href="tel:7066323451" class="inline-flex items-center gap-1 bg-blue-700 hover:bg-blue-800 text-white font-black text-xs px-4 py-2 rounded-full transition">&#128222; (706) 632-3451</a>
+                                <a href="tel:7066322041" data-emergency-phone class="inline-flex items-center gap-1 bg-blue-700 hover:bg-blue-800 text-white font-black text-xs px-4 py-2 rounded-full transition">&#128222; (706) 632-2041</a>
                                 <a href="tel:911" class="inline-flex items-center gap-1 bg-stone-800 hover:bg-black text-white font-black text-xs px-4 py-2 rounded-full transition">&#128680; Call 911</a>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div class="parchment rounded-xl p-5 border-l-4 border-orange-700 shadow" data-emergency-card="Fire & Rescue">
+                    <div class="flex items-start gap-3"><div class="text-4xl" aria-hidden="true">&#128658;</div><div>
+                        <p class="font-black text-orange-800 text-sm uppercase tracking-wide mb-1">Fire &amp; Rescue</p>
+                        <p class="font-bold text-stone-800 text-base" data-emergency-name>Fannin County Fire &amp; Rescue</p>
+                        <p class="text-stone-600 text-sm" data-emergency-detail>Non-emergency office</p>
+                        <div class="flex gap-3 mt-2 flex-wrap"><a href="tel:7066324711" data-emergency-phone class="inline-flex items-center gap-1 bg-orange-700 hover:bg-orange-800 text-white font-black text-xs px-4 py-2 rounded-full transition">&#128222; (706) 632-4711</a><a href="tel:911" class="inline-flex items-center gap-1 bg-stone-800 hover:bg-black text-white font-black text-xs px-4 py-2 rounded-full transition">&#128680; Call 911</a></div>
+                    </div></div>
                 </div>
 
                 <!-- Poison Control -->
@@ -1887,6 +1896,19 @@ if ('serviceWorker' in navigator) {
 
 // PWA install prompt
 let deferredInstallPrompt = null;
+
+fetch('/api/emergency-contacts',{cache:'no-store'}).then(async response=>{
+    if(!response.ok)return;
+    const data=await response.json();
+    for(const contact of data.contacts||[]){
+        const card=document.querySelector(`[data-emergency-card="${CSS.escape(contact.category)}"]`);
+        if(!card)continue;
+        const name=card.querySelector('[data-emergency-name]'),detail=card.querySelector('[data-emergency-detail]'),phone=card.querySelector('[data-emergency-phone]');
+        if(name)name.textContent=contact.name;
+        if(detail)detail.textContent=contact.services||contact.notes||contact.scheduling||'Non-emergency contact';
+        if(phone){phone.href=`tel:${String(contact.phone||'').replace(/[^\d+]/g,'')}`;phone.textContent=`☎ ${contact.phone}`;}
+    }
+}).catch(()=>{});
 
 window.addEventListener('beforeinstallprompt', e => {
     e.preventDefault();
