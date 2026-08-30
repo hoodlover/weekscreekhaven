@@ -1,4 +1,4 @@
-import { appendBookingRecord } from './booking-store.js';
+import { appendBookingRecord, getBookingCalendar, rangesOverlap, unavailableRanges } from './booking-store.js';
 import { escapeEmailHtml, sendEmail } from './email.js';
 import { createAgreementToken } from './security.js';
 
@@ -28,8 +28,8 @@ async function paymentWelcome(booking, url) {
     toName: booking.name,
     templateKey: 'payment-received', templateVariables: { guestName:booking.name, arrival:dates.arrival, departure:dates.departure, packetUrl:url },
     subject: 'Payment received — finish your Weeks Creek Haven booking',
-    text: `Hi ${booking.name},\n\nWe received your required payment for ${dates.arrival} through ${dates.departure}. Your dates are reserved.\n\nOpen your private booking packet to sign the rental agreement and download your paperwork: ${url}\n\nOnce the agreement is signed, your stay will be marked Booked automatically.`,
-    html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Payment received</h1><p>Hi ${safeName},</p><p>We received your required payment for <strong>${dates.arrival} through ${dates.departure}</strong>. Your dates are reserved.</p><p><a href="${url}" style="display:inline-block;background:#183c2d;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Open your booking packet</a></p><p>Sign the rental agreement and download your paperwork there. Once the agreement is signed, your stay will be marked <strong>Booked</strong> automatically.</p></div>`,
+    text: `Hi ${booking.name},\n\nWe received your required payment for ${dates.arrival} through ${dates.departure}. Your stay is not locked in until the rental agreement is also signed.\n\nOpen your private booking packet to sign the rental agreement and download your paperwork: ${url}\n\nOnce the agreement is signed, your stay will be marked Booked automatically if the dates are still available.`,
+    html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Payment received</h1><p>Hi ${safeName},</p><p>We received your required payment for <strong>${dates.arrival} through ${dates.departure}</strong>. Your stay is not locked in until the rental agreement is also signed.</p><p><a href="${url}" style="display:inline-block;background:#183c2d;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Open your booking packet</a></p><p>Once the agreement is signed, your stay will be marked <strong>Booked</strong> automatically if the dates are still available.</p></div>`,
   });
 }
 
@@ -53,8 +53,14 @@ export async function finalizeBookingFlow(booking) {
   const now = new Date().toISOString();
   const paid = paymentMet(current);
   const agreementSigned = Boolean(current.agreementAcceptedAt);
-  if (paid && agreementSigned && current.status === 'reserved') {
-    current = await record(current, { status: 'booked', bookedAt: current.bookedAt || now, bookedAutomatically: true }, now);
+  if (paid && agreementSigned && ['pending-payment', 'reserved'].includes(current.status)) {
+    const dates = selectedDates(current);
+    const conflicts = unavailableRanges(await getBookingCalendar()).filter((range) => range.bookingId !== current.id);
+    if (dates.arrival && dates.departure && conflicts.some((range) => rangesOverlap(dates, range))) {
+      current = await record(current, { status: 'payment-conflict', paymentConflictAt: now, paymentConflictReason: 'Another guest completed payment and the rental agreement first. Owner refund or alternate dates required.' }, now);
+    } else {
+      current = await record(current, { status: 'booked', bookedAt: current.bookedAt || now, bookedAutomatically: true }, now);
+    }
   }
   if (!current.email) return current;
   const url = packetUrl(current.id);
