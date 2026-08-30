@@ -44,7 +44,7 @@ function stayEmailVariables(booking) {
     nextStep:booking.agreementAcceptedAt?'Your agreement is signed. Review the packet for the latest stay details.':'Please open the packet and sign the rental agreement.',
     refundAmount:`$${((Number(refund.amountCents)||0)/100).toFixed(2)}`, refundReason:refund.reason || 'Owner-approved adjustment',
     hubUrl:booking.welcomePreviewUrl || packetUrl, inviteCode:booking.invitePasscode || '',
-    checkoutChecklistUrl:noCleaner?'https://www.weekscreekhaven.com/checkout.html':packetUrl,
+    checkoutChecklistUrl:`https://www.weekscreekhaven.com/checkout.html?token=${encodeURIComponent(createAgreementToken(booking.id,365*86400))}`,
     checkoutExtraSteps:noCleaner?'Friends & Family checkout — no cleaner is scheduled after this stay. Please strip used beds, clean the bathrooms you used, complete at least one load of linens, and leave the cabin ready for the next adventure. Don’t let the door hit you on the way out — say “Alexa, Going Home” for the quick exit routine.':'Your cleaner will handle beds, bathrooms, and laundry. Please do not strip the beds.',
   };
 }
