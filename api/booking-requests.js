@@ -4,6 +4,7 @@ import { createAgreementToken, enforceRateLimit, json, rateLimitJson, requireInv
 import { applyFriendsAndFamilyDiscount, money, quoteStay } from '../pricing.js';
 import { automaticallyApproveBooking } from '../_lib/auto-booking.js';
 import { getInvites } from '../_lib/invite-store.js';
+import { applyInviteComplimentary } from '../_lib/invite-pricing.js';
 
 const text = (value, max = 240) => String(value || '').trim().slice(0, max);
 const emailValue = (value) => {
@@ -75,7 +76,8 @@ export default async function handler(request, response) {
     const lateCheckout = ['1', 'true', 'on', true, 1].includes(request.body?.lateCheckout);
     const dateChoices = [first].map((choice) => {
       const standardQuote = quoteStay({ ...choice, guests, dogs, lateCheckout, rates: calendar.rates || [] });
-      const quote = applyFriendsAndFamilyDiscount(standardQuote, phone, calendar.discounts || []);
+      const discountedQuote = applyFriendsAndFamilyDiscount(standardQuote, phone, calendar.discounts || []);
+      const quote = applyInviteComplimentary(discountedQuote, activeInvite);
       return { ...choice, amountCents: quote.totalCents, quote };
     });
     const unavailableChoices = dateChoices.map((choice) => unavailable.some((range) => rangesOverlap(choice, range)));

@@ -25,6 +25,8 @@ Use these instructions for all work in this repository.
 - Completed stays should not present welcome-page, welcome-packet, packet-copy, or packet-resend actions as current follow-up work.
 - Only guest messages appropriate to the booking's current stage should be offered.
 - Address guests by first name in guest-facing emails and welcome copy. Abigail's preferred name is Abby; keep her full legal/booking name in formal records.
+- New Friends & Family invitations do not offer preselected date options. Invitees choose any available dates from the live calendar; an invite may be marked complimentary, otherwise its saved phone-based Friends & Family pricing applies.
+- Invitation copy should feel warm, relaxed, personal, and free of pressure. Do not use the word "bless" or describe a complimentary stay as "totally free."
 - Draft unusual guest communications for owner review. Never send them without the owner's explicit approval.
 
 ## Verification and safety

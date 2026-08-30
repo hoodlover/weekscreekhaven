@@ -311,18 +311,17 @@
         <form id="invite-form" class="panel create">
           <div class="eyebrow">Friends &amp; family</div>
           <h2>Create an invite</h2>
-          <p class="helper">The site makes a strong passcode for you. Send it with the guest-access link.</p>
+          <p class="helper">The site makes a strong passcode. Your guest opens their private welcome, then picks any available dates from the live calendar.</p>
           <label for="invite-label">Who is it for?</label>
           <input id="invite-label" placeholder="The Smith family" maxlength="80" required>
           <label for="recipient-email">Guest email (optional)</label>
           <input id="recipient-email" type="email" placeholder="friend@example.com" autocomplete="off" maxlength="160">
           <label class="checkline"><input id="send-invite-email" type="checkbox" checked> Email the invitation as soon as it is created</label>
-          <label>Stay choices (optional)</label>
-          <p class="helper">Offer up to three date choices. One-night stays are allowed but use the two-night minimum price. Enter any custom cost before taxes, or mark a truly complimentary stay when nothing at all will be collected.</p>
-          <div id="stay-options" class="stay-options"></div>
-          <button id="add-stay-option" type="button" class="add-option">+ Add another date choice</button>
+          <label>Invitation offer</label>
+          <label class="checkline"><input id="invite-complimentary" type="checkbox"><span><strong>Complimentary stay</strong> · no rent, taxes, government lodging fees, or required charges</span></label>
+          <p class="helper">Leave this unchecked for their saved Friends &amp; Family rate. Make sure their phone number is in the private pricing list; their rate appears when they use that number while choosing dates.</p>
           <label for="welcome-message">Personal welcome (optional)</label>
-          <textarea id="welcome-message" rows="5" maxlength="500">Welcome to Weeks Creek Haven! We&rsquo;re so glad you&rsquo;re here. Make yourselves at home, slow down, listen to the creek, and enjoy your time in the mountains. We hope this place feels like your own little getaway while you&rsquo;re here.</textarea>
+          <textarea id="welcome-message" rows="6" maxlength="500">Hey! We&rsquo;d really love for you to enjoy some time away at Weeks Creek Haven. Pick any open dates that work for you&mdash;midweek or a weekend&mdash;and come enjoy a relaxed getaway in Blue Ridge. There are no strings attached. We care about you and would simply love to share this place with you so you can slow down, breathe, and enjoy some mountain time.</textarea>
           <label for="invite-photos">Welcome photos (optional)</label>
           <div class="photo-picker">
             <input id="invite-photos" type="file" accept="image/jpeg,image/png,image/webp" multiple>
@@ -334,7 +333,7 @@
           <label for="max-uses">Entry limit (optional)</label>
           <input id="max-uses" type="number" min="0" max="999" placeholder="Unlimited">
           <label for="notes">Private note (optional)</label>
-          <textarea id="notes" rows="3" maxlength="240">Check in Friday and head out Sunday whenever you&rsquo;re ready. No rush at all.</textarea>
+          <textarea id="notes" rows="3" maxlength="240">Pick whatever open dates work best&mdash;midweek or weekend. Arrive whenever it&rsquo;s convenient, settle in, and head out whenever you&rsquo;re ready. No rush at all.</textarea>
           <button id="create-submit" class="primary" style="width:100%;margin-top:18px">Create invite</button>
           <div id="create-error" class="error" hidden></div>
           <div id="created" class="created" hidden>
@@ -499,7 +498,7 @@
       $('invite-list').innerHTML = orderedInvites.length ? orderedInvites.map((invite) => {
         const inactive = isInactive(invite);
         const emailButton = invite.recipientEmail ? `<button class="copy" data-email-invite="${escapeHtml(invite.id)}">Email</button>` : '';
-        const stayDetails=(invite.stayOptions||[]).map((option,index)=>`<br>Option ${index+1}: ${formatStayDate(option.arrival)}–${formatStayDate(option.departure)}${option.costCents?` · $${(option.costCents/100).toFixed(2)}`:''}${option.expiresOn?` · choose by ${formatStayDate(option.expiresOn)}`:''}${invite.selectedStayChoice===index?' · SELECTED':''}`).join('');
+        const stayDetails=(invite.stayOptions||[]).length?(invite.stayOptions||[]).map((option,index)=>`<br>Option ${index+1}: ${formatStayDate(option.arrival)}–${formatStayDate(option.departure)}${option.costCents?` · $${(option.costCents/100).toFixed(2)}`:''}${option.expiresOn?` · choose by ${formatStayDate(option.expiresOn)}`:''}${invite.selectedStayChoice===index?' · SELECTED':''}`).join(''):`<br>${invite.complimentary?'Complimentary open-date invitation':'Open-date invitation · saved Friends & Family pricing'}`;
         return `<article class="invite"><div><h3>${escapeHtml(invite.label)} <span class="badge ${inactive?'off':''}">${inactive?'inactive':'active'}</span></h3><div class="meta">Created ${formatDate(invite.createdAt)}${invite.recipientEmail?`<br>${escapeHtml(invite.recipientEmail)}`:''}${invite.expiresAt?`<br>Invite expires ${formatDate(invite.expiresAt)}`:''}${stayDetails}<br>${invite.accessCount} recorded entr${invite.accessCount===1?'y':'ies'}${invite.notes?` &middot; ${escapeHtml(invite.notes)}`:''}</div></div><div class="passcode"><code>${escapeHtml(invite.passcode)}</code><button class="copy" data-copy="${escapeHtml(codeSuffix(invite.passcode))}">Copy</button><a class="ghost" href="/api/admin-preview-invite?inviteId=${encodeURIComponent(invite.id)}" target="_blank" rel="noopener">Open welcome page</a>${emailButton}</div>${inactive?'<span></span>':`<button class="danger" data-revoke="${escapeHtml(invite.id)}">Revoke</button>`}</article>`;
       }).join('') : '<div class="empty">No invites yet. Create the first one on the left.</div>';
       [...document.querySelectorAll('#invite-list .invite')].forEach((card,index) => {
@@ -598,21 +597,6 @@
       if(!quote){result.innerHTML='<span class="helper">Choose dates to see the full calculation.</span>';return;}
       result.innerHTML=quote.complimentary?`<strong>Welcome · complimentary stay</strong><div class="meta"><strong>$0 due · no taxes or government lodging fees</strong><br>${quote.actualNights} night${quote.actualNights===1?'':'s'} · 4:00 PM check-in · ${quote.checkoutTime} checkout</div>`:`<strong>${quote.friendsAndFamilyDiscount?'Welcome · ':''}${money(quote.totalCents)} estimated price</strong><div class="meta">Does not include ${money(quote.estimatedTaxesAndFeesCents)} in taxes and fees<br><strong>${money(quote.estimatedGrandTotalCents)} estimated amount if booked</strong><br>${quote.friendsAndFamilyDiscount?`<strong>${escapeHtml(quote.friendsAndFamilyDiscount.label)}</strong> · ${money(quote.discountAmountCents)} savings from ${money(quote.standardTotalCents)}<br>`:''}${quote.actualNights} night${quote.actualNights===1?'':'s'} · ${escapeHtml(quote.pricingRule)}${quote.passThroughCents?`<br>${money(quote.passThroughCents)} required costs remain after discount`:''}<br>4:00 PM check-in · ${quote.checkoutTime} checkout</div>`;
     }
-    function addStayOption(values={}) {
-      if(document.querySelectorAll('.stay-option').length>=3)return;
-      const index=document.querySelectorAll('.stay-option').length+1;
-      const box=document.createElement('div'); box.className='stay-option';
-      box.innerHTML=`${index>1?'<button type="button" class="remove-option">Remove</button>':''}<strong>Option ${index}</strong><div class="stay-option-grid"><label>Arrival<input data-stay-arrival type="date" min="${todayKey()}" value="${escapeHtml(values.arrival||'')}"></label><label>Checkout<input data-stay-departure type="date" min="${todayKey()}" value="${escapeHtml(values.departure||'')}"></label><label>Cost before taxes<input data-stay-cost type="number" min="0" step="0.01" placeholder="Optional" value="${escapeHtml(values.cost||'')}"></label><label>Choose by<input data-stay-expires type="date" min="${todayKey()}" value="${escapeHtml(values.expiresOn||'')}"></label></div><label class="checkline"><input data-stay-complimentary type="checkbox"${values.complimentary?' checked':''}><span><strong>Complimentary stay</strong> · $0 with no taxes or government lodging fees</span></label>`;
-      const arrival=box.querySelector('[data-stay-arrival]'),departure=box.querySelector('[data-stay-departure]');
-      const complimentary=box.querySelector('[data-stay-complimentary]'),cost=box.querySelector('[data-stay-cost]');
-      const updateComplimentary=()=>{cost.disabled=complimentary.checked;if(complimentary.checked)cost.value='';cost.placeholder=complimentary.checked?'No charge':'Optional';}; complimentary.addEventListener('change',updateComplimentary);updateComplimentary();
-      arrival.addEventListener('change',()=>{ const firstCheckout=arrival.value?addDays(arrival.value,1):todayKey(); departure.min=firstCheckout; if(arrival.value&&(!departure.value||departure.value<firstCheckout))departure.value=firstCheckout; });
-      box.querySelector('.remove-option')?.addEventListener('click',()=>{ box.remove(); [...document.querySelectorAll('.stay-option>strong')].forEach((title,i)=>title.textContent=`Option ${i+1}`); $('add-stay-option').hidden=false; });
-      $('stay-options').appendChild(box); $('add-stay-option').hidden=document.querySelectorAll('.stay-option').length>=3;
-    }
-    function resetStayOptions(){ $('stay-options').innerHTML=''; $('add-stay-option').hidden=false; addStayOption(); }
-    $('add-stay-option').addEventListener('click',()=>addStayOption());
-    resetStayOptions();
     $('calc-arrival').min=todayKey(); $('calc-departure').min=addDays(todayKey(),1);
     $('calc-arrival').addEventListener('change',()=>{if($('calc-arrival').value){$('calc-departure').min=addDays($('calc-arrival').value,1);if(!$('calc-departure').value||$('calc-departure').value<$('calc-departure').min)$('calc-departure').value=$('calc-departure').min;}renderCalculator();});
     $('calc-departure').addEventListener('change',renderCalculator); $('calc-guests').addEventListener('change',renderCalculator); $('calc-dogs').addEventListener('change',renderCalculator); $('calc-phone').addEventListener('input',renderCalculator); $('calc-late-checkout').addEventListener('change',renderCalculator);
@@ -652,8 +636,7 @@
         const expiration = $('expires').value ? new Date(`${$('expires').value}T23:59:59`).toISOString() : null;
         const recipientEmail = $('recipient-email').value.trim();
         const shouldEmail = recipientEmail && $('send-invite-email').checked;
-        const stayOptions=[...document.querySelectorAll('.stay-option')].map((box)=>({arrival:box.querySelector('[data-stay-arrival]').value,departure:box.querySelector('[data-stay-departure]').value,cost:box.querySelector('[data-stay-cost]').value,expiresOn:box.querySelector('[data-stay-expires]').value,complimentary:box.querySelector('[data-stay-complimentary]').checked}));
-        const data = await request('/api/admin-invites',{method:'POST',body:JSON.stringify({label:$('invite-label').value,recipientEmail,welcomeMessage:$('welcome-message').value,expiresAt:expiration,maxUses:$('max-uses').value,notes:$('notes').value,stayOptions})});
+        const data = await request('/api/admin-invites',{method:'POST',body:JSON.stringify({label:$('invite-label').value,recipientEmail,welcomeMessage:$('welcome-message').value,expiresAt:expiration,maxUses:$('max-uses').value,notes:$('notes').value,complimentary:$('invite-complimentary').checked,stayOptions:[]})});
         createdInvite=data.invite;
         for (let index=0;index<files.length;index++) {
           submit.textContent=`Uploading photo ${index+1} of ${files.length}...`;
@@ -664,7 +647,7 @@
           submit.textContent='Sending invitation...';
           await request('/api/admin-send-invite',{method:'POST',body:JSON.stringify({inviteId:data.invite.id,recipientEmail})});
         }
-        state.newInvite=data.invite; $('new-code').textContent=data.invite.passcode; event.target.reset(); resetStayOptions(); $('photo-preview').innerHTML=''; await load(); $('created').hidden=false;
+        state.newInvite=data.invite; $('new-code').textContent=data.invite.passcode; event.target.reset(); $('photo-preview').innerHTML=''; await load(); $('created').hidden=false;
         $('created').querySelector('strong').textContent = shouldEmail ? 'Invite ready and emailed' : 'Invite ready';
       } catch(error) {
         if (createdInvite) { state.newInvite=createdInvite; $('new-code').textContent=createdInvite.passcode; $('created').querySelector('strong').textContent='Invite created'; $('created').hidden=false; await load().catch(()=>{}); }
@@ -735,8 +718,8 @@
     $('booking-list').addEventListener('change',(event)=>{const filter=event.target.closest('[data-booking-filter]');if(filter){state.bookingFilter=filter.value;render();return;}const sort=event.target.closest('[data-booking-sort]');if(sort){state.bookingSort=sort.value;render();return;}const select=event.target.closest('[data-booking-choice]');if(!select)return;const card=select.closest('[data-booking-card]'),booking=state.bookings.find(item=>item.id===card.dataset.bookingCard),quote=booking?.dateChoices?.[Number(select.value)-1]?.calculatedQuote,input=card.querySelector('[data-booking-amount]');if(quote&&input)input.value=(quote.totalCents/100).toFixed(2);});
     $('copy-invite').addEventListener('click', async () => {
       if(!state.newInvite) return;
-      const options=(state.newInvite.stayOptions||[]).map((option,index)=>`Option ${index+1}: ${formatStayDate(option.arrival)} to ${formatStayDate(option.departure)}${option.costCents?` · $${(option.costCents/100).toFixed(2)}`:''}${option.expiresOn?` · choose by ${formatStayDate(option.expiresOn)} or this option will be released`:''}`).join('\n');
-      const message = `You’re invited to the Weeks Creek Haven Friends Hub.${options?`\n\nStay choices:\n${options}\n\nEach deadline applies only to that option. If it expires, that date is freed for others while your other unexpired choices stay available. Choosing one releases the rest.`:''}\n\nOpen: ${location.origin}/important-info.html\nPasscode: ${codeSuffix(state.newInvite.passcode)}\n\nThe sign-in page already supplies WCH-. Enter your name and these 8 characters to unlock the cabin guide${options?' and choose your stay':''}.`;
+      const offer=state.newInvite.complimentary?'This stay is our treat, with no rent, taxes, government lodging fees, or required charges.':'Your saved Friends & Family rate will appear when you enter the phone number we have for you.';
+      const message = `${state.newInvite.welcomeMessage||'We’d love for you to enjoy some time at Weeks Creek Haven.'}\n\nUse your private invitation to see the live calendar and pick any open dates that work for you. ${offer}\n\nOpen: ${location.origin}/important-info.html\nPasscode: ${codeSuffix(state.newInvite.passcode)}\n\nThe sign-in page already supplies WCH-. Enter your name and these 8 characters to open your welcome and choose your dates.`;
       await navigator.clipboard.writeText(message); $('copy-invite').textContent='Message copied'; setTimeout(()=>$('copy-invite').textContent='Copy message',1400);
     });
     document.querySelector('.tabs').addEventListener('click',(event)=>{ const tab=event.target.closest('[data-tab]'); if(!tab)return; document.querySelectorAll('.tab,.tab-panel').forEach(el=>el.classList.remove('active')); tab.classList.add('active'); const panel=$(`panel-${tab.dataset.tab}`);panel.classList.add('active'); if(tab.dataset.tab==='calendar'){const frame=panel.querySelector('.calendar-frame');if(frame&&!frame.hasAttribute('src'))frame.src=frame.dataset.src;} if(tab.dataset.tab==='accounting'&&!state.accountingLoaded)loadAccounting(); if(tab.dataset.tab==='activity'){ try{localStorage.setItem('wch_seen_activity',new Date().toISOString());}catch{} render(); } requestAnimationFrame(()=>panel.scrollIntoView({behavior:'smooth',block:'start'})); });

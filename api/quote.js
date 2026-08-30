@@ -1,5 +1,7 @@
 import { getBookingCalendar } from '../_lib/booking-store.js';
-import { enforceRateLimit, json, rateLimitJson, sameOriginRequest } from '../_lib/security.js';
+import { getInvites } from '../_lib/invite-store.js';
+import { applyInviteComplimentary } from '../_lib/invite-pricing.js';
+import { enforceRateLimit, json, rateLimitJson, requireInvite, sameOriginRequest } from '../_lib/security.js';
 import { applyFriendsAndFamilyDiscount, quoteStay } from '../pricing.js';
 
 export default async function handler(request, response) {
@@ -12,6 +14,9 @@ export default async function handler(request, response) {
   try {
     const input = request.method === 'POST' ? request.body || {} : request.query || {};
     const calendar = await getBookingCalendar();
+    const inviteSession = requireInvite(request);
+    const invites = inviteSession && !String(inviteSession.visitorName || '').includes('owner preview') ? await getInvites() : [];
+    const activeInvite = invites.find((item) => item.id === inviteSession?.inviteId && !item.revokedAt && (!item.expiresAt || Date.parse(item.expiresAt) >= Date.now()));
     const standardQuote = quoteStay({
       arrival: String(input.arrival || ''),
       departure: String(input.departure || ''),
@@ -21,7 +26,8 @@ export default async function handler(request, response) {
       rates: calendar.rates || [],
     });
     if (!standardQuote) return json(response, 400, { error: 'Choose a valid arrival and checkout date.' });
-    const quote = applyFriendsAndFamilyDiscount(standardQuote, request.method === 'POST' ? input.phone : '', calendar.discounts || []);
+    const discountedQuote = applyFriendsAndFamilyDiscount(standardQuote, request.method === 'POST' ? input.phone : '', calendar.discounts || []);
+    const quote = applyInviteComplimentary(discountedQuote, activeInvite);
     return json(response, 200, { quote }, { 'Cache-Control': request.method === 'POST' || input.phone ? 'private, no-store' : 'public, max-age=0, s-maxage=60, stale-while-revalidate=300' });
   } catch (error) {
     console.error(error);

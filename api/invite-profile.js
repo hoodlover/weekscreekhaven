@@ -22,6 +22,7 @@ export default async function handler(request, response) {
       visitorName: session.visitorName,
       inviteLabel: invite.label,
       welcomeMessage: invite.welcomeMessage || '',
+      complimentary: invite.complimentary === true,
       stayOptions: (invite.stayOptions || []).map((option, index) => {
         const selected = Boolean(booking && ['reserved', 'booked'].includes(booking.status) && booking.approvedChoice === index);
         return { ...option, expired: !selected && Boolean(option.expiresOn && option.expiresOn < today), selected };

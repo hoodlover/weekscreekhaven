@@ -46,7 +46,7 @@
     .stay-option strong { display:block; color:var(--ink); font-size:.88rem; }
     .stay-meta { color:var(--muted); font-size:.7rem; line-height:1.5; margin-top:4px; }
     .deadline { color:#8a2f2f; font-weight:700; }
-    .choose { border:0; border-radius:999px; background:var(--rust); color:white; padding:10px 14px; font:800 .65rem Montserrat,sans-serif; text-transform:uppercase; letter-spacing:.07em; cursor:pointer; }
+    .choose { display:inline-block; border:0; border-radius:999px; background:var(--rust); color:white; padding:10px 14px; font:800 .65rem Montserrat,sans-serif; text-transform:uppercase; text-decoration:none; text-align:center; letter-spacing:.07em; cursor:pointer; }
     .choose:disabled { background:#9d948c; cursor:not-allowed; }
     .rule { width:80px; height:3px; background:var(--rust); margin:23px auto; }
     .enter { display:inline-block; text-decoration:none; background:var(--pine); color:white; padding:15px 27px; border-radius:999px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; font-size:.78rem; box-shadow:0 10px 24px rgba(23,58,44,.25); }
@@ -99,10 +99,11 @@
       } catch(error) { alert(error.message); button.disabled=false; button.textContent='Choose this stay'; }
     }
     function renderStayChoices(data) {
-      const options=data.stayOptions||[]; if(!options.length)return;
-      const selected=Number.isInteger(data.selectedStayChoice)?data.selectedStayChoice:null;
       const box=document.getElementById('stay-box'),list=document.getElementById('stay-options'),heading=document.getElementById('stay-heading'),helper=document.getElementById('stay-helper');
+      const options=data.stayOptions||[];
       box.hidden=false;
+      if(!options.length){heading.textContent='Pick your dates';helper.textContent=data.complimentary?'Choose any open dates that work for you. This stay is our treat, with no rent, taxes, government lodging fees, or required charges.':'Choose any open dates that work for you. Enter the phone number we have for you and your Friends & Family rate will appear automatically.';list.innerHTML='<article class="stay-option"><div><strong>Midweek or weekend—choose what works best.</strong><div class="stay-meta">The live calendar shows what is currently open.</div></div><a class="choose" href="/register.html">View open dates</a></article>';return;}
+      const selected=Number.isInteger(data.selectedStayChoice)?data.selectedStayChoice:null;
       if(selected!==null){ heading.textContent='Your reserved stay'; helper.textContent='This is the stay choice on your reservation. The other offered dates have been released.'; }
       else { heading.textContent=options.length===1?'Confirm your stay':'Choose your stay'; helper.textContent='Each option has its own deadline. If one expires, only that option is released; your other unexpired choices remain available.'; }
       list.innerHTML=options.map((option,index)=>{ const isSelected=selected===index; const cost=option.complimentary?'<div class="stay-meta"><strong>Our guest · complimentary stay</strong><br>No rent, taxes, or government lodging fees.</div>':option.costCents?`<div class="stay-meta">Listed cost: <strong>$${(option.costCents/100).toFixed(2)}</strong><br>Does not include <strong>$${(estimatedTaxesAndFees(option)/100).toFixed(2)}</strong> in estimated taxes and fees.</div>`:''; const deadline=option.expiresOn?`<div class="stay-meta deadline">Choose by ${formatStayDate(option.expiresOn)}. After that, this option is freed for others.</div>`:'<div class="stay-meta">No automatic expiration for this option.</div>'; const action=isSelected?'<strong>Selected</strong>':selected!==null?'':option.expired?'<button class="choose" disabled>Expired</button>':`<button class="choose" data-choice="${index+1}">Choose this stay</button>`; return `<article class="stay-option ${isSelected?'selected':''} ${option.expired?'expired':''}"><div><strong>Option ${index+1}: ${formatStayDate(option.arrival)} to ${formatStayDate(option.departure)}</strong>${cost}${deadline}</div>${action}</article>`; }).join('');
