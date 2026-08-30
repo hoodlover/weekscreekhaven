@@ -45,7 +45,22 @@ export default async function handler(request, response) {
   try {
     if (request.method === 'GET') {
       const calendar = await getBookingCalendar();
-      return json(response, 200, { discounts: calendar.discounts || [] }, { 'Cache-Control': 'no-store' });
+      const discounts = calendar.discounts || [];
+      const kirbyBooking = (calendar.bookings || []).find((booking) => /kirby\s*crew/i.test(String(booking.name || '')) && normalizePhone(booking.phone));
+      const kirbyPhone = normalizePhone(kirbyBooking?.phone);
+      if (kirbyBooking && kirbyPhone && !discounts.some((rule) => rule.target === kirbyPhone)) {
+        const createdAt = new Date().toISOString();
+        const discount = {
+          id: `kirby-crew-${kirbyPhone}`, matchType: 'phone', target: kirbyPhone,
+          guestName: safeText(kirbyBooking.name, 60) || 'Kirby Crew', discountType: 'flat',
+          label: 'Friends & Family rate', percentage: null, amountOffCents: null, flatTotalCents: 3000,
+          chargeCleaning: false, chargeDogFee: false, chargeLateCheckout: false,
+          customFeeLabel: '', customFeeCents: 0, createdAt,
+        };
+        await appendBookingRecord({ type: 'discount_created', discount, createdAt });
+        discounts.unshift(discount);
+      }
+      return json(response, 200, { discounts }, { 'Cache-Control': 'no-store' });
     }
     const createdAt = new Date().toISOString();
     if (request.method === 'POST') {
