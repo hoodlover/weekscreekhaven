@@ -171,9 +171,10 @@
     </div>
 
     <div class="parchment p-8 md:p-12 rounded-xl shadow-2xl border-t-8 border-orange-900/30">
-        <form action="https://formspree.io/f/mzdjnprj" method="POST" class="space-y-8 font-sans">
+        <form id="checkout-form" action="https://formspree.io/f/mzdjnprj" method="POST" class="space-y-8 font-sans">
             <input type="hidden" name="_next" value="https://www.weekscreekhaven.com/thank-you-departure.html">
             <input type="hidden" name="_subject" value="New Cabin Checkout & Guest Book Entry">
+            <input type="hidden" id="booking-token" name="booking_token" value="">
                 
             <div class="bg-stone-100/50 p-6 rounded-lg border border-stone-200">
                 <h3 class="text-lg font-serif font-bold text-stone-800 mb-4 border-b border-stone-300 pb-1 uppercase tracking-widest">
@@ -478,6 +479,29 @@
 
 <script>
 const TOP_BOX_IDS = ['trash','dishes','bathrooms','fireplace','linens','hottub','lights','lockup','trace'];
+
+const checkoutToken = new URLSearchParams(location.search).get('token') || '';
+document.getElementById('booking-token').value = checkoutToken;
+document.getElementById('checkout-form').addEventListener('submit', async (event) => {
+    if (!checkoutToken) return;
+    event.preventDefault();
+    const form = event.currentTarget;
+    const submit = form.querySelector('button[type="submit"]');
+    submit.disabled = true;
+    try {
+        const response = await fetch('/api/complete-checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: checkoutToken }),
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || 'Checkout could not be marked complete.');
+        form.submit();
+    } catch (error) {
+        submit.disabled = false;
+        alert(`${error.message} Your answers are still here; please try again.`);
+    }
+});
 
 function checkAllBoxes() {
     const allChecked = TOP_BOX_IDS.every(id => document.getElementById(id)?.checked);
