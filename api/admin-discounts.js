@@ -32,7 +32,7 @@ function pricingValues(body) {
     percentage: discountType === 'percentage' ? enteredValue : null,
     amountOffCents: discountType === 'amount' ? roundUpCents(Math.round(enteredValue * 100)) : null,
     flatTotalCents: discountType === 'flat' ? roundUpCents(Math.round(enteredValue * 100)) : null,
-    chargeCleaning: discountType === 'complimentary' ? false : Boolean(body?.chargeCleaning),
+    chargeCleaning: false,
     chargeDogFee: discountType === 'complimentary' ? false : Boolean(body?.chargeDogFee),
     chargeLateCheckout: discountType === 'complimentary' ? false : Boolean(body?.chargeLateCheckout),
     customFeeLabel: discountType !== 'complimentary' && customFeeCents ? safeText(body?.customFeeLabel, 60) || 'Required fee' : '',
