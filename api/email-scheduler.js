@@ -16,7 +16,7 @@ function midpoint(arrival,departure) { const nights=Math.max(1,Math.round((Date.
 function checkoutDetails(booking) {
   const noCleaner=Boolean(booking.friendsAndFamilyDiscount) && booking.friendsAndFamilyDiscount.chargeCleaning !== true;
   return {
-    checkoutChecklistUrl:noCleaner?'https://www.weekscreekhaven.com/checkout.html':`https://www.weekscreekhaven.com/booking-packet.html?token=${encodeURIComponent(createAgreementToken(booking.id,365*86400))}`,
+    checkoutChecklistUrl:`https://www.weekscreekhaven.com/checkout.html?token=${encodeURIComponent(createAgreementToken(booking.id,365*86400))}`,
     checkoutExtraSteps:noCleaner?'Friends & Family checkout — no cleaner is scheduled after this stay. Please strip used beds, clean the bathrooms you used, complete at least one load of linens, and leave the cabin ready for the next adventure. Don’t let the door hit you on the way out — say “Alexa, Going Home” for the quick exit routine.':'Your cleaner will handle beds, bathrooms, and laundry. Please do not strip the beds.',
   };
 }
@@ -54,7 +54,7 @@ export default async function handler(request, response) {
     const stored=await getBookingRequests();
     let sent=0;
     for (let booking of stored) {
-      if (!['pending-payment','reserved','booked'].includes(booking.status) || !booking.email) continue;
+      if (!['pending-payment','reserved','booked','completed'].includes(booking.status) || !booking.email) continue;
       if (booking.squareInvoiceId && !booking.paymentFullyPaid) { try { booking=await refreshSquareBooking(booking); } catch { /* use last confirmed payment state */ } }
       const dates=selectedDates(booking); if (!dates.arrival || !dates.departure) continue;
       const packetUrl=`https://www.weekscreekhaven.com/booking-packet.html?token=${encodeURIComponent(createAgreementToken(booking.id,365*86400))}`;
@@ -78,9 +78,10 @@ export default async function handler(request, response) {
       if (booking.status==='booked' && today===dates.arrival) sent+=await scheduledSend(booking,'checkin-reminder',common,'checkinEmailSentAt');
       if (booking.status==='booked' && today===midpoint(dates.arrival,dates.departure)) sent+=await scheduledSend(booking,'midstay-rebook',common,'midstayRebookSentAt');
       if (booking.status==='booked' && today===dates.departure) sent+=await scheduledSend(booking,'checkout-reminder',common,'checkoutEmailSentAt');
-      if (booking.status==='booked' && today===shiftDate(dates.departure,1) && !booking.reviewRequestedAt) sent+=await scheduledSend(booking,'thank-you-review',common,'thankYouEmailSentAt');
-      if (booking.status==='booked' && Number(booking.securityDepositCents)>0 && today===shiftDate(dates.departure,1)) sent+=await scheduledOwnerSend(booking,'security-deposit-review',common,'securityDepositReviewSentAt');
-      if (booking.status==='booked' && !booking.complimentary && today===shiftDate(dates.departure,7)) sent+=await scheduledSend(booking,'return-referral-offer',common,'returnOfferEmailSentAt');
+      if (booking.status==='booked' && !booking.checkoutCompletedAt && today===shiftDate(dates.departure,1)) sent+=await scheduledSend(booking,'checkout-reminder',common,'checkoutFollowupSentAt');
+      if (booking.status==='completed' && today===shiftDate(dates.departure,1) && !booking.reviewRequestedAt) sent+=await scheduledSend(booking,'thank-you-review',common,'thankYouEmailSentAt');
+      if (booking.status==='completed' && Number(booking.securityDepositCents)>0 && today===shiftDate(dates.departure,1)) sent+=await scheduledOwnerSend(booking,'security-deposit-review',common,'securityDepositReviewSentAt');
+      if (booking.status==='completed' && !booking.complimentary && today===shiftDate(dates.departure,7)) sent+=await scheduledSend(booking,'return-referral-offer',common,'returnOfferEmailSentAt');
     }
     return json(response, 200, { ok:true, checked:stored.length, sent });
   } catch (error) {
