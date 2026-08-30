@@ -159,12 +159,19 @@
         .arrival-step-card h3 { color: #183c2d; font-family: Georgia, serif; font-size: 1.05rem; line-height: 1.15; }
         .arrival-step-card p { margin-top: .3rem; color: #6b5f54; font-size: .76rem; line-height: 1.45; }
         .arrival-command-grid { display: grid; gap: .7rem; }
+        .arrival-alexa-layout { display: grid; gap: 1rem; }
+        .arrival-alexa-photo { width: 100%; border: 1px solid #d9cbb8; border-radius: .85rem; object-fit: cover; box-shadow: 0 8px 20px rgba(54,39,27,.16); }
         .arrival-command { padding: 1rem; border: 1px solid #d9cbb8; border-radius: .8rem; background: #f7f1e7; }
         .arrival-command strong { color: #183c2d; }
         .arrival-command p { margin-top: .25rem; color: #706257; font-size: .76rem; line-height: 1.45; }
         @media (min-width: 768px) {
-            .arrival-access-grid { grid-template-columns: minmax(0,.85fr) minmax(0,1.15fr); }
+            .arrival-access-grid { grid-template-columns: minmax(0,1.7fr) minmax(280px,.8fr); }
+            .arrival-secret-list { grid-template-columns: minmax(0,.85fr) minmax(0,1.35fr) minmax(0,.8fr); }
+            .arrival-secret strong { font-size: clamp(.95rem, 1.35vw, 1.2rem); white-space: nowrap; }
+            .arrival-section-head .section-title { white-space: nowrap; font-size: clamp(1.85rem, 3vw, 2.5rem); }
             .arrival-step-grid, .arrival-command-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+            .arrival-alexa-layout { grid-template-columns: minmax(250px,.75fr) minmax(0,1.6fr); align-items: stretch; }
+            .arrival-alexa-photo { height: 100%; min-height: 250px; }
         }
 
         /* Lightbox */
@@ -421,7 +428,7 @@
                             <strong id="wifi-pass">creeklife</strong>
                         </button>
                     </div>
-                    <p class="arrival-tip"><strong>To unlock:</strong> Enter the door code, then press the checkmark on the keypad. Pull the door toward you gently if the lock needs a little help lining up.</p>
+                    <p class="arrival-tip"><strong>To unlock:</strong> Enter the door code, press the checkmark, then push the door inward. <strong>To lock:</strong> Close the door and pull it toward you so the deadbolt lines up.</p>
                 </section>
 
                 <section class="arrival-wifi-card">
@@ -477,13 +484,16 @@
                     <div><p class="arrival-kicker">Hands-free shortcuts</p><h2 class="section-title">Useful Alexa Commands</h2></div>
                     <p>The cabin routines handle the main lights so you do not need to search for switches.</p>
                 </div>
-                <div class="arrival-command-grid">
-                    <div class="arrival-command"><strong>&ldquo;Alexa, Cabin on&rdquo;</strong><p>Turns on the main-area lights.</p></div>
-                    <div class="arrival-command"><strong>&ldquo;Alexa, Cabin off&rdquo;</strong><p>Turns off the main-area lights.</p></div>
-                    <div class="arrival-command"><strong>&ldquo;Alexa, Set fireside to 30%&rdquo;</strong><p>Dims the fireside lights for movies or a quieter evening.</p></div>
-                    <div class="arrival-command"><strong>&ldquo;Alexa, Cabin Den on&rdquo;</strong><p>Turns on the lights in the lower lounge.</p></div>
-                    <div class="arrival-command"><strong>&ldquo;Alexa, Going out&rdquo;</strong><p>Starts the leaving routine for lights and locks.</p></div>
-                    <div class="arrival-command"><strong>&ldquo;Alexa, Set the mood&rdquo;</strong><p>Sets the cabin lighting for movie night.</p></div>
+                <div class="arrival-alexa-layout">
+                    <img src="webpic/alexa2.webp" alt="Alexa screen at Weeks Creek Haven" class="arrival-alexa-photo">
+                    <div class="arrival-command-grid">
+                        <div class="arrival-command"><strong>&ldquo;Alexa, Cabin on&rdquo;</strong><p>Turns on the main-area lights.</p></div>
+                        <div class="arrival-command"><strong>&ldquo;Alexa, Cabin off&rdquo;</strong><p>Turns off the main-area lights.</p></div>
+                        <div class="arrival-command"><strong>&ldquo;Alexa, Set fireside to 30%&rdquo;</strong><p>Dims the fireside lights for movies or a quieter evening.</p></div>
+                        <div class="arrival-command"><strong>&ldquo;Alexa, Cabin Den on&rdquo;</strong><p>Turns on the lights in the lower lounge.</p></div>
+                        <div class="arrival-command"><strong>&ldquo;Alexa, Going out&rdquo;</strong><p>Starts the leaving routine for lights and locks.</p></div>
+                        <div class="arrival-command"><strong>&ldquo;Alexa, Set the mood&rdquo;</strong><p>Sets the cabin lighting for movie night.</p></div>
+                    </div>
                 </div>
             </section>
 
