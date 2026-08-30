@@ -107,7 +107,7 @@
         <p class="wch-footer-title">Weeks Creek Haven</p>
         <p class="wch-footer-address">421 Weeks Creek Rd · Blue Ridge, GA 30513</p>
         <p class="wch-footer-copy">&copy; 2026 H &amp; L Havens, LLC · Beautiful Blue Ridge</p>
-        <p class="wch-footer-version" aria-label="Website version">Version 31.226.1203</p>
+        <p class="wch-footer-version" aria-label="Website version">Version 31.226.1204</p>
       </div>
 
     </footer>
