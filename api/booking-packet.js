@@ -1,4 +1,5 @@
 import { getBookingRequests } from '../_lib/booking-store.js';
+import { guestFirstName } from '../_lib/guest-name.js';
 import { refreshSquareBooking } from '../_lib/payment-sync.js';
 import { json, verifyAgreementToken } from '../_lib/security.js';
 
@@ -15,7 +16,7 @@ export default async function handler(request, response) {
     const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || booking.dateChoices?.[0] || {};
     const complimentary = booking.paymentPlan === 'complimentary' || Number(booking.amountCents) === 0;
     return json(response, 200, {
-      guestName: booking.name,
+      guestName: guestFirstName(booking.name),
       guestEmail: booking.email || '',
       arrival: dates.arrival || '',
       departure: dates.departure || '',

@@ -24,6 +24,7 @@ Use these instructions for all work in this repository.
 - At 5:00 PM Eastern on the final day, if no review has been recorded, the applicable guest email should thank the guest, invite them back, and request a rating through the review link.
 - Completed stays should not present welcome-page, welcome-packet, packet-copy, or packet-resend actions as current follow-up work.
 - Only guest messages appropriate to the booking's current stage should be offered.
+- Address guests by first name in guest-facing emails and welcome copy. Abigail's preferred name is Abby; keep her full legal/booking name in formal records.
 - Draft unusual guest communications for owner review. Never send them without the owner's explicit approval.
 
 ## Verification and safety

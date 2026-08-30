@@ -1,3 +1,5 @@
+import { guestFirstName } from './guest-name.js';
+
 const RESEND_ENDPOINT = 'https://api.resend.com/emails';
 const SENDER_ENDPOINT = 'https://api.sender.net/v2/message/send';
 
@@ -66,12 +68,23 @@ async function sendWithSender({ to, toName, subject, text, html, attachments }) 
 export async function sendEmail({ to, toName = '', subject, text, html, attachments = [], idempotencyKey = '', templateKey = '', templateVariables = {} }) {
   if (templateKey) {
     try {
-      const [{ getBookingCalendar }, { mergeEmailTemplates, renderTemplate }] = await Promise.all([import('./booking-store.js'), import('./email-library.js')]);
-      const template = mergeEmailTemplates((await getBookingCalendar()).emailTemplates).find(item => item.id === templateKey);
+      const { mergeEmailTemplates, renderTemplate } = await import('./email-library.js');
+      let savedTemplates = [];
+      try {
+        const { getBookingCalendar } = await import('./booking-store.js');
+        savedTemplates = (await getBookingCalendar()).emailTemplates || [];
+      } catch (error) {
+        console.error('Saved email templates could not be loaded; using the built-in copy.', error);
+      }
+      const template = mergeEmailTemplates(savedTemplates).find(item => item.id === templateKey);
       if (template && template.enabled !== false) {
-        subject = renderTemplate(template.subject || subject, templateVariables);
+        const variables = template.audience === 'Guest'
+          ? { ...templateVariables, guestName: guestFirstName(templateVariables.guestName || toName) }
+          : templateVariables;
+        if (template.audience === 'Guest') toName = guestFirstName(toName || templateVariables.guestName);
+        subject = renderTemplate(template.subject || subject, variables);
         if (template.body) {
-          text = renderTemplate(template.body, templateVariables);
+          text = renderTemplate(template.body, variables);
           html = `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px">${text.split(/\n{2,}/).map(part => `<p>${escapeEmailHtml(part).replace(/\n/g, '<br>')}</p>`).join('')}</div>`;
         }
       } else if (template?.enabled === false) return { skipped: true, templateKey };
