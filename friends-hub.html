@@ -186,6 +186,18 @@
         .guide-list li { position: relative; padding-left: .9rem; }
         .guide-list li::before { content: ''; position: absolute; left: 0; top: .62em; width: 4px; height: 4px; border-radius: 50%; background: #a45d41; }
         .guide-bidet { max-width: 315px; margin-inline: auto; }
+        .departure-task-grid { display: grid; gap: .7rem; }
+        .departure-task {
+            display: grid; grid-template-columns: 22px 1fr; gap: .75rem; align-items: start;
+            padding: .95rem; border: 1px solid #dfd3c1; border-radius: .8rem; background: #faf6ee;
+        }
+        .departure-task label { color: #62564c; font-size: .78rem; line-height: 1.5; cursor: pointer; }
+        .departure-task strong { display: block; margin-bottom: .15rem; color: #183c2d; font-family: Georgia, serif; font-size: 1rem; }
+        .departure-exit { margin-top: 1rem; padding: 1rem; border-radius: .85rem; background: #183c2d; color: white; text-align: center; }
+        .departure-exit span { display: block; color: #e5b67e; font-size: .65rem; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; }
+        .departure-exit strong { display: block; margin-top: .25rem; font-family: Georgia, serif; font-size: 1.35rem; }
+        .departure-form-grid { display: grid; gap: .7rem; grid-template-columns: repeat(2, minmax(0,1fr)); }
+        .departure-form-choice { display: flex; align-items: center; gap: .55rem; padding: .7rem; border: 1px solid #dfd3c1; border-radius: .7rem; background: #faf6ee; color: #62564c; font-size: .72rem; }
         @media (min-width: 768px) {
             .arrival-access-grid { grid-template-columns: minmax(0,1fr) 110px; align-items: start; }
             .arrival-wifi-card { width: 110px; justify-self: end; }
@@ -199,6 +211,8 @@
             .guide-layout { grid-template-columns: minmax(0,1.25fr) minmax(250px,.75fr); gap: 2rem; }
             .guide-layout.guide-image-first { grid-template-columns: minmax(250px,.75fr) minmax(0,1.25fr); }
             .guide-note-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+            .departure-task-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+            .departure-form-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
         }
 
         /* Lightbox */
@@ -716,257 +730,99 @@
         <!-- ==================== TAB 3: CHECK OUT ==================== -->
         <div id="tab-checkout" class="tab-panel space-y-8">
 
-            <div class="parchment p-6 md:p-10 rounded-xl shadow-lg border-l-8 border-green-900">
-                <h2 class="text-3xl font-serif font-bold mb-2 text-stone-900 border-b border-stone-300 pb-2 uppercase tracking-tight">Friends &amp; Family Departure Checklist</h2>
-                <p class="font-serif italic mb-5 text-stone-700 text-sm">
-                    Standard departure is 11:00 AM. If your confirmed stay includes the paid late-checkout option, departure is noon. If you have time to <a href="provisions.html" class="underline decoration-stone-400 hover:text-green-800 transition">restock</a> anything you used up, that would be amazing! Thanks.
-                </p>
+            <section class="arrival-intro">
+                <p class="arrival-kicker">Friends &amp; family checkout</p>
+                <h2>Leave the Haven ready for the next visit.</h2>
+                <p>There is no set checkout time for friends and family. If we need the cabin by a certain time, Lance or Heather will let you know personally.</p>
+            </section>
 
-                <div class="space-y-1 text-sm mb-6">
-                    <div class="check-row"><input type="checkbox" id="c-trash"><label for="c-trash"><strong>Trash:</strong> Place all bagged trash in the outside deck bin. Food trash MUST go in the bear-proof tall can on the porch.</label></div>
-                    <div class="check-row"><input type="checkbox" id="c-dishes"><label for="c-dishes"><strong>Dishes:</strong> Load the dishwasher and start the cycle. No dirty dishes in the sink. We will find you.</label></div>
-                    <div class="check-row"><input type="checkbox" id="c-bathrooms"><label for="c-bathrooms"><strong>Bathrooms:</strong> Clean the bathrooms you used. Ready for the next adventure party.</label></div>
-                    <div class="check-row"><input type="checkbox" id="c-fireplace"><label for="c-fireplace"><strong>Fireplace:</strong> Fully off. Leave pilot light on. Close the screens.</label></div>
-                    <div class="check-row"><input type="checkbox" id="c-linens"><label for="c-linens"><strong>Linens:</strong> Strip beds, place in laundry area. Start at least one load start-to-finish.</label></div>
-                    <div class="check-row"><input type="checkbox" id="c-hottub"><label for="c-hottub"><strong>Hot Tub:</strong> Towels to laundry area. Cover closed. Temp lowered to 80&deg;F.</label></div>
-                    <div class="check-row"><input type="checkbox" id="c-lights"><label for="c-lights"><strong>Lights &amp; Air:</strong> All lights off. Thermostat to 75&deg;F (Summer) or 60&deg;F (Winter).</label></div>
-                    <div class="check-row"><input type="checkbox" id="c-fridge"><label for="c-fridge"><strong>Fridge:</strong> Remove all personal food items. Don&rsquo;t leave us your mystery tupperware.</label></div>
-                    <div class="check-row"><input type="checkbox" id="c-lockup"><label for="c-lockup"><strong>Lock Up:</strong> Windows closed, smart doors locked. (&ldquo;Alexa, going out&rdquo;)</label></div>
-                    <div class="check-row"><input type="checkbox" id="c-trace"><label for="c-trace"><strong>Leave No Trace:</strong> This is not an AirBnB. Leave it great for the next family visit.</label></div>
+            <section class="arrival-section">
+                <div class="guide-layout guide-image-first">
+                    <div>
+                        <img src="info/29_F_2.webp" alt="Weeks Creek Haven friends and family checkout list" onclick="openLightbox(this.src)" class="guide-photo">
+                        <p class="guide-photo-note">The checklist posted on the cabin refrigerator. Tap to enlarge.</p>
+                    </div>
+                    <div>
+                        <p class="arrival-kicker">Before heading home</p>
+                        <h2 class="section-title">Which Checkout Applies?</h2>
+                        <div class="guide-note-grid">
+                            <div class="guide-note">
+                                <h3>Friends &amp; family</h3>
+                                <p>No cleaner is automatically scheduled. Please complete the full checklist below so the cabin is ready for the next visit.</p>
+                            </div>
+                            <div class="guide-note">
+                                <h3>Cleaner scheduled</h3>
+                                <p>Leave beds, bathrooms, and laundry for the cleaner. Please handle dishes, personal food, trash, the hot tub cover, lights, and locking up.</p>
+                            </div>
+                        </div>
+                        <p class="arrival-tip"><strong>Want us to schedule the cleaner?</strong> Just let Lance or Heather know. The cleaning fee is $200.</p>
+                    </div>
                 </div>
+            </section>
 
-                <div id="all-checked-msg" class="hidden p-4 bg-green-900/10 border border-green-800 rounded-lg text-green-900 font-bold text-center text-sm">
-                    &#9989; You&rsquo;re a legend. See you next time!
+            <section class="arrival-section">
+                <div class="arrival-section-head">
+                    <div><p class="arrival-kicker">One clear list</p><h2 class="section-title">Friends &amp; Family Cleaning</h2></div>
+                    <p>Check each item as you finish it. The wording here matches the refrigerator list and the checkout reminder.</p>
                 </div>
-
-                <div class="mt-6 bg-stone-900 text-white p-5 rounded-lg text-center shadow-inner">
-                    <h4 class="text-lg font-serif italic mb-1">Quick Exit:</h4>
-                    <p class="text-xl font-bold uppercase tracking-widest text-[#d4a373]">&ldquo;Alexa, Going Home&rdquo;</p>
+                <div class="departure-task-grid">
+                    <div class="departure-task"><input type="checkbox" id="c-linens"><label for="c-linens"><strong>Beds &amp; laundry</strong>Strip the beds you used. Wash sheets, pillowcases, and towels, then move the load to the dryer and start it before you leave.</label></div>
+                    <div class="departure-task"><input type="checkbox" id="c-bathrooms"><label for="c-bathrooms"><strong>Bathrooms</strong>Clean the sinks, toilets, and showers you used so they are ready for the next guests.</label></div>
+                    <div class="departure-task"><input type="checkbox" id="c-dishes"><label for="c-dishes"><strong>Dishes</strong>Hand-wash dishes or load and start the dishwasher. Please leave the sink empty.</label></div>
+                    <div class="departure-task"><input type="checkbox" id="c-fridge"><label for="c-fridge"><strong>Refrigerator</strong>Remove your food and wipe up any spills or crumbs.</label></div>
+                    <div class="departure-task"><input type="checkbox" id="c-trash"><label for="c-trash"><strong>Trash</strong>Bag and remove all trash. Food waste goes in the tall bear-proof can; non-food trash goes in the porch trash box.</label></div>
+                    <div class="departure-task"><input type="checkbox" id="c-fireplace"><label for="c-fireplace"><strong>Fireplace</strong>Turn the fireplace knob to <em>Pilot</em> and close the screens.</label></div>
+                    <div class="departure-task"><input type="checkbox" id="c-hottub"><label for="c-hottub"><strong>Hot tub</strong>Secure the cover, lower the temperature to 80&deg;F, and include used hot-tub towels with the laundry.</label></div>
+                    <div class="departure-task"><input type="checkbox" id="c-lights"><label for="c-lights"><strong>Lights &amp; thermostat</strong>Turn off the lights. Set the thermostat to 75&deg;F in summer or 60&deg;F in winter.</label></div>
+                    <div class="departure-task"><input type="checkbox" id="c-lockup"><label for="c-lockup"><strong>Doors &amp; windows</strong>Close the windows and lock all three smart doors, or use the Alexa routine below.</label></div>
+                    <div class="departure-task"><input type="checkbox" id="c-trace"><label for="c-trace"><strong>Final walk-through</strong>Leave the cabin as you found it and text us about anything that broke, needs attention, or could make a future stay better.</label></div>
                 </div>
-            </div>
+                <div id="all-checked-msg" class="hidden arrival-tip"><strong>All set.</strong> Thank you for taking care of the Haven. Safe travels home.</div>
+                <div class="departure-exit">
+                    <span>Quick exit routine</span>
+                    <strong>&ldquo;Alexa, Going Home&rdquo;</strong>
+                </div>
+            </section>
 
-            <!-- Restock section -->
-            <div class="parchment p-6 md:p-8 rounded-xl shadow-lg border-t-4 border-orange-800/40">
-                <h3 class="text-xl font-serif font-bold text-stone-800 mb-4 border-b border-stone-300 pb-1 uppercase tracking-widest">Haven Supplies Update</h3>
-                <p class="text-xs font-bold uppercase tracking-widest text-stone-500 mb-3">What needs restocking?</p>
-                <form id="checkout-form" action="https://formspree.io/f/mzdjnprj" method="POST" class="space-y-4">
+            <section class="arrival-section">
+                <div class="arrival-section-head">
+                    <div><p class="arrival-kicker">A quick note to us</p><h2 class="section-title">Send Your Checkout Report</h2></div>
+                    <p>Tell us what needs restocking or attention. If something is urgent, call or text Lance at 770.549.9358.</p>
+                </div>
+                <form id="checkout-form" action="https://formspree.io/f/mzdjnprj" method="POST" class="space-y-5">
                     <input type="hidden" name="_subject" value="Restock & Checkout Report">
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
-                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Coffee Beans"> Coffee Beans</label>
-                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Toilet Paper"> Toilet Paper</label>
-                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Paper Towels"> Paper Towels</label>
-                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Dishwasher Pods"> Dishwasher Pods</label>
-                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Hand Soap"> Hand Soap</label>
-                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Dish Soap"> Dish Soap</label>
-                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Dish Scrub Pads"> Dish Scrub Pads</label>
-                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Laundry Pods"> Laundry Pods</label>
-                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Keurig Pods"> Keurig Pods</label>
-                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Propane"> Propane</label>
-                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Charcoal"> Charcoal</label>
-                        <label class="flex items-center gap-2 bg-stone-100 p-2 rounded hover:bg-stone-200 transition cursor-pointer"><input type="checkbox" name="restock[]" value="Square Napkins"> Square Napkins</label>
-                    </div>
-                    <div class="bg-stone-100 p-3 rounded border border-stone-200 text-sm">
-                        <label class="flex items-center gap-2 cursor-pointer font-bold text-stone-800 mb-2"><input type="checkbox" name="restock[]" value="Batteries"> Remote/Flashlight Batteries</label>
-                        <div class="ml-6 flex gap-4 text-xs">
-                            <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" name="restock[]" value="AA"> AA</label>
-                            <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" name="restock[]" value="AAA"> AAA</label>
-                            <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" name="restock[]" value="C or D"> C or D</label>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-2">Supplies running low</label>
+                        <div class="departure-form-grid">
+                            <label class="departure-form-choice"><input type="checkbox" name="restock[]" value="Coffee"> Coffee</label>
+                            <label class="departure-form-choice"><input type="checkbox" name="restock[]" value="Toilet Paper"> Toilet paper</label>
+                            <label class="departure-form-choice"><input type="checkbox" name="restock[]" value="Paper Towels"> Paper towels</label>
+                            <label class="departure-form-choice"><input type="checkbox" name="restock[]" value="Dishwasher Pods"> Dishwasher pods</label>
+                            <label class="departure-form-choice"><input type="checkbox" name="restock[]" value="Dish or Hand Soap"> Dish or hand soap</label>
+                            <label class="departure-form-choice"><input type="checkbox" name="restock[]" value="Laundry Pods"> Laundry pods</label>
+                            <label class="departure-form-choice"><input type="checkbox" name="restock[]" value="Batteries"> Batteries</label>
+                            <label class="departure-form-choice"><input type="checkbox" name="restock[]" value="Propane"> Propane</label>
+                            <label class="departure-form-choice"><input type="checkbox" name="restock[]" value="Charcoal"> Charcoal</label>
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-1">Maintenance Notes</label>
-                        <textarea name="maintenance_issue" rows="2" class="maint-input text-sm" placeholder="Broken bulbs, leaky faucets, anything Lance should know..."></textarea>
-                        <p class="text-[10px] text-stone-500 italic mt-1">"If it&rsquo;s urgent, text Lance at 770.549.9358!"</p>
+                        <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-1">Anything broken, unfinished, or worth improving?</label>
+                        <textarea name="maintenance_issue" rows="3" class="maint-input text-sm" placeholder="Tell us what happened or what would make the next stay better."></textarea>
                     </div>
                     <div>
-                        <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-1">Your Name(s)</label>
-                        <input type="text" name="guest_names" class="maint-input" placeholder="The Smith Crew" required>
+                        <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-1">Your name</label>
+                        <input type="text" name="guest_names" class="maint-input" placeholder="Your name" required>
                     </div>
-                    <div class="bg-green-900/5 p-3 rounded border border-green-800/20">
-                        <label class="flex items-center gap-2 cursor-pointer text-xs text-stone-700 font-bold uppercase tracking-tight">
-                            <input type="checkbox" name="cleanliness_confirm" value="yes" required onchange="cleanlinessCheck(this)">
-                            We&rsquo;ve stripped the sheets, washed the towels, and taken out the trash.
-                        </label>
-                    </div>
-                    <div id="clean-msg" class="hidden text-center py-3 text-green-900 font-black text-base italic"></div>
-                    <!-- Guest book nudge -->
-                    <div class="bg-green-900/8 border border-green-800/30 rounded-xl p-4 flex items-start gap-3">
-                        <img src="webpic/Guestnotebook.webp" alt="Guest Book" class="w-12 h-12 object-cover rounded-lg flex-shrink-0 border border-stone-300 shadow">
-                        <div>
-                            <p class="font-black text-green-900 text-xs uppercase tracking-wide mb-1">Before You Hit the Road...</p>
-                            <p class="text-stone-600 text-xs leading-relaxed">Grab the guest book off the shelf by the robovac and leave your mark. It takes 2 minutes and future guests will love reading it. Your story belongs in there.</p>
-                        </div>
-                    </div>
-                    <!-- ===== EXIT SURVEY ===== -->
-                    <div class="bg-stone-50 border border-stone-200 rounded-xl p-5 space-y-6 mt-2">
-                        <div class="border-b border-stone-200 pb-3">
-                            <h3 class="text-2xl font-serif italic text-[#A45D41] mb-1">The Debrief &#128373;</h3>
-                            <p class="text-stone-500 text-xs font-serif italic">Be honest. We can take it. Probably.</p>
-                            <p class="text-xs text-stone-400 mt-1">60 seconds. No wrong answers. (Well, one star is technically a wrong answer.)</p>
-                        </div>
-                        <!-- Overall star rating -->
-                        <div>
-                            <label class="block text-sm font-bold text-stone-700 mb-1">Overall &mdash; the big one &#127775;</label>
-                            <p class="text-xs text-stone-400 italic mb-2">This is the one Lance checks first. No pressure.</p>
-                            <div class="star-row">
-                                <input type="radio" name="rating_overall" id="hos5" value="5"><label for="hos5">★</label>
-                                <input type="radio" name="rating_overall" id="hos4" value="4"><label for="hos4">★</label>
-                                <input type="radio" name="rating_overall" id="hos3" value="3"><label for="hos3">★</label>
-                                <input type="radio" name="rating_overall" id="hos2" value="2"><label for="hos2">★</label>
-                                <input type="radio" name="rating_overall" id="hos1" value="1"><label for="hos1">★</label>
-                            </div>
-                        </div>
-                        <!-- Aspect mini-ratings -->
-                        <div>
-                            <label class="block text-sm font-bold text-stone-700 mb-1">The Details</label>
-                            <p class="text-xs text-stone-400 italic mb-3">Go ahead, judge us. We're emotionally prepared.</p>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <div class="bg-white rounded-lg px-4 py-3 border border-stone-200">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-sm font-bold text-stone-700">Cleanliness</span>
-                                        <div class="mini-star-row">
-                                            <input type="radio" name="rating_clean" id="hcl5" value="5"><label for="hcl5">★</label>
-                                            <input type="radio" name="rating_clean" id="hcl4" value="4"><label for="hcl4">★</label>
-                                            <input type="radio" name="rating_clean" id="hcl3" value="3"><label for="hcl3">★</label>
-                                            <input type="radio" name="rating_clean" id="hcl2" value="2"><label for="hcl2">★</label>
-                                            <input type="radio" name="rating_clean" id="hcl1" value="1"><label for="hcl1">★</label>
-                                        </div>
-                                    </div>
-                                    <p class="text-[10px] text-stone-400 italic mt-1">Heather cleaned it. Lance watched.</p>
-                                </div>
-                                <div class="bg-white rounded-lg px-4 py-3 border border-stone-200">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-sm font-bold text-stone-700">Cabin Amenities</span>
-                                        <div class="mini-star-row">
-                                            <input type="radio" name="rating_amenities" id="ham5" value="5"><label for="ham5">★</label>
-                                            <input type="radio" name="rating_amenities" id="ham4" value="4"><label for="ham4">★</label>
-                                            <input type="radio" name="rating_amenities" id="ham3" value="3"><label for="ham3">★</label>
-                                            <input type="radio" name="rating_amenities" id="ham2" value="2"><label for="ham2">★</label>
-                                            <input type="radio" name="rating_amenities" id="ham1" value="1"><label for="ham1">★</label>
-                                        </div>
-                                    </div>
-                                    <p class="text-[10px] text-stone-400 italic mt-1">The stuff that makes "roughing it" feel like a lie.</p>
-                                </div>
-                                <div class="bg-white rounded-lg px-4 py-3 border border-stone-200">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-sm font-bold text-stone-700">Hot Tub &#9832;</span>
-                                        <div class="mini-star-row">
-                                            <input type="radio" name="rating_hottub" id="hht5" value="5"><label for="hht5">★</label>
-                                            <input type="radio" name="rating_hottub" id="hht4" value="4"><label for="hht4">★</label>
-                                            <input type="radio" name="rating_hottub" id="hht3" value="3"><label for="hht3">★</label>
-                                            <input type="radio" name="rating_hottub" id="hht2" value="2"><label for="hht2">★</label>
-                                            <input type="radio" name="rating_hottub" id="hht1" value="1"><label for="hht1">★</label>
-                                        </div>
-                                    </div>
-                                    <p class="text-[10px] text-stone-400 italic mt-1">If you got wrinkly, it did its job.</p>
-                                </div>
-                                <div class="bg-white rounded-lg px-4 py-3 border border-stone-200">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-sm font-bold text-stone-700">Comfort &amp; Sleep</span>
-                                        <div class="mini-star-row">
-                                            <input type="radio" name="rating_comfort" id="hco5" value="5"><label for="hco5">★</label>
-                                            <input type="radio" name="rating_comfort" id="hco4" value="4"><label for="hco4">★</label>
-                                            <input type="radio" name="rating_comfort" id="hco3" value="3"><label for="hco3">★</label>
-                                            <input type="radio" name="rating_comfort" id="hco2" value="2"><label for="hco2">★</label>
-                                            <input type="radio" name="rating_comfort" id="hco1" value="1"><label for="hco1">★</label>
-                                        </div>
-                                    </div>
-                                    <p class="text-[10px] text-stone-400 italic mt-1">Did the creek lull you or keep you up? Both are valid.</p>
-                                </div>
-                                <div class="bg-white rounded-lg px-4 py-3 border border-stone-200">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-sm font-bold text-stone-700">The Creek &amp; Setting</span>
-                                        <div class="mini-star-row">
-                                            <input type="radio" name="rating_setting" id="hse5" value="5"><label for="hse5">★</label>
-                                            <input type="radio" name="rating_setting" id="hse4" value="4"><label for="hse4">★</label>
-                                            <input type="radio" name="rating_setting" id="hse3" value="3"><label for="hse3">★</label>
-                                            <input type="radio" name="rating_setting" id="hse2" value="2"><label for="hse2">★</label>
-                                            <input type="radio" name="rating_setting" id="hse1" value="1"><label for="hse1">★</label>
-                                        </div>
-                                    </div>
-                                    <p class="text-[10px] text-stone-400 italic mt-1">The part you'll describe to literally everyone for a month.</p>
-                                </div>
-                                <div class="bg-white rounded-lg px-4 py-3 border border-stone-200">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-sm font-bold text-stone-700">Host Communication</span>
-                                        <div class="mini-star-row">
-                                            <input type="radio" name="rating_host" id="hho5" value="5"><label for="hho5">★</label>
-                                            <input type="radio" name="rating_host" id="hho4" value="4"><label for="hho4">★</label>
-                                            <input type="radio" name="rating_host" id="hho3" value="3"><label for="hho3">★</label>
-                                            <input type="radio" name="rating_host" id="hho2" value="2"><label for="hho2">★</label>
-                                            <input type="radio" name="rating_host" id="hho1" value="1"><label for="hho1">★</label>
-                                        </div>
-                                    </div>
-                                    <p class="text-[10px] text-stone-400 italic mt-1">Were we helpful, or just enthusiastic? (Lance suspects both.)</p>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Activities -->
-                        <div>
-                            <label class="block text-sm font-bold text-stone-700 mb-1">What did you actually do? &#128064;</label>
-                            <p class="text-xs text-stone-400 italic mb-2">"Just relaxed" is a completely legitimate and underrated life choice.</p>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                                <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Hiking" class="accent-[#A45D41]"> &#9650; Hiking</label>
-                                <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Trout Fishing" class="accent-[#A45D41]"> &#127907; Trout Fishing</label>
-                                <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Hot Tub" class="accent-[#A45D41]"> &#9832; Hot Tub</label>
-                                <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Tubing / Kayaking" class="accent-[#A45D41]"> &#128676; Tubing</label>
-                                <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Downtown Blue Ridge" class="accent-[#A45D41]"> &#127978; Downtown</label>
-                                <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Firepit / S'mores" class="accent-[#A45D41]"> &#128293; Firepit</label>
-                                <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Waterfalls" class="accent-[#A45D41]"> &#128167; Waterfalls</label>
-                                <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Board Games / Cards" class="accent-[#A45D41]"> &#127921; Games</label>
-                                <label class="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-stone-200 cursor-pointer hover:border-[#A45D41] transition text-sm text-stone-700"><input type="checkbox" name="activities[]" value="Just Relaxed" class="accent-[#A45D41]"> &#129397; Nothing</label>
-                            </div>
-                        </div>
-                        <!-- Improve -->
-                        <div>
-                            <label class="block text-sm font-bold text-stone-700 mb-1">What could we do better? &#128064;</label>
-                            <p class="text-xs text-stone-400 italic mb-2">Honest feedback is a gift. Lance reads every word. Heather reads it after and sighs.</p>
-                            <textarea name="survey_improve" rows="2" class="maint-input text-sm" placeholder="Don't hold back. We're adults. Mostly."></textarea>
-                        </div>
-                        <!-- Return visit -->
-                        <div>
-                            <label class="block text-sm font-bold text-stone-700 mb-1">Planning to come back? &#128197;</label>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="survey-pill"><input type="radio" name="return_visit" id="hrv1" value="Already texted Lance"><label for="hrv1">&#128248; Already texted Lance</label></span>
-                                <span class="survey-pill"><input type="radio" name="return_visit" id="hrv2" value="Definitely"><label for="hrv2">&#9989; Definitely</label></span>
-                                <span class="survey-pill"><input type="radio" name="return_visit" id="hrv3" value="Probably"><label for="hrv3">&#128578; Probably</label></span>
-                                <span class="survey-pill"><input type="radio" name="return_visit" id="hrv4" value="Ask me after I unpack"><label for="hrv4">&#129300; Ask me after I unpack</label></span>
-                                <span class="survey-pill"><input type="radio" name="return_visit" id="hrv5" value="Unlikely"><label for="hrv5">&#128546; Unlikely</label></span>
-                            </div>
-                        </div>
-                        <!-- Recommend -->
-                        <div>
-                            <label class="block text-sm font-bold text-stone-700 mb-1">Would you send your people here? &#128587;</label>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="survey-pill"><input type="radio" name="recommend" id="hrec1" value="Already bragging about it"><label for="hrec1">&#128293; Already bragging</label></span>
-                                <span class="survey-pill"><input type="radio" name="recommend" id="hrec2" value="Yes, for sure"><label for="hrec2">&#128077; Yes, for sure</label></span>
-                                <span class="survey-pill"><input type="radio" name="recommend" id="hrec3" value="Maybe — I want to keep it secret"><label for="hrec3">&#129323; Keep it secret</label></span>
-                                <span class="survey-pill"><input type="radio" name="recommend" id="hrec4" value="Probably not"><label for="hrec4">&#128547; Probably not</label></span>
-                            </div>
-                        </div>
-                        <!-- Final word -->
-                        <div>
-                            <label class="block text-sm font-bold text-stone-700 mb-1">Last words? &#127908;</label>
-                            <textarea name="survey_notes" rows="2" class="maint-input text-sm" placeholder="The creek still has me. I'm not okay. (In the best way.)"></textarea>
-                        </div>
-                    </div>
-                    <!-- ===== END EXIT SURVEY ===== -->
-
-                    <button type="submit" id="checkout-submit" class="w-full bg-green-900 text-white font-bold py-3 rounded hover:bg-black transition shadow-lg uppercase tracking-widest text-sm">Send Checkout Report</button>
-                    <p id="checkout-sending" class="hidden text-center text-stone-500 text-sm italic">Sending... hang tight</p>
-                    <p id="checkout-error" class="hidden text-center text-red-600 text-sm font-bold">Something went wrong — try texting Lance at 770.549.9358</p>
+                    <label class="departure-form-choice">
+                        <input type="checkbox" name="cleanliness_confirm" value="yes" required>
+                        <span>I completed the checkout steps that apply to my stay.</span>
+                    </label>
+                    <button type="submit" id="checkout-submit" class="w-full bg-[#183c2d] text-white font-bold py-3 rounded-lg hover:bg-black transition shadow uppercase tracking-widest text-sm">Send Checkout Report</button>
+                    <p id="checkout-sending" class="hidden text-center text-stone-500 text-sm">Sending your report...</p>
+                    <p id="checkout-error" class="hidden text-center text-red-700 text-sm font-bold">The report did not send. Please text Lance at 770.549.9358.</p>
                 </form>
-            </div>
-
-            <!-- $200 cleaning fee -->
-            <div class="flex flex-col items-center gap-5">
-                <img id="fee-img" src="webpic/$200.webp" alt="$200 Cleaning Fee" class="max-w-sm w-full rounded shadow-2xl border-2 border-stone-300 hover:rotate-1 transition-transform cursor-pointer" onclick="feeClick()">
-                <div class="parchment p-5 border-2 border-dashed border-[#A45D41]/60 rounded-xl max-w-2xl text-center shadow-lg">
-                    <p class="text-stone-700 italic font-bold text-lg leading-relaxed">&ldquo;If you don&rsquo;t have time or don&rsquo;t want to clean, no worries! We just ask that you cover the $200 cleaning fee they charge us.&rdquo;</p>
-                </div>
-            </div>
+            </section>
         </div>
-
 
         <!-- ==================== TAB 5: GUEST BOOK ==================== -->
         <div id="tab-guestbook" class="tab-panel space-y-6">

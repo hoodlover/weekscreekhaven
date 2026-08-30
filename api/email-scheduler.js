@@ -21,8 +21,9 @@ function midpoint(arrival,departure) { const nights=Math.max(1,Math.round((Date.
 function checkoutDetails(booking) {
   const noCleaner=Boolean(booking.friendsAndFamilyDiscount) && booking.friendsAndFamilyDiscount.chargeCleaning !== true;
   return {
-    checkoutChecklistUrl:`https://www.weekscreekhaven.com/checkout.html?token=${encodeURIComponent(createAgreementToken(booking.id,365*86400))}`,
-    checkoutExtraSteps:noCleaner?'Friends & Family checkout — no cleaner is scheduled after this stay. Please strip used beds, clean the bathrooms you used, complete at least one load of linens, and leave the cabin ready for the next adventure. Don’t let the door hit you on the way out — say “Alexa, Going Home” for the quick exit routine.':'Your cleaner will handle beds, bathrooms, and laundry. Please do not strip the beds.',
+    checkoutChecklistUrl:`https://www.weekscreekhaven.com/checkout.html?token=${encodeURIComponent(createAgreementToken(booking.id,365*86400))}&cleaner=${noCleaner?'0':'1'}`,
+    checkoutTiming:noCleaner?'There is no set checkout time for this friends-and-family stay. If we need the cabin by a certain time, Lance or Heather will let you know personally.':`Checkout is ${booking.lateCheckout?'noon':'11:00 AM'} today.`,
+    checkoutExtraSteps:noCleaner?'No cleaner is scheduled. Please strip the beds you used; wash sheets, pillowcases, and towels; move the load to the dryer and start it; and clean the sinks, toilets, and showers you used.':'Your cleaner will handle beds, bathrooms, and laundry. Please do not strip the beds.',
   };
 }
 
