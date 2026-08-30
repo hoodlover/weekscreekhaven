@@ -26,6 +26,10 @@ async function scheduledOwnerSend(booking, templateKey, variables, marker) {
 
 async function scheduledSend(booking, templateKey, variables, marker) {
   if (booking[marker] || !booking.email) return false;
+  if (String(process.env.OWNER_EMAIL || '').trim().toLowerCase() === String(booking.email).trim().toLowerCase()) {
+    console.warn(`Skipped guest email ${templateKey} for ${booking.id}: recipient is the owner address.`);
+    return false;
+  }
   const result=await sendEmail({ to:booking.email, toName:booking.name, templateKey, templateVariables:variables, subject:'Weeks Creek Haven stay update', text:`Hi ${booking.name},\n\nPlease review this update for your Weeks Creek Haven stay.`, html:`<p>Hi ${booking.name},</p><p>Please review this update for your Weeks Creek Haven stay.</p>`, idempotencyKey:`${booking.id}-${templateKey}` });
   if (result?.skipped) return false;
   const createdAt=new Date().toISOString();
