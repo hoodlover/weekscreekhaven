@@ -68,8 +68,18 @@ export async function getBookingCalendar() {
     if (record.type === 'email_template_saved') emailTemplates.set(record.template.id, record.template);
     if (record.type === 'email_template_removed') emailTemplates.set(record.templateId, { id: record.templateId, deletedAt: record.createdAt });
   }
+  const now = Date.now();
+  const bookings = [...requests.values()].map((booking) => {
+    const inquiryExpiresAt = booking.bookingIntent === 'questions'
+      ? booking.inquiryExpiresAt || new Date(Date.parse(booking.createdAt) + 48 * 60 * 60 * 1000).toISOString()
+      : null;
+    if (inquiryExpiresAt && Date.parse(inquiryExpiresAt) <= now && booking.status === 'pending') {
+      return { ...booking, inquiryExpiresAt, status: 'expired', archivedAt: booking.archivedAt || inquiryExpiresAt };
+    }
+    return inquiryExpiresAt ? { ...booking, inquiryExpiresAt } : booking;
+  });
   return {
-    bookings: [...requests.values()].sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
+    bookings: bookings.sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
     blocks: [...blocks.values()].sort((a, b) => a.arrival.localeCompare(b.arrival)),
     defaultNightlyRateCents,
     rates: [...rates.values()].sort((a, b) => a.arrival.localeCompare(b.arrival)),
