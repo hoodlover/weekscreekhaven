@@ -58,6 +58,8 @@
             .guide-layout { grid-template-columns: minmax(260px,.78fr) minmax(0,1.22fr); gap:2rem; }
             .note-grid,.task-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
             .choice-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+            .checkout-intro h1 { white-space:nowrap; font-size:clamp(1.9rem,3.5vw,2.8rem); }
+            .single-line { white-space:nowrap; font-size:clamp(1.85rem,3.2vw,2.5rem); }
         }
         @media (max-width:767px) { .section-head { display:block; } .section-head > p { margin-top:.65rem; } }
     </style>
@@ -82,10 +84,11 @@
                 </div>
                 <div>
                     <p class="kicker">Before heading home</p>
-                    <h2 class="section-title">Friends &amp; Family Checkout</h2>
-                    <div class="note-grid">
-                        <div class="note"><h3>No cleaner scheduled</h3><p>Please complete the full checklist below so the cabin is ready for the next visit.</p></div>
-                        <div class="note"><h3>Prefer a cleaner?</h3><p>Tell Lance or Heather and we can schedule one. The cleaning fee is $200.</p></div>
+                    <h2 class="section-title single-line">Easy Cleaning Tools</h2>
+                    <div class="space-y-3 text-sm leading-relaxed text-stone-600">
+                        <p>There is a stick vacuum on the main floor and another stick vacuum on the basement floor. Use whichever one is closest for a quick cleanup.</p>
+                        <p>The robovac is optional. Press its <strong class="text-stone-800">Home</strong> button as you leave and it can make a pass through the cabin&mdash;or skip it. Either is completely fine.</p>
+                        <p><strong class="text-stone-800">No thermostat adjustment is needed.</strong> The checkout temperature changes automatically after you leave.</p>
                     </div>
                 </div>
             </div>
@@ -104,12 +107,11 @@
                 <div class="task"><input type="checkbox" id="trash"><label for="trash"><strong>Trash</strong>Bag and remove all trash. Food waste goes in the tall bear-proof can; non-food trash goes in the porch trash box.</label></div>
                 <div class="task"><input type="checkbox" id="fireplace"><label for="fireplace"><strong>Fireplace</strong>Turn the fireplace knob to <em>Pilot</em> and close the screens.</label></div>
                 <div class="task"><input type="checkbox" id="hottub"><label for="hottub"><strong>Hot tub</strong>Secure the cover, lower the temperature to 80&deg;F, and include used hot-tub towels with the laundry.</label></div>
-                <div class="task"><input type="checkbox" id="lights"><label for="lights"><strong>Lights &amp; thermostat</strong>Turn off the lights. Set the thermostat to 75&deg;F in summer or 60&deg;F in winter.</label></div>
+                <div class="task"><input type="checkbox" id="lights"><label for="lights"><strong>Lights</strong>Turn off the lights. The checkout temperature adjusts automatically.</label></div>
                 <div class="task"><input type="checkbox" id="lockup"><label for="lockup"><strong>Doors &amp; windows</strong>Close the windows and lock all three smart doors, or use the Alexa routine below.</label></div>
                 <div class="task"><input type="checkbox" id="walkthrough"><label for="walkthrough"><strong>Final walk-through</strong>Leave the cabin as you found it and text us about anything that broke, needs attention, or could make a future stay better.</label></div>
             </div>
             <div id="all-checked" class="tip hidden"><strong>All set.</strong> Thank you for taking care of the Haven. Safe travels home.</div>
-            <div class="quick-exit"><span>Quick exit routine</span><strong>&ldquo;Alexa, Going Home&rdquo;</strong></div>
         </section>
 
         <section id="cleaner-checklist" class="checkout-card hidden">
@@ -122,10 +124,9 @@
                 <div class="task"><input type="checkbox" id="paid-food"><label for="paid-food"><strong>Personal food</strong>Remove your food from the refrigerator.</label></div>
                 <div class="task"><input type="checkbox" id="paid-trash"><label for="paid-trash"><strong>Trash</strong>Bag the trash. Food waste goes in the tall bear-proof can.</label></div>
                 <div class="task"><input type="checkbox" id="paid-hottub"><label for="paid-hottub"><strong>Hot tub</strong>Secure the cover and lower the temperature to 80&deg;F.</label></div>
-                <div class="task"><input type="checkbox" id="paid-lights"><label for="paid-lights"><strong>Lights &amp; thermostat</strong>Turn off lights and set the thermostat to 75&deg;F in summer or 60&deg;F in winter.</label></div>
+                <div class="task"><input type="checkbox" id="paid-lights"><label for="paid-lights"><strong>Lights</strong>Turn off the lights. The checkout temperature adjusts automatically.</label></div>
                 <div class="task"><input type="checkbox" id="paid-lockup"><label for="paid-lockup"><strong>Lock up</strong>Close windows and lock all three smart doors.</label></div>
             </div>
-            <div class="quick-exit"><span>Quick exit routine</span><strong>&ldquo;Alexa, Going Home&rdquo;</strong></div>
         </section>
 
         <section class="checkout-card">
@@ -141,19 +142,25 @@
                     <label class="field-label">Supplies running low</label>
                     <div class="choice-grid">
                         <label class="choice"><input type="checkbox" name="restock[]" value="Coffee"> Coffee</label>
+                        <label class="choice"><input type="checkbox" name="restock[]" value="Keurig Pods"> Keurig pods</label>
                         <label class="choice"><input type="checkbox" name="restock[]" value="Toilet Paper"> Toilet paper</label>
                         <label class="choice"><input type="checkbox" name="restock[]" value="Paper Towels"> Paper towels</label>
+                        <label class="choice"><input type="checkbox" name="restock[]" value="Trash Bags"> Trash bags</label>
                         <label class="choice"><input type="checkbox" name="restock[]" value="Dishwasher Pods"> Dishwasher pods</label>
-                        <label class="choice"><input type="checkbox" name="restock[]" value="Dish or Hand Soap"> Dish or hand soap</label>
+                        <label class="choice"><input type="checkbox" name="restock[]" value="Dish Soap"> Dish soap</label>
+                        <label class="choice"><input type="checkbox" name="restock[]" value="Hand Soap"> Hand soap</label>
+                        <label class="choice"><input type="checkbox" name="restock[]" value="Sponges or Scrub Pads"> Sponges or scrub pads</label>
                         <label class="choice"><input type="checkbox" name="restock[]" value="Laundry Pods"> Laundry pods</label>
+                        <label class="choice"><input type="checkbox" name="restock[]" value="Bathroom Toiletries"> Shampoo or body wash</label>
                         <label class="choice"><input type="checkbox" name="restock[]" value="Batteries"> Batteries</label>
-                        <label class="choice"><input type="checkbox" name="restock[]" value="Propane"> Propane</label>
+                        <label class="choice"><input type="checkbox" name="restock[]" value="Grill or Deck-Heater Propane Tanks"> Grill/deck-heater propane tanks</label>
                         <label class="choice"><input type="checkbox" name="restock[]" value="Charcoal"> Charcoal</label>
                     </div>
                 </div>
                 <div><label class="field-label" for="checkout-notes">Anything broken, unfinished, or worth improving?</label><textarea id="checkout-notes" name="maintenance_issue" rows="3" class="field" placeholder="Tell us what happened or what would make the next stay better."></textarea></div>
                 <div><label class="field-label" for="guest-name">Your name</label><input id="guest-name" type="text" name="guest_names" class="field" placeholder="Your name" required></div>
                 <label class="choice"><input type="checkbox" name="cleanliness_confirm" value="yes" required><span>I completed the checkout steps that apply to my stay.</span></label>
+                <div class="quick-exit md:ml-auto md:max-w-md"><span>Quick exit routine</span><strong>&ldquo;Alexa, Going Home&rdquo;</strong></div>
                 <button type="submit" class="send-button">Send Checkout Report</button>
             </form>
         </section>
