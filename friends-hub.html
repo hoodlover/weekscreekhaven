@@ -847,7 +847,10 @@
 
             <!-- Real guest book nudge -->
             <div class="parchment rounded-xl p-5 shadow border-l-4 border-green-800 flex items-start gap-4 max-w-3xl mx-auto">
-                <img src="webpic/Guestnotebook.webp" alt="Guest Book" class="w-14 h-14 object-cover rounded-lg shadow flex-shrink-0 border border-stone-300">
+                <picture class="flex-shrink-0">
+                    <source media="(min-width: 768px)" srcset="webpic/guestbook-realistic.webp">
+                    <img src="webpic/Guestnotebook.webp" alt="The Weeks Creek Haven leather guest book" class="w-14 h-14 md:w-36 md:h-24 object-cover rounded-lg shadow border border-stone-300">
+                </picture>
                 <div>
                     <p class="font-black text-green-900 text-sm uppercase tracking-wide mb-1">Don't Forget the Real One</p>
                     <p class="text-stone-600 text-sm leading-relaxed">The physical guest book is on the shelf by the fireplace. Flip through it — you'll see everyone who came before you. Then add your own story in ink. This digital form is great, but the real book is the one that stays at the cabin forever.</p>
