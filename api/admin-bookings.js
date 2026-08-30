@@ -1,5 +1,6 @@
 import { appendBookingRecord, getBookingCalendar, getBookingRequests, rangesOverlap, unavailableRanges } from '../_lib/booking-store.js';
 import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
+import { mergeEmailTemplates } from '../_lib/email-library.js';
 import { getInvites } from '../_lib/invite-store.js';
 import { createAgreementToken, createReviewToken, json, requireAdmin } from '../_lib/security.js';
 import { cancelSquareInvoice, createSquareBookingInvoice, createSquareFriendInvoice, getSquareInvoice, squareStatus } from '../_lib/square.js';
@@ -19,6 +20,26 @@ function validEmail(value) {
 function bookingPacketUrl(bookingId) {
   const token = createAgreementToken(bookingId, 365 * 86400);
   return `https://www.weekscreekhaven.com/booking-packet.html?token=${encodeURIComponent(token)}`;
+}
+
+function easternToday() {
+  const parts = new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+  const value = Object.fromEntries(parts.map(part => [part.type, part.value]));
+  return `${value.year}-${value.month}-${value.day}`;
+}
+
+function stayEmailVariables(booking) {
+  const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || booking.dateChoices?.[0] || {};
+  const packetUrl = bookingPacketUrl(booking.id);
+  const noCleaner = Boolean(booking.friendsAndFamilyDiscount) && booking.friendsAndFamilyDiscount.chargeCleaning !== true;
+  return {
+    guestName:booking.name, arrival:dates.arrival || '', departure:dates.departure || '', checkout:booking.lateCheckout?'noon':'11:00 AM', packetUrl,
+    paymentUrl:booking.paymentUrl || packetUrl, depositAmount:`$${((Number(booking.depositAmountCents)||0)/100).toFixed(2)}`,
+    balanceAmount:`$${((Number(booking.squareBalanceCents ?? booking.balanceAmountCents)||0)/100).toFixed(2)}`,
+    bookingUrl:'https://www.weekscreekhaven.com/register.html', referralCode:booking.referralCode || '',
+    checkoutChecklistUrl:noCleaner?'https://www.weekscreekhaven.com/checkout.html':packetUrl,
+    checkoutExtraSteps:noCleaner?'Friends & Family checkout — no cleaner is scheduled after this stay. Please strip used beds, clean the bathrooms you used, complete at least one load of linens, and leave the cabin ready for the next adventure. Don’t let the door hit you on the way out — say “Alexa, Going Home” for the quick exit routine.':'Your cleaner will handle beds, bathrooms, and laundry. Please do not strip the beds.',
+  };
 }
 
 async function sendBookingPacketEmail(booking, packetUrl) {
@@ -296,6 +317,24 @@ export default async function handler(request, response) {
       });
       await appendBookingRecord({ type: 'status', bookingId: booking.id, changes: { reviewRequestedAt: createdAt }, createdAt });
       return json(response, 200, { ok: true });
+    }
+    if (action === 'send-stay-email') {
+      if (!booking.email) return json(response, 400, { error: 'This guest does not have an email address.' });
+      if (String(process.env.OWNER_EMAIL || '').trim().toLowerCase() === String(booking.email).trim().toLowerCase()) return json(response, 409, { error: 'This booking still uses the owner email. Correct the guest email before sending.' });
+      if (booking.status !== 'booked') return json(response, 409, { error: 'Current-stay emails are available only after the stay is fully booked.' });
+      const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || booking.dateChoices?.[0] || {};
+      const today = easternToday();
+      if (!dates.arrival || !dates.departure || today < dates.arrival || today > dates.departure) return json(response, 409, { error: 'These messages can be sent only while the guest is currently staying at the cabin.' });
+      const allowedTriggers = new Set(['scheduled_checkin_day','scheduled_midstay','scheduled_checkout_day']);
+      const calendar = await getBookingCalendar();
+      const template = mergeEmailTemplates(calendar.emailTemplates).find(item => item.id === String(request.body?.templateId || '') && item.audience === 'Guest' && item.enabled !== false && allowedTriggers.has(item.trigger));
+      if (!template) return json(response, 400, { error: 'Choose an active check-in, during-stay, or checkout email.' });
+      await sendEmail({
+        to:booking.email, toName:booking.name, templateKey:template.id, templateVariables:stayEmailVariables(booking),
+        subject:template.subject || 'Weeks Creek Haven stay update', text:template.body || `Hi ${booking.name},\n\nHere is an update for your current stay.`,
+      });
+      await appendBookingRecord({ type:'status', bookingId:booking.id, changes:{ lastManualStayEmailId:template.id, lastManualStayEmailSentAt:createdAt }, createdAt });
+      return json(response, 200, { ok:true, templateName:template.name });
     }
     if (action === 'decline') {
       await appendBookingRecord({ type: 'status', bookingId: booking.id, changes: { status: 'declined', declinedAt: createdAt }, createdAt });
