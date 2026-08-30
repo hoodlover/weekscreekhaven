@@ -78,6 +78,12 @@ export async function getInvites() {
     if (record.type === 'revoked' && invites.has(record.inviteId)) {
       invites.get(record.inviteId).revokedAt = record.createdAt;
     }
+    if (record.type === 'archived' && invites.has(record.inviteId)) {
+      invites.get(record.inviteId).archivedAt = record.createdAt;
+    }
+    if (record.type === 'unarchived' && invites.has(record.inviteId)) {
+      delete invites.get(record.inviteId).archivedAt;
+    }
     if (record.type === 'photo_added' && invites.has(record.inviteId)) {
       const invite = invites.get(record.inviteId);
       invite.photos = [...(invite.photos || []), record.photo].slice(0, 3);

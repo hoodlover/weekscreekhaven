@@ -10,7 +10,7 @@ export default async function handler(request, response) {
     const photoId = String(request.query?.photoId || '');
     const invites = await getInvites();
     const invite = invites.find((item) => (item.photos || []).some((photo) => photo.id === photoId));
-    if (!invite || (!admin && session.inviteId !== invite.id)) return response.status(404).end();
+    if (!invite || (!admin && (invite.archivedAt || invite.revokedAt || session.inviteId !== invite.id))) return response.status(404).end();
     const photo = invite.photos.find((item) => item.id === photoId);
     const result = await getInvitePhoto(photo.pathname);
     if (!result || result.statusCode !== 200) return response.status(404).end();

@@ -324,7 +324,7 @@
           <label class="checkline"><input id="invite-complimentary" type="checkbox"><span><strong>Complimentary stay</strong> · no rent, taxes, government lodging fees, or required charges</span></label>
           <p class="helper">Leave this unchecked for their saved Friends &amp; Family rate. Make sure the phone number above matches the one in your private pricing list.</p>
           <label for="welcome-message">Personal welcome (optional)</label>
-          <textarea id="welcome-message" rows="6" maxlength="500">Hey! We&rsquo;d really love for you to enjoy some time away at Weeks Creek Haven. Pick any open dates that work for you&mdash;midweek or a weekend&mdash;and come enjoy a relaxed getaway in Blue Ridge. There are no strings attached. We care about you and would simply love to share this place with you so you can slow down, breathe, and enjoy some mountain time.</textarea>
+          <textarea id="welcome-message" rows="7" maxlength="500">Hey! We&rsquo;d love for you to enjoy some time away at Weeks Creek Haven. Pick a couple midweek nights or a weekend getaway&mdash;whatever open dates work best&mdash;and come enjoy a relaxed Blue Ridge escape. Arrive whenever it&rsquo;s convenient and head out whenever you&rsquo;re ready; there&rsquo;s no rush. The price you see is a discounted rate just for you all. There are no strings attached. We care about you and would simply love to share this place with you. Any questions, send Lance or Heather a text or give us a call.</textarea>
           <label for="invite-photos">Welcome photos (optional)</label>
           <div class="photo-picker">
             <input id="invite-photos" type="file" accept="image/jpeg,image/png,image/webp" multiple>
@@ -335,8 +335,8 @@
           <input id="expires" type="date">
           <label for="max-uses">Entry limit (optional)</label>
           <input id="max-uses" type="number" min="0" max="999" placeholder="Unlimited">
-          <label for="notes">Private note (optional)</label>
-          <textarea id="notes" rows="3" maxlength="240">Pick a couple midweek nights or a weekend getaway. Arrive whenever it&rsquo;s convenient and head out whenever you&rsquo;re ready&mdash;no rush. The price you see is a discounted rate just for you all. Any questions, send Lance or Heather a text or call us.</textarea>
+          <label for="notes">Notes from Heather &amp; Lance&mdash;things we need to think about or remember (optional)</label>
+          <textarea id="notes" rows="3" maxlength="240" placeholder="Private reminder for us&mdash;the guest will not see this."></textarea>
           <button id="create-submit" class="primary" style="width:100%;margin-top:18px">Create invite</button>
           <div id="create-error" class="error" hidden></div>
           <div id="created" class="created" hidden>
@@ -383,7 +383,7 @@
   </main>
   <script type="module">
     import { applyFriendsAndFamilyDiscount, money, PRICING_CONFIG, quoteStay, weekPlan } from '/pricing.js';
-    const state = { invites: [], access: [], bookings: [], reviews: [], rates: [], discounts: [], discountNameFilter: '', discountTypeFilter: 'all', emails: [], emailTriggers: [], accounting: [], accountingLoaded: false, showArchivedBookings: false, bookingFilter: 'all', bookingSort: 'arrival', openBookingIds: new Set(), pricing: PRICING_CONFIG, square: {}, knownBookingIds: new Set(), knownAccessIds: new Set(), initialized: false, newInvite: null };
+    const state = { invites: [], access: [], bookings: [], reviews: [], rates: [], discounts: [], discountNameFilter: '', discountTypeFilter: 'all', emails: [], emailTriggers: [], accounting: [], accountingLoaded: false, showArchivedBookings: false, showArchivedInvites: false, bookingFilter: 'all', bookingSort: 'arrival', openBookingIds: new Set(), pricing: PRICING_CONFIG, square: {}, knownBookingIds: new Set(), knownAccessIds: new Set(), initialized: false, newInvite: null };
     const $ = (id) => document.getElementById(id);
     $('panel-invites').prepend($('invite-form'));
     const discountFilters=document.createElement('div');discountFilters.className='discount-editor-grid';discountFilters.innerHTML='<label>Filter by name<input id="discount-filter-name" type="search" placeholder="Start typing a name"></label><label>Filter by discount<select id="discount-filter-type"><option value="all">All discounts</option><option value="percentage">Percentage off</option><option value="amount">Dollar amount off</option><option value="flat">Whole-stay price</option><option value="complimentary">Complimentary</option></select></label>';$('discount-list').before(discountFilters);
@@ -482,9 +482,12 @@
 
     function render() {
       const now = new Date();
-      const isInactive = (item) => Boolean(item.revokedAt || (item.expiresAt && new Date(item.expiresAt) <= now));
+      const inviteEnded = (item) => Boolean((item.stayOptions||[]).length && (item.stayOptions||[]).every(option=>option.departure&&option.departure<easternDateKey()));
+      const isInactive = (item) => Boolean(item.archivedAt || item.revokedAt || (item.expiresAt && new Date(item.expiresAt) <= now) || inviteEnded(item) || ['completed','cancelled','declined'].includes(item.stayStatus));
       const orderedInvites = [...state.invites].sort((first,second) => Number(isInactive(first))-Number(isInactive(second)) || String(second.createdAt).localeCompare(String(first.createdAt)));
       const active = orderedInvites.filter((item) => !isInactive(item));
+      const archivedInvites = orderedInvites.filter(isInactive);
+      const displayedInvites = state.showArchivedInvites ? archivedInvites : active;
       const pendingCount=state.bookings.filter(item=>(item.status||'pending')==='pending').length;
       const today=new Date().toISOString().slice(0,10);
       const upcomingCount=state.bookings.filter(item=>['reserved','booked'].includes(item.status)&&((item.dateChoices||[])[Number.isInteger(item.approvedChoice)?item.approvedChoice:0]?.departure||'')>=today).length;
@@ -498,14 +501,17 @@
       $('review-badge').textContent=recentReviews; $('review-badge').hidden=!recentReviews;
       $('activity-badge').textContent=unreadActivity; $('activity-badge').hidden=!unreadActivity;
       document.title=(pendingCount+unreadActivity)?`(${pendingCount+unreadActivity}) Cabin Command Center | Weeks Creek Haven`:'Cabin Command Center | Weeks Creek Haven';
-      $('invite-list').innerHTML = orderedInvites.length ? orderedInvites.map((invite) => {
+      const inviteControls=archivedInvites.length?`<div class="booking-filter-bar"><div><strong>${active.length} active or future invite${active.length===1?'':'s'}</strong><span>${archivedInvites.length} archived, expired, or completed</span></div><div class="booking-filter-actions"><button type="button" data-toggle-archived-invites>${state.showArchivedInvites?'Back to active':'Show archived'}</button></div></div>`:'';
+      $('invite-list').innerHTML = inviteControls+(displayedInvites.length ? displayedInvites.map((invite) => {
         const inactive = isInactive(invite);
+        const naturallyEnded=Boolean(invite.revokedAt||(invite.expiresAt&&new Date(invite.expiresAt)<=now)||inviteEnded(invite)||['completed','cancelled','declined'].includes(invite.stayStatus));
+        const canRestore=Boolean(invite.archivedAt&&!naturallyEnded);
         const emailButton = invite.recipientEmail ? `<button class="copy" data-email-invite="${escapeHtml(invite.id)}">Email</button>` : '';
         const stayDetails=(invite.stayOptions||[]).length?(invite.stayOptions||[]).map((option,index)=>`<br>Option ${index+1}: ${formatStayDate(option.arrival)}–${formatStayDate(option.departure)}${option.costCents?` · $${(option.costCents/100).toFixed(2)}`:''}${option.expiresOn?` · choose by ${formatStayDate(option.expiresOn)}`:''}${invite.selectedStayChoice===index?' · SELECTED':''}`).join(''):`<br>${invite.complimentary?'Complimentary open-date invitation':'Open-date invitation · saved Friends & Family pricing'}`;
-        return `<article class="invite"><div><h3>${escapeHtml(invite.label)} <span class="badge ${inactive?'off':''}">${inactive?'inactive':'active'}</span></h3><div class="meta">Created ${formatDate(invite.createdAt)}${invite.recipientEmail?`<br>${escapeHtml(invite.recipientEmail)}`:''}${invite.recipientPhone?`<br>${escapeHtml(formatPhone(invite.recipientPhone))}`:''}${invite.expiresAt?`<br>Invite expires ${formatDate(invite.expiresAt)}`:''}${stayDetails}<br>${invite.accessCount} recorded entr${invite.accessCount===1?'y':'ies'}${invite.notes?` &middot; ${escapeHtml(invite.notes)}`:''}</div></div><div class="passcode"><code>${escapeHtml(invite.passcode)}</code><button class="copy" data-copy="${escapeHtml(codeSuffix(invite.passcode))}">Copy</button><a class="ghost" href="/api/admin-preview-invite?inviteId=${encodeURIComponent(invite.id)}" target="_blank" rel="noopener">Open welcome page</a>${emailButton}</div>${inactive?'<span></span>':`<button class="danger" data-revoke="${escapeHtml(invite.id)}">Revoke</button>`}</article>`;
-      }).join('') : '<div class="empty">No invites yet. Create the first one on the left.</div>';
+        return `<article class="invite"><div><h3>${escapeHtml(invite.label)} <span class="badge ${inactive?'off':''}">${inactive?'archived':'active'}</span></h3><div class="meta">Created ${formatDate(invite.createdAt)}${invite.recipientEmail?`<br>${escapeHtml(invite.recipientEmail)}`:''}${invite.recipientPhone?`<br>${escapeHtml(formatPhone(invite.recipientPhone))}`:''}${invite.expiresAt?`<br>Invite expires ${formatDate(invite.expiresAt)}`:''}${stayDetails}<br>${invite.accessCount} recorded entr${invite.accessCount===1?'y':'ies'}${invite.notes?`<br><strong>Notes from Heather &amp; Lance:</strong> ${escapeHtml(invite.notes)}`:''}</div></div><div class="passcode"><code>${escapeHtml(invite.passcode)}</code><button class="copy" data-copy="${escapeHtml(codeSuffix(invite.passcode))}">Copy</button>${inactive?'':`<a class="ghost" href="/api/admin-preview-invite?inviteId=${encodeURIComponent(invite.id)}" target="_blank" rel="noopener">Open welcome page</a>${emailButton}`}</div>${inactive?(canRestore?`<button class="ghost" data-unarchive-invite="${escapeHtml(invite.id)}">Restore</button>`:'<span class="badge off">Expired or completed</span>'):`<button class="danger" data-archive-invite="${escapeHtml(invite.id)}">Archive</button>`}</article>`;
+      }).join('') : `<div class="empty">${state.showArchivedInvites?'No archived invitations.':'No active or future invitations.'}</div>`);
       [...document.querySelectorAll('#invite-list .invite')].forEach((card,index) => {
-        const photos = orderedInvites[index]?.photos || [];
+        const photos = displayedInvites[index]?.photos || [];
         if (!photos.length) return;
         const strip = document.createElement('div'); strip.className='invite-photos';
         for (const photo of photos) { const img=document.createElement('img'); img.src=`/api/invite-photo?photoId=${encodeURIComponent(photo.id)}`; img.alt=''; strip.appendChild(img); }
@@ -659,9 +665,10 @@
       finally { submit.disabled=false; submit.textContent='Create invite'; }
     });
     $('invite-list').addEventListener('click', async (event) => {
+      const toggleArchived = event.target.closest('[data-toggle-archived-invites]'); if(toggleArchived) { state.showArchivedInvites=!state.showArchivedInvites; render(); return; }
       const copy = event.target.closest('[data-copy]'); if(copy) { await navigator.clipboard.writeText(copy.dataset.copy); copy.textContent='Copied'; setTimeout(()=>copy.textContent='Copy',1200); }
       const emailInvite = event.target.closest('[data-email-invite]'); if(emailInvite) { emailInvite.disabled=true; try { await request('/api/admin-send-invite',{method:'POST',body:JSON.stringify({inviteId:emailInvite.dataset.emailInvite})}); emailInvite.textContent='Sent'; } catch(error) { alert(error.message); emailInvite.textContent='Email'; } finally { emailInvite.disabled=false; } }
-      const revoke = event.target.closest('[data-revoke]'); if(revoke && confirm('Revoke this passcode? Unselected date offers will be released, but an already selected stay will remain reserved.')) { await request('/api/admin-invites',{method:'PATCH',body:JSON.stringify({inviteId:revoke.dataset.revoke})}); await load(); }
+      const archive = event.target.closest('[data-archive-invite],[data-unarchive-invite]'); if(archive) { const restoring=Boolean(archive.dataset.unarchiveInvite),inviteId=archive.dataset.unarchiveInvite||archive.dataset.archiveInvite; if(!restoring&&!confirm('Archive this invitation? Its passcode will stop working, but the record can be restored later.'))return; archive.disabled=true; try { await request('/api/admin-invites',{method:'PATCH',body:JSON.stringify({action:restoring?'unarchive':'archive',inviteId})}); if(restoring)state.showArchivedInvites=false; await load(); } catch(error) { alert(error.message); archive.disabled=false; } }
     });
     $('booking-list').addEventListener('click', async (event) => {
       const bookingToggle=event.target.closest('[data-toggle-booking]');

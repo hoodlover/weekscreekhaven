@@ -11,7 +11,7 @@ export default async function handler(request, response) {
     const [invites, calendar] = await Promise.all([getInvites(), getBookingCalendar()]);
     const invite = invites.find((item) => item.id === session.inviteId);
     const expired = invite?.expiresAt && new Date(invite.expiresAt).getTime() < Date.now();
-    if (!invite || invite.revokedAt || expired) return json(response, 403, { error: 'This invite is no longer active.' });
+    if (!invite || invite.archivedAt || invite.revokedAt || expired) return json(response, 403, { error: 'This invite is no longer active.' });
     const booking = findInviteBooking(invite, calendar.bookings);
     const chosenStay = booking?.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || null;
     const packetReady = booking && ['reserved', 'booked'].includes(booking.status);

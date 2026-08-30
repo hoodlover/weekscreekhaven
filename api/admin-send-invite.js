@@ -17,7 +17,7 @@ export default async function handler(request, response) {
   if (request.method !== 'POST') return json(response, 405, { error: 'Method not allowed.' });
   try {
     const invite = (await getInvites()).find((item) => item.id === String(request.body?.inviteId || ''));
-    if (!invite || invite.revokedAt) return json(response, 404, { error: 'That invite is not active.' });
+    if (!invite || invite.archivedAt || invite.revokedAt) return json(response, 404, { error: 'That invite is not active.' });
     const recipientEmail = validEmail(request.body?.recipientEmail || invite.recipientEmail);
     if (!recipientEmail) return json(response, 400, { error: 'Add a valid guest email address.' });
     const guestName = invite.label;

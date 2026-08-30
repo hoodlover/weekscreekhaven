@@ -37,7 +37,7 @@ export default async function handler(request, response) {
   }
     const inviteSession = requireInvite(request);
     const invites = inviteSession && !String(inviteSession.visitorName || '').includes('owner preview') ? await getInvites() : [];
-    const activeInvite = invites.find((item) => item.id === inviteSession?.inviteId && !item.revokedAt && (!item.expiresAt || Date.parse(item.expiresAt) >= Date.now()));
+    const activeInvite = invites.find((item) => item.id === inviteSession?.inviteId && !item.archivedAt && !item.revokedAt && (!item.expiresAt || Date.parse(item.expiresAt) >= Date.now()));
     const name = text(activeInvite?.label || request.body?.name, 100);
     const email = emailValue(activeInvite?.recipientEmail || request.body?.email);
     const first = dateChoice(request, 1);

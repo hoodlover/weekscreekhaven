@@ -26,7 +26,7 @@ export default async function handler(request, response) {
       const access = await getAccessRecords();
       overLimit = access.filter((entry) => entry.inviteId === invite.id).length >= invite.maxUses;
     }
-    if (!invite || invite.revokedAt || expired || overLimit) {
+    if (!invite || invite.archivedAt || invite.revokedAt || expired || overLimit) {
       await wait(400);
       return json(response, 401, { error: 'That invite is not active. Check the code or ask Lance for a fresh invite.' });
     }

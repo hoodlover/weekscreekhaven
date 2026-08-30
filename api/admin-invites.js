@@ -125,10 +125,16 @@ export default async function handler(request, response) {
 
     if (request.method === 'PATCH') {
       const inviteId = safeText(request.body?.inviteId, 80);
+      const action = safeText(request.body?.action, 20) || 'revoke';
       const [invites, calendar] = await Promise.all([getInvites(), getBookingCalendar()]);
       const invite = invites.find((item) => item.id === inviteId);
       if (!invite) return json(response, 404, { error: 'Invite not found.' });
       const createdAt = new Date().toISOString();
+      if (action === 'archive' || action === 'unarchive') {
+        await appendInviteRecord({ type: action === 'archive' ? 'archived' : 'unarchived', createdAt, inviteId });
+        return json(response, 200, { ok: true, archived: action === 'archive' });
+      }
+      if (action !== 'revoke') return json(response, 400, { error: 'Choose a valid invitation action.' });
       await appendInviteRecord({ type: 'revoked', createdAt, inviteId });
       const booking = invite.bookingId ? calendar.bookings.find((item) => item.id === invite.bookingId) : null;
       if (booking?.status === 'offered') await appendBookingRecord({ type: 'status', bookingId: booking.id, changes: { status: 'cancelled', cancelledAt: createdAt }, createdAt });

@@ -28,6 +28,8 @@ Use these instructions for all work in this repository.
 - New Friends & Family invitations do not offer preselected date options. Invitees choose any available dates from the live calendar; an invite may be marked complimentary, otherwise its saved phone number automatically applies any matching private Friends & Family pricing without showing the public-price comparison.
 - Invitation copy should feel warm, relaxed, personal, and free of pressure. Do not use the word "bless" or describe a complimentary stay as "totally free."
 - Use `guests/weeks-creek-haven-friends-family-welcome-5x5.png` as the default invitation welcome image whenever no personal invitation photo is uploaded; personal uploads override it.
+- Keep guest-facing invitation wording in the Personal Welcome so it appears on the welcome page and invitation email. The “Notes from Heather & Lance” field is owner-only.
+- The invitation list defaults to active and future invites. Archive expired, completed, and test invitations without deleting them; archived invite passcodes must not work unless restored.
 - Draft unusual guest communications for owner review. Never send them without the owner's explicit approval.
 
 ## Verification and safety

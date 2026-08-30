@@ -16,7 +16,7 @@ export default async function handler(request, response) {
     const calendar = await getBookingCalendar();
     const inviteSession = requireInvite(request);
     const invites = inviteSession && !String(inviteSession.visitorName || '').includes('owner preview') ? await getInvites() : [];
-    const activeInvite = invites.find((item) => item.id === inviteSession?.inviteId && !item.revokedAt && (!item.expiresAt || Date.parse(item.expiresAt) >= Date.now()));
+    const activeInvite = invites.find((item) => item.id === inviteSession?.inviteId && !item.archivedAt && !item.revokedAt && (!item.expiresAt || Date.parse(item.expiresAt) >= Date.now()));
     const standardQuote = quoteStay({
       arrival: String(input.arrival || ''),
       departure: String(input.departure || ''),

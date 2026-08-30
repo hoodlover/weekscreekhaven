@@ -22,7 +22,7 @@ export default async function handler(request, response) {
     const [invites, calendar] = await Promise.all([getInvites(), getBookingCalendar()]);
     const invite = invites.find((item) => item.id === session.inviteId);
     const expiredInvite = invite?.expiresAt && new Date(invite.expiresAt).getTime() < Date.now();
-    if (!invite || invite.revokedAt || expiredInvite) return json(response, 403, { error: 'This invitation is no longer active.' });
+    if (!invite || invite.archivedAt || invite.revokedAt || expiredInvite) return json(response, 403, { error: 'This invitation is no longer active.' });
     const booking = invite.bookingId ? calendar.bookings.find((item) => item.id === invite.bookingId) : null;
     if (!booking) return json(response, 404, { error: 'These stay choices could not be found.' });
     const choiceIndex = Number(request.body?.choice) - 1;
