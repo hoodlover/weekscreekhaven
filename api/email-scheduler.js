@@ -3,11 +3,16 @@ import { sendEmail } from '../_lib/email.js';
 import { refreshSquareBooking } from '../_lib/payment-sync.js';
 import { createAgreementToken, createReviewToken, json } from '../_lib/security.js';
 import { cancelSquareInvoice } from '../_lib/square.js';
+import { getReviews } from '../_lib/review-store.js';
 
 function easternToday() {
   const parts = new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
   const value=Object.fromEntries(parts.map(part=>[part.type,part.value]));
   return `${value.year}-${value.month}-${value.day}`;
+}
+function easternHour() {
+  const parts = new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour:'2-digit',hourCycle:'h23'}).formatToParts(new Date());
+  return Number(parts.find(part=>part.type==='hour')?.value || 0);
 }
 function shiftDate(value, days) { const date=new Date(`${value}T12:00:00Z`); date.setUTCDate(date.getUTCDate()+days); return date.toISOString().slice(0,10); }
 function money(cents) { return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format((Number(cents)||0)/100); }
@@ -50,8 +55,9 @@ export default async function handler(request, response) {
   if (!secret || request.headers.authorization !== `Bearer ${secret}`) return json(response, 401, { error:'Scheduled email authorization failed.' });
   if (request.method !== 'GET') return json(response, 405, { error:'Method not allowed.' });
   try {
-    const today=easternToday();
-    const stored=await getBookingRequests();
+    const today=easternToday(),hour=easternHour();
+    const [stored,reviews]=await Promise.all([getBookingRequests(),getReviews()]);
+    const reviewedBookingIds=new Set(reviews.map(review=>review.bookingId).filter(Boolean));
     let sent=0;
     for (let booking of stored) {
       if (!['pending-payment','reserved','booked','completed'].includes(booking.status) || !booking.email) continue;
@@ -74,12 +80,21 @@ export default async function handler(request, response) {
       else if (booking.paymentPlan==='deposit-balance' && !booking.paymentRequirementMet && booking.depositReminderSentAt && Date.now()-Date.parse(booking.depositReminderSentAt)>=20*3600000) sent+=await scheduledSend(booking,'deposit-grace',common,'depositGraceSentAt');
       if (booking.paymentPlan==='deposit-balance' && !booking.paymentFullyPaid && booking.balanceDueDate && today===shiftDate(booking.balanceDueDate,-1)) sent+=await scheduledSend(booking,'balance-reminder',common,'balanceReminderSentAt');
       if (booking.paymentPlan==='deposit-balance' && !booking.paymentFullyPaid && booking.balanceDueDate && today>booking.balanceDueDate) sent+=await scheduledSend(booking,'balance-grace',common,'balanceGraceSentAt');
-      if (booking.status==='booked' && today===shiftDate(dates.arrival,-3)) sent+=await scheduledSend(booking,'pre-arrival-guide',common,'preArrivalEmailSentAt');
-      if (booking.status==='booked' && today===dates.arrival) sent+=await scheduledSend(booking,'checkin-reminder',common,'checkinEmailSentAt');
-      if (booking.status==='booked' && today===midpoint(dates.arrival,dates.departure)) sent+=await scheduledSend(booking,'midstay-rebook',common,'midstayRebookSentAt');
-      if (booking.status==='booked' && today===dates.departure) sent+=await scheduledSend(booking,'checkout-reminder',common,'checkoutEmailSentAt');
-      if (booking.status==='booked' && !booking.checkoutCompletedAt && today===shiftDate(dates.departure,1)) sent+=await scheduledSend(booking,'checkout-reminder',common,'checkoutFollowupSentAt');
-      if (booking.status==='completed' && today===shiftDate(dates.departure,1) && !booking.reviewRequestedAt) sent+=await scheduledSend(booking,'thank-you-review',common,'thankYouEmailSentAt');
+      if (booking.status==='booked' && today===shiftDate(dates.arrival,-3) && hour>=9) sent+=await scheduledSend(booking,'pre-arrival-guide',common,'preArrivalEmailSentAt');
+      if (booking.status==='booked' && today===dates.arrival && hour>=9) sent+=await scheduledSend(booking,'checkin-reminder',common,'checkinEmailSentAt');
+      if (booking.status==='booked' && today===midpoint(dates.arrival,dates.departure) && hour>=10) sent+=await scheduledSend(booking,'midstay-rebook',common,'midstayRebookSentAt');
+      if (booking.status==='booked' && today===dates.departure && hour>=8 && hour<15) sent+=await scheduledSend(booking,'checkout-reminder',common,'checkoutEmailSentAt');
+      if (['booked','completed'].includes(booking.status) && !booking.checkoutCompletedAt && today===dates.departure && hour>=15) sent+=await scheduledSend(booking,'checkout-checklist-followup',common,'checkoutFollowupSentAt');
+      if (booking.status==='booked' && today===dates.departure && hour>=17) {
+        const completedAt=new Date().toISOString();
+        await appendBookingRecord({type:'status',bookingId:booking.id,changes:{status:'completed',completedAt,completedAutomaticallyAt:completedAt},createdAt:completedAt});
+        booking.status='completed'; booking.completedAt=completedAt;
+      }
+      if (['booked','completed'].includes(booking.status) && today===dates.departure && hour>=17 && !booking.reviewRequestedAt && !reviewedBookingIds.has(booking.id)) {
+        const sentReview=await scheduledSend(booking,'thank-you-review',common,'thankYouEmailSentAt');
+        sent+=sentReview;
+        if(sentReview){const reviewRequestedAt=new Date().toISOString();await appendBookingRecord({type:'status',bookingId:booking.id,changes:{reviewRequestedAt},createdAt:reviewRequestedAt});booking.reviewRequestedAt=reviewRequestedAt;}
+      }
       if (booking.status==='completed' && Number(booking.securityDepositCents)>0 && today===shiftDate(dates.departure,1)) sent+=await scheduledOwnerSend(booking,'security-deposit-review',common,'securityDepositReviewSentAt');
       if (booking.status==='completed' && !booking.complimentary && today===shiftDate(dates.departure,7)) sent+=await scheduledSend(booking,'return-referral-offer',common,'returnOfferEmailSentAt');
     }

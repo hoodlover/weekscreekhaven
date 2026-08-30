@@ -103,9 +103,10 @@ export default async function handler(request, response) {
             const finalDisplayedQuote = booking.friendsAndFamilyDiscount
               ? { ...displayedQuote, refundableSecurityDepositCents: 0, estimatedAmountDueCents: displayedQuote?.estimatedGrandTotalCents || 0 }
               : displayedQuote;
+            const isComplimentary = choice.complimentary || booking.complimentary || booking.paymentPlan === 'complimentary';
             return {
               ...choice,
-              calculatedQuote: choice.complimentary
+              calculatedQuote: isComplimentary
                 ? withEstimatedTaxesAndFees({ ...finalDisplayedQuote, totalCents: 0, complimentary: true })
                 : finalDisplayedQuote,
             };
@@ -123,15 +124,25 @@ export default async function handler(request, response) {
     if (action === 'correct-guest-contact') {
       const email = validEmail(request.body?.email);
       const name = String(request.body?.name || '').trim().slice(0, 100);
+      const phone = String(request.body?.phone || '').trim().slice(0, 40);
       const inviteId = String(request.body?.inviteId || '').trim();
       if (!email || name.length < 2) return json(response, 400, { error: 'Add the correct guest name and email address.' });
+      if (phone && phone.replace(/\D/g, '').length < 10) return json(response, 400, { error: 'Enter a complete guest phone number or leave it blank.' });
       if (inviteId) {
         const invite = (await getInvites()).find((item) => item.id === inviteId && !item.revokedAt);
         if (!invite) return json(response, 400, { error: 'That active invite could not be found.' });
         if (invite.recipientEmail && invite.recipientEmail.toLowerCase() !== email) return json(response, 409, { error: 'The entered email does not match that invitation.' });
       }
-      await appendBookingRecord({ type: 'status', bookingId: booking.id, changes: { name, email, inviteId: inviteId || null, source: inviteId ? 'invite-booking' : booking.source, guestContactCorrectedAt: createdAt }, createdAt });
-      return json(response, 200, { ok: true, name, email, inviteId: inviteId || null });
+      await appendBookingRecord({ type: 'status', bookingId: booking.id, changes: { name, email, phone, inviteId: inviteId || booking.inviteId || null, source: inviteId ? 'invite-booking' : booking.source, guestContactCorrectedAt: createdAt }, createdAt });
+      return json(response, 200, { ok: true, name, email, phone, inviteId: inviteId || booking.inviteId || null });
+    }
+    if (action === 'mark-completed') {
+      const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || booking.dateChoices?.[0] || {};
+      if (booking.status !== 'booked') return json(response, 409, { error: 'Only a booked stay can be marked completed.' });
+      if (!dates.departure || easternToday() < dates.departure) return json(response, 409, { error: 'A stay can be completed on or after its checkout date.' });
+      const changes = { status: 'completed', completedAt: createdAt, completedByOwnerAt: createdAt };
+      await appendBookingRecord({ type: 'status', bookingId: booking.id, changes, createdAt });
+      return json(response, 200, { ok: true, ...changes });
     }
     if (action === 'archive') {
       if (!['declined', 'cancelled'].includes(booking.status)) return json(response, 409, { error: 'Only declined or canceled bookings can be archived.' });
@@ -353,7 +364,10 @@ export default async function handler(request, response) {
         to:booking.email, toName:booking.name, templateKey:template.id, templateVariables:stayEmailVariables(booking),
         subject:template.subject || 'Weeks Creek Haven booking update', text:template.body || `Hi ${booking.name},\n\nHere is an update about your Weeks Creek Haven booking.`,
       });
-      await appendBookingRecord({ type:'status', bookingId:booking.id, changes:{ lastManualEmailId:template.id, lastManualEmailSentAt:createdAt }, createdAt });
+      const changes = { lastManualEmailId:template.id, lastManualEmailSentAt:createdAt };
+      if (['scheduled_after_checkout','review_requested'].includes(template.trigger)) changes.reviewRequestedAt = booking.reviewRequestedAt || createdAt;
+      if (template.trigger === 'scheduled_after_checkout') changes.thankYouEmailSentAt = booking.thankYouEmailSentAt || createdAt;
+      await appendBookingRecord({ type:'status', bookingId:booking.id, changes, createdAt });
       return json(response, 200, { ok:true, templateName:template.name, guestName:booking.name });
     }
     if (action === 'decline') {
