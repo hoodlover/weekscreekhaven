@@ -51,19 +51,23 @@
     .create { padding:22px; position:static; box-shadow:none; background:#f8f3ea; }
     .create h2,.content h2 { font-size:1.8rem; color:var(--pine); }
     .helper { color:var(--muted); font-size:.78rem; line-height:1.5; }
-    .content { padding:0; min-width:0; display:grid; grid-template-columns:235px minmax(0,1fr); overflow:hidden; }
+    .content { padding:0; min-width:0; display:grid; grid-template-columns:270px minmax(0,1fr); overflow:hidden; }
     .section-head { grid-row:1 / span 10; padding:26px 18px; background:#f3ecdf; border-right:1px solid var(--line); align-self:stretch; }
     .section-head h2 { font-size:1.65rem; line-height:1.05; margin-bottom:18px; }
     .tabs { display:grid; gap:7px; }
-    .tab { position:relative; border:0; border-radius:10px; padding:12px 13px; background:transparent; color:#5f544b; font-weight:800; font-size:.7rem; text-transform:uppercase; text-align:left; }
+    .nav-group-label { margin:12px 8px 1px; color:#9a765f; font-size:.56rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
+    .nav-group-label:first-child { margin-top:0; }
+    .tab { position:relative; display:flex; align-items:center; justify-content:space-between; gap:10px; width:100%; border:1px solid transparent; border-radius:11px; padding:12px 13px; background:transparent; color:#5f544b; font-weight:800; font-size:.68rem; line-height:1.25; text-transform:uppercase; text-align:left; text-decoration:none; }
+    .tab::after { content:'›'; flex:0 0 auto; color:#a8907a; font-size:1rem; line-height:1; }
+    .tab:hover,.tab:focus-visible { border-color:#d8c9b7; background:#fffaf1; color:var(--pine); outline:none; }
     .tab.active { background:var(--rust); color:white; }
+    .tab.active::after { color:white; }
+    .tab.external { background:#fff; border-color:var(--line); color:var(--pine); }
     .count-badge { display:inline-grid; place-items:center; min-width:20px; height:20px; margin-left:6px; padding:0 6px; border-radius:999px; background:#8a2f2f; color:white; font-size:.6rem; vertical-align:middle; }
     .count-badge[hidden] { display:none !important; }
     .tab-panel { display:none; min-width:0; padding:28px; }
     .tab-panel.active { display:block; grid-column:2; }
     #panel-invites.active { display:grid; grid-template-columns:minmax(285px,360px) minmax(0,1fr); gap:24px; align-items:start; }
-    .workspace-links { display:grid; gap:7px; margin-top:22px; padding-top:18px; border-top:1px solid var(--line); }
-    .workspace-links a { display:block; padding:11px 12px; border-radius:9px; background:white; border:1px solid var(--line); color:var(--pine); text-decoration:none; font-size:.7rem; font-weight:800; text-transform:uppercase; }
     .content .ghost,.create .ghost { color:var(--pine); background:white; border-color:var(--line); }
     .invite { display:grid; grid-template-columns:minmax(150px,1fr) minmax(175px,.8fr) auto; gap:16px; align-items:center; padding:17px 0; border-bottom:1px solid #e9e1d5; }
     .invite:last-child,.activity:last-child { border-bottom:0; }
@@ -211,7 +215,7 @@
     .accounting-note { margin-top:12px; padding:11px 13px; border-radius:9px; background:#f5efe5; color:var(--muted); font-size:.7rem; line-height:1.5; }
     .discount-rule strong { display:block; color:var(--pine); }
     .status-pending { background:#fff0cc; color:#76530c; } .status-offered { background:#f3e3bf; color:#76530c; } .status-approved,.status-reserved { background:#dceaf4; color:#285b79; } .status-booked { background:#e0efe5; color:#276141; } .status-declined,.status-cancelled { background:#f2dddd; color:#842e2e; }
-    @media (max-width:900px) { .content { grid-template-columns:1fr; } .section-head { grid-row:auto; border-right:0; border-bottom:1px solid var(--line); padding:18px; } .section-head h2 { margin-bottom:12px; } .tabs { display:flex; overflow:auto; padding-bottom:4px; } .tab { white-space:nowrap; } .workspace-links { grid-template-columns:1fr 1fr; margin-top:12px; padding-top:12px; } .tab-panel.active { grid-column:1; } #panel-invites.active { grid-template-columns:1fr; } }
+    @media (max-width:900px) { .content { grid-template-columns:1fr; } .section-head { grid-row:auto; border-right:0; border-bottom:1px solid var(--line); padding:18px; } .section-head h2 { margin-bottom:12px; } .tabs { grid-template-columns:repeat(3,minmax(0,1fr)); } .nav-group-label { grid-column:1 / -1; margin-top:10px; } .tab { min-width:0; } .tab-panel.active { grid-column:1; } #panel-invites.active { grid-template-columns:1fr; } }
     @media (max-width:800px) { .pricing-layout,.discount-layout { grid-template-columns:1fr; } .invite { grid-template-columns:1fr; gap:9px; } .stats { grid-template-columns:1fr 1fr; } .stats .stat:last-child { grid-column:1/-1; } }
     @media (max-width:560px) {
       .shell { width:calc(100% - 8px); padding:6px 0 38px; }
@@ -233,11 +237,10 @@
       .stat span { font-size:.43rem; line-height:1.15; letter-spacing:.035em; }
       .create,.section-head,.tab-panel { padding:15px; }
       .section-head h2 { margin-bottom:10px; }
-      .tabs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; overflow:visible; padding:0; }
-      .tab { min-width:0; min-height:44px; padding:9px 6px; white-space:normal; text-align:center; line-height:1.25; overflow-wrap:anywhere; }
+      .tabs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; overflow:visible; padding:0; }
+      .nav-group-label { grid-column:1 / -1; margin:12px 3px 0; }
+      .tab { min-width:0; min-height:50px; padding:10px 9px; white-space:normal; text-align:left; line-height:1.25; overflow-wrap:anywhere; }
       .count-badge { display:inline-grid; margin:3px 0 0 3px; }
-      .workspace-links { grid-template-columns:1fr; }
-      .workspace-links a { text-align:center; }
       .booking-head,.review-head { align-items:flex-start; flex-direction:column; gap:7px; }
       .booking-dates,.stay-option-grid,.calculator-grid,.pricing-seasons,.refund-grid { grid-template-columns:1fr; }
       .booking-actions,.booking-tools,.refund-actions,.payment-links,.discount-editor-buttons { align-items:stretch; flex-direction:column; }
@@ -267,9 +270,7 @@
       </div>
       <div class="top-actions">
         <a href="/index.html" class="ghost" style="text-decoration:none">Home</a>
-        <a id="open-calendar" href="/calendar.html" class="ghost" style="text-decoration:none" hidden>Calendar</a>
         <a id="open-hub" href="/friends-hub.html" class="ghost" style="text-decoration:none" hidden>Guest Guide</a>
-        <a id="open-handbook" href="/owner-emergency-handbook.html" class="ghost" style="text-decoration:none" hidden>Emergency handbook</a>
         <button id="enable-alerts" class="ghost" hidden>Enable alerts</button>
         <button id="logout" class="ghost" hidden>Sign out</button>
       </div>
@@ -332,7 +333,25 @@
         <section class="panel content">
           <div class="section-head">
             <div><div class="eyebrow">Owner operations</div><h2>Cabin Command Center</h2></div>
-            <div class="tabs"><button class="tab active" data-tab="bookings">Bookings <span id="booking-badge" class="count-badge" hidden></span></button><button class="tab" data-tab="emails">Email library</button><button class="tab" data-tab="accounting">Money &amp; taxes</button><button class="tab" data-tab="pricing">Rates &amp; calculator</button><button class="tab" data-tab="discounts">Friends &amp; family rates</button><button class="tab" data-tab="reviews">Guest reviews <span id="review-badge" class="count-badge" hidden></span></button><button class="tab" data-tab="invites">Guest access</button><button class="tab" data-tab="activity">Hub activity <span id="activity-badge" class="count-badge" hidden></span></button></div><div class="workspace-links"><a href="/calendar.html">Open calendar</a><a href="/property-people.html">Property &amp; People</a><a href="/api/admin-cabin-contacts-pdf" target="_blank" rel="noopener">Quick view / print contacts PDF</a></div>
+            <nav class="tabs" aria-label="Owner command center menu">
+              <div class="nav-group-label">Daily work</div>
+              <button class="tab active" data-tab="bookings">Bookings &amp; payments <span id="booking-badge" class="count-badge" hidden></span></button>
+              <a id="open-calendar" href="/calendar.html" class="tab external" hidden>Calendar</a>
+              <button class="tab" data-tab="emails">Guest email timeline</button>
+              <button class="tab" data-tab="invites">Guest access &amp; invites</button>
+
+              <div class="nav-group-label">Money &amp; pricing</div>
+              <button class="tab" data-tab="accounting">Money &amp; taxes</button>
+              <button class="tab" data-tab="pricing">Rates &amp; quote calculator</button>
+              <button class="tab" data-tab="discounts">Friends &amp; family pricing</button>
+
+              <div class="nav-group-label">Property &amp; records</div>
+              <button class="tab" data-tab="reviews">Guest reviews <span id="review-badge" class="count-badge" hidden></span></button>
+              <button class="tab" data-tab="activity">Activity log <span id="activity-badge" class="count-badge" hidden></span></button>
+              <a id="open-handbook" href="/owner-emergency-handbook.html" class="tab external" hidden>Emergency handbook</a>
+              <a href="/property-people.html" class="tab external">Property &amp; people</a>
+              <a href="/api/admin-cabin-contacts-pdf" class="tab external" target="_blank" rel="noopener">Print contacts PDF</a>
+            </nav>
           </div>
           <div id="panel-invites" class="tab-panel"><div id="invite-list"></div></div>
           <div id="panel-bookings" class="tab-panel active"><div id="square-status" class="square-status"></div><div id="booking-notice" class="booking-notice" hidden role="status" aria-live="polite"><span id="booking-notice-text"></span><button id="dismiss-booking-notice" type="button" aria-label="Dismiss message">Close</button></div><div id="booking-list"></div></div>
