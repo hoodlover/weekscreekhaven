@@ -13,7 +13,8 @@ export async function automaticallyApproveBooking(booking) {
   const dates=booking.dateChoices[0], quote=dates.quote, createdAt=new Date().toISOString();
   const preTaxAmountCents=quote.totalCents;
   const tax=withEstimatedTaxesAndFees({totalCents:preTaxAmountCents,actualNights:Math.max(1,daysBetween(dates.arrival,dates.departure)),complimentary:quote.complimentary});
-  const securityDepositCents=quote.complimentary?0:(Number(tax.refundableSecurityDepositCents)||30000);
+  const isFriendsAndFamily=Boolean(quote.friendsAndFamilyDiscount);
+  const securityDepositCents=quote.complimentary||isFriendsAndFamily?0:(Number(tax.refundableSecurityDepositCents)||30000);
   const stayAmountCents=tax.estimatedGrandTotalCents;
   const amountCents=stayAmountCents+securityDepositCents;
   const securityText=securityDepositCents?` Refundable security deposit: $${(securityDepositCents/100).toFixed(2)}.`:'';
