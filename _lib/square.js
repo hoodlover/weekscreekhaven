@@ -200,11 +200,11 @@ export async function createSquareFriendInvoice({ bookingId, guestName, email, a
           name: `Weeks Creek Haven friends & family stay for ${guestName}`,
           quantity: '1',
           base_price_money: { amount: stayChargeCents, currency: 'USD' },
-        }, {
+        }, ...(securityDepositCents > 0 ? [{
           name: 'Refundable security deposit',
           quantity: '1',
           base_price_money: { amount: securityDepositCents, currency: 'USD' },
-        }],
+        }] : [])],
       },
     },
   });
