@@ -7,6 +7,14 @@ import { refreshSquareBooking } from '../_lib/payment-sync.js';
 import { findBookingInvite } from '../_lib/booking-invite.js';
 import { daysBetween, PRICING_CONFIG, quoteStay, withEstimatedTaxesAndFees } from '../pricing.js';
 
+const MANUAL_STAY_EMAILS = new Set(['pre-arrival-guide', 'checkin-reminder', 'midstay-rebook', 'checkout-reminder']);
+const MANUAL_STAY_EMAIL_MARKERS = {
+  'pre-arrival-guide': 'preArrivalEmailSentAt',
+  'checkin-reminder': 'checkinEmailSentAt',
+  'midstay-rebook': 'midstayRebookSentAt',
+  'checkout-reminder': 'checkoutEmailSentAt',
+};
+
 function completedInvoiceCents(invoice) {
   return (invoice?.payment_requests || []).reduce((sum, paymentRequest) => sum + (Number(paymentRequest.total_completed_amount_money?.amount) || 0), 0);
 }
@@ -281,6 +289,41 @@ export default async function handler(request, response) {
         changes: { bookingPacketSentAt: booking.bookingPacketSentAt || createdAt, bookingPacketResentAt: createdAt },
       });
       return json(response, 200, { ok: true, packetUrl });
+    }
+    if (action === 'send-stay-email') {
+      if (!booking.email) return json(response, 400, { error: 'This guest does not have an email address.' });
+      if (booking.status !== 'booked') return json(response, 409, { error: 'Only a booked guest can receive current-stay emails.' });
+      const templateKey = String(request.body?.templateKey || '');
+      if (!MANUAL_STAY_EMAILS.has(templateKey)) return json(response, 400, { error: 'Choose one of the current-stay emails.' });
+      const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || booking.dateChoices?.[0] || {};
+      if (!dates.arrival || !dates.departure) return json(response, 409, { error: 'This booking does not have confirmed stay dates.' });
+      const packetUrl = bookingPacketUrl(booking.id);
+      const reviewUrl = `https://www.weekscreekhaven.com/review.html?token=${encodeURIComponent(createReviewToken(booking.id))}`;
+      const templateVariables = {
+        guestName: booking.name,
+        arrival: dates.arrival,
+        departure: dates.departure,
+        checkout: booking.lateCheckout ? 'noon' : '11:00 AM',
+        packetUrl,
+        paymentUrl: booking.paymentUrl || packetUrl,
+        reviewUrl,
+        bookingUrl: 'https://www.weekscreekhaven.com/register.html',
+        referralCode: booking.referralCode || '',
+      };
+      await sendEmail({
+        to: booking.email,
+        toName: booking.name,
+        templateKey,
+        templateVariables,
+        subject: 'Weeks Creek Haven stay update',
+        text: `Hi ${booking.name},\n\nHere is an update for your Weeks Creek Haven stay.`,
+        html: `<p>Hi ${escapeEmailHtml(booking.name)},</p><p>Here is an update for your Weeks Creek Haven stay.</p>`,
+      });
+      await appendBookingRecord({
+        type: 'status', bookingId: booking.id, createdAt,
+        changes: { lastManualStayEmail: templateKey, lastManualStayEmailSentAt: createdAt, [MANUAL_STAY_EMAIL_MARKERS[templateKey]]: createdAt },
+      });
+      return json(response, 200, { ok: true, templateKey, sentAt: createdAt });
     }
     if (action === 'send-review') {
       if (!booking.email) return json(response, 400, { error: 'This guest does not have an email address.' });
