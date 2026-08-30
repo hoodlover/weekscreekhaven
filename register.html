@@ -465,6 +465,15 @@
       form.elements.arrival1.value=selectedArrival; form.elements.departure1.value=selectedDeparture; calendarState[1].month=monthStart(new Date(`${selectedArrival}T12:00:00`));
       const selectionNote=document.getElementById('calendar-selection'); selectionNote.textContent=`Your calendar selection was added: ${friendlyDate(selectedArrival)} through ${friendlyDate(selectedDeparture)}.`; selectionNote.hidden=false;
     }
+    fetch('/api/invite-profile',{cache:'no-store'}).then(async(response)=>{
+      if(!response.ok)return;
+      const data=await response.json(),profile=data.bookingProfile||{};
+      if(String(data.visitorName||'').includes('owner preview'))return;
+      if(profile.guestName)form.elements.name.value=profile.guestName;
+      if(profile.email){form.elements.email.value=profile.email;form.elements.email.readOnly=true;}
+      if(profile.guests)form.elements.guests.value=profile.guests;
+      if(validDate(profile.arrival)&&validDate(profile.departure)){form.elements.arrival1.value=profile.arrival;form.elements.departure1.value=profile.departure;}
+    }).catch(()=>{});
     renderCalendars();
     fetch('/api/availability').then(async(response)=>{const data=await response.json();if(!response.ok)throw new Error(data.error||'Pricing could not be loaded.');pricingState.rates=data.rates||[];pricingState.unavailable=data.unavailable||[];pricingState.requested=data.requested||[];pricingState.loaded=true;renderCalendars();renderQuote(1);checkAvailability(1);scheduleDiscountQuotes();}).catch((error)=>{pricingState.calendarError=error.message||'Live availability could not be loaded.';renderCalendars();});
     form.elements.formStartedAt.value=String(Date.now());
