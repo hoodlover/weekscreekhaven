@@ -89,6 +89,12 @@ export default async function handler(request, response) {
       const calendar = await getBookingCalendar();
       const booking = calendar.bookings.find((item) => item.id === bookingId);
       if (!booking) return json(response, 404, { error: 'Booking request not found.' });
+      if (action === 'hide-booking-from-calendar' || action === 'show-booking-on-calendar') {
+        if (!['pending','offered','pending-payment','reserved'].includes(booking.status)) return json(response, 409, { error:'Only unconfirmed bookings can be hidden from the calendar.' });
+        const hiddenFromCalendar = action === 'hide-booking-from-calendar';
+        await appendBookingRecord({ type:'status', bookingId, changes:{ hiddenFromCalendar, calendarVisibilityChangedAt:createdAt }, createdAt });
+        return json(response, 200, { ok:true, hiddenFromCalendar });
+      }
       if (action === 'edit-booking') {
         const arrival = date(request.body?.arrival);
         const lastHeldDate = date(request.body?.departure);
