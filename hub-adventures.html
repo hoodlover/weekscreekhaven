@@ -402,6 +402,8 @@ function switchTab(name, btn) {
         activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
 }
+const requestedTab = new URLSearchParams(location.search).get('tab');
+if (['hiking', 'fishing', 'dining', 'fun', 'packlist'].includes(requestedTab)) switchTab(requestedTab);
 function openLightbox(src) {
     document.getElementById('lightbox-img').src = src;
     document.getElementById('lightbox').style.display = 'flex';
