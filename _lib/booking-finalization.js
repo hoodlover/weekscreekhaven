@@ -1,6 +1,7 @@
 import { appendBookingRecord, getBookingCalendar, rangesOverlap, unavailableRanges } from './booking-store.js';
 import { escapeEmailHtml, sendEmail } from './email.js';
 import { bookingAccessCode, createAgreementToken } from './security.js';
+import { generateDoorCode } from './door-code.js';
 
 function selectedDates(booking) {
   return booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || booking.dateChoices?.[0] || {};
@@ -69,6 +70,22 @@ export async function finalizeBookingFlow(booking) {
     } else {
       current = await record(current, { status: 'booked', bookedAt: current.bookedAt || now, bookedAutomatically: true }, now);
     }
+  }
+  if (current.status === 'booked' && !current.doorCode) {
+    try {
+      const calendar = await getBookingCalendar();
+      const doorCode = generateDoorCode(calendar.bookings || []);
+      current = await record(current, { doorCode, doorCodeGeneratedAt:now, doorCodeInstalledAt:null, doorCodeRemovedAt:null, doorCodeGuestSentAt:null }, now);
+      if (process.env.OWNER_EMAIL) {
+        const dates=selectedDates(current);
+        await sendEmail({
+          to:process.env.OWNER_EMAIL, toName:'Heather & Lance', subject:`Set ${current.name}’s guest door code`,
+          text:`A new guest door code is ready.\n\nGuest: ${current.name}\nStay: ${dates.arrival || ''} through ${dates.departure || ''}\nDoor code: ${doorCode}\n\nProgram it on every cabin door, then confirm “Code installed” in the Command Center.`,
+          html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6"><h1 style="color:#183c2d">Set the guest door code</h1><p><strong>${escapeEmailHtml(current.name)}</strong><br>${escapeEmailHtml(dates.arrival || '')} through ${escapeEmailHtml(dates.departure || '')}</p><p style="font-size:28px;font-weight:800;letter-spacing:.14em">${doorCode}</p><p>Program it on every cabin door, then confirm <strong>Code installed</strong> in the Command Center.</p></div>`,
+        });
+        current = await record(current, { doorCodeOwnerEmailSentAt:now }, now);
+      }
+    } catch (error) { console.error('Door code setup failed', error); }
   }
   if (!current.email) return current;
   const url = packetUrl(current.id);
