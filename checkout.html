@@ -162,8 +162,8 @@
                     <div><label class="field-label" for="maintenance-priority">How soon?</label><select id="maintenance-priority" name="maintenance_priority" class="field"><option value="">Choose if something needs attention</option><option value="Low - note for later">Low &mdash; Note it for later</option><option value="Medium - fix soon">Medium &mdash; Please fix soon</option><option value="Urgent - already contacted hosts">Urgent &mdash; I already contacted you</option></select></div>
                 </div>
                 <div>
-                    <label class="field-label">Cabin condition report</label>
-                    <p class="mb-3 text-sm leading-relaxed text-stone-600">Please put routine repairs and cabin notes here instead of calling. For an active leak, no heat, a lockout, or another safety issue, call or text Lance right away at 770.549.9358.</p>
+                    <label class="field-label">Something not right?</label>
+                    <p class="mb-3 text-sm leading-relaxed text-stone-600">Tell us what happened, or anything you think Lance, Heather, or the cleaner should fix, check, or take care of next time. For an active leak, no heat, a lockout, or another safety issue, call or text Lance right away at 770.549.9358.</p>
                     <div class="choice-grid">
                         <label class="choice"><input type="checkbox" name="maintenance_none" value="Nothing to report"> Nothing to report</label>
                         <label class="choice"><input type="checkbox" name="maintenance_category[]" value="Heating or Cooling"> Heating / cooling</label>
@@ -176,10 +176,9 @@
                         <label class="choice"><input type="checkbox" name="maintenance_category[]" value="Cleaning Supplies or Other"> Cleaning / supplies / other</label>
                     </div>
                 </div>
-                <div><label class="field-label" for="checkout-notes">What happened?</label><textarea id="checkout-notes" name="maintenance_issue" rows="3" class="field" placeholder="Tell us exactly what you noticed and whether it is still happening."></textarea></div>
+                <div><label class="field-label" for="checkout-notes">Tell us what happened</label><textarea id="checkout-notes" name="maintenance_issue" rows="3" class="field" placeholder="What did you notice? What should we or the cleaner check, fix, or take care of?"></textarea></div>
                 <div><label class="field-label" for="guest-name">Your name</label><input id="guest-name" type="text" name="guest_names" autocomplete="name" class="field" placeholder="Your name" required></div>
                 <div><label class="field-label" for="guest-phone">Phone number</label><input id="guest-phone" type="tel" name="guest_phone" autocomplete="tel" class="field" placeholder="Your phone number"></div>
-                <label class="choice"><input type="checkbox" name="cleanliness_confirm" value="yes" required><span>I completed the checkout steps that apply to my stay.</span></label>
                 <div class="quick-exit md:ml-auto md:max-w-md"><span>Quick exit routine</span><strong>&ldquo;Alexa, Going Home&rdquo;</strong></div>
                 <button type="submit" class="send-button">Send Checkout Report</button>
             </form>

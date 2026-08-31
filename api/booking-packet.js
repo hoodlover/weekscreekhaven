@@ -1,4 +1,4 @@
-import { getBookingRequests } from '../_lib/booking-store.js';
+import { getBookingCalendar } from '../_lib/booking-store.js';
 import { findBookingInvite } from '../_lib/booking-invite.js';
 import { guestFirstName } from '../_lib/guest-name.js';
 import { getInvites } from '../_lib/invite-store.js';
@@ -10,11 +10,11 @@ export default async function handler(request, response) {
   try {
     const token = verifyAgreementToken(request.query?.token);
     if (!token) return json(response, 404, { error: 'This booking-packet link is invalid or has expired.' });
-    const [bookings, invites] = await Promise.all([
-      getBookingRequests(),
+    const [calendar, invites] = await Promise.all([
+      getBookingCalendar(),
       getInvites().catch(() => []),
     ]);
-    let booking = bookings.find((item) => item.id === token.bookingId);
+    let booking = calendar.bookings.find((item) => item.id === token.bookingId);
     if (!booking) return json(response, 404, { error: 'Booking not found.' });
     if (booking.squareInvoiceId && !(booking.status === 'booked' && booking.paymentFullyPaid && booking.bookedWelcomeSentAt)) {
       try { booking = await refreshSquareBooking(booking); } catch { /* Show the last confirmed status. */ }
@@ -22,11 +22,13 @@ export default async function handler(request, response) {
     const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || booking.dateChoices?.[0] || {};
     const complimentary = booking.paymentPlan === 'complimentary' || Number(booking.amountCents) === 0;
     const linkedInvite = findBookingInvite(booking, invites);
+    const discountId = booking.friendsAndFamilyDiscount?.id || dates.quote?.friendsAndFamilyDiscount?.id || '';
+    const linkedDiscount = discountId ? (calendar.discounts || []).find((rule) => rule.id === discountId) : null;
     return json(response, 200, {
       guestName: guestFirstName(booking.name),
       guestFullName: booking.name || '',
       guestEmail: booking.email || '',
-      guestPhone: booking.phone || linkedInvite?.recipientPhone || '',
+      guestPhone: booking.phone || linkedInvite?.recipientPhone || linkedDiscount?.target || '',
       arrival: dates.arrival || '',
       departure: dates.departure || '',
       guests: booking.guests || 1,
