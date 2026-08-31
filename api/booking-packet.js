@@ -21,6 +21,7 @@ export default async function handler(request, response) {
     }
     const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || booking.dateChoices?.[0] || {};
     const complimentary = booking.paymentPlan === 'complimentary' || Number(booking.amountCents) === 0;
+    const friendsAndFamily = Boolean(booking.friendsAndFamilyDiscount || dates.quote?.friendsAndFamilyDiscount);
     const linkedInvite = findBookingInvite(booking, invites);
     const discountId = booking.friendsAndFamilyDiscount?.id || dates.quote?.friendsAndFamilyDiscount?.id || '';
     const linkedDiscount = discountId ? (calendar.discounts || []).find((rule) => rule.id === discountId) : null;
@@ -37,7 +38,7 @@ export default async function handler(request, response) {
       securityDepositCents: Number(booking.securityDepositCents) || 0,
       status: booking.status || 'pending',
       checkInTime: '4:00 PM',
-      checkoutTime: booking.lateCheckout ? 'noon' : '11:00 AM',
+      checkoutTime: friendsAndFamily ? 'Flexible — no set time' : (booking.lateCheckout ? 'noon' : '11:00 AM'),
       complimentary,
       invoiceSent: Boolean(booking.squareInvoiceId),
       invoiceSentAt: booking.friendInvoiceSentAt || booking.invoiceSentAt || booking.approvedAt || null,

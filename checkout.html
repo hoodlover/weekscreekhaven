@@ -17,6 +17,8 @@
         }
         h1,h2,h3 { font-family: 'Crimson Text', serif; font-weight: 700; }
         .checkout-shell { max-width: 64rem; margin: 0 auto; padding: 8rem 1rem 5rem; }
+        .guide-back { display:inline-flex; align-items:center; gap:.45rem; margin:0 0 .8rem; padding:.65rem .9rem; border:1px solid rgba(255,255,255,.28); border-radius:999px; background:rgba(24,60,45,.9); color:#fff; font-size:.75rem; font-weight:800; text-decoration:none; box-shadow:0 8px 18px rgba(0,0,0,.18); }
+        .guide-back:hover { background:#0f271d; }
         .checkout-intro {
             padding: clamp(1.4rem,4vw,2.4rem); border-radius: 1rem; color: #f8f1e5;
             background: linear-gradient(115deg,rgba(24,60,45,.97),rgba(39,77,57,.9)),url('webpic/railroad-tie-texture.webp') center/cover;
@@ -69,6 +71,7 @@
 <script src="nav.js"></script>
 
 <main class="checkout-shell">
+    <a id="guide-back" class="guide-back" href="/friends-hub.html?tab=checkout">← Back to Guest Guide</a>
     <section class="checkout-intro">
         <p class="kicker">Weeks Creek Haven checkout</p>
         <h1 id="checkout-heading">Leave the Haven ready for the next visit.</h1>
@@ -195,6 +198,9 @@ const params = new URLSearchParams(location.search);
 const checkoutToken = params.get('token') || '';
 const cleanerScheduled = params.get('cleaner') === '1';
 document.getElementById('booking-token').value = checkoutToken;
+document.getElementById('guide-back').href = checkoutToken
+    ? `/friends-hub.html?token=${encodeURIComponent(checkoutToken)}&tab=checkout`
+    : '/friends-hub.html?tab=checkout';
 
 if (cleanerScheduled) {
     document.getElementById('friends-overview').classList.add('hidden');

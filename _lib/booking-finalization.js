@@ -10,6 +10,13 @@ function paymentMet(booking) {
   return booking.paymentPlan === 'complimentary' || Number(booking.amountCents) === 0 || booking.paymentRequirementMet === true;
 }
 
+function checkoutLabel(booking) {
+  const dates = selectedDates(booking);
+  return booking.friendsAndFamilyDiscount || dates.quote?.friendsAndFamilyDiscount
+    ? 'flexible—there is no set time unless Lance or Heather lets you know personally'
+    : (booking.lateCheckout ? 'noon' : '11:00 AM');
+}
+
 function packetUrl(bookingId) {
   const token = createAgreementToken(bookingId, 365 * 86400);
   return `https://www.weekscreekhaven.com/booking-packet.html?token=${encodeURIComponent(token)}`;
@@ -36,7 +43,7 @@ async function paymentWelcome(booking, url) {
 async function bookedWelcome(booking, url) {
   const dates = selectedDates(booking);
   const safeName = escapeEmailHtml(booking.name);
-  const checkout = booking.lateCheckout ? 'noon' : '11:00 AM';
+  const checkout = checkoutLabel(booking);
   const referralCode=booking.referralCode||'';
   await sendEmail({
     to: booking.email,

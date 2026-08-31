@@ -19,10 +19,13 @@ function money(cents) { return new Intl.NumberFormat('en-US',{style:'currency',c
 function selectedDates(booking) { return booking.dateChoices?.[Number.isInteger(booking.approvedChoice)?booking.approvedChoice:0] || booking.dateChoices?.[0] || {}; }
 function midpoint(arrival,departure) { const nights=Math.max(1,Math.round((Date.parse(`${departure}T12:00:00Z`)-Date.parse(`${arrival}T12:00:00Z`))/86400000)); return shiftDate(arrival,Math.max(1,Math.floor(nights/2))); }
 function checkoutDetails(booking) {
-  const noCleaner=Boolean(booking.friendsAndFamilyDiscount) && booking.friendsAndFamilyDiscount.chargeCleaning !== true;
+  const dates=selectedDates(booking);
+  const friendsAndFamily=Boolean(booking.friendsAndFamilyDiscount || dates.quote?.friendsAndFamilyDiscount);
+  const discount=booking.friendsAndFamilyDiscount || dates.quote?.friendsAndFamilyDiscount;
+  const noCleaner=friendsAndFamily && discount?.chargeCleaning !== true;
   return {
     checkoutChecklistUrl:`https://www.weekscreekhaven.com/checkout.html?token=${encodeURIComponent(createAgreementToken(booking.id,365*86400))}&cleaner=${noCleaner?'0':'1'}`,
-    checkoutTiming:noCleaner?'There is no set checkout time for this friends-and-family stay. If we need the cabin by a certain time, Lance or Heather will let you know personally.':`Checkout is ${booking.lateCheckout?'noon':'11:00 AM'} today.`,
+    checkoutTiming:friendsAndFamily?'There is no set checkout time for this friends-and-family stay. If we need the cabin by a certain time, Lance or Heather will let you know personally.':`Checkout is ${booking.lateCheckout?'noon':'11:00 AM'} today.`,
     checkoutExtraSteps:noCleaner?'No cleaner is scheduled. Please strip the beds you used; wash sheets, pillowcases, and towels; move the load to the dryer and start it; and clean the sinks, toilets, and showers you used.':'Your cleaner will handle beds, bathrooms, and laundry. Please do not strip the beds.',
   };
 }
@@ -64,10 +67,13 @@ export default async function handler(request, response) {
       if (!['pending-payment','reserved','booked','completed'].includes(booking.status) || !booking.email) continue;
       if (booking.squareInvoiceId && !booking.paymentFullyPaid) { try { booking=await refreshSquareBooking(booking); } catch { /* use last confirmed payment state */ } }
       const dates=selectedDates(booking); if (!dates.arrival || !dates.departure) continue;
-      const packetUrl=`https://www.weekscreekhaven.com/booking-packet.html?token=${encodeURIComponent(createAgreementToken(booking.id,365*86400))}`;
+      const agreementToken=createAgreementToken(booking.id,365*86400);
+      const packetUrl=`https://www.weekscreekhaven.com/booking-packet.html?token=${encodeURIComponent(agreementToken)}`;
+      const guestGuideUrl=`https://www.weekscreekhaven.com/friends-hub.html?token=${encodeURIComponent(agreementToken)}&tab=checkin`;
       const reviewUrl=`https://www.weekscreekhaven.com/review.html?token=${encodeURIComponent(createReviewToken(booking.id))}`;
       const guestBookUrl=`https://www.weekscreekhaven.com/friends-hub.html?token=${encodeURIComponent(createAgreementToken(booking.id,365*86400))}&tab=guestbook`;
-      const common={ guestName:booking.name, arrival:dates.arrival, departure:dates.departure, checkout:booking.lateCheckout?'noon':'11:00 AM', packetUrl, paymentUrl:booking.paymentUrl||packetUrl, depositAmount:money(booking.depositAmountCents), balanceAmount:money(booking.squareBalanceCents ?? booking.balanceAmountCents), reviewUrl, guestBookUrl, bookingUrl:'https://www.weekscreekhaven.com/register.html', referralCode:booking.referralCode||'', securityDeposit:money(booking.securityDepositCents||0), adminUrl:'https://www.weekscreekhaven.com/admin.html', ...checkoutDetails(booking) };
+      const friendsAndFamily=Boolean(booking.friendsAndFamilyDiscount || dates.quote?.friendsAndFamilyDiscount);
+      const common={ guestName:booking.name, arrival:dates.arrival, departure:dates.departure, checkout:friendsAndFamily?'flexible—there is no set time unless Lance or Heather lets you know personally':(booking.lateCheckout?'noon':'11:00 AM'), packetUrl, guestGuideUrl, paymentUrl:booking.paymentUrl||packetUrl, depositAmount:money(booking.depositAmountCents), balanceAmount:money(booking.squareBalanceCents ?? booking.balanceAmountCents), reviewUrl, guestBookUrl, bookingUrl:'https://www.weekscreekhaven.com/register.html', referralCode:booking.referralCode||'', securityDeposit:money(booking.securityDepositCents||0), adminUrl:'https://www.weekscreekhaven.com/admin.html', ...checkoutDetails(booking) };
       if (booking.earlyBirdExpiresAt && !booking.earlyBirdExpiredAt && Date.now() >= Date.parse(booking.earlyBirdExpiresAt) && (!booking.paymentRequirementMet || !booking.agreementAcceptedAt)) {
         if (booking.squareInvoiceId) { try { await cancelSquareInvoice(booking.squareInvoiceId); } catch { /* record expiration even if Square already closed the invoice */ } }
         const expiredAt=new Date().toISOString();
