@@ -23,6 +23,7 @@
     h1,h2,h3 { font-family:'Crimson Text',serif; margin:0; }
     h1 { font-size:clamp(2rem,4vw,3.2rem); line-height:.95; }
     .eyebrow { color:#ddb083; text-transform:uppercase; letter-spacing:.18em; font-size:.64rem; font-weight:800; margin-bottom:5px; }
+    .topbar h1,.topbar .eyebrow { text-shadow:0 3px 2px rgba(0,0,0,.95),0 8px 20px rgba(0,0,0,.9); }
     .actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
     .ghost { border:1px solid #ffffff66; background:#0004; color:white; text-decoration:none; border-radius:999px; padding:9px 14px; font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
     .ghost:hover,.ghost:focus-visible { background:#2f6846; border-color:#a8c8b2; outline:none; }
@@ -168,7 +169,8 @@
         if(status==='pending-payment'){ const choiceIndex=Number.isInteger(booking.approvedChoice)?booking.approvedChoice:0,dates=booking.dateChoices?.[choiceIndex]; if(dates)result.push({...dates,type:'request',label:`${notedName} · checkout pending`,name:booking.name,note:booking.calendarNote||'',bookingId:booking.id,dateChoice:choiceIndex+1,status,booking}); }
         if(['reserved','booked'].includes(status)){ const dates=booking.dateChoices?.[Number.isInteger(booking.approvedChoice)?booking.approvedChoice:0]; if(dates) result.push({...dates,type:status,label:notedName,name:booking.name,note:booking.calendarNote||'',bookingId:booking.id,status,booking}); }
       }
-      for(const event of result) event.hiddenFromCalendar=Boolean(event.booking?.hiddenFromCalendar);\n      for(const block of state.blocks) result.push({...block,departure:addDays(block.departure,-1),type:'blocked',label:`${block.label}${block.holdType==='flexible'?' · flexible hold':' · firm hold'}${block.note?` · ${block.note}`:''}`,name:`${block.label}${block.holdType==='flexible'?' · flexible hold':' · firm hold'}`,note:block.note||'',blockId:block.id});
+      for(const event of result) event.hiddenFromCalendar=Boolean(event.booking?.hiddenFromCalendar);
+      for(const block of state.blocks) result.push({...block,departure:addDays(block.departure,-1),type:'blocked',label:`${block.label}${block.holdType==='flexible'?' · flexible hold':' · firm hold'}${block.note?` · ${block.note}`:''}`,name:`${block.label}${block.holdType==='flexible'?' · flexible hold':' · firm hold'}`,note:block.note||'',blockId:block.id});
       return result;
     }
     function paymentStatus(event){const booking=event.booking;if(!booking)return'';if(booking.paymentPlan==='complimentary'||Number(booking.amountCents)===0)return`<span class="item-note">No invoice needed · ${booking.agreementAcceptedAt?'agreement accepted':'agreement pending'}</span>`;if(!booking.squareInvoiceId)return`<span class="item-note">Invoice not sent · ${booking.agreementAcceptedAt?'agreement accepted':'agreement pending'}</span>`;const paid=Number(booking.squarePaidCents)||0,balance=Number.isFinite(Number(booking.squareBalanceCents))?Number(booking.squareBalanceCents):Math.max(0,(Number(booking.amountCents)||0)-paid),label=booking.paymentFullyPaid?'Paid in full':booking.paymentRequirementMet?'Deposit paid':paid?'Partial payment':'Invoice sent · unpaid';return`<span class="item-note"><strong>${label}</strong> · ${money(paid)} received · ${money(balance)} remaining<br>${booking.agreementAcceptedAt?'Agreement accepted':'Agreement pending'}</span>`;}

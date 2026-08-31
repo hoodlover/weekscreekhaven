@@ -113,16 +113,12 @@ export default async function handler(request, response) {
           }),
         };
       });
-      return json(response, 200, { bookings: pricedBookings, square: squareStatus(), pricing: PRICING_CONFIG, rates: calendar.rates || [], doorCodeRetirement: calendar.doorCodeRetirement || { required:true } }, { 'Cache-Control': 'no-store' });
+      return json(response, 200, { bookings: pricedBookings, square: squareStatus(), pricing: PRICING_CONFIG, rates: calendar.rates || [] }, { 'Cache-Control': 'no-store' });
     }
     if (request.method !== 'PATCH') return json(response, 405, { error: 'Method not allowed.' });
     const bookings = await getBookingRequests();
     const action = String(request.body?.action || '');
     const createdAt = new Date().toISOString();
-    if (action === 'retire-current-door-code') {
-      await appendBookingRecord({ type:'door_code_retirement_confirmed', createdAt });
-      return json(response, 200, { ok:true, retiredAt:createdAt });
-    }
     const booking = bookings.find((item) => item.id === String(request.body?.bookingId || ''));
     if (!booking) return json(response, 404, { error: 'Booking request not found.' });
     if (action === 'generate-door-code') {
