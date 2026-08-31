@@ -139,7 +139,9 @@
                 <p class="text-lg text-stone-600 font-serif italic">"Share a favorite adventure, a laugh, or your darkest secret."</p>
             </header>
 
-            <form action="https://formspree.io/f/mzdjnprj" method="POST" enctype="multipart/form-data" class="space-y-8">
+            <form action="/api/owner-message" method="POST" class="space-y-8" data-site-form data-success="/thank-you-guestbook.html">
+                <input type="hidden" name="form_type" value="guestbook">
+                <input type="text" name="website" autocomplete="off" tabindex="-1" aria-hidden="true" style="position:absolute;left:-9999px">
                 
                 <div class="grid md:grid-cols-2 gap-6">
                     <div>
@@ -182,5 +184,6 @@
     </div>
 
 <script>document.addEventListener("contextmenu", function(e){ e.preventDefault(); });</script>
+<script src="/site-forms.js"></script>
 </body>
 </html>

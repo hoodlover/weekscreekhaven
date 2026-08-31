@@ -137,10 +137,9 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // Skip non-GET and cross-origin API calls (weather, formspree)
+  // Skip non-GET and cross-origin API calls.
   if (event.request.method !== 'GET') return;
   if (url.pathname.startsWith('/api/')) return;
-  if (url.hostname === 'formspree.io') return;
 
   // The worker has root scope, so every site page can pass through it. Always
   // check the network for navigations to avoid stale admin and booking screens.

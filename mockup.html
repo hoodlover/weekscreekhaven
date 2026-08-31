@@ -735,7 +735,9 @@
     <p class="section-tag">Reserve Your Stay</p>
     <h2 class="section-title">Ready to <em>Escape?</em></h2>
     <p class="section-body">Send us a quick message with your dates and group size. We'll get back to you fast.</p>
-    <form class="inquiry-form" action="https://formspree.io/f/mzdjnprj" method="POST">
+    <form class="inquiry-form" action="/api/owner-message" method="POST" data-site-form data-success="/thank-you-inquiry.html">
+      <input type="hidden" name="form_type" value="inquiry">
+      <input type="text" name="website" autocomplete="off" tabindex="-1" aria-hidden="true" style="position:absolute;left:-9999px">
       <div class="form-group">
         <label>First Name</label>
         <input type="text" name="first_name" placeholder="Jane">
@@ -825,5 +827,6 @@
   revealEls.forEach(el => observer.observe(el));
 </script>
 
+<script src="/site-forms.js"></script>
 </body>
 </html>

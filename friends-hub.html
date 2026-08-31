@@ -1011,7 +1011,9 @@
                     <h1 class="text-4xl md:text-5xl font-serif italic text-green-900 mb-3">Your Stay, in Your Words</h1>
                     <p class="text-base text-stone-600 font-serif italic">The good parts, the funny parts, and anything future guests should know.</p>
                 </header>
-                <form id="guestbook-form" action="https://formspree.io/f/mzdjnprj" method="POST" class="space-y-6">
+                <form id="guestbook-form" action="/api/owner-message" method="POST" class="space-y-6">
+                    <input type="hidden" name="form_type" value="guestbook">
+                    <input type="text" name="website" autocomplete="off" tabindex="-1" aria-hidden="true" style="position:absolute;left:-9999px">
                     <div class="grid md:grid-cols-2 gap-5">
                         <div>
                             <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-1">Guest Name(s)</label>
@@ -1402,6 +1404,14 @@ function fetchForm(formId, submitId, sendingId, errorId, redirectUrl) {
         sending.classList.remove('hidden');
         error.classList.add('hidden');
         try {
+            let operation = form.querySelector('input[name="operation_id"]');
+            if (!operation) {
+                operation = document.createElement('input');
+                operation.type = 'hidden';
+                operation.name = 'operation_id';
+                form.appendChild(operation);
+            }
+            if (!operation.value) operation.value = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
             const data = {};
             new FormData(form).forEach((val, key) => {
                 if (data[key]) { data[key] = [].concat(data[key], val); } else { data[key] = val; }

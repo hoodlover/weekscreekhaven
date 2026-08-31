@@ -72,7 +72,9 @@
           <a href="gallery.html">See the cabin</a>
           <a href="find-us.html">Find us</a>
         </nav>
-        <form action="https://formspree.io/f/mzdjnprj" method="POST">
+        <form action="/api/owner-message" method="POST" data-site-form data-success="/thank-you-inquiry.html">
+          <input type="hidden" name="form_type" value="inquiry">
+          <input type="text" name="website" autocomplete="off" tabindex="-1" aria-hidden="true" style="position:absolute;left:-9999px">
           <label>Full name<input type="text" name="name" autocomplete="name" required></label>
           <label>Email address<input type="email" name="email" autocomplete="email" required></label>
           <label>Arrival date<input type="date" name="arrival"></label>
@@ -86,5 +88,6 @@
   </main>
   <div id="footer-placeholder"></div>
   <script src="footer.js?v=3"></script>
+  <script src="/site-forms.js"></script>
 </body>
 </html>
