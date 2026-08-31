@@ -1,0 +1,67 @@
+import { get, list, put } from '@vercel/blob';
+import { decryptRecord, encryptRecord } from './security.js';
+
+const PREFIX = 'secure-cleaner/records/';
+
+export const DEFAULT_INVENTORY = [
+  ['toilet-paper','Toilet paper','Guest supplies'], ['paper-towels','Paper towels','Guest supplies'],
+  ['trash-bags','Trash bags','Guest supplies'], ['dishwasher-pods','Dishwasher pods','Guest supplies'],
+  ['dish-soap','Dish soap','Guest supplies'], ['hand-soap','Hand soap','Guest supplies'],
+  ['coffee','Coffee & Keurig pods','Guest supplies'], ['toiletries','Shampoo & body wash','Guest supplies'],
+  ['all-purpose-cleaner','All-purpose cleaner','Cleaning'], ['disinfectant','Disinfectant','Cleaning'],
+  ['glass-cleaner','Glass cleaner','Cleaning'], ['bathroom-cleaner','Bathroom & toilet cleaner','Cleaning'],
+  ['laundry','Laundry detergent & stain remover','Cleaning'], ['sponges','Sponges & scrub pads','Cleaning'],
+  ['hot-tub-chemicals','Hot-tub chemicals','Hot tub'], ['hot-tub-test-strips','Hot-tub test strips','Hot tub'],
+  ['charcoal','Charcoal','Outdoor'], ['propane','Grill & deck-heater propane','Outdoor'],
+  ['bath-towels','Bath towels','Linens'], ['hot-tub-towels','Hot-tub towels','Linens'],
+  ['washcloths','Washcloths & hand towels','Linens'], ['queen-sheets','Queen sheet sets','Linens'],
+  ['king-sheets','King sheet sets','Linens'], ['pillowcases','Pillowcases','Linens'],
+].map(([id,name,category]) => ({ id, name, category, level:'unknown', note:'', updatedAt:'' }));
+
+function token() { return process.env.INVITE_BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN; }
+function ensureConfigured() { if (!token()) throw new Error('Cleaner storage is not configured.'); }
+
+async function readBlob(blob) {
+  const result = await get(blob.pathname, { access:'private', token:token() });
+  if (!result || result.statusCode !== 200) return null;
+  return new Response(result.stream).text();
+}
+
+export async function appendCleanerRecord(record) {
+  ensureConfigured();
+  const createdAt = new Date(record.createdAt || Date.now()).toISOString();
+  const stamp = createdAt.replace(/[:.]/g,'-');
+  const value = { ...record, createdAt };
+  await put(`${PREFIX}${stamp}-${crypto.randomUUID()}.json.enc`, encryptRecord(value), {
+    access:'private', token:token(), contentType:'text/plain; charset=utf-8', addRandomSuffix:false, cacheControlMaxAge:60,
+  });
+  return value;
+}
+
+export async function getCleanerRecords() {
+  ensureConfigured();
+  const records=[]; let cursor;
+  do {
+    const page=await list({ prefix:PREFIX, cursor, limit:1000, token:token() });
+    const values=await Promise.all(page.blobs.map(async blob=>{ try{return decryptRecord(await readBlob(blob));}catch{return null;} }));
+    records.push(...values.filter(Boolean)); cursor=page.hasMore?page.cursor:undefined;
+  } while(cursor);
+  return records.sort((a,b)=>String(a.createdAt).localeCompare(String(b.createdAt)));
+}
+
+export async function getCleanerState() {
+  const records=await getCleanerRecords();
+  const settings={ cleanerName:'Cabin Care Team', standardPayCents:17500, doorCode:'', closetCode:'', doorCodeUpdatedAt:'', passcodeHash:'', passcodeSalt:'', cleanerAuthVersion:'' };
+  const inventory=new Map(DEFAULT_INVENTORY.map(item=>[item.id,{...item}]));
+  const assignments=new Map(); const remarks=new Map(); const tips=new Map();
+  for (const record of records) {
+    if(record.type==='settings') Object.assign(settings,record.changes||{});
+    if(record.type==='inventory') inventory.set(record.item.id,{...(inventory.get(record.item.id)||{}),...record.item});
+    if(record.type==='assignment') assignments.set(record.bookingId,{...(assignments.get(record.bookingId)||{bookingId:record.bookingId}),...(record.changes||{}),updatedAt:record.createdAt});
+    if(record.type==='remark') remarks.set(record.remark.id,record.remark);
+    if(record.type==='remark_update'&&remarks.has(record.remarkId)) Object.assign(remarks.get(record.remarkId),record.changes,{updatedAt:record.createdAt});
+    if(record.type==='tip') tips.set(record.tip.id,record.tip);
+    if(record.type==='tip_update'&&tips.has(record.tipId)) Object.assign(tips.get(record.tipId),record.changes,{updatedAt:record.createdAt});
+  }
+  return { settings, inventory:[...inventory.values()], assignments:[...assignments.values()], remarks:[...remarks.values()], tips:[...tips.values()] };
+}

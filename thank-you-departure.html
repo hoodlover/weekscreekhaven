@@ -71,6 +71,28 @@
         </div>
     </div>
 
+    <section id="cleaner-tip" class="parchment rounded-2xl p-8 shadow-2xl mb-8 fade-up-4 border-t-8 border-[#4a9b6f]" hidden>
+        <p class="font-black text-[#4a9b6f] text-xs uppercase tracking-widest mb-2">Entirely optional</p>
+        <h2 class="text-3xl text-[#183c2d] mb-3">Leave a thank-you for the cleaner</h2>
+        <p class="text-stone-600 leading-relaxed mb-5">If the cabin care made your stay feel especially easy, you can leave the cleaner a tip. Every paid tip is listed in her private Cleaner Hub so she can see your thank-you and the amount herself.</p>
+        <form id="tip-form">
+            <div class="grid grid-cols-4 gap-2 mb-3">
+                <button type="button" data-tip="10" class="tip-choice border-2 border-[#4a9b6f] text-[#183c2d] font-black py-2 rounded-xl">$10</button>
+                <button type="button" data-tip="20" class="tip-choice border-2 border-[#4a9b6f] text-[#183c2d] font-black py-2 rounded-xl">$20</button>
+                <button type="button" data-tip="30" class="tip-choice border-2 border-[#4a9b6f] text-[#183c2d] font-black py-2 rounded-xl">$30</button>
+                <button type="button" data-tip="50" class="tip-choice border-2 border-[#4a9b6f] text-[#183c2d] font-black py-2 rounded-xl">$50</button>
+            </div>
+            <label class="block text-xs font-black uppercase tracking-wide text-stone-500" for="tip-amount">Or enter an amount</label>
+            <div class="flex gap-2 mt-2"><input id="tip-amount" type="number" min="1" max="500" step="1" inputmode="decimal" class="min-w-0 flex-1 border border-stone-300 rounded-xl px-4" placeholder="$"><button id="tip-submit" class="bg-[#183c2d] text-white font-black px-6 py-3 rounded-xl">Continue to Square</button></div>
+            <p id="tip-error" class="text-red-700 text-sm mt-3" hidden></p>
+        </form>
+    </section>
+
+    <section id="tip-thanks" class="parchment rounded-2xl p-7 shadow-2xl mb-8 fade-up-4 border-t-8 border-[#4a9b6f]" hidden>
+        <h2 class="text-3xl text-[#183c2d] mb-2">That was wonderfully kind.</h2>
+        <p class="text-stone-600">Square received your cleaner tip. It will appear in her private Cleaner Hub as soon as the payment confirmation arrives.</p>
+    </section>
+
     <!-- Stats row -->
     <div class="grid grid-cols-3 gap-4 mb-10 fade-up-4">
         <div class="dark-card rounded-xl p-4 text-center">
@@ -129,6 +151,30 @@ window.addEventListener('load', function() {
     draw();
 });
 document.addEventListener("contextmenu", function(e){ e.preventDefault(); });
+
+const departureParams = new URLSearchParams(location.search);
+const departureToken = departureParams.get('token') || '';
+if (departureParams.get('tip') === 'thanks') document.getElementById('tip-thanks').hidden = false;
+if (departureToken && departureParams.get('cleaner') === '1') document.getElementById('cleaner-tip').hidden = false;
+document.querySelectorAll('[data-tip]').forEach(button => button.addEventListener('click', () => {
+    document.getElementById('tip-amount').value = button.dataset.tip;
+    document.querySelectorAll('[data-tip]').forEach(item => item.classList.remove('bg-[#4a9b6f]','text-white'));
+    button.classList.add('bg-[#4a9b6f]','text-white');
+}));
+document.getElementById('tip-form')?.addEventListener('submit', async event => {
+    event.preventDefault();
+    const submit = document.getElementById('tip-submit');
+    const errorBox = document.getElementById('tip-error');
+    errorBox.hidden = true; submit.disabled = true; submit.textContent = 'Opening Square…';
+    try {
+        const response = await fetch('/api/cleaner-tip', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({token:departureToken,amount:document.getElementById('tip-amount').value}) });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || 'The tip link could not be created.');
+        location.href = data.url;
+    } catch (error) {
+        errorBox.textContent = error.message; errorBox.hidden = false; submit.disabled = false; submit.textContent = 'Continue to Square';
+    }
+});
 </script>
 </body>
 </html>

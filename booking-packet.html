@@ -629,7 +629,7 @@
               (document.getElementById(id).href = guide + "&tab=" + tab),
           );
           document.getElementById("checkout-guide-link").href =
-            "/checkout.html?token=" + encodeURIComponent(token);
+            "/checkout.html?token=" + encodeURIComponent(token) + (data.cleanerScheduled ? "&cleaner=1" : "");
           const paymentStep = document.getElementById("payment-step"),
             agreementStep = document.getElementById("agreement-step"),
             bookedStep = document.getElementById("booked-step");

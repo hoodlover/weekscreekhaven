@@ -195,12 +195,13 @@
 <script>
 const params = new URLSearchParams(location.search);
 const checkoutToken = params.get('token') || '';
-const cleanerScheduled = params.get('cleaner') === '1';
+let cleanerScheduled = params.get('cleaner') === '1';
 document.getElementById('booking-token').value = checkoutToken;
 document.getElementById('guide-back').href = checkoutToken
     ? `/friends-hub.html?token=${encodeURIComponent(checkoutToken)}&tab=checkout`
     : '/friends-hub.html?tab=checkout';
 
+function applyCleanerCheckout() {
 if (cleanerScheduled) {
     document.getElementById('friends-overview').classList.add('hidden');
     document.getElementById('friends-checklist').classList.add('hidden');
@@ -208,6 +209,8 @@ if (cleanerScheduled) {
     document.getElementById('checkout-heading').textContent = 'A few quick steps before you go.';
     document.getElementById('checkout-timing').textContent = 'Your cleaner is scheduled and will handle beds, bathrooms, and laundry. Your confirmed checkout time is in your booking details.';
 }
+}
+applyCleanerCheckout();
 
 async function loadCheckoutGuest() {
     if (!checkoutToken) return;
@@ -218,6 +221,8 @@ async function loadCheckoutGuest() {
         document.getElementById('guest-name').value = data.guestFullName || data.guestName || '';
         document.getElementById('guest-phone').value = data.guestPhone || '';
         if (data.guestName) document.getElementById('checkout-heading').textContent = `Safe travels, ${data.guestName} & crew.`;
+        cleanerScheduled = data.cleanerScheduled === true;
+        applyCleanerCheckout();
     } catch { /* Keep the generic form available if booking details cannot load. */ }
 }
 loadCheckoutGuest();
@@ -256,7 +261,7 @@ document.getElementById('checkout-form').addEventListener('submit', async (event
         });
         const data = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(data.error || 'Your checkout report could not be sent.');
-        window.location.href = '/thank-you-departure.html';
+        window.location.href = checkoutToken ? `/thank-you-departure.html?token=${encodeURIComponent(checkoutToken)}${cleanerScheduled?'&cleaner=1':''}` : '/thank-you-departure.html';
     } catch (error) {
         submit.disabled = false;
         submit.textContent = 'Send Checkout Report';

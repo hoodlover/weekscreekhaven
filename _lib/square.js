@@ -391,3 +391,26 @@ export async function createSquarePaymentLink({ bookingId, guestName, email, amo
   }
   return { url: result.payment_link.url, id: result.payment_link.id, orderId: result.payment_link.order_id };
 }
+
+export async function createSquareCleanerTipLink({ tipId, bookingId, guestName, email, amountCents }) {
+  if (!squareConfigured()) throw new Error('Square is not connected yet.');
+  if (!Number.isInteger(amountCents) || amountCents < 100 || amountCents > 50000) throw new Error('Choose a tip between $1 and $500.');
+  const result = await squareRequest('/v2/online-checkout/payment-links', {
+    method:'POST',
+    body:{
+      idempotency_key:`wch-cleaner-tip-${tipId}`,
+      quick_pay:{ name:'A thank-you for the Weeks Creek Haven cleaner', price_money:{ amount:amountCents, currency:'USD' }, location_id:process.env.SQUARE_LOCATION_ID },
+      checkout_options:{ redirect_url:'https://www.weekscreekhaven.com/thank-you-departure.html?tip=thanks', ask_for_shipping_address:false },
+      ...(email ? { pre_populated_data:{ buyer_email:email } } : {}),
+      payment_note:`Cleaner tip ${tipId} for booking ${bookingId} from ${guestName}`,
+    },
+  });
+  if (!result.payment_link?.url) throw new Error('Square could not create the cleaner tip link.');
+  return { url:result.payment_link.url, id:result.payment_link.id, orderId:result.payment_link.order_id };
+}
+
+export async function getSquareOrder(orderId) {
+  if (!orderId) throw new Error('Square order not found.');
+  const result=await squareRequest(`/v2/orders/${encodeURIComponent(orderId)}`);
+  return result.order;
+}

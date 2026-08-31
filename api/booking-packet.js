@@ -50,6 +50,8 @@ export default async function handler(request, response) {
     const discountId = booking.friendsAndFamilyDiscount?.id || dates.quote?.friendsAndFamilyDiscount?.id || '';
     const linkedDiscount = discountId ? (calendar.discounts || []).find((rule) => rule.id === discountId) : null;
     const doorAccess = doorCodeRelease(booking, dates.arrival || '');
+    const cleaningRule = booking.friendsAndFamilyDiscount || dates.quote?.friendsAndFamilyDiscount;
+    const cleanerScheduled = !(cleaningRule && cleaningRule.chargeCleaning !== true);
     return json(response, 200, {
       guestName: guestFirstName(booking.name),
       guestFullName: booking.name || '',
@@ -66,6 +68,7 @@ export default async function handler(request, response) {
       checkInTime: '4:00 PM',
       checkoutTime: friendsAndFamily ? 'Flexible — no set time' : (booking.lateCheckout ? 'noon' : '11:00 AM'),
       complimentary,
+      cleanerScheduled,
       invoiceSent: Boolean(booking.squareInvoiceId),
       invoiceSentAt: booking.friendInvoiceSentAt || booking.invoiceSentAt || booking.approvedAt || null,
       invoiceUrl: booking.paymentUrl || '',

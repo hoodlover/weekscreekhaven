@@ -285,6 +285,7 @@
         <a href="/index.html" class="ghost" style="text-decoration:none">Home</a>
         <button id="install-owner-app" class="ghost" type="button">Install Owner App</button>
         <a id="open-hub" href="/friends-hub.html" class="ghost" style="text-decoration:none" hidden>Guest Guide</a>
+        <a id="open-cleaner" href="/cleaner.html" class="ghost" style="text-decoration:none" hidden>Cleaner Hub</a>
         <button id="enable-alerts" class="ghost" hidden>Enable alerts</button>
         <button id="logout" class="ghost" hidden>Sign out</button>
       </div>
@@ -364,6 +365,7 @@
               <div class="nav-group-label">Property &amp; records</div>
               <button class="tab" data-tab="reviews">Guest reviews <span id="review-badge" class="count-badge" hidden></span></button>
               <button class="tab" data-tab="activity">Activity log <span id="activity-badge" class="count-badge" hidden></span></button>
+              <a id="open-cleaner-menu" href="/cleaner.html" class="tab external">Cleaner Hub</a>
               <a id="open-handbook" href="/owner-emergency-handbook.html" class="tab external" hidden>Emergency handbook</a>
               <a href="/property-people.html" class="tab external">Property &amp; people</a>
               <a href="/api/admin-cabin-contacts-pdf" class="tab external" target="_blank" rel="noopener">Print contacts PDF</a>
@@ -505,7 +507,7 @@
         state.bookings = bookingData.bookings || [];
         state.reviews = reviewData.reviews || []; state.square = bookingData.square || {}; state.rates=bookingData.rates||[]; state.discounts=discountData.discounts||[]; state.emails=emailData.templates||[]; state.emailTriggers=emailData.availableTriggers||[]; state.pricing=bookingData.pricing||PRICING_CONFIG;
         state.knownBookingIds = new Set(state.bookings.map(item=>item.id)); state.knownAccessIds = new Set(state.access.map(item=>item.id)); state.initialized=true;
-        $('login').style.display = 'none'; $('dashboard').style.display = 'block'; $('open-calendar').hidden = false; $('open-hub').hidden = false; $('open-handbook').hidden = false; $('enable-alerts').hidden=false; $('logout').hidden = false; updateAlertButton();
+        $('login').style.display = 'none'; $('dashboard').style.display = 'block'; $('open-calendar').hidden = false; $('open-hub').hidden = false; $('open-cleaner').hidden = false; $('open-handbook').hidden = false; $('enable-alerts').hidden=false; $('logout').hidden = false; updateAlertButton();
         render();
       } catch (error) {
         if (error.status !== 401) { $('login-error').textContent = error.message; $('login-error').hidden = false; }

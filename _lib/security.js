@@ -4,6 +4,7 @@ const textEncoder = new TextEncoder();
 
 export const ADMIN_COOKIE = 'wch_admin';
 export const INVITE_COOKIE = 'wch_invite';
+export const CLEANER_COOKIE = 'wch_cleaner';
 
 export function parseCookies(request) {
   const header = request.headers.cookie || '';
@@ -124,6 +125,10 @@ export function anonymizeIp(ip) {
 
 export function requireAdmin(request) {
   return verifySession(parseCookies(request)[ADMIN_COOKIE], 'admin');
+}
+
+export function requireCleaner(request) {
+  return verifySession(parseCookies(request)[CLEANER_COOKIE], 'cleaner');
 }
 
 export function createReviewToken(bookingId, lifetimeSeconds = 180 * 86400) {

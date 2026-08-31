@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import { getBookingRequests } from '../_lib/booking-store.js';
 import { refreshSquareBooking } from '../_lib/payment-sync.js';
+import { appendCleanerRecord, getCleanerState } from '../_lib/cleaner-store.js';
 
 export const config = { api: { bodyParser: false } };
 
@@ -32,6 +33,14 @@ export default async function handler(request, response) {
     const body = await rawBody(request);
     if (!validSignature(body, request.headers['x-square-hmacsha256-signature'])) return send(response, 403, { error: 'Invalid Square signature.' });
     const event = JSON.parse(body);
+    if (event.type === 'payment.updated') {
+      const payment=event.data?.object?.payment;
+      if(payment?.order_id&&payment?.status==='COMPLETED'){
+        const tip=(await getCleanerState()).tips.find(item=>item.squareOrderId===payment.order_id);
+        if(tip&&tip.squareLastEventId!==event.event_id)await appendCleanerRecord({type:'tip_update',tipId:tip.id,changes:{status:'paid',paidAt:payment.updated_at||payment.created_at||new Date().toISOString(),squarePaymentId:payment.id,squareLastEventId:String(event.event_id||'')}});
+      }
+      return send(response,200,{received:true});
+    }
     if (!['invoice.payment_made', 'invoice.updated'].includes(event.type)) return send(response, 200, { received: true, ignored: true });
     const invoiceId = String(event.data?.object?.invoice?.id || '');
     if (!invoiceId) return send(response, 200, { received: true, ignored: true });
