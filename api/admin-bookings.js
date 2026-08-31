@@ -163,7 +163,7 @@ export default async function handler(request, response) {
       return json(response, 200, { ok: true, name, email, inviteId: inviteId || null });
     }
     if (action === 'archive') {
-      if (!['declined', 'cancelled'].includes(booking.status)) return json(response, 409, { error: 'Only declined or canceled bookings can be archived.' });
+      if (!['completed', 'declined', 'cancelled'].includes(booking.status)) return json(response, 409, { error: 'Only completed, declined, or canceled bookings can be archived.' });
       await appendBookingRecord({ type: 'status', bookingId: booking.id, changes: { archivedAt: createdAt }, createdAt });
       return json(response, 200, { ok: true, archivedAt: createdAt });
     }
