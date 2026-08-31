@@ -16,7 +16,7 @@ function invoiceTotalCents(invoice) {
 
 function requiredCents(booking) {
   if (booking.paymentPlan === 'complimentary') return 0;
-  if (booking.paymentPlan === 'deposit-balance') return Number(booking.depositAmountCents) || 10000;
+  if (['deposit-balance','friends-family-deposit'].includes(booking.paymentPlan)) return Number(booking.depositAmountCents) || 10000;
   return Number(booking.amountCents) || 0;
 }
 

@@ -194,27 +194,28 @@ export default async function handler(request, response) {
       const earlyBirdExpiresAt = earlyBirdDiscountCents ? new Date(Date.parse(createdAt) + 7 * 86400000).toISOString() : null;
       const complimentary = preTaxAmountCents === 0 && (requestedDates.complimentary === true || requestedDates.quote?.complimentary === true || booking.friendsAndFamilyDiscount?.discountType === 'complimentary');
       const tax = withEstimatedTaxesAndFees({ totalCents: preTaxAmountCents, actualNights: Math.max(1, daysBetween(requestedDates.arrival, requestedDates.departure)), complimentary });
-      const amountCents = tax.estimatedGrandTotalCents;
       let payment = null;
       let paymentPlan = 'complimentary';
-      const securityDepositCents = booking.friendsAndFamilyDiscount ? 0 : Number(tax.refundableSecurityDepositCents) || 30000;
+      const securityDepositCents = booking.friendsAndFamilyDiscount ? 5000 : Number(tax.refundableSecurityDepositCents) || 30000;
+      const stayAmountCents = tax.estimatedGrandTotalCents;
+      const amountCents = complimentary ? 0 : stayAmountCents + securityDepositCents;
       if (amountCents > 0 && booking.friendsAndFamilyDiscount) {
-        payment = await createSquareFriendInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, amountCents, securityDepositCents: 0, arrival: requestedDates.arrival });
-        paymentPlan = 'friends-family-total';
+        payment = await createSquareFriendInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, amountCents, securityDepositCents, arrival: requestedDates.arrival, paymentChoice: booking.friendsPaymentChoice });
+        paymentPlan = payment.fullPaymentRequired ? 'friends-family-full' : 'friends-family-deposit';
       } else if (amountCents > 0) {
         payment = await createSquareBookingInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, amountCents, depositBaseCents: preTaxAmountCents, arrival: requestedDates.arrival, discountCents: discountAmountCents, depositDueDays: earlyBirdDiscountCents ? 7 : 1 });
         paymentPlan = payment.fullPaymentRequired ? 'full-payment' : 'deposit-balance';
       }
       const changes = {
         status: 'reserved', approvedAt: createdAt, approvedChoice, originalAmountCents, discountAmountCents, additionalDiscountCents, earlyBirdDiscountCents, earlyBirdPercentage: approvedQuote?.earlyBirdDiscount?.percentage || null, earlyBirdExpiresAt, amountCents, paymentPlan, complimentary,
-        preTaxAmountCents, securityDepositCents, salesTaxCents: tax.salesTaxCents, lodgingTaxCents: tax.lodgingTaxCents,
+        preTaxAmountCents, stayAmountCents, securityDepositCents, salesTaxCents: tax.salesTaxCents, lodgingTaxCents: tax.lodgingTaxCents,
         stateHotelMotelFeeCents: tax.stateHotelMotelFeeCents, taxesAndFeesCents: tax.estimatedTaxesAndFeesCents,
         paymentUrl: payment?.url || null, squareInvoiceId: payment?.invoiceId || null, squareOrderId: payment?.orderId || null, squareCustomerId: payment?.customerId || null,
         invoiceSentAt: payment ? createdAt : null, bookingPacketSentAt: createdAt,
         depositAmountCents: payment?.depositAmountCents ?? amountCents,
-        balanceAmountCents: paymentPlan === 'deposit-balance' ? payment.balanceAmountCents : 0,
-        balanceDueDate: paymentPlan === 'deposit-balance' ? payment.balanceDueDate : null,
-        depositDueDate: paymentPlan === 'deposit-balance' ? payment.depositDueDate : null,
+        balanceAmountCents: ['deposit-balance', 'friends-family-deposit'].includes(paymentPlan) ? payment.balanceAmountCents : 0,
+        balanceDueDate: ['deposit-balance', 'friends-family-deposit'].includes(paymentPlan) ? payment.balanceDueDate : null,
+        depositDueDate: ['deposit-balance', 'friends-family-deposit'].includes(paymentPlan) ? payment.depositDueDate : null,
       };
       await appendBookingRecord({ type: 'status', bookingId: booking.id, changes, createdAt });
       const dates = requestedDates;
@@ -223,19 +224,22 @@ export default async function handler(request, response) {
       const packetUrl = `https://www.weekscreekhaven.com/booking-packet.html?token=${encodeURIComponent(bookingToken)}`;
       const paymentText = paymentPlan === 'complimentary'
         ? 'This stay is complimentary, so no payment is required.'
-        : paymentPlan === 'friends-family-total'
-          ? `Your full Friends & Family total of $${(amountCents / 100).toFixed(2)} is due now. Pay here: ${payment.url}`
+        : paymentPlan === 'friends-family-deposit'
+          ? `Pay $25 today to secure the dates. The remaining $${(payment.balanceAmountCents / 100).toFixed(2)} can be paid anytime and is due by ${payment.balanceDueDate}. The total includes a $50 refundable security deposit. Pay here: ${payment.url}`
+          : paymentPlan === 'friends-family-full'
+            ? `Your full Friends & Family total of $${(amountCents / 100).toFixed(2)}, including the $50 refundable security deposit, is due now. Pay here: ${payment.url}`
           : paymentPlan === 'full-payment'
             ? `Because check-in is within seven days, the full $${(amountCents / 100).toFixed(2)} is due now. The 20% cancellation-deposit amount is $${(payment.depositAmountCents / 100).toFixed(2)}. Pay the Square invoice: ${payment.url}`
             : `A 20% deposit of $${(payment.depositAmountCents / 100).toFixed(2)} is due within ${earlyBirdDiscountCents ? 'seven days' : '24 hours'} to reserve the dates. ${earlyBirdDiscountCents ? `Sign the rental agreement and pay by ${earlyBirdExpiresAt.slice(0,10)} to keep your automatic ${approvedQuote.earlyBirdDiscount.percentage}% Early Bird price; otherwise it expires and the stay must be repriced or rebooked. ` : ''}The remaining $${(payment.balanceAmountCents / 100).toFixed(2)} is due by ${payment.balanceDueDate}. Pay the Square invoice: ${payment.url}`;
       const paymentHtml = paymentPlan === 'complimentary'
         ? '<p style="background:#e8f2e9;padding:12px;border-radius:8px"><strong>Complimentary stay:</strong> No payment is required.</p>'
-        : `<p><a href="${payment.url}" style="display:inline-block;background:#183c2d;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold;margin:0 8px 8px 0">${paymentPlan === 'friends-family-total' ? 'Pay Friends & Family total' : 'Open Square invoice'}</a></p>`;
+        : `<p><a href="${payment.url}" style="display:inline-block;background:#183c2d;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold;margin:0 8px 8px 0">${paymentPlan === 'friends-family-full' ? 'Pay Friends & Family total' : paymentPlan === 'friends-family-deposit' ? 'Pay $25 today' : 'Open Square invoice'}</a></p>`;
+      const cancellationDepositText = paymentPlan.startsWith('friends-family') ? 'the $25 Friends & Family reservation payment' : 'the 20% reservation deposit';
       await sendEmail({
         to: booking.email, toName: booking.name, subject: 'Your Weeks Creek Haven dates are approved',
         templateKey:'booking-approved', templateVariables:{ guestName:booking.name, arrival:dates.arrival, departure:dates.departure, total:`$${(amountCents/100).toFixed(2)}`, paymentText, packetUrl, checkout:booking.lateCheckout?'noon':'11:00 AM' },
-        text: `Hi ${booking.name},\n\nYour requested stay from ${dates.arrival} to ${dates.departure} is available. The approved total is $${(amountCents / 100).toFixed(2)}. Check-in begins at 4:00 PM and checkout is ${booking.lateCheckout ? 'noon (your $50 late checkout is included)' : '11:00 AM'}. ${paymentText}\n\nOpen your private booking packet to track payment, sign the rental agreement, and download your paperwork: ${packetUrl}\n\nCancellation policy: cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the 20% reservation deposit is retained and any remaining amount paid is refunded.\n\nYour reservation is final after ${paymentPlan === 'complimentary' ? 'the rental agreement is accepted' : 'payment is made and the rental agreement is accepted'}.`,
-        html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Your booking packet</h1><p>Hi ${safeName},</p><p>We approved <strong>${dates.arrival} through ${dates.departure}</strong>.</p><p>Check-in: <strong>4:00 PM</strong><br>Checkout: <strong>${booking.lateCheckout ? 'noon ($50 late checkout included)' : '11:00 AM'}</strong></p><p>Approved total: <strong>$${(amountCents / 100).toFixed(2)}</strong></p>${paymentHtml}<p><a href="${packetUrl}" style="display:inline-block;background:#a45d41;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Open booking packet</a></p><p>Track payment, sign the rental agreement, and download your paperwork from the packet.</p><p style="background:#fff0cc;padding:12px;border-radius:8px"><strong>Cancellation policy:</strong> Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the 20% reservation deposit is retained and any remaining amount paid is refunded.</p><p>Your reservation is final after ${paymentPlan === 'complimentary' ? 'the rental agreement is accepted' : 'payment is made and the rental agreement is accepted'}.</p></div>`,
+        text: `Hi ${booking.name},\n\nYour requested stay from ${dates.arrival} to ${dates.departure} is available. The approved total is $${(amountCents / 100).toFixed(2)}. Check-in begins at 4:00 PM and checkout is ${booking.lateCheckout ? 'noon (your $50 late checkout is included)' : '11:00 AM'}. ${paymentText}\n\nOpen your private booking packet to track payment, sign the rental agreement, and download your paperwork: ${packetUrl}\n\nCancellation policy: cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, ${cancellationDepositText} is retained and any remaining amount paid is refunded.\n\nYour reservation is final after ${paymentPlan === 'complimentary' ? 'the rental agreement is accepted' : 'payment is made and the rental agreement is accepted'}.`,
+        html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Your booking packet</h1><p>Hi ${safeName},</p><p>We approved <strong>${dates.arrival} through ${dates.departure}</strong>.</p><p>Check-in: <strong>4:00 PM</strong><br>Checkout: <strong>${booking.lateCheckout ? 'noon ($50 late checkout included)' : '11:00 AM'}</strong></p><p>Approved total: <strong>$${(amountCents / 100).toFixed(2)}</strong></p>${paymentHtml}<p><a href="${packetUrl}" style="display:inline-block;background:#a45d41;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Open booking packet</a></p><p>Track payment, sign the rental agreement, and download your paperwork from the packet.</p><p style="background:#fff0cc;padding:12px;border-radius:8px"><strong>Cancellation policy:</strong> Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, ${cancellationDepositText} is retained and any remaining amount paid is refunded.</p><p>Your reservation is final after ${paymentPlan === 'complimentary' ? 'the rental agreement is accepted' : 'payment is made and the rental agreement is accepted'}.</p></div>`,
       });
       return json(response, 200, { ok: true, paymentUrl: payment?.url || null, complimentary: paymentPlan === 'complimentary' });
     }
@@ -257,16 +261,17 @@ export default async function handler(request, response) {
       const originalAmountCents = Number(booking.originalAmountCents) || previousPreTaxAmountCents;
       const discountAmountCents = Math.max(0, originalAmountCents - revisedPreTaxAmountCents);
       const isFriendInvoice = Boolean(booking.friendsAndFamilyDiscount) || String(booking.paymentPlan || '').includes('friend');
-      const securityDepositCents = isFriendInvoice ? 0 : Number.isInteger(Number(booking.securityDepositCents)) ? Number(booking.securityDepositCents) : 30000;
+      const securityDepositCents = isFriendInvoice ? 5000 : Number.isInteger(Number(booking.securityDepositCents)) ? Number(booking.securityDepositCents) : 30000;
       const tax = withEstimatedTaxesAndFees({ totalCents: revisedPreTaxAmountCents, actualNights: Math.max(1, daysBetween(dates.arrival, dates.departure)) });
       const stayAmountCents = tax.estimatedGrandTotalCents;
       const amountCents = stayAmountCents + securityDepositCents;
       const invoiceRevision = (Number(booking.invoiceRevision) || 0) + 1;
       if (currentInvoice && !['CANCELED', 'PAID', 'REFUNDED'].includes(currentInvoice.status)) await cancelSquareInvoice(booking.squareInvoiceId);
       const payment = isFriendInvoice
-        ? await createSquareFriendInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, amountCents, securityDepositCents, arrival: dates.arrival, revisionKey: invoiceRevision })
+        ? await createSquareFriendInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, amountCents, securityDepositCents, arrival: dates.arrival, paymentChoice: booking.friendsPaymentChoice, revisionKey: invoiceRevision })
         : await createSquareBookingInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, address: { line1: booking.billingAddress, city: booking.billingCity, state: booking.billingState, postalCode: booking.billingPostalCode }, amountCents, securityDepositCents, depositBaseCents: revisedPreTaxAmountCents, arrival: dates.arrival, discountCents: discountAmountCents, depositDueDays: booking.earlyBirdDiscountCents ? 7 : 1, revisionKey: invoiceRevision });
-      const paymentPlan = isFriendInvoice ? 'friends-family-total' : payment.fullPaymentRequired ? 'full-payment' : 'deposit-balance';
+      const paymentPlan = isFriendInvoice ? (payment.fullPaymentRequired ? 'friends-family-full' : 'friends-family-deposit') : payment.fullPaymentRequired ? 'full-payment' : 'deposit-balance';
+      const hasBalancePlan = ['deposit-balance', 'friends-family-deposit'].includes(paymentPlan);
       const invoiceHistory = [...(booking.invoiceHistory || []), ...(booking.squareInvoiceId ? [{ invoiceId: booking.squareInvoiceId, orderId: booking.squareOrderId || null, paymentUrl: booking.paymentUrl || null, replacedAt: createdAt, amountCents: Number(booking.amountCents) || 0 }] : [])];
       const changes = {
         status: 'pending-payment', previousPreTaxAmountCents, originalAmountCents, preTaxAmountCents: revisedPreTaxAmountCents, stayAmountCents, securityDepositCents, amountCents,
@@ -274,8 +279,8 @@ export default async function handler(request, response) {
         salesTaxCents: tax.salesTaxCents, lodgingTaxCents: tax.lodgingTaxCents, stateHotelMotelFeeCents: tax.stateHotelMotelFeeCents, taxesAndFeesCents: tax.estimatedTaxesAndFeesCents,
         paymentPlan, paymentUrl: payment.url, squareInvoiceId: payment.invoiceId, squareOrderId: payment.orderId, squareCustomerId: payment.customerId,
         invoiceSentAt: createdAt, squareInvoiceStatus: 'UNPAID', squarePaidCents: 0, squareBalanceCents: amountCents, paymentRequirementMet: false, paymentFullyPaid: false,
-        depositAmountCents: payment.depositAmountCents ?? amountCents, balanceAmountCents: paymentPlan === 'deposit-balance' ? payment.balanceAmountCents : 0,
-        balanceDueDate: paymentPlan === 'deposit-balance' ? payment.balanceDueDate : null, depositDueDate: paymentPlan === 'deposit-balance' ? payment.depositDueDate : null,
+        depositAmountCents: payment.depositAmountCents ?? amountCents, balanceAmountCents: hasBalancePlan ? payment.balanceAmountCents : 0,
+        balanceDueDate: hasBalancePlan ? payment.balanceDueDate : null, depositDueDate: hasBalancePlan ? payment.depositDueDate : null,
       };
       await appendBookingRecord({ type: 'status', bookingId: booking.id, changes, createdAt });
       return json(response, 200, { ok: true, amountCents, ownerPriceAdjustmentCents, paymentUrl: payment.url });
@@ -308,11 +313,14 @@ export default async function handler(request, response) {
       const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0];
       if (!dates) return json(response, 400, { error: 'The selected stay dates could not be found.' });
       const tax = withEstimatedTaxesAndFees({ totalCents: preTaxAmountCents, actualNights: Math.max(1, daysBetween(dates.arrival, dates.departure)) });
-      const amountCents = tax.estimatedGrandTotalCents;
-      const payment = await createSquareFriendInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, amountCents, arrival: dates.arrival });
+      const securityDepositCents = 5000;
+      const stayAmountCents = tax.estimatedGrandTotalCents;
+      const amountCents = stayAmountCents + securityDepositCents;
+      const payment = await createSquareFriendInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, amountCents, securityDepositCents, arrival: dates.arrival, paymentChoice: booking.friendsPaymentChoice });
+      const paymentPlan = payment.fullPaymentRequired ? 'friends-family-full' : 'friends-family-deposit';
       await appendBookingRecord({
         type: 'status', bookingId: booking.id, createdAt,
-        changes: { paymentPlan: 'friend-total', preTaxAmountCents, amountCents, salesTaxCents: tax.salesTaxCents, lodgingTaxCents: tax.lodgingTaxCents, stateHotelMotelFeeCents: tax.stateHotelMotelFeeCents, taxesAndFeesCents: tax.estimatedTaxesAndFeesCents, paymentUrl: payment.url, squareInvoiceId: payment.invoiceId, squareOrderId: payment.orderId, squareCustomerId: payment.customerId, friendInvoiceSentAt: createdAt },
+        changes: { paymentPlan, preTaxAmountCents, stayAmountCents, securityDepositCents, amountCents, salesTaxCents: tax.salesTaxCents, lodgingTaxCents: tax.lodgingTaxCents, stateHotelMotelFeeCents: tax.stateHotelMotelFeeCents, taxesAndFeesCents: tax.estimatedTaxesAndFeesCents, paymentUrl: payment.url, squareInvoiceId: payment.invoiceId, squareOrderId: payment.orderId, squareCustomerId: payment.customerId, friendInvoiceSentAt: createdAt, invoiceSentAt: createdAt, squareInvoiceStatus: 'UNPAID', squarePaidCents: 0, squareBalanceCents: amountCents, paymentRequirementMet: false, paymentFullyPaid: false, depositAmountCents: payment.depositAmountCents, balanceAmountCents: payment.balanceAmountCents, balanceDueDate: payment.balanceDueDate, depositDueDate: payment.depositDueDate },
       });
       return json(response, 200, { ok: true, paymentUrl: payment.url });
     }

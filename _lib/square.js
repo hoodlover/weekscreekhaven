@@ -68,6 +68,19 @@ function invoiceReminders(today, dueDate) {
     : [];
 }
 
+export function friendInvoicePlan({ amountCents, arrival, paymentChoice = 'deposit', today = easternDate() }) {
+  const balanceDueDate = shiftDate(arrival, -7);
+  const fullPaymentRequired = paymentChoice === 'full' || balanceDueDate <= today || amountCents <= 2500;
+  const depositAmountCents = fullPaymentRequired ? amountCents : 2500;
+  return {
+    fullPaymentRequired,
+    depositAmountCents,
+    balanceAmountCents: fullPaymentRequired ? 0 : amountCents - depositAmountCents,
+    balanceDueDate: fullPaymentRequired ? null : balanceDueDate,
+    depositDueDate: today,
+  };
+}
+
 export async function createSquareBookingInvoice({ bookingId, guestName, email, address = {}, amountCents, securityDepositCents = 30000, depositBaseCents, arrival, discountCents = 0, depositDueDays = 1, revisionKey = '' }) {
   const revisionSuffix = revisionKey ? `-r${String(revisionKey).replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 24)}` : '';
   if (!Number.isInteger(amountCents) || amountCents < 100) throw new Error('The stay total must be at least $1.00.');
@@ -170,12 +183,32 @@ export async function createSquareBookingInvoice({ bookingId, guestName, email, 
   };
 }
 
-export async function createSquareFriendInvoice({ bookingId, guestName, email, amountCents, securityDepositCents = 30000, arrival, revisionKey = '' }) {
+export async function createSquareFriendInvoice({ bookingId, guestName, email, amountCents, securityDepositCents = 5000, arrival, paymentChoice = 'deposit', revisionKey = '' }) {
   const revisionSuffix = revisionKey ? `-r${String(revisionKey).replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 24)}` : '';
   if (!Number.isInteger(amountCents) || amountCents < 100) throw new Error('The friend invoice total must be at least $1.00.');
   if (!email) throw new Error('Add an email address before sending a friend invoice.');
   const stayChargeCents = amountCents - securityDepositCents;
   if (!Number.isInteger(stayChargeCents) || stayChargeCents < 0) throw new Error('The refundable security deposit could not be itemized.');
+  const today = easternDate();
+  const { fullPaymentRequired, depositAmountCents, balanceAmountCents, balanceDueDate, depositDueDate } = friendInvoicePlan({ amountCents, arrival, paymentChoice, today });
+  const paymentRequests = fullPaymentRequired ? [{
+    request_type: 'BALANCE',
+    due_date: today,
+    tipping_enabled: false,
+    automatic_payment_source: 'NONE',
+  }] : [{
+    request_type: 'DEPOSIT',
+    due_date: today,
+    fixed_amount_requested_money: { amount: depositAmountCents, currency: 'USD' },
+    tipping_enabled: false,
+    automatic_payment_source: 'NONE',
+  }, {
+    request_type: 'BALANCE',
+    due_date: balanceDueDate,
+    tipping_enabled: false,
+    automatic_payment_source: 'NONE',
+    reminders: invoiceReminders(today, balanceDueDate),
+  }];
   const nameParts = String(guestName || 'Guest').trim().split(/\s+/);
   const familyName = nameParts.length > 1 ? nameParts.pop() : '';
   const givenName = nameParts.join(' ') || guestName || 'Guest';
@@ -217,15 +250,10 @@ export async function createSquareFriendInvoice({ bookingId, guestName, email, a
         order_id: orderResult.order.id,
         primary_recipient: { customer_id: customerResult.customer.id },
         delivery_method: 'EMAIL',
-        payment_requests: [{
-          request_type: 'BALANCE',
-          due_date: easternDate(),
-          tipping_enabled: false,
-          automatic_payment_source: 'NONE',
-        }],
+        payment_requests: paymentRequests,
         invoice_number: `WCHF-${bookingId.slice(0, 8).toUpperCase()}${revisionKey ? `-R${revisionKey}` : ''}`,
         title: 'Weeks Creek Haven friends & family stay',
-        description: 'Friends & family total due now. The separately listed $300 security deposit is refundable under the rental agreement. Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, 20% of the approved pre-tax stay total is retained and the remaining payment is refunded.',
+        description: `${fullPaymentRequired ? 'The full Friends & Family total is due now.' : `A $25 reservation payment is due today, and the remaining balance is due by ${balanceDueDate}. You may pay the balance sooner through this invoice.`} The separately listed $50 security deposit is refundable under the rental agreement. Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the $25 reservation payment is retained and any remaining amount paid is refunded.`,
         sale_or_service_date: arrival,
         accepted_payment_methods: { card: true, square_gift_card: false, bank_account: false, buy_now_pay_later: false, cash_app_pay: false },
       },
@@ -241,6 +269,11 @@ export async function createSquareFriendInvoice({ bookingId, guestName, email, a
     orderId: orderResult.order.id,
     customerId: customerResult.customer.id,
     amountCents,
+    depositAmountCents,
+    balanceAmountCents,
+    balanceDueDate: fullPaymentRequired ? null : balanceDueDate,
+    depositDueDate,
+    fullPaymentRequired,
     securityDepositCents,
   };
 }

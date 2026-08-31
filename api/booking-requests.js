@@ -94,6 +94,7 @@ export default async function handler(request, response) {
       ageConfirmed, primaryGuestStaying, privacyAcceptedAt: createdAt,
       guests, dogs, lateCheckout, pricingVersion: 2,
       friendsAndFamilyDiscount: dateChoices[0].quote.friendsAndFamilyDiscount || null,
+      friendsPaymentChoice: request.body?.friendsPaymentChoice === 'full' ? 'full' : 'deposit',
       dateChoices, relationship: text(request.body?.relationship, 160),
       reference: text(request.body?.reference, 160), discountRequest: first.discountRequest,
       bookingIntent, ownerQuestions, inquiryExpiresAt,
