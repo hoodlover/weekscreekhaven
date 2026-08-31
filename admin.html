@@ -359,6 +359,7 @@
               <a id="open-handbook" href="/owner-emergency-handbook.html" class="tab external" hidden>Emergency handbook</a>
               <a href="/property-people.html" class="tab external">Property &amp; people</a>
               <a href="/api/admin-cabin-contacts-pdf" class="tab external" target="_blank" rel="noopener">Print contacts PDF</a>
+              <a href="/output/pdf/weeks-creek-haven-owner-handbook-for-heather.pdf" class="tab external" target="_blank" rel="noopener">Heather&rsquo;s Haven Playbook</a>
             </nav>
           </div>
           <div id="panel-invites" class="tab-panel"><div id="invite-list"></div></div>
@@ -375,7 +376,7 @@
   </main>
   <script type="module">
     import { applyFriendsAndFamilyDiscount, money, PRICING_CONFIG, quoteStay, weekPlan } from '/pricing.js';
-    const state = { invites: [], access: [], bookings: [], reviews: [], rates: [], discounts: [], discountNameFilter: '', discountTypeFilter: 'all', emails: [], emailTriggers: [], accounting: [], accountingLoaded: false, showArchivedBookings: false, bookingFilter: 'all', bookingSort: 'attention', openBookingIds: new Set(), pricing: PRICING_CONFIG, square: {}, doorCodeRetirement:{required:true}, knownBookingIds: new Set(), knownAccessIds: new Set(), initialized: false, newInvite: null };
+    const state = { invites: [], access: [], bookings: [], reviews: [], rates: [], discounts: [], discountNameFilter: '', discountTypeFilter: 'all', emails: [], emailTriggers: [], accounting: [], accountingLoaded: false, showArchivedBookings: false, bookingFilter: 'all', bookingSort: 'arrival', openBookingIds: new Set(), pricing: PRICING_CONFIG, square: {}, doorCodeRetirement:{required:true}, knownBookingIds: new Set(), knownAccessIds: new Set(), initialized: false, newInvite: null };
     const $ = (id) => document.getElementById(id);
     $('panel-invites').prepend($('invite-form'));
     const discountFilters=document.createElement('div');discountFilters.className='discount-editor-grid';discountFilters.innerHTML='<label>Filter by name<input id="discount-filter-name" type="search" placeholder="Start typing a name"></label><label>Filter by discount<select id="discount-filter-type"><option value="all">All discounts</option><option value="percentage">Percentage off</option><option value="amount">Dollar amount off</option><option value="flat">Whole-stay price</option><option value="complimentary">Complimentary</option></select></label>';$('discount-list').before(discountFilters);
@@ -459,7 +460,6 @@
         if (notify && state.initialized) sendBrowserAlert((bookingData.bookings||[]).filter(item=>!state.knownBookingIds.has(item.id)),(data.access||[]).filter(item=>!state.knownAccessIds.has(item.id)));
         state.invites = data.invites; state.access = data.access;
         state.bookings = bookingData.bookings || []; state.doorCodeRetirement=bookingData.doorCodeRetirement||{required:true}; $('retire-door-code').hidden=state.doorCodeRetirement.required===false;
-        if(!state.initialized) state.bookings.filter(item=>(item.status||'pending')==='pending').forEach(item=>state.openBookingIds.add(item.id));
         state.reviews = reviewData.reviews || []; state.square = bookingData.square || {}; state.rates=bookingData.rates||[]; state.discounts=discountData.discounts||[]; state.emails=emailData.templates||[]; state.emailTriggers=emailData.availableTriggers||[]; state.pricing=bookingData.pricing||PRICING_CONFIG;
         state.knownBookingIds = new Set(state.bookings.map(item=>item.id)); state.knownAccessIds = new Set(state.access.map(item=>item.id)); state.initialized=true;
         $('login').style.display = 'none'; $('dashboard').style.display = 'block'; $('open-calendar').hidden = false; $('open-hub').hidden = false; $('open-handbook').hidden = false; $('enable-alerts').hidden=false; $('logout').hidden = false; updateAlertButton();
@@ -523,7 +523,9 @@
         const dates=['pending','offered'].includes(status)?allDates:(stay.arrival?[stay]:allDates.slice(0,1));
         const stayLabel=stay.arrival&&stay.departure?`${formatStayDate(stay.arrival)} – ${formatStayDate(stay.departure)}`:'Dates not selected';
         const paymentDue=booking.paymentPlan!=='complimentary'&&Number(booking.squareBalanceCents ?? booking.amountCents ?? 0)>0&&!booking.paymentFullyPaid;
-        const statusBadges=status==='completed'?`<span class="badge status-completed">Completed</span>${paymentDue?'<span class="badge payment-due">Payment due</span>':''}`:['reserved','booked','pending-payment'].includes(status)?(paymentDue?'<span class="badge payment-due">Payment due</span>':''):`<span class="badge status-${escapeHtml(status)}">${status==='pending'?'New request':escapeHtml(status)}</span>`;
+        const agreementDue=['reserved','booked','pending-payment'].includes(status)&&!booking.agreementAcceptedAt;
+        const currentIssueBadges=`${paymentDue?'<span class="badge payment-due">Payment due</span>':''}${agreementDue?'<span class="badge status-pending">Agreement due</span>':''}`;
+        const statusBadges=status==='completed'?`<span class="badge status-completed">Completed</span>${paymentDue?'<span class="badge payment-due">Payment due</span>':''}`:['reserved','booked','pending-payment'].includes(status)?(currentIssueBadges||'<span class="badge status-ready">Ready</span>'):`<span class="badge status-${escapeHtml(status)}">${status==='pending'?'New request':escapeHtml(status)}</span>`;
         const quickLinks=!['pending','declined','cancelled','offered'].includes(status)?`${booking.welcomePreviewUrl?`<a class="ghost" href="${escapeHtml(booking.welcomePreviewUrl)}" target="_blank" rel="noopener">Welcome</a>`:''}${booking.bookingPacketUrl?`<a class="ghost" href="${escapeHtml(booking.bookingPacketUrl)}" target="_blank" rel="noopener">${booking.agreementAcceptedAt?'Packet':'Sign packet'}</a>`:''}`:'';
         const refundTotal=(booking.refunds||[]).reduce((sum,item)=>sum+(Number(item.amountCents)||0),0);
         const paymentSummary = `${renderPaymentTracker(booking)}${refundTotal?`<p class="meta"><strong>Refunded:</strong> ${money(refundTotal)}</p>`:''}`;
