@@ -157,7 +157,26 @@
                         <label class="choice"><input type="checkbox" name="restock[]" value="Charcoal"> Charcoal</label>
                     </div>
                 </div>
-                <div><label class="field-label" for="checkout-notes">Anything broken, unfinished, or worth improving?</label><textarea id="checkout-notes" name="maintenance_issue" rows="3" class="field" placeholder="Tell us what happened or what would make the next stay better."></textarea></div>
+                <div class="note-grid">
+                    <div><label class="field-label" for="maintenance-location">Where is the issue?</label><input id="maintenance-location" type="text" name="maintenance_location" class="field" placeholder="Kitchen, loft, hot-tub deck..."></div>
+                    <div><label class="field-label" for="maintenance-priority">How soon?</label><select id="maintenance-priority" name="maintenance_priority" class="field"><option value="">Choose if something needs attention</option><option value="Low - note for later">Low &mdash; Note it for later</option><option value="Medium - fix soon">Medium &mdash; Please fix soon</option><option value="Urgent - already contacted hosts">Urgent &mdash; I already contacted you</option></select></div>
+                </div>
+                <div>
+                    <label class="field-label">Cabin condition report</label>
+                    <p class="mb-3 text-sm leading-relaxed text-stone-600">Please put routine repairs and cabin notes here instead of calling. For an active leak, no heat, a lockout, or another safety issue, call or text Lance right away at 770.549.9358.</p>
+                    <div class="choice-grid">
+                        <label class="choice"><input type="checkbox" name="maintenance_none" value="Nothing to report"> Nothing to report</label>
+                        <label class="choice"><input type="checkbox" name="maintenance_category[]" value="Heating or Cooling"> Heating / cooling</label>
+                        <label class="choice"><input type="checkbox" name="maintenance_category[]" value="Plumbing or Leak"> Plumbing / leak</label>
+                        <label class="choice"><input type="checkbox" name="maintenance_category[]" value="Electrical or Lighting"> Electrical / lighting</label>
+                        <label class="choice"><input type="checkbox" name="maintenance_category[]" value="Appliance or Laundry"> Appliance / laundry</label>
+                        <label class="choice"><input type="checkbox" name="maintenance_category[]" value="Wi-Fi TV or Alexa"> Wi-Fi / TV / Alexa</label>
+                        <label class="choice"><input type="checkbox" name="maintenance_category[]" value="Hot Tub or Exterior"> Hot tub / exterior</label>
+                        <label class="choice"><input type="checkbox" name="maintenance_category[]" value="Furniture or Damage"> Furniture / damage</label>
+                        <label class="choice"><input type="checkbox" name="maintenance_category[]" value="Cleaning Supplies or Other"> Cleaning / supplies / other</label>
+                    </div>
+                </div>
+                <div><label class="field-label" for="checkout-notes">What happened?</label><textarea id="checkout-notes" name="maintenance_issue" rows="3" class="field" placeholder="Tell us exactly what you noticed and whether it is still happening."></textarea></div>
                 <div><label class="field-label" for="guest-name">Your name</label><input id="guest-name" type="text" name="guest_names" autocomplete="name" class="field" placeholder="Your name" required></div>
                 <div><label class="field-label" for="guest-phone">Phone number</label><input id="guest-phone" type="tel" name="guest_phone" autocomplete="tel" class="field" placeholder="Your phone number"></div>
                 <label class="choice"><input type="checkbox" name="cleanliness_confirm" value="yes" required><span>I completed the checkout steps that apply to my stay.</span></label>

@@ -439,7 +439,6 @@
         <button class="tab-btn" onclick="switchTab('scoop',this)">Cabin Sense</button>
         <button class="tab-btn" onclick="switchTab('checkout',this)">Check Out</button>
         <button class="tab-btn" onclick="switchTab('guestbook',this)">Guest Book</button>
-        <button class="tab-btn" onclick="switchTab('maintenance',this)">Maintenance</button>
         <button class="tab-btn" onclick="switchTab('directions',this)">Directions</button>
         <button class="tab-btn" onclick="switchTab('weather',this)">Weather</button>
         <button class="tab-btn" onclick="switchTab('emergency',this)">Emergency</button>
@@ -815,9 +814,45 @@
                             <label class="departure-form-choice"><input type="checkbox" name="restock[]" value="Charcoal"> Charcoal</label>
                         </div>
                     </div>
-                    <div>
-                        <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-1">Anything broken, unfinished, or worth improving?</label>
-                        <textarea name="maintenance_issue" rows="3" class="maint-input text-sm" placeholder="Tell us what happened or what would make the next stay better."></textarea>
+                    <div class="rounded-xl border border-stone-300 bg-[#faf6ee] p-4 md:p-5 space-y-4">
+                        <div>
+                            <p class="arrival-kicker">Cabin condition report</p>
+                            <h3 class="font-serif text-2xl font-bold text-green-900">Does anything need attention?</h3>
+                            <p class="mt-1 text-sm leading-relaxed text-stone-600">Please put routine repairs and cabin notes here instead of calling. For an active leak, no heat, a lockout, or another safety issue, call or text Lance right away at 770.549.9358.</p>
+                        </div>
+                        <label class="departure-form-choice"><input type="checkbox" name="maintenance_none" value="Nothing to report"> Nothing needs attention</label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-1">Where is it?</label>
+                                <input type="text" name="maintenance_location" class="maint-input" placeholder="Kitchen, loft, hot-tub deck...">
+                            </div>
+                            <div>
+                                <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-1">How soon?</label>
+                                <select name="maintenance_priority" class="maint-input">
+                                    <option value="">Choose if something needs attention</option>
+                                    <option value="Low - note for later">Low &mdash; Note it for later</option>
+                                    <option value="Medium - fix soon">Medium &mdash; Please fix soon</option>
+                                    <option value="Urgent - already contacted hosts">Urgent &mdash; I already contacted you</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-2">What needs attention?</p>
+                            <div class="departure-form-grid">
+                                <label class="departure-form-choice"><input type="checkbox" name="maintenance_category[]" value="Heating or Cooling"> Heating / cooling</label>
+                                <label class="departure-form-choice"><input type="checkbox" name="maintenance_category[]" value="Plumbing or Leak"> Plumbing / leak</label>
+                                <label class="departure-form-choice"><input type="checkbox" name="maintenance_category[]" value="Electrical or Lighting"> Electrical / lighting</label>
+                                <label class="departure-form-choice"><input type="checkbox" name="maintenance_category[]" value="Appliance or Laundry"> Appliance / laundry</label>
+                                <label class="departure-form-choice"><input type="checkbox" name="maintenance_category[]" value="Wi-Fi TV or Alexa"> Wi-Fi / TV / Alexa</label>
+                                <label class="departure-form-choice"><input type="checkbox" name="maintenance_category[]" value="Hot Tub or Exterior"> Hot tub / exterior</label>
+                                <label class="departure-form-choice"><input type="checkbox" name="maintenance_category[]" value="Furniture or Damage"> Furniture / damage</label>
+                                <label class="departure-form-choice"><input type="checkbox" name="maintenance_category[]" value="Cleaning Supplies or Other"> Cleaning / supplies / other</label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-1">What happened?</label>
+                            <textarea name="maintenance_issue" rows="3" class="maint-input text-sm" placeholder="Tell us exactly what you noticed and whether it is still happening."></textarea>
+                        </div>
                     </div>
                     <div>
                         <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-1">Your name</label>
@@ -845,6 +880,12 @@
         <!-- ==================== TAB 5: GUEST BOOK ==================== -->
         <div id="tab-guestbook" class="tab-panel space-y-6">
 
+            <section class="arrival-intro">
+                <p class="arrival-kicker">One last cabin tradition</p>
+                <h2 id="guestbook-title">Leave a little story behind.</h2>
+                <p>Tell us what you loved, what made you laugh, and what the next crew should not miss.</p>
+            </section>
+
             <!-- Real guest book nudge -->
             <div class="parchment rounded-xl p-5 shadow border-l-4 border-green-800 flex items-start gap-4 max-w-3xl mx-auto">
                 <picture class="flex-shrink-0">
@@ -859,35 +900,39 @@
 
             <div class="parchment p-8 md:p-12 rounded-2xl shadow-2xl max-w-3xl mx-auto border-t-8 border-green-900">
                 <header class="text-center mb-8">
-                    <h1 class="text-4xl md:text-5xl font-serif italic text-green-900 mb-3">The Haven Guest Book</h1>
-                    <p class="text-base text-stone-600 font-serif italic">&ldquo;Share a favorite adventure, a laugh, or your darkest secret.&rdquo;</p>
+                    <h1 class="text-4xl md:text-5xl font-serif italic text-green-900 mb-3">Your Stay, in Your Words</h1>
+                    <p class="text-base text-stone-600 font-serif italic">The good parts, the funny parts, and anything future guests should know.</p>
                 </header>
                 <form id="guestbook-form" action="https://formspree.io/f/mzdjnprj" method="POST" class="space-y-6">
                     <div class="grid md:grid-cols-2 gap-5">
                         <div>
                             <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-1">Guest Name(s)</label>
-                            <input type="text" name="guest_names" required class="input-style font-sans" placeholder="The Smith Family">
+                            <input id="guestbook-guest-name" type="text" name="guest_names" autocomplete="name" required class="input-style font-sans" placeholder="The Smith Family">
                         </div>
                         <div>
                             <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-1">Dates of Stay</label>
                             <div class="flex items-center gap-2">
-                                <input type="date" name="stay_start" class="input-style font-sans text-sm flex-1" required>
+                                <input id="guestbook-stay-start" type="date" name="stay_start" class="input-style font-sans text-sm flex-1" required>
                                 <span class="text-stone-400 text-sm">to</span>
-                                <input type="date" name="stay_end" class="input-style font-sans text-sm flex-1" required>
+                                <input id="guestbook-stay-end" type="date" name="stay_end" class="input-style font-sans text-sm flex-1" required>
                             </div>
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-serif font-bold text-stone-800 mb-1">What was your favorite mountain adventure?</label>
-                        <textarea name="favorite_adventure" rows="3" required class="input-style font-sans" placeholder="Hiking the Toccoa Swinging Bridge..."></textarea>
+                        <label class="block text-sm font-serif font-bold text-stone-800 mb-1">What did you love most about the cabin or Blue Ridge?</label>
+                        <textarea name="favorite_adventure" rows="3" required class="input-style font-sans" placeholder="The creek, porch coffee, a favorite trail, movie night..."></textarea>
                     </div>
                     <div>
-                        <label class="block text-sm font-serif font-bold text-stone-800 mb-1">Got a laugh, scary moment or faux pas made by someone in your group?</label>
-                        <textarea name="funny_moment" rows="3" class="input-style font-sans" placeholder="Keep it interesting..."></textarea>
+                        <label class="block text-sm font-serif font-bold text-stone-800 mb-1">What moment from the trip still makes you smile?</label>
+                        <textarea name="funny_moment" rows="3" class="input-style font-sans" placeholder="A great meal, a ridiculous story, wildlife with questionable boundaries..."></textarea>
                     </div>
                     <div>
-                        <label class="block text-sm font-serif font-bold text-stone-800 mb-1">How could we have made your stay even better?</label>
-                        <textarea name="feedback" rows="2" class="input-style font-sans" placeholder="Be honest, we love to improve!"></textarea>
+                        <label class="block text-sm font-serif font-bold text-stone-800 mb-1">What should the next guests make sure they do?</label>
+                        <textarea name="guest_tip" rows="2" class="input-style font-sans" placeholder="Your best cabin or Blue Ridge recommendation..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-serif font-bold text-stone-800 mb-1">Anything you would like Lance and Heather to know privately?</label>
+                        <textarea name="feedback" rows="2" class="input-style font-sans" placeholder="Ideas, feedback, or just a note to us..."></textarea>
                     </div>
                     <div class="text-center pt-4">
                         <button type="submit" id="guestbook-submit" class="bg-green-900 text-white font-bold py-4 px-12 rounded-full hover:bg-black transition shadow-xl uppercase tracking-widest">Sign the Book</button>
@@ -897,54 +942,10 @@
                     </div>
                 </form>
             </div>
-        </div><!-- end guestbook card -->
         </div><!-- end tab-guestbook -->
 
 
-        <!-- ==================== TAB 6: MAINTENANCE ==================== -->
-        <div id="tab-maintenance" class="tab-panel">
-            <div class="parchment p-6 md:p-10 rounded-2xl shadow-2xl max-w-3xl mx-auto border-t-8 border-orange-800">
-                <h1 class="text-3xl text-orange-900 mb-2 italic heavy-shadow">Report a Cabin Issue</h1>
-                <p class="mb-5 text-stone-600 text-sm">Spotted something that needs a tool belt? Let Lance &amp; Heather know so we can keep the Haven humming.</p>
-                <form id="maintenance-form" action="https://formspree.io/f/mzdjnprj" method="POST" class="space-y-5">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Location of Issue</label>
-                            <input type="text" name="location" placeholder="e.g. Kitchen, Loft, Hot Tub Deck" class="maint-input" required>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wide text-stone-700 mb-1">Urgency Level</label>
-                            <select name="priority" class="maint-input" required>
-                                <option value="low">Low &mdash; Just an FYI for later</option>
-                                <option value="medium">Medium &mdash; Fix when convenient</option>
-                                <option value="high">High &mdash; Needs attention ASAP</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-bold uppercase tracking-widest text-stone-700 border-b border-stone-300 mb-3 pb-1">What&rsquo;s acting up?</h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                            <label class="flex items-center gap-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="category[]" value="HVAC" class="w-4 h-4 accent-orange-800"> Heating / Cooling</label>
-                            <label class="flex items-center gap-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="category[]" value="Plumbing" class="w-4 h-4 accent-orange-800"> Plumbing / Leaks</label>
-                            <label class="flex items-center gap-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="category[]" value="Electrical" class="w-4 h-4 accent-orange-800"> Electrical / Lighting</label>
-                            <label class="flex items-center gap-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="category[]" value="Appliances" class="w-4 h-4 accent-orange-800"> Appliances (Kitchen/Laundry)</label>
-                            <label class="flex items-center gap-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="category[]" value="Connectivity" class="w-4 h-4 accent-orange-800"> Wi-Fi / 98-inch TV</label>
-                            <label class="flex items-center gap-3 bg-stone-100 p-3 rounded hover:bg-stone-200 transition cursor-pointer text-stone-800"><input type="checkbox" name="category[]" value="Hot Tub" class="w-4 h-4 accent-orange-800"> Hot Tub / Exterior</label>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold mb-1 text-stone-700">Please describe the issue:</label>
-                        <textarea name="description" rows="4" placeholder="Be as specific as possible (e.g. 'The third lightbulb from the left in the kitchen is flickering and judging me')." class="maint-input" required></textarea>
-                        <p class="mt-2 text-xs text-stone-500 italic">&ldquo;If it&rsquo;s urgent (water leak, no heat, etc.), please text Lance immediately at 770.549.9358!&rdquo;</p>
-                    </div>
-                    <button type="submit" id="maintenance-submit" class="w-full bg-orange-900 text-white font-bold py-4 rounded hover:bg-black transition shadow-lg uppercase tracking-widest">Send Maintenance Report</button>
-                    <p id="maintenance-sending" class="hidden text-center text-stone-500 text-sm italic">Sending... hang tight</p>
-                    <p id="maintenance-error" class="hidden text-center text-red-600 text-sm font-bold">Something went wrong — try texting Lance at 770.549.9358</p>
-                </form>
-            </div>
-        </div>
-
-        <!-- ==================== TAB 7: DIRECTIONS ==================== -->
+        <!-- ==================== TAB 6: DIRECTIONS ==================== -->
         <div id="tab-directions" class="tab-panel space-y-6">
 
             <div class="parchment p-5 rounded-xl shadow-lg border-t-4 border-[#A45D41] mb-2">
@@ -1304,7 +1305,6 @@ function fetchForm(formId, submitId, sendingId, errorId, redirectUrl) {
 }
 fetchForm('checkout-form',    'checkout-submit',    'checkout-sending',    'checkout-error',    '/thank-you-departure.html');
 fetchForm('guestbook-form',   'guestbook-submit',   'guestbook-sending',   'guestbook-error',   '/thank-you-guestbook.html');
-fetchForm('maintenance-form', 'maintenance-submit', 'maintenance-sending', 'maintenance-error', '/thank-you-maintenance.html');
 
 function formatGuestStayDate(value) {
     if (!value) return '';
@@ -1318,9 +1318,13 @@ function personalizeGuestGuide(profile, packetUrl = '') {
     if (firstName) {
         document.getElementById('guest-welcome-title').textContent = `Welcome to the Haven, ${firstName}.`;
         document.getElementById('guest-checkout-title').textContent = `Safe travels, ${firstName} & crew.`;
+        document.getElementById('guestbook-title').textContent = `${firstName}, leave a little story behind.`;
     }
     document.getElementById('checkout-guest-name').value = fullName;
     document.getElementById('checkout-guest-phone').value = phone;
+    document.getElementById('guestbook-guest-name').value = fullName;
+    document.getElementById('guestbook-stay-start').value = profile.arrival || '';
+    document.getElementById('guestbook-stay-end').value = profile.departure || '';
     const dates = profile.arrival && profile.departure ? `${formatGuestStayDate(profile.arrival)} – ${formatGuestStayDate(profile.departure)}` : '';
     if (firstName || dates) {
         document.getElementById('personalized-stay-summary').textContent = [firstName ? `${firstName}'s private guest guide` : '', dates].filter(Boolean).join(' · ');
@@ -1362,7 +1366,7 @@ loadGuestBookingTools();
 // ============================
 // TAB SWITCHING
 // ============================
-const TAB_ORDER = ['checkin','scoop','provisions','checkout','guestbook','maintenance','directions','weather','emergency'];
+const TAB_ORDER = ['checkin','scoop','checkout','guestbook','directions','weather','emergency'];
 
 function switchTab(name, btn) {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
@@ -1375,6 +1379,9 @@ function switchTab(name, btn) {
     }
     if (name === 'weather') loadWeather();
 }
+
+const requestedTab = new URLSearchParams(location.search).get('tab');
+if (TAB_ORDER.includes(requestedTab)) switchTab(requestedTab, null);
 
 // ============================
 // SWIPE TO CHANGE TAB
