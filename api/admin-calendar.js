@@ -5,6 +5,7 @@ import { createAgreementToken, json, requireAdmin } from '../_lib/security.js';
 import { cancelSquareInvoice } from '../_lib/square.js';
 import { refreshSquareBooking } from '../_lib/payment-sync.js';
 import { findBookingInvite } from '../_lib/booking-invite.js';
+import { finalizeBookingFlow } from '../_lib/booking-finalization.js';
 
 const text = (value, max = 120) => String(value || '').trim().slice(0, max);
 const date = (value) => /^\d{4}-\d{2}-\d{2}$/.test(String(value || '')) ? String(value) : '';
@@ -121,8 +122,10 @@ export default async function handler(request, response) {
       if (action === 'mark-booked') {
         const paymentReady = booking.paymentPlan === 'complimentary' || Number(booking.amountCents) === 0 || booking.paymentRequirementMet === true;
         if (!paymentReady || !booking.agreementAcceptedAt) return json(response, 409, { error: `This stay is still missing ${!paymentReady && !booking.agreementAcceptedAt ? 'payment and the rental agreement' : !paymentReady ? 'the required payment' : 'the rental agreement'}. Use Check payment after Square is paid.` });
-        await appendBookingRecord({ type: 'status', bookingId, changes: { status: 'booked', bookedAt: createdAt }, createdAt });
-        return json(response, 200, { ok: true });
+        const changes={ status:'booked', bookedAt:createdAt };
+        await appendBookingRecord({ type:'status', bookingId, changes, createdAt });
+        await finalizeBookingFlow({ ...booking, ...changes });
+        return json(response, 200, { ok:true });
       }
       if (action === 'cancel-booking') {
         if (booking.squareInvoiceId) await cancelSquareInvoice(booking.squareInvoiceId);
