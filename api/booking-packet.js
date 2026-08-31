@@ -33,7 +33,7 @@ export default async function handler(request, response) {
   if (request.method !== 'GET') return json(response, 405, { error: 'Method not allowed.' });
   try {
     const token = verifyAgreementToken(request.query?.token);
-    if (!token) return json(response, 404, { error: 'This booking-packet link is invalid or has expired.' });
+    if (!token) return json(response, 404, { error: 'This reservation link is invalid or has expired.' });
     const [calendar, invites] = await Promise.all([
       getBookingCalendar(),
       getInvites().catch(() => []),
@@ -81,6 +81,6 @@ export default async function handler(request, response) {
     }, { 'Cache-Control': 'no-store' });
   } catch (error) {
     console.error(error);
-    return json(response, 503, { error: 'Your booking packet is temporarily unavailable.' });
+    return json(response, 503, { error: 'Your reservation details are temporarily unavailable.' });
   }
 }

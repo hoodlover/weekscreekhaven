@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="robots" content="noindex,nofollow" />
-    <title>Your Booking Packet | Weeks Creek Haven</title>
+    <title>Your Weeks Creek Haven Stay</title>
     <link rel="icon" href="/webpic/weeks-creek-haven-favicon.ico" />
     <style>
       :root {
@@ -308,7 +308,7 @@
   <body>
     <main>
       <div id="loading" class="inner">
-        Preparing your private booking packet…
+        Preparing your reservation details…
       </div>
       <div id="content" hidden>
         <header class="hero">
@@ -346,7 +346,7 @@
             <p>Dear <span id="letter-name"></span>,</p>
             <p>
               We’re so glad you’re coming to Weeks Creek Haven. We created this
-              packet to make everything from signing your agreement to finding
+              reservation page to make everything from signing your agreement to finding
               the cabin simple and relaxed. Once you arrive, we hope you’ll slow
               down, listen to the creek, enjoy the mountain air, and make the
               place your own for a little while.
@@ -570,7 +570,7 @@
               { cache: "no-store" },
             ),
             data = await response.json();
-          if (!response.ok) throw Error(data.error || "Packet unavailable.");
+          if (!response.ok) throw Error(data.error || "Reservation details unavailable.");
           document.getElementById("name").textContent = data.guestName;
           document.getElementById("letter-name").textContent = data.guestName;
           document.getElementById("dates").textContent =

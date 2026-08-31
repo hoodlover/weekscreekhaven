@@ -40,7 +40,7 @@ export default async function handler(request, response) {
     if (!result) return json(response, 404, { error: 'This rental agreement link is invalid or has expired.' });
     if (request.method === 'GET') return json(response, 200, bookingDetails(result), { 'Cache-Control': 'no-store' });
     if (request.method !== 'POST') return json(response, 405, { error: 'Method not allowed.' });
-    if (!sameOriginRequest(request)) return json(response, 403, { error: 'Open the agreement from your private booking packet.' });
+    if (!sameOriginRequest(request)) return json(response, 403, { error: 'Open the agreement from your private reservation details.' });
     const rate = enforceRateLimit(request, 'agreement-signing', 10, 60 * 60 * 1000);
     if (!rate.allowed) return rateLimitJson(response, rate);
     if (result.booking.agreementAcceptedAt) return json(response, 409, { error: 'This rental agreement has already been accepted.' });
