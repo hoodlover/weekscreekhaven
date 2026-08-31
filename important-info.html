@@ -119,35 +119,44 @@
     <div id="main-container" class="min-h-screen flex items-start justify-center px-4 md:px-6 pt-24 pb-16">
 
         <div id="gate" class="parchment p-8 md:p-10 rounded-2xl shadow-2xl text-center max-w-[35rem] w-full border-t-8 border-green-900">
-            <a href="/admin.html" class="block w-fit ml-auto -mt-2 mb-2 px-3 py-2 rounded-full border border-stone-300 text-[10px] uppercase tracking-[0.16em] font-bold text-stone-500 hover:bg-green-900 hover:text-white hover:border-green-900 transition">Owner Admin</a>
-            <h1 class="text-5xl mb-3 font-serif italic text-green-900">Oh, You Got the Code?</h1>
-            <p class="mb-2 text-stone-700 font-bold italic text-base">"Well then. Someone out there likes you."</p>
-            <p class="mb-8 text-stone-500 text-sm">
-                <span class="block">Enter your name and invitation code below.</span>
-                <span class="block mt-1">You&rsquo;ll find the code in your personal invitation message.</span>
-            </p>
+            <a href="/admin.html" class="block w-fit ml-auto -mt-2 mb-2 px-3 py-2 rounded-full border border-stone-300 text-[10px] uppercase tracking-[0.16em] font-bold text-stone-500 hover:bg-green-900 hover:text-white hover:border-green-900 transition" aria-label="H and L owner sign in">H&nbsp;&amp;&nbsp;L</a>
+            <h1 class="text-5xl mb-3 font-serif italic text-green-900">Your Guest Guide</h1>
+            <p class="mb-2 text-stone-700 font-bold italic text-base">One reservation. One private guide. All the cabin stuff.</p>
+            <p class="mb-6 text-stone-500 text-sm leading-relaxed">Every booked guest gets a personalized guide with their name, stay details, arrival information, checkout steps, and the things worth knowing while they&rsquo;re at the Haven.</p>
 
-            <input type="text" id="visitorName" placeholder="Your name" autocomplete="name" autofocus
-                   class="w-full p-4 border-2 border-stone-300 rounded-lg mb-3 focus:border-green-800 outline-none text-center text-base">
-
+            <label for="reservationInput" class="block mb-2 text-left text-[11px] uppercase tracking-[0.15em] font-black text-stone-600">Enter your reservation code</label>
             <div class="flex items-stretch mb-4 rounded-lg border-2 border-stone-300 overflow-hidden bg-white focus-within:border-green-800">
                 <span class="flex items-center px-4 bg-stone-100 border-r border-stone-300 text-green-900 font-black text-xl tracking-wider">WCH-</span>
-                <input type="text" id="passInput" placeholder="8 letters & numbers" autocomplete="one-time-code" maxlength="8"
+                <input type="text" id="reservationInput" placeholder="10 letters & numbers" autocomplete="one-time-code" maxlength="10" autofocus
                        oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'').replace(/^WCH/,'')"
-                       onkeydown="if(event.key === 'Enter') { event.preventDefault(); checkPass(); }"
+                       onkeydown="if(event.key === 'Enter') { event.preventDefault(); findGuide(); }"
                        class="min-w-0 flex-1 p-4 outline-none text-center text-xl tracking-widest text-stone-800 uppercase">
             </div>
+            <button id="guideButton" type="button" onclick="findGuide()" class="w-full bg-green-900 text-white font-bold py-4 rounded-lg hover:bg-black transition shadow-lg uppercase tracking-widest disabled:opacity-60">Find My Guest Guide</button>
+            <p class="mt-3 text-[11px] leading-relaxed text-stone-500">Your WCH reservation code is in your booking email and booking packet.</p>
+            <p id="guideError" class="text-red-700 mt-4 font-bold hidden" role="alert"></p>
 
-            <button id="unlockButton" type="button" onclick="checkPass()" class="w-full bg-green-900 text-white font-bold py-4 rounded-lg hover:bg-black transition shadow-lg uppercase tracking-widest disabled:opacity-60">
-                Unlock Haven
-            </button>
-
-            <p id="error" class="text-red-700 mt-6 font-bold hidden" role="alert"></p>
+            <details class="mt-6 pt-5 border-t border-stone-300 text-left">
+                <summary class="cursor-pointer text-center text-xs uppercase tracking-[0.12em] font-black text-green-900">Have an invitation but haven&rsquo;t booked yet?</summary>
+                <div class="mt-5">
+                    <p class="mb-4 text-center text-stone-500 text-sm">Enter your name and the eight-character code from Lance or Heather&rsquo;s personal invitation.</p>
+                    <input type="text" id="visitorName" placeholder="Your name" autocomplete="name" class="w-full p-4 border-2 border-stone-300 rounded-lg mb-3 focus:border-green-800 outline-none text-center text-base">
+                    <div class="flex items-stretch mb-4 rounded-lg border-2 border-stone-300 overflow-hidden bg-white focus-within:border-green-800">
+                        <span class="flex items-center px-4 bg-stone-100 border-r border-stone-300 text-green-900 font-black text-xl tracking-wider">WCH-</span>
+                        <input type="text" id="passInput" placeholder="8 letters & numbers" autocomplete="one-time-code" maxlength="8"
+                               oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'').replace(/^WCH/,'')"
+                               onkeydown="if(event.key === 'Enter') { event.preventDefault(); checkPass(); }"
+                               class="min-w-0 flex-1 p-4 outline-none text-center text-xl tracking-widest text-stone-800 uppercase">
+                    </div>
+                    <button id="unlockButton" type="button" onclick="checkPass()" class="w-full bg-[#A45D41] text-white font-bold py-4 rounded-lg hover:bg-black transition shadow-lg uppercase tracking-widest disabled:opacity-60">Open My Invitation</button>
+                    <p id="error" class="text-red-700 mt-4 text-center font-bold hidden" role="alert"></p>
+                </div>
+            </details>
 
             <!-- PWA install nudge -->
             <div class="mt-6 bg-stone-800 text-white rounded-xl p-4 text-left">
                 <p class="font-black text-[#d4a373] text-xs uppercase tracking-widest mb-2">Pro Move After You Log In</p>
-                <p class="text-xs leading-relaxed text-stone-300">Once you&rsquo;re in, <strong class="text-white">add the Friends Hub to your phone&rsquo;s home screen.</strong> It works like an app &mdash; door codes, directions, hot tub temp, and everything else still loads even when you&rsquo;ve got zero cell bars on Weeks Creek Rd.</p>
+                <p class="text-xs leading-relaxed text-stone-300">Once you&rsquo;re in, <strong class="text-white">add your Guest Guide to your phone&rsquo;s home screen.</strong> It works like an app &mdash; door codes, directions, hot tub temp, and everything else still loads even when you&rsquo;ve got zero cell bars on Weeks Creek Rd.</p>
                 <p class="text-[10px] text-stone-400 italic mt-2">Safari: Share &rarr; Add to Home Screen &nbsp;|&nbsp; Chrome: Menu &rarr; Install App</p>
             </div>
 
@@ -159,6 +168,32 @@
     </div>
 
 <script>
+    async function findGuide() {
+        const reservationInput = document.getElementById('reservationInput');
+        const errorMsg = document.getElementById('guideError');
+        const button = document.getElementById('guideButton');
+        errorMsg.classList.add('hidden');
+        button.disabled = true;
+        button.textContent = 'Finding your guide...';
+        try {
+            const response = await fetch('/api/guest-guide-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ reservationCode: `WCH-${reservationInput.value}` })
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(data.error || 'We could not find that reservation. Please try again.');
+            window.location.href = data.destination;
+        } catch (error) {
+            errorMsg.textContent = error.message;
+            errorMsg.classList.remove('hidden');
+            reservationInput.select();
+        } finally {
+            button.disabled = false;
+            button.textContent = 'Find My Guest Guide';
+        }
+    }
+
     async function checkPass() {
         const passInput = document.getElementById('passInput');
         const visitorName = document.getElementById('visitorName');

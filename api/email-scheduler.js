@@ -1,7 +1,7 @@
 import { appendBookingRecord, getBookingRequests } from '../_lib/booking-store.js';
 import { sendEmail } from '../_lib/email.js';
 import { refreshSquareBooking } from '../_lib/payment-sync.js';
-import { createAgreementToken, createReviewToken, json } from '../_lib/security.js';
+import { bookingAccessCode, createAgreementToken, createReviewToken, json } from '../_lib/security.js';
 import { cancelSquareInvoice } from '../_lib/square.js';
 import { getReviews } from '../_lib/review-store.js';
 
@@ -73,7 +73,7 @@ export default async function handler(request, response) {
       const reviewUrl=`https://www.weekscreekhaven.com/review.html?token=${encodeURIComponent(createReviewToken(booking.id))}`;
       const guestBookUrl=`https://www.weekscreekhaven.com/friends-hub.html?token=${encodeURIComponent(createAgreementToken(booking.id,365*86400))}&tab=guestbook`;
       const friendsAndFamily=Boolean(booking.friendsAndFamilyDiscount || dates.quote?.friendsAndFamilyDiscount);
-      const common={ guestName:booking.name, arrival:dates.arrival, departure:dates.departure, checkout:friendsAndFamily?'flexible—there is no set time unless Lance or Heather lets you know personally':(booking.lateCheckout?'noon':'11:00 AM'), packetUrl, guestGuideUrl, paymentUrl:booking.paymentUrl||packetUrl, depositAmount:money(booking.depositAmountCents), balanceAmount:money(booking.squareBalanceCents ?? booking.balanceAmountCents), reviewUrl, guestBookUrl, bookingUrl:'https://www.weekscreekhaven.com/register.html', referralCode:booking.referralCode||'', securityDeposit:money(booking.securityDepositCents||0), adminUrl:'https://www.weekscreekhaven.com/admin.html', ...checkoutDetails(booking) };
+      const common={ guestName:booking.name, arrival:dates.arrival, departure:dates.departure, checkout:friendsAndFamily?'flexible—there is no set time unless Lance or Heather lets you know personally':(booking.lateCheckout?'noon':'11:00 AM'), packetUrl, guestGuideUrl, bookingCode:bookingAccessCode(booking.id), paymentUrl:booking.paymentUrl||packetUrl, depositAmount:money(booking.depositAmountCents), balanceAmount:money(booking.squareBalanceCents ?? booking.balanceAmountCents), reviewUrl, guestBookUrl, bookingUrl:'https://www.weekscreekhaven.com/register.html', referralCode:booking.referralCode||'', securityDeposit:money(booking.securityDepositCents||0), adminUrl:'https://www.weekscreekhaven.com/admin.html', ...checkoutDetails(booking) };
       if (booking.earlyBirdExpiresAt && !booking.earlyBirdExpiredAt && Date.now() >= Date.parse(booking.earlyBirdExpiresAt) && (!booking.paymentRequirementMet || !booking.agreementAcceptedAt)) {
         if (booking.squareInvoiceId) { try { await cancelSquareInvoice(booking.squareInvoiceId); } catch { /* record expiration even if Square already closed the invoice */ } }
         const expiredAt=new Date().toISOString();

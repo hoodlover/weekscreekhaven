@@ -85,6 +85,12 @@ export function generatePasscode() {
   return `WCH-${Array.from(bytes, (byte) => alphabet[byte % alphabet.length]).join('')}`;
 }
 
+export function bookingAccessCode(bookingId) {
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const digest = createHmac('sha256', sessionSecret()).update(`guest-guide:${String(bookingId || '')}`).digest();
+  return `WCH-${Array.from(digest.subarray(0, 10), (byte) => alphabet[byte % alphabet.length]).join('')}`;
+}
+
 function encryptionKey() {
   return createHash('sha256').update(`${sessionSecret()}:weeks-creek-private-data`).digest();
 }

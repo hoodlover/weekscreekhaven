@@ -2,7 +2,7 @@ import { appendBookingRecord, getBookingCalendar, getBookingRequests, rangesOver
 import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
 import { mergeEmailTemplates } from '../_lib/email-library.js';
 import { getInvites } from '../_lib/invite-store.js';
-import { createAgreementToken, createReviewToken, json, requireAdmin } from '../_lib/security.js';
+import { bookingAccessCode, createAgreementToken, createReviewToken, json, requireAdmin } from '../_lib/security.js';
 import { cancelSquareInvoice, createSquareBookingInvoice, createSquareFriendInvoice, getSquareInvoice, squareStatus } from '../_lib/square.js';
 import { refreshSquareBooking } from '../_lib/payment-sync.js';
 import { findBookingInvite } from '../_lib/booking-invite.js';
@@ -47,7 +47,7 @@ function stayEmailVariables(booking) {
   const reviewUrl = `https://www.weekscreekhaven.com/review.html?token=${encodeURIComponent(createReviewToken(booking.id))}`;
   const refund = (booking.refunds || []).at(-1) || {};
   return {
-    guestName:booking.name, arrival:dates.arrival || '', departure:dates.departure || '', checkout:checkoutLabel(booking, dates), packetUrl, guestGuideUrl:guestGuideUrl(booking.id),
+    guestName:booking.name, arrival:dates.arrival || '', departure:dates.departure || '', checkout:checkoutLabel(booking, dates), packetUrl, guestGuideUrl:guestGuideUrl(booking.id), bookingCode:bookingAccessCode(booking.id),
     paymentUrl:booking.paymentUrl || packetUrl, depositAmount:`$${((Number(booking.depositAmountCents)||0)/100).toFixed(2)}`,
     balanceAmount:`$${((Number(booking.squareBalanceCents ?? booking.balanceAmountCents)||0)/100).toFixed(2)}`,
     bookingUrl:'https://www.weekscreekhaven.com/register.html', reviewUrl, referralCode:booking.referralCode || '',
@@ -66,6 +66,7 @@ async function sendBookingPacketEmail(booking, packetUrl) {
   const paid = booking.paymentPlan === 'complimentary' || Number(booking.amountCents) === 0 || booking.paymentRequirementMet === true;
   const signed = Boolean(booking.agreementAcceptedAt);
   const checkout = checkoutLabel(booking, dates);
+  const bookingCode = bookingAccessCode(booking.id);
   const nextStep = signed
     ? 'Your signed agreement, payment status, and booking information are available in the packet.'
     : paid
@@ -74,10 +75,10 @@ async function sendBookingPacketEmail(booking, packetUrl) {
   await sendEmail({
     to: booking.email,
     toName: booking.name,
-    templateKey:'booking-packet', templateVariables:{ guestName:booking.name, nextStep, arrival:dates.arrival || 'To be confirmed', departure:dates.departure || 'To be confirmed', packetUrl, checkout },
+    templateKey:'booking-packet', templateVariables:{ guestName:booking.name, nextStep, arrival:dates.arrival || 'To be confirmed', departure:dates.departure || 'To be confirmed', packetUrl, checkout, bookingCode },
     subject: signed ? 'Your Weeks Creek Haven booking packet' : 'Please sign your Weeks Creek Haven agreement',
-    text: `Hi ${booking.name},\n\n${nextStep}\n\nStay: ${dates.arrival || 'To be confirmed'} through ${dates.departure || 'To be confirmed'}\n\nOpen your private booking packet: ${packetUrl}\n\nCheck-in begins at 4:00 PM. Checkout is ${checkout}.`,
-    html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Your private booking packet</h1><p>Hi ${escapeEmailHtml(booking.name)},</p><p>${escapeEmailHtml(nextStep)}</p><p><strong>${escapeEmailHtml(dates.arrival || 'To be confirmed')} through ${escapeEmailHtml(dates.departure || 'To be confirmed')}</strong></p><p><a href="${packetUrl}" style="display:inline-block;background:#183c2d;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">${signed ? 'Open booking packet' : 'Open packet and sign agreement'}</a></p><p>Check-in begins at <strong>4:00 PM</strong>. Checkout is <strong>${escapeEmailHtml(checkout)}</strong>.</p></div>`,
+    text: `Hi ${booking.name},\n\n${nextStep}\n\nStay: ${dates.arrival || 'To be confirmed'} through ${dates.departure || 'To be confirmed'}\n\nOpen your private booking packet: ${packetUrl}\nGuest Guide reservation code: ${bookingCode}\n\nCheck-in begins at 4:00 PM. Checkout is ${checkout}.`,
+    html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Your private booking packet</h1><p>Hi ${escapeEmailHtml(booking.name)},</p><p>${escapeEmailHtml(nextStep)}</p><p><strong>${escapeEmailHtml(dates.arrival || 'To be confirmed')} through ${escapeEmailHtml(dates.departure || 'To be confirmed')}</strong></p><p><a href="${packetUrl}" style="display:inline-block;background:#183c2d;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">${signed ? 'Open booking packet' : 'Open packet and sign agreement'}</a></p><p><strong>Guest Guide reservation code:</strong> ${bookingCode}</p><p>Check-in begins at <strong>4:00 PM</strong>. Checkout is <strong>${escapeEmailHtml(checkout)}</strong>.</p></div>`,
   });
 }
 
@@ -96,6 +97,7 @@ export default async function handler(request, response) {
         return {
           ...booking,
           bookingPacketUrl: bookingPacketUrl(booking.id),
+          guestGuideCode: bookingAccessCode(booking.id),
           invitePasscode: invite?.passcode || '',
           welcomePreviewUrl: invite ? `/api/admin-preview-invite?inviteId=${encodeURIComponent(invite.id)}` : '',
           dateChoices: (booking.dateChoices || []).map((choice, choiceIndex) => {
@@ -227,11 +229,12 @@ export default async function handler(request, response) {
         ? '<p style="background:#e8f2e9;padding:12px;border-radius:8px"><strong>Complimentary stay:</strong> No payment is required.</p>'
         : `<p><a href="${payment.url}" style="display:inline-block;background:#183c2d;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold;margin:0 8px 8px 0">${paymentPlan === 'friends-family-total' ? 'Pay Friends & Family total' : 'Open Square invoice'}</a></p>`;
       const checkout = checkoutLabel({ ...booking, friendsAndFamilyDiscount: booking.friendsAndFamilyDiscount || approvedQuote?.friendsAndFamilyDiscount }, dates);
+      const bookingCode = bookingAccessCode(booking.id);
       await sendEmail({
         to: booking.email, toName: booking.name, subject: 'Your Weeks Creek Haven dates are approved',
-        templateKey:'booking-approved', templateVariables:{ guestName:booking.name, arrival:dates.arrival, departure:dates.departure, total:`$${(amountCents/100).toFixed(2)}`, paymentText, packetUrl, checkout },
-        text: `Hi ${booking.name},\n\nYour requested stay from ${dates.arrival} to ${dates.departure} is available. The approved total is $${(amountCents / 100).toFixed(2)}. Check-in begins at 4:00 PM and checkout is ${checkout}. ${paymentText}\n\nOpen your private booking packet to track payment, sign the rental agreement, and download your paperwork: ${packetUrl}\n\nCancellation policy: cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the 20% reservation deposit is retained and any remaining amount paid is refunded.\n\nYour reservation is final after ${paymentPlan === 'complimentary' ? 'the rental agreement is accepted' : 'payment is made and the rental agreement is accepted'}.`,
-        html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Your booking packet</h1><p>Hi ${safeName},</p><p>We approved <strong>${dates.arrival} through ${dates.departure}</strong>.</p><p>Check-in: <strong>4:00 PM</strong><br>Checkout: <strong>${escapeEmailHtml(checkout)}</strong></p><p>Approved total: <strong>$${(amountCents / 100).toFixed(2)}</strong></p>${paymentHtml}<p><a href="${packetUrl}" style="display:inline-block;background:#a45d41;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Open booking packet</a></p><p>Track payment, sign the rental agreement, and download your paperwork from the packet.</p><p style="background:#fff0cc;padding:12px;border-radius:8px"><strong>Cancellation policy:</strong> Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the 20% reservation deposit is retained and any remaining amount paid is refunded.</p><p>Your reservation is final after ${paymentPlan === 'complimentary' ? 'the rental agreement is accepted' : 'payment is made and the rental agreement is accepted'}.</p></div>`,
+        templateKey:'booking-approved', templateVariables:{ guestName:booking.name, arrival:dates.arrival, departure:dates.departure, total:`$${(amountCents/100).toFixed(2)}`, paymentText, packetUrl, checkout, bookingCode },
+        text: `Hi ${booking.name},\n\nYour requested stay from ${dates.arrival} to ${dates.departure} is available. The approved total is $${(amountCents / 100).toFixed(2)}. Check-in begins at 4:00 PM and checkout is ${checkout}. ${paymentText}\n\nOpen your private booking packet to track payment, sign the rental agreement, and download your paperwork: ${packetUrl}\nGuest Guide reservation code: ${bookingCode}\n\nCancellation policy: cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the 20% reservation deposit is retained and any remaining amount paid is refunded.\n\nYour reservation is final after ${paymentPlan === 'complimentary' ? 'the rental agreement is accepted' : 'payment is made and the rental agreement is accepted'}.`,
+        html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Your booking packet</h1><p>Hi ${safeName},</p><p>We approved <strong>${dates.arrival} through ${dates.departure}</strong>.</p><p>Check-in: <strong>4:00 PM</strong><br>Checkout: <strong>${escapeEmailHtml(checkout)}</strong></p><p>Approved total: <strong>$${(amountCents / 100).toFixed(2)}</strong></p>${paymentHtml}<p><a href="${packetUrl}" style="display:inline-block;background:#a45d41;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Open booking packet</a></p><p><strong>Guest Guide reservation code:</strong> ${bookingCode}</p><p>Track payment, sign the rental agreement, and download your paperwork from the packet.</p><p style="background:#fff0cc;padding:12px;border-radius:8px"><strong>Cancellation policy:</strong> Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the 20% reservation deposit is retained and any remaining amount paid is refunded.</p><p>Your reservation is final after ${paymentPlan === 'complimentary' ? 'the rental agreement is accepted' : 'payment is made and the rental agreement is accepted'}.</p></div>`,
       });
       return json(response, 200, { ok: true, paymentUrl: payment?.url || null, complimentary: paymentPlan === 'complimentary' });
     }

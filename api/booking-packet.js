@@ -3,7 +3,7 @@ import { findBookingInvite } from '../_lib/booking-invite.js';
 import { guestFirstName } from '../_lib/guest-name.js';
 import { getInvites } from '../_lib/invite-store.js';
 import { refreshSquareBooking } from '../_lib/payment-sync.js';
-import { json, verifyAgreementToken } from '../_lib/security.js';
+import { bookingAccessCode, json, verifyAgreementToken } from '../_lib/security.js';
 
 export default async function handler(request, response) {
   if (request.method !== 'GET') return json(response, 405, { error: 'Method not allowed.' });
@@ -30,6 +30,7 @@ export default async function handler(request, response) {
       guestFullName: booking.name || '',
       guestEmail: booking.email || '',
       guestPhone: booking.phone || linkedInvite?.recipientPhone || linkedDiscount?.target || '',
+      reservationCode: bookingAccessCode(booking.id),
       arrival: dates.arrival || '',
       departure: dates.departure || '',
       guests: booking.guests || 1,
