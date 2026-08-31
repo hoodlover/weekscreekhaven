@@ -9,7 +9,8 @@ export default async function handler(request, response) {
   const rate = enforceRateLimit(request, 'invite-login', 10, 15 * 60 * 1000);
   if (!rate.allowed) return rateLimitJson(response, rate);
   try {
-    const passcode = normalizePasscode(request.body?.passcode);
+    const passcodeSuffix = normalizePasscode(request.body?.passcode).replace(/^(?:WCH-)+/, '');
+    const passcode = passcodeSuffix ? `WCH-${passcodeSuffix}` : '';
     const visitorName = String(request.body?.visitorName || '').trim().slice(0, 80);
     if (!passcode || !visitorName) return json(response, 400, { error: 'Enter your name and invite passcode.' });
     const invites = await getInvites();

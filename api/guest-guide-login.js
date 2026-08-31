@@ -10,7 +10,8 @@ export default async function handler(request, response) {
   const rate = enforceRateLimit(request, 'guest-guide-login', 8, 15 * 60 * 1000);
   if (!rate.allowed) return rateLimitJson(response, rate);
   try {
-    const suppliedCode = normalizePasscode(request.body?.reservationCode);
+    const codeSuffix = normalizePasscode(request.body?.reservationCode).replace(/^(?:WCH-)+/, '');
+    const suppliedCode = codeSuffix ? `WCH-${codeSuffix}` : '';
     if (!suppliedCode || !/^WCH-[A-Z0-9]{10}$/.test(suppliedCode)) {
       return json(response, 400, { error: 'Enter the WCH reservation code from your booking email.' });
     }

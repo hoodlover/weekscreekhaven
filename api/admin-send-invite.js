@@ -1,6 +1,6 @@
 import { sendEmail, escapeEmailHtml } from '../_lib/email.js';
 import { getInvites } from '../_lib/invite-store.js';
-import { inviteCodeSuffix, json, requireAdmin } from '../_lib/security.js';
+import { json, requireAdmin } from '../_lib/security.js';
 import { daysBetween, withEstimatedTaxesAndFees } from '../pricing.js';
 
 function validEmail(value) {
@@ -21,9 +21,9 @@ export default async function handler(request, response) {
     const recipientEmail = validEmail(request.body?.recipientEmail || invite.recipientEmail);
     if (!recipientEmail) return json(response, 400, { error: 'Add a valid guest email address.' });
     const guestName = invite.label;
-    const url = 'https://www.weekscreekhaven.com/important-info.html';
+    const url = 'https://www.weekscreekhaven.com/important-info.html?invite=1';
     const safeName = escapeEmailHtml(guestName);
-    const code = inviteCodeSuffix(invite.passcode);
+    const code = invite.passcode;
     const safeCode = escapeEmailHtml(code);
     const options = invite.stayOptions || [];
     const welcomeMessage = invite.welcomeMessage || 'We’d love for you to enjoy some time at Weeks Creek Haven.';
@@ -40,8 +40,8 @@ export default async function handler(request, response) {
       toName: guestName,
       templateKey:'guest-invitation', templateVariables:{ guestName, welcomeMessage, inviteOffer, hubUrl:url, inviteCode:code },
       subject: `A little Blue Ridge getaway for you`,
-      text: `Hi ${guestName},\n\n${welcomeMessage}\n\n${optionsText ? `We are holding these stay choices for you:\n${optionsText}\n\nOptions with different deadlines expire separately. Choosing one releases the others.` : `Use your private invitation to see the live calendar and choose any open dates that work for you. ${inviteOffer}`}\n\nOpen: ${url}\nYour code: ${code}\n\nThe sign-in page already supplies WCH-. Enter your name and these 8 characters to open your welcome and choose your dates.`,
-      html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">A little Blue Ridge getaway for you</h1><p>Hi ${safeName},</p><p>${escapeEmailHtml(welcomeMessage)}</p>${optionsHtml ? `<h2 style="color:#183c2d">Your stay choices</h2><ol>${optionsHtml}</ol><p>Each deadline applies only to that option. Choosing one releases the others.</p>` : `<p>Use your private invitation to see the live calendar and choose any open dates that work for you.</p><p style="background:#e8f2e9;padding:12px;border-radius:8px"><strong>${escapeEmailHtml(inviteOffer)}</strong></p>`}<p><a href="${url}" style="display:inline-block;background:#183c2d;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Open your invitation</a></p><p>Your invitation code is <strong style="font-size:20px;letter-spacing:2px">${safeCode}</strong>.</p><p style="color:#74685e;font-size:13px">The sign-in page already supplies <strong>WCH-</strong>, so enter only these 8 characters.</p><p>Enter your name and the code when prompted, then choose the dates that work best.</p></div>`,
+      text: `Hi ${guestName},\n\n${welcomeMessage}\n\n${optionsText ? `We are holding these stay choices for you:\n${optionsText}\n\nOptions with different deadlines expire separately. Choosing one releases the others.` : `Use your private invitation to see the live calendar and choose any open dates that work for you. ${inviteOffer}`}\n\nOpen: ${url}\nYour invitation code: ${code}\n\nThe invitation form opens automatically. Enter your name, then paste the full code or enter just the 8 characters after WCH-.`,
+      html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">A little Blue Ridge getaway for you</h1><p>Hi ${safeName},</p><p>${escapeEmailHtml(welcomeMessage)}</p>${optionsHtml ? `<h2 style="color:#183c2d">Your stay choices</h2><ol>${optionsHtml}</ol><p>Each deadline applies only to that option. Choosing one releases the others.</p>` : `<p>Use your private invitation to see the live calendar and choose any open dates that work for you.</p><p style="background:#e8f2e9;padding:12px;border-radius:8px"><strong>${escapeEmailHtml(inviteOffer)}</strong></p>`}<p><a href="${url}" style="display:inline-block;background:#183c2d;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Open your invitation</a></p><p>Your invitation code is <strong style="font-size:20px;letter-spacing:2px">${safeCode}</strong>.</p><p style="color:#74685e;font-size:13px">The invitation form opens automatically. Enter your name, then paste the full code or enter just the 8 characters after <strong>WCH-</strong>.</p><p>Choose the dates that work best for you.</p></div>`,
     });
     return json(response, 200, { ok: true });
   } catch (error) {
