@@ -904,8 +904,9 @@
                     <div><p class="arrival-kicker">A quick note to us</p><h2 class="section-title">Send Your Checkout Report</h2></div>
                     <p>Tell us what needs restocking or attention. If something is urgent, call or text Lance at 770.549.9358.</p>
                 </div>
-                <form id="checkout-form" action="https://formspree.io/f/mzdjnprj" method="POST" class="space-y-5">
-                    <input type="hidden" name="_subject" value="Restock & Checkout Report">
+                <form id="checkout-form" action="/api/checkout-report" method="POST" class="space-y-5">
+                    <input id="checkout-booking-token" type="hidden" name="booking_token" value="">
+                    <input id="checkout-checklist-completed" type="hidden" name="checklist_completed" value="false">
                     <div>
                         <label class="block text-xs uppercase tracking-widest font-bold text-stone-500 mb-2">Supplies running low</label>
                         <div class="departure-form-grid">
@@ -1419,6 +1420,10 @@ function fetchForm(formId, submitId, sendingId, errorId, redirectUrl) {
         }
     });
 }
+document.getElementById('checkout-form')?.addEventListener('submit', () => {
+    const checklistIds = ['c-linens','c-bathrooms','c-dishes','c-fridge','c-trash','c-fireplace','c-hottub','c-lights','c-lockup','c-trace'];
+    document.getElementById('checkout-checklist-completed').value = String(checklistIds.every(id => document.getElementById(id)?.checked));
+});
 fetchForm('checkout-form',    'checkout-submit',    'checkout-sending',    'checkout-error',    '/thank-you-departure.html');
 fetchForm('guestbook-form',   'guestbook-submit',   'guestbook-sending',   'guestbook-error',   '/thank-you-guestbook.html');
 
@@ -1454,6 +1459,7 @@ function personalizeGuestGuide(profile, packetUrl = '') {
         const packet = document.getElementById('hub-booking-packet');
         packet.href = packetUrl;
         packet.hidden = false;
+        document.getElementById('checkout-booking-token').value = new URL(packetUrl, location.origin).searchParams.get('token') || '';
     }
 }
 

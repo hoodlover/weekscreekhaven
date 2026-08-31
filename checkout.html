@@ -137,10 +137,9 @@
                 <div><p class="kicker">A quick note to us</p><h2 class="section-title">Send Your Checkout Report</h2></div>
                 <p>Tell us what needs restocking or attention. If something is urgent, call or text Lance at 770.549.9358.</p>
             </div>
-            <form id="checkout-form" action="https://formspree.io/f/mzdjnprj" method="POST" class="space-y-5">
-                <input type="hidden" name="_next" value="https://www.weekscreekhaven.com/thank-you-departure.html">
-                <input type="hidden" name="_subject" value="Weeks Creek Haven Checkout Report">
+            <form id="checkout-form" action="/api/checkout-report" method="POST" class="space-y-5">
                 <input type="hidden" id="booking-token" name="booking_token" value="">
+                <input type="hidden" id="checklist-completed" name="checklist_completed" value="false">
                 <div>
                     <label class="field-label">Supplies running low</label>
                     <div class="choice-grid">
@@ -236,22 +235,31 @@ function openLightbox(src) {
 function closeLightbox() { document.getElementById('lightbox').style.display = 'none'; }
 
 document.getElementById('checkout-form').addEventListener('submit', async (event) => {
-    if (!checkoutToken) return;
     event.preventDefault();
     const form = event.currentTarget;
     const submit = form.querySelector('button[type="submit"]');
+    const paidBoxIds = ['paid-dishes','paid-food','paid-trash','paid-hottub','paid-lights','paid-lockup'];
+    const checklistIds = cleanerScheduled ? paidBoxIds : friendBoxIds;
+    document.getElementById('checklist-completed').value = String(checklistIds.every(id => document.getElementById(id)?.checked));
     submit.disabled = true;
+    submit.textContent = 'Sending report...';
     try {
-        const response = await fetch('/api/complete-checkout', {
+        const payload = {};
+        new FormData(form).forEach((value, key) => {
+            if (payload[key]) payload[key] = [].concat(payload[key], value);
+            else payload[key] = value;
+        });
+        const response = await fetch(form.action, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: checkoutToken }),
+            body: JSON.stringify(payload),
         });
         const data = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(data.error || 'Checkout could not be marked complete.');
-        form.submit();
+        if (!response.ok) throw new Error(data.error || 'Your checkout report could not be sent.');
+        window.location.href = '/thank-you-departure.html';
     } catch (error) {
         submit.disabled = false;
+        submit.textContent = 'Send Checkout Report';
         alert(error.message + ' Your answers are still here; please try again.');
     }
 });
