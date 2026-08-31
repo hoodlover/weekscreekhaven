@@ -10,6 +10,11 @@ function easternToday() {
   const value=Object.fromEntries(parts.map(part=>[part.type,part.value]));
   return `${value.year}-${value.month}-${value.day}`;
 }
+function easternHour() {
+  return Number(new Intl.DateTimeFormat('en-US', {
+    timeZone:'America/New_York', hour:'2-digit', hourCycle:'h23'
+  }).format(new Date()));
+}
 function shiftDate(value, days) { const date=new Date(`${value}T12:00:00Z`); date.setUTCDate(date.getUTCDate()+days); return date.toISOString().slice(0,10); }
 function money(cents) { return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format((Number(cents)||0)/100); }
 function selectedDates(booking) { return booking.dateChoices?.[Number.isInteger(booking.approvedChoice)?booking.approvedChoice:0] || booking.dateChoices?.[0] || {}; }
@@ -52,6 +57,7 @@ export default async function handler(request, response) {
   if (request.method !== 'GET') return json(response, 405, { error:'Method not allowed.' });
   try {
     const today=easternToday();
+    const hour=easternHour();
     const calendar=await getBookingCalendar();
     const stored=calendar.bookings||[];
     let sent=0;
@@ -77,11 +83,11 @@ export default async function handler(request, response) {
       else if (booking.paymentPlan==='deposit-balance' && !booking.paymentRequirementMet && booking.depositReminderSentAt && Date.now()-Date.parse(booking.depositReminderSentAt)>=20*3600000) sent+=await scheduledSend(booking,'deposit-grace',common,'depositGraceSentAt');
       if (booking.paymentPlan==='deposit-balance' && !booking.paymentFullyPaid && booking.balanceDueDate && today===shiftDate(booking.balanceDueDate,-1)) sent+=await scheduledSend(booking,'balance-reminder',common,'balanceReminderSentAt');
       if (booking.paymentPlan==='deposit-balance' && !booking.paymentFullyPaid && booking.balanceDueDate && today>booking.balanceDueDate) sent+=await scheduledSend(booking,'balance-grace',common,'balanceGraceSentAt');
-      if (booking.status==='booked' && today===shiftDate(dates.arrival,-3)) sent+=await scheduledSend(booking,'pre-arrival-guide',common,'preArrivalEmailSentAt');
-      if (booking.status==='booked' && today===dates.arrival) sent+=await scheduledSend(booking,'checkin-reminder',common,'checkinEmailSentAt');
-      if(booking.status==='booked'&&today===dates.arrival&&booking.doorCode&&booking.doorCodeInstalledAt&&!booking.doorCodeGuestSentAt){const result=await sendEmail({to:booking.email,toName:booking.name,subject:'Your Weeks Creek Haven door code',text:`Hi ${booking.name},\n\nYour private cabin door code is ${booking.doorCode}. Please keep it within your registered group. Your cabin packet has the remaining arrival details.`,html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6"><h1 style="color:#183c2d">Your cabin door code</h1><p>Hi ${booking.name},</p><p>Your private cabin door code is:</p><p style="font-size:30px;font-weight:800;letter-spacing:.14em">${booking.doorCode}</p><p>Please keep it within your registered group. Your cabin packet has the remaining arrival details.</p></div>`,idempotencyKey:`${booking.id}-door-code`});if(!result?.skipped){const sentAt=new Date().toISOString();await appendBookingRecord({type:'status',bookingId:booking.id,changes:{doorCodeGuestSentAt:sentAt},createdAt:sentAt});sent++;}}
+      if (booking.status==='booked' && today===shiftDate(dates.arrival,-3) && hour>=9) sent+=await scheduledSend(booking,'pre-arrival-guide',common,'preArrivalEmailSentAt');
+      if (booking.status==='booked' && today===dates.arrival && hour>=9) sent+=await scheduledSend(booking,'checkin-reminder',common,'checkinEmailSentAt');
+      if(booking.status==='booked'&&today===dates.arrival&&hour>=9&&booking.doorCode&&booking.doorCodeInstalledAt&&!booking.doorCodeGuestSentAt){const result=await sendEmail({to:booking.email,toName:booking.name,subject:'Your Weeks Creek Haven door code',text:`Hi ${booking.name},\n\nYour private cabin door code is ${booking.doorCode}. It is also available now in your Booking & Signing Packet and the Check In page of your Guest Guide. Please keep it within your registered group. Check-in begins at 4:00 PM Eastern.`,html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6"><h1 style="color:#183c2d">Your cabin door code</h1><p>Hi ${booking.name},</p><p>Your private cabin door code is:</p><p style="font-size:30px;font-weight:800;letter-spacing:.14em">${booking.doorCode}</p><p>It is also available now in your Booking &amp; Signing Packet and the Check In page of your Guest Guide. Please keep it within your registered group.</p><p><strong>Check-in begins at 4:00 PM Eastern.</strong></p></div>`,idempotencyKey:`${booking.id}-door-code`});if(!result?.skipped){const sentAt=new Date().toISOString();await appendBookingRecord({type:'status',bookingId:booking.id,changes:{doorCodeGuestSentAt:sentAt},createdAt:sentAt});sent++;}}
       if (booking.status==='booked' && today===midpoint(dates.arrival,dates.departure)) sent+=await scheduledSend(booking,'midstay-rebook',common,'midstayRebookSentAt');
-      if (booking.status==='booked' && today===dates.departure) sent+=await scheduledSend(booking,'checkout-reminder',common,'checkoutEmailSentAt');
+      if (booking.status==='booked' && today===dates.departure && hour>=8) sent+=await scheduledSend(booking,'checkout-reminder',common,'checkoutEmailSentAt');
       if (booking.status==='booked' && !booking.checkoutCompletedAt && today===shiftDate(dates.departure,1)) sent+=await scheduledSend(booking,'checkout-reminder',common,'checkoutFollowupSentAt');
       if (booking.status==='completed' && today===shiftDate(dates.departure,1) && !booking.reviewRequestedAt) sent+=await scheduledSend(booking,'thank-you-review',common,'thankYouEmailSentAt');
       if (booking.status==='completed' && Number(booking.securityDepositCents)>0 && today===shiftDate(dates.departure,1)) sent+=await scheduledOwnerSend(booking,'security-deposit-review',common,'securityDepositReviewSentAt');

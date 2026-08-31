@@ -534,7 +534,7 @@
                     <div class="arrival-secret-list">
                         <div class="arrival-secret">
                             <span>Cabin door code</span>
-                            <strong id="door-code">22246</strong>
+                            <strong id="door-code">Available at 9:00 AM Eastern on check-in day</strong>
                         </div>
                         <div class="arrival-secret">
                             <span>Wi-Fi network</span>
@@ -1392,6 +1392,10 @@ function personalizeGuestGuide(profile, packetUrl = '') {
     const firstName = profile.guestName || profile.name || '';
     const fullName = profile.guestFullName || profile.name || firstName;
     const phone = profile.guestPhone || profile.phone || '';
+    const doorCode = document.getElementById('door-code');
+    if (doorCode) doorCode.textContent = profile.doorCodeAvailable && profile.doorCode
+        ? profile.doorCode
+        : (profile.doorCodeReleaseText || 'Available at 9:00 AM Eastern on check-in day');
     if (firstName) {
         document.getElementById('guest-welcome-title').textContent = `Welcome to the Haven, ${firstName}.`;
         document.getElementById('guest-checkout-title').textContent = `Safe travels, ${firstName} & crew.`;
