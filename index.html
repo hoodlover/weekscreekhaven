@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blue Ridge GA Cabin Rental | Weeks Creek Haven</title>
   <link rel="icon" href="/webpic/wch-favicon-v2.ico" sizes="any">
-  <link rel="manifest" href="/site-manifest.json?v=1">
+  <link rel="manifest" href="/site-manifest.json?v=2">
   <link rel="apple-touch-icon" sizes="180x180" href="/webpic/wch-main-apple-180-v1.png">
   <meta name="theme-color" content="#00111d">
   <link rel="icon" type="image/png" sizes="48x48" href="/webpic/wch-favicon-48-v2.png">
@@ -256,6 +256,9 @@
     .pwa-splash.is-visible { display:flex; }
     .pwa-splash img { width:min(62vw,280px); aspect-ratio:1; object-fit:cover; border-radius:22%; box-shadow:0 18px 50px rgba(0,0,0,.42); }
     .pwa-splash.is-leaving { opacity:0; transition:opacity .22s ease; pointer-events:none; }
+    .main-pwa-install { display:inline-flex; align-items:center; gap:.55rem; }
+    .main-pwa-install[hidden] { display:none; }
+    .main-pwa-install img { width:24px; height:24px; border-radius:6px; }
   </style>
 </head>
 <body>
@@ -276,6 +279,9 @@
       <a href="register.html" class="btn-primary">Request Dates</a>
       <a href="availability.html" class="btn-ghost">Availability &amp; Rates</a>
       <a href="gallery.html" class="btn-ghost">See the Cabin</a>
+      <button id="main-pwa-install" class="btn-ghost main-pwa-install" type="button">
+        <img src="/webpic/wch-main-pwa-192-v1.png" alt="">Install WCH App
+      </button>
     </div>
   </div>
   <div class="hero-scroll"><div class="scroll-line"></div><span>Scroll</span></div>
@@ -477,8 +483,44 @@
 </script>
 <script>
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('/friends-sw.js?v=34').catch(() => {}));
+    window.addEventListener('load', () => navigator.serviceWorker.register('/friends-sw.js?v=37').catch(() => {}));
   }
+</script>
+
+<script>
+  (() => {
+    const button = document.getElementById('main-pwa-install');
+    const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    if (!button || standalone) {
+      if (button) button.hidden = true;
+      return;
+    }
+
+    let installPrompt = null;
+    window.addEventListener('beforeinstallprompt', event => {
+      event.preventDefault();
+      installPrompt = event;
+    });
+
+    window.addEventListener('appinstalled', () => {
+      installPrompt = null;
+      button.hidden = true;
+    });
+
+    button.addEventListener('click', async () => {
+      if (installPrompt) {
+        installPrompt.prompt();
+        await installPrompt.userChoice;
+        installPrompt = null;
+        return;
+      }
+
+      const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+      window.alert(isIOS
+        ? 'In Safari, tap Share, then Add to Home Screen.'
+        : 'In your browser menu, tap Add to Home screen or Install app.');
+    });
+  })();
 </script>
 
 <script>
