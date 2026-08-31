@@ -2,11 +2,12 @@ import { appendBookingRecord, getBookingCalendar, getBookingRequests, rangesOver
 import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
 import { mergeEmailTemplates } from '../_lib/email-library.js';
 import { getInvites } from '../_lib/invite-store.js';
-import { bookingAccessCode, createAgreementToken, createReviewToken, json, requireAdmin } from '../_lib/security.js';
+import { createAgreementToken, createReviewToken, json, requireAdmin } from '../_lib/security.js';
 import { cancelSquareInvoice, createSquareBookingInvoice, createSquareFriendInvoice, getSquareInvoice, squareStatus } from '../_lib/square.js';
 import { refreshSquareBooking } from '../_lib/payment-sync.js';
 import { findBookingInvite } from '../_lib/booking-invite.js';
 import { daysBetween, PRICING_CONFIG, quoteStay, withEstimatedTaxesAndFees } from '../pricing.js';
+import { generateDoorCode, selectedStay } from '../_lib/door-code.js';
 
 function completedInvoiceCents(invoice) {
   return (invoice?.payment_requests || []).reduce((sum, paymentRequest) => sum + (Number(paymentRequest.total_completed_amount_money?.amount) || 0), 0);
@@ -22,17 +23,6 @@ function bookingPacketUrl(bookingId) {
   return `https://www.weekscreekhaven.com/booking-packet.html?token=${encodeURIComponent(token)}`;
 }
 
-function guestGuideUrl(bookingId) {
-  const token = createAgreementToken(bookingId, 365 * 86400);
-  return `https://www.weekscreekhaven.com/friends-hub.html?token=${encodeURIComponent(token)}&tab=checkin`;
-}
-
-function checkoutLabel(booking, dates = {}) {
-  return booking.friendsAndFamilyDiscount || dates.quote?.friendsAndFamilyDiscount
-    ? 'flexible—there is no set time unless Lance or Heather lets you know personally'
-    : (booking.lateCheckout ? 'noon' : '11:00 AM');
-}
-
 function easternToday() {
   const parts = new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
   const value = Object.fromEntries(parts.map(part => [part.type, part.value]));
@@ -42,12 +32,11 @@ function easternToday() {
 function stayEmailVariables(booking) {
   const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || booking.dateChoices?.[0] || {};
   const packetUrl = bookingPacketUrl(booking.id);
-  const discount = booking.friendsAndFamilyDiscount || dates.quote?.friendsAndFamilyDiscount;
-  const noCleaner = Boolean(discount) && discount.chargeCleaning !== true;
+  const noCleaner = Boolean(booking.friendsAndFamilyDiscount) && booking.friendsAndFamilyDiscount.chargeCleaning !== true;
   const reviewUrl = `https://www.weekscreekhaven.com/review.html?token=${encodeURIComponent(createReviewToken(booking.id))}`;
   const refund = (booking.refunds || []).at(-1) || {};
   return {
-    guestName:booking.name, arrival:dates.arrival || '', departure:dates.departure || '', checkout:checkoutLabel(booking, dates), packetUrl, guestGuideUrl:guestGuideUrl(booking.id), bookingCode:bookingAccessCode(booking.id),
+    guestName:booking.name, arrival:dates.arrival || '', departure:dates.departure || '', checkout:booking.lateCheckout?'noon':'11:00 AM', packetUrl,
     paymentUrl:booking.paymentUrl || packetUrl, depositAmount:`$${((Number(booking.depositAmountCents)||0)/100).toFixed(2)}`,
     balanceAmount:`$${((Number(booking.squareBalanceCents ?? booking.balanceAmountCents)||0)/100).toFixed(2)}`,
     bookingUrl:'https://www.weekscreekhaven.com/register.html', reviewUrl, referralCode:booking.referralCode || '',
@@ -65,8 +54,6 @@ async function sendBookingPacketEmail(booking, packetUrl) {
   const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || booking.dateChoices?.[0] || {};
   const paid = booking.paymentPlan === 'complimentary' || Number(booking.amountCents) === 0 || booking.paymentRequirementMet === true;
   const signed = Boolean(booking.agreementAcceptedAt);
-  const checkout = checkoutLabel(booking, dates);
-  const bookingCode = bookingAccessCode(booking.id);
   const nextStep = signed
     ? 'Your signed agreement, payment status, and booking information are available in the packet.'
     : paid
@@ -75,10 +62,10 @@ async function sendBookingPacketEmail(booking, packetUrl) {
   await sendEmail({
     to: booking.email,
     toName: booking.name,
-    templateKey:'booking-packet', templateVariables:{ guestName:booking.name, nextStep, arrival:dates.arrival || 'To be confirmed', departure:dates.departure || 'To be confirmed', packetUrl, checkout, bookingCode },
+    templateKey:'booking-packet', templateVariables:{ guestName:booking.name, nextStep, arrival:dates.arrival || 'To be confirmed', departure:dates.departure || 'To be confirmed', packetUrl, checkout:booking.lateCheckout?'noon':'11:00 AM' },
     subject: signed ? 'Your Weeks Creek Haven booking packet' : 'Please sign your Weeks Creek Haven agreement',
-    text: `Hi ${booking.name},\n\n${nextStep}\n\nStay: ${dates.arrival || 'To be confirmed'} through ${dates.departure || 'To be confirmed'}\n\nOpen your private booking packet: ${packetUrl}\nGuest Guide reservation code: ${bookingCode}\n\nCheck-in begins at 4:00 PM. Checkout is ${checkout}.`,
-    html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Your private booking packet</h1><p>Hi ${escapeEmailHtml(booking.name)},</p><p>${escapeEmailHtml(nextStep)}</p><p><strong>${escapeEmailHtml(dates.arrival || 'To be confirmed')} through ${escapeEmailHtml(dates.departure || 'To be confirmed')}</strong></p><p><a href="${packetUrl}" style="display:inline-block;background:#183c2d;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">${signed ? 'Open booking packet' : 'Open packet and sign agreement'}</a></p><p><strong>Guest Guide reservation code:</strong> ${bookingCode}</p><p>Check-in begins at <strong>4:00 PM</strong>. Checkout is <strong>${escapeEmailHtml(checkout)}</strong>.</p></div>`,
+    text: `Hi ${booking.name},\n\n${nextStep}\n\nStay: ${dates.arrival || 'To be confirmed'} through ${dates.departure || 'To be confirmed'}\n\nOpen your private booking packet: ${packetUrl}\n\nCheck-in begins at 4:00 PM. Checkout is ${booking.lateCheckout ? 'noon' : '11:00 AM'}.`,
+    html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Your private booking packet</h1><p>Hi ${escapeEmailHtml(booking.name)},</p><p>${escapeEmailHtml(nextStep)}</p><p><strong>${escapeEmailHtml(dates.arrival || 'To be confirmed')} through ${escapeEmailHtml(dates.departure || 'To be confirmed')}</strong></p><p><a href="${packetUrl}" style="display:inline-block;background:#183c2d;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">${signed ? 'Open booking packet' : 'Open packet and sign agreement'}</a></p><p>Check-in begins at <strong>4:00 PM</strong>. Checkout is <strong>${booking.lateCheckout ? 'noon' : '11:00 AM'}</strong>.</p></div>`,
   });
 }
 
@@ -97,7 +84,6 @@ export default async function handler(request, response) {
         return {
           ...booking,
           bookingPacketUrl: bookingPacketUrl(booking.id),
-          guestGuideCode: bookingAccessCode(booking.id),
           invitePasscode: invite?.passcode || '',
           welcomePreviewUrl: invite ? `/api/admin-preview-invite?inviteId=${encodeURIComponent(invite.id)}` : '',
           dateChoices: (booking.dateChoices || []).map((choice, choiceIndex) => {
@@ -118,46 +104,67 @@ export default async function handler(request, response) {
             const finalDisplayedQuote = booking.friendsAndFamilyDiscount
               ? { ...displayedQuote, refundableSecurityDepositCents: 0, estimatedAmountDueCents: displayedQuote?.estimatedGrandTotalCents || 0 }
               : displayedQuote;
-            const isComplimentary = choice.complimentary || booking.complimentary || booking.paymentPlan === 'complimentary';
             return {
               ...choice,
-              calculatedQuote: isComplimentary
+              calculatedQuote: choice.complimentary
                 ? withEstimatedTaxesAndFees({ ...finalDisplayedQuote, totalCents: 0, complimentary: true })
                 : finalDisplayedQuote,
             };
           }),
         };
       });
-      return json(response, 200, { bookings: pricedBookings, square: squareStatus(), pricing: PRICING_CONFIG, rates: calendar.rates || [] }, { 'Cache-Control': 'no-store' });
+      return json(response, 200, { bookings: pricedBookings, square: squareStatus(), pricing: PRICING_CONFIG, rates: calendar.rates || [], doorCodeRetirement: calendar.doorCodeRetirement || { required:true } }, { 'Cache-Control': 'no-store' });
     }
     if (request.method !== 'PATCH') return json(response, 405, { error: 'Method not allowed.' });
     const bookings = await getBookingRequests();
-    const booking = bookings.find((item) => item.id === String(request.body?.bookingId || ''));
-    if (!booking) return json(response, 404, { error: 'Booking request not found.' });
     const action = String(request.body?.action || '');
     const createdAt = new Date().toISOString();
+    if (action === 'retire-current-door-code') {
+      await appendBookingRecord({ type:'door_code_retirement_confirmed', createdAt });
+      return json(response, 200, { ok:true, retiredAt:createdAt });
+    }
+    const booking = bookings.find((item) => item.id === String(request.body?.bookingId || ''));
+    if (!booking) return json(response, 404, { error: 'Booking request not found.' });
+    if (action === 'generate-door-code') {
+      if (booking.status !== 'booked') return json(response, 409, { error:'Door codes are created only after a stay is Booked.' });
+      if (booking.doorCode && !booking.doorCodeRemovedAt) return json(response, 200, { ok:true, doorCode:booking.doorCode });
+      const doorCode = generateDoorCode(bookings);
+      await appendBookingRecord({ type:'status', bookingId:booking.id, changes:{ doorCode, doorCodeGeneratedAt:createdAt, doorCodeInstalledAt:null, doorCodeRemovedAt:null, doorCodeGuestSentAt:null }, createdAt });
+      const stay=selectedStay(booking);
+      if (process.env.OWNER_EMAIL) await sendEmail({ to:process.env.OWNER_EMAIL, toName:'Heather & Lance', subject:`Set ${booking.name}’s guest door code`, text:`A new guest door code is ready.\n\nGuest: ${booking.name}\nStay: ${stay.arrival || ''} through ${stay.departure || ''}\nDoor code: ${doorCode}\n\nProgram this code on all cabin doors, then open the Command Center and select “Code installed.”`, html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6"><h1 style="color:#183c2d">Set the guest door code</h1><p><strong>${escapeEmailHtml(booking.name)}</strong><br>${escapeEmailHtml(stay.arrival || '')} through ${escapeEmailHtml(stay.departure || '')}</p><p style="font-size:28px;font-weight:800;letter-spacing:.14em">${doorCode}</p><p>Program this code on all cabin doors, then confirm <strong>Code installed</strong> in the Command Center.</p></div>` });
+      return json(response, 200, { ok:true, doorCode });
+    }
+    if (action === 'door-code-installed') {
+      if (!booking.doorCode) return json(response, 409, { error:'Generate the guest code first.' });
+      await appendBookingRecord({ type:'status', bookingId:booking.id, changes:{ doorCodeInstalledAt:createdAt, doorCodeRemovedAt:null }, createdAt });
+      return json(response, 200, { ok:true, installedAt:createdAt });
+    }
+    if (action === 'send-door-code') {
+      if (!booking.doorCode || !booking.doorCodeInstalledAt) return json(response, 409, { error:'Confirm that the code is installed before sending it.' });
+      if (!booking.email) return json(response, 400, { error:'This booking does not have a guest email address.' });
+      if (String(process.env.OWNER_EMAIL || '').trim().toLowerCase() === String(booking.email).trim().toLowerCase()) return json(response, 409, { error:'Correct the guest email before sending the door code.' });
+      const stay=selectedStay(booking);
+      await sendEmail({ to:booking.email, toName:booking.name, subject:'Your Weeks Creek Haven door code', text:`Hi ${booking.name},\n\nYour private door code for ${stay.arrival || 'your stay'} through ${stay.departure || ''} is ${booking.doorCode}. It activates for your stay and should not be shared outside your registered group.\n\nYour cabin packet has the remaining arrival details.`, html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6"><h1 style="color:#183c2d">Your cabin door code</h1><p>Hi ${escapeEmailHtml(booking.name)},</p><p>Your private code for <strong>${escapeEmailHtml(stay.arrival || 'your stay')} through ${escapeEmailHtml(stay.departure || '')}</strong> is:</p><p style="font-size:30px;font-weight:800;letter-spacing:.14em">${booking.doorCode}</p><p>Please keep it within your registered group. Your cabin packet contains the remaining arrival details.</p></div>` });
+      await appendBookingRecord({ type:'status', bookingId:booking.id, changes:{ doorCodeGuestSentAt:createdAt }, createdAt });
+      return json(response, 200, { ok:true, sentAt:createdAt });
+    }
+    if (action === 'door-code-removed') {
+      if (!booking.doorCode) return json(response, 409, { error:'This booking has no recorded door code.' });
+      await appendBookingRecord({ type:'status', bookingId:booking.id, changes:{ doorCodeRemovedAt:createdAt }, createdAt });
+      return json(response, 200, { ok:true, removedAt:createdAt });
+    }
     if (action === 'correct-guest-contact') {
       const email = validEmail(request.body?.email);
       const name = String(request.body?.name || '').trim().slice(0, 100);
-      const phone = String(request.body?.phone || '').trim().slice(0, 40);
       const inviteId = String(request.body?.inviteId || '').trim();
       if (!email || name.length < 2) return json(response, 400, { error: 'Add the correct guest name and email address.' });
-      if (phone && phone.replace(/\D/g, '').length < 10) return json(response, 400, { error: 'Enter a complete guest phone number or leave it blank.' });
       if (inviteId) {
         const invite = (await getInvites()).find((item) => item.id === inviteId && !item.revokedAt);
         if (!invite) return json(response, 400, { error: 'That active invite could not be found.' });
         if (invite.recipientEmail && invite.recipientEmail.toLowerCase() !== email) return json(response, 409, { error: 'The entered email does not match that invitation.' });
       }
-      await appendBookingRecord({ type: 'status', bookingId: booking.id, changes: { name, email, phone, inviteId: inviteId || booking.inviteId || null, source: inviteId ? 'invite-booking' : booking.source, guestContactCorrectedAt: createdAt }, createdAt });
-      return json(response, 200, { ok: true, name, email, phone, inviteId: inviteId || booking.inviteId || null });
-    }
-    if (action === 'mark-completed') {
-      const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || booking.dateChoices?.[0] || {};
-      if (booking.status !== 'booked') return json(response, 409, { error: 'Only a booked stay can be marked completed.' });
-      if (!dates.departure || easternToday() < dates.departure) return json(response, 409, { error: 'A stay can be completed on or after its checkout date.' });
-      const changes = { status: 'completed', completedAt: createdAt, completedByOwnerAt: createdAt };
-      await appendBookingRecord({ type: 'status', bookingId: booking.id, changes, createdAt });
-      return json(response, 200, { ok: true, ...changes });
+      await appendBookingRecord({ type: 'status', bookingId: booking.id, changes: { name, email, inviteId: inviteId || null, source: inviteId ? 'invite-booking' : booking.source, guestContactCorrectedAt: createdAt }, createdAt });
+      return json(response, 200, { ok: true, name, email, inviteId: inviteId || null });
     }
     if (action === 'archive') {
       if (!['declined', 'cancelled'].includes(booking.status)) return json(response, 409, { error: 'Only declined or canceled bookings can be archived.' });
@@ -228,13 +235,11 @@ export default async function handler(request, response) {
       const paymentHtml = paymentPlan === 'complimentary'
         ? '<p style="background:#e8f2e9;padding:12px;border-radius:8px"><strong>Complimentary stay:</strong> No payment is required.</p>'
         : `<p><a href="${payment.url}" style="display:inline-block;background:#183c2d;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold;margin:0 8px 8px 0">${paymentPlan === 'friends-family-total' ? 'Pay Friends & Family total' : 'Open Square invoice'}</a></p>`;
-      const checkout = checkoutLabel({ ...booking, friendsAndFamilyDiscount: booking.friendsAndFamilyDiscount || approvedQuote?.friendsAndFamilyDiscount }, dates);
-      const bookingCode = bookingAccessCode(booking.id);
       await sendEmail({
         to: booking.email, toName: booking.name, subject: 'Your Weeks Creek Haven dates are approved',
-        templateKey:'booking-approved', templateVariables:{ guestName:booking.name, arrival:dates.arrival, departure:dates.departure, total:`$${(amountCents/100).toFixed(2)}`, paymentText, packetUrl, checkout, bookingCode },
-        text: `Hi ${booking.name},\n\nYour requested stay from ${dates.arrival} to ${dates.departure} is available. The approved total is $${(amountCents / 100).toFixed(2)}. Check-in begins at 4:00 PM and checkout is ${checkout}. ${paymentText}\n\nOpen your private booking packet to track payment, sign the rental agreement, and download your paperwork: ${packetUrl}\nGuest Guide reservation code: ${bookingCode}\n\nCancellation policy: cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the 20% reservation deposit is retained and any remaining amount paid is refunded.\n\nYour reservation is final after ${paymentPlan === 'complimentary' ? 'the rental agreement is accepted' : 'payment is made and the rental agreement is accepted'}.`,
-        html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Your booking packet</h1><p>Hi ${safeName},</p><p>We approved <strong>${dates.arrival} through ${dates.departure}</strong>.</p><p>Check-in: <strong>4:00 PM</strong><br>Checkout: <strong>${escapeEmailHtml(checkout)}</strong></p><p>Approved total: <strong>$${(amountCents / 100).toFixed(2)}</strong></p>${paymentHtml}<p><a href="${packetUrl}" style="display:inline-block;background:#a45d41;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Open booking packet</a></p><p><strong>Guest Guide reservation code:</strong> ${bookingCode}</p><p>Track payment, sign the rental agreement, and download your paperwork from the packet.</p><p style="background:#fff0cc;padding:12px;border-radius:8px"><strong>Cancellation policy:</strong> Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the 20% reservation deposit is retained and any remaining amount paid is refunded.</p><p>Your reservation is final after ${paymentPlan === 'complimentary' ? 'the rental agreement is accepted' : 'payment is made and the rental agreement is accepted'}.</p></div>`,
+        templateKey:'booking-approved', templateVariables:{ guestName:booking.name, arrival:dates.arrival, departure:dates.departure, total:`$${(amountCents/100).toFixed(2)}`, paymentText, packetUrl, checkout:booking.lateCheckout?'noon':'11:00 AM' },
+        text: `Hi ${booking.name},\n\nYour requested stay from ${dates.arrival} to ${dates.departure} is available. The approved total is $${(amountCents / 100).toFixed(2)}. Check-in begins at 4:00 PM and checkout is ${booking.lateCheckout ? 'noon (your $50 late checkout is included)' : '11:00 AM'}. ${paymentText}\n\nOpen your private booking packet to track payment, sign the rental agreement, and download your paperwork: ${packetUrl}\n\nCancellation policy: cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the 20% reservation deposit is retained and any remaining amount paid is refunded.\n\nYour reservation is final after ${paymentPlan === 'complimentary' ? 'the rental agreement is accepted' : 'payment is made and the rental agreement is accepted'}.`,
+        html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Your booking packet</h1><p>Hi ${safeName},</p><p>We approved <strong>${dates.arrival} through ${dates.departure}</strong>.</p><p>Check-in: <strong>4:00 PM</strong><br>Checkout: <strong>${booking.lateCheckout ? 'noon ($50 late checkout included)' : '11:00 AM'}</strong></p><p>Approved total: <strong>$${(amountCents / 100).toFixed(2)}</strong></p>${paymentHtml}<p><a href="${packetUrl}" style="display:inline-block;background:#a45d41;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">Open booking packet</a></p><p>Track payment, sign the rental agreement, and download your paperwork from the packet.</p><p style="background:#fff0cc;padding:12px;border-radius:8px"><strong>Cancellation policy:</strong> Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the 20% reservation deposit is retained and any remaining amount paid is refunded.</p><p>Your reservation is final after ${paymentPlan === 'complimentary' ? 'the rental agreement is accepted' : 'payment is made and the rental agreement is accepted'}.</p></div>`,
       });
       return json(response, 200, { ok: true, paymentUrl: payment?.url || null, complimentary: paymentPlan === 'complimentary' });
     }
@@ -381,10 +386,7 @@ export default async function handler(request, response) {
         to:booking.email, toName:booking.name, templateKey:template.id, templateVariables:stayEmailVariables(booking),
         subject:template.subject || 'Weeks Creek Haven booking update', text:template.body || `Hi ${booking.name},\n\nHere is an update about your Weeks Creek Haven booking.`,
       });
-      const changes = { lastManualEmailId:template.id, lastManualEmailSentAt:createdAt };
-      if (['scheduled_after_checkout','review_requested'].includes(template.trigger)) changes.reviewRequestedAt = booking.reviewRequestedAt || createdAt;
-      if (template.trigger === 'scheduled_after_checkout') changes.thankYouEmailSentAt = booking.thankYouEmailSentAt || createdAt;
-      await appendBookingRecord({ type:'status', bookingId:booking.id, changes, createdAt });
+      await appendBookingRecord({ type:'status', bookingId:booking.id, changes:{ lastManualEmailId:template.id, lastManualEmailSentAt:createdAt }, createdAt });
       return json(response, 200, { ok:true, templateName:template.name, guestName:booking.name });
     }
     if (action === 'decline') {
