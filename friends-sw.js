@@ -1,4 +1,4 @@
-const CACHE_NAME = 'friends-hub-v37';
+const CACHE_NAME = 'friends-hub-v38';
 
 const PRECACHE_URLS = [
   '/friends-hub.html',
@@ -6,6 +6,7 @@ const PRECACHE_URLS = [
   '/privacy.html',
   '/site-manifest.json?v=2',
   '/manifest.json?v=22',
+  '/admin-manifest.json?v=1',
   '/hub-adventures.html',
   '/nav.js',
   '/footer.js',
