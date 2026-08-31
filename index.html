@@ -415,7 +415,7 @@
         const details = document.createElement('div');
         details.className = 'review-details';
         const month = new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' }).format(new Date(review.createdAt));
-        details.textContent = [review.location, month, review.source].filter(Boolean).join(' \u00b7 ');
+        details.textContent = [review.location, month].filter(Boolean).join(' \u00b7 ');
         article.append(stars, quote, name, details);
         list.appendChild(article);
       });
