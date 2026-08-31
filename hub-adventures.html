@@ -8,8 +8,8 @@
   <link rel="icon" href="/webpic/weeks-creek-haven-favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="/webpic/weeks-creek-haven-favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/webpic/weeks-creek-haven-favicon-16.png">
-    <link rel="manifest" href="/manifest.json?v=17">
-    <link rel="apple-touch-icon" sizes="192x192" href="/webpic/pwa-wch-192-v3.png">
+    <link rel="manifest" href="/manifest.json?v=22">
+    <link rel="apple-touch-icon" sizes="192x192" href="/webpic/pwa-guest-guide-192-v1.png">
     <meta name="theme-color" content="#A45D41">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Friends Hub">
@@ -412,7 +412,7 @@ function closeLightbox() {
     document.body.style.overflow = 'auto';
 }
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/friends-sw.js?v=32').catch(e => console.warn('SW:', e));
+    navigator.serviceWorker.register('/friends-sw.js?v=34').catch(e => console.warn('SW:', e));
 }
 </script>
 <script>document.addEventListener("contextmenu", function(e){ e.preventDefault(); });</script>

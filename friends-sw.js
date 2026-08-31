@@ -1,11 +1,11 @@
-const CACHE_NAME = 'friends-hub-v33';
+const CACHE_NAME = 'friends-hub-v34';
 
 const PRECACHE_URLS = [
   '/friends-hub.html',
   '/index.html',
   '/privacy.html',
   '/site-manifest.json?v=1',
-  '/manifest.json?v=21',
+  '/manifest.json?v=22',
   '/hub-adventures.html',
   '/nav.js',
   '/footer.js',
@@ -42,11 +42,11 @@ const PRECACHE_URLS = [
   '/webpic/policon.png',
   '/webpic/wpaicon.png',
   // PWA icons
-  '/webpic/pwa-wch-192-v4.png',
+  '/webpic/pwa-guest-guide-192-v1.png',
   '/webpic/wch-main-pwa-192-v1.png',
   '/webpic/wch-main-pwa-512-v1.png',
   '/webpic/wch-main-apple-180-v1.png',
-  '/webpic/pwa-wch-512-v4.png',
+  '/webpic/pwa-guest-guide-512-v1.png',
   '/webpic/weeks-creek-haven-round-logo.png',
   // checkout
   '/webpic/bidet.webp',
