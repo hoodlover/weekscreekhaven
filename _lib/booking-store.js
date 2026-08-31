@@ -51,6 +51,7 @@ export async function getBookingCalendar() {
   const discounts = new Map();
   const emailTemplates = new Map();
   let defaultNightlyRateCents = 0;
+  let doorCodeRetirement = { required:true, retiredAt:null };
   for (const record of records) {
     if (record.type === 'requested') requests.set(record.booking.id, record.booking);
     if (record.type === 'status' && requests.has(record.bookingId)) {
@@ -67,6 +68,7 @@ export async function getBookingCalendar() {
     if (record.type === 'discount_removed') discounts.delete(record.discountId);
     if (record.type === 'email_template_saved') emailTemplates.set(record.template.id, record.template);
     if (record.type === 'email_template_removed') emailTemplates.set(record.templateId, { id: record.templateId, deletedAt: record.createdAt });
+    if (record.type === 'door_code_retirement_confirmed') doorCodeRetirement = { required:false, retiredAt:record.createdAt };
   }
   const now = Date.now();
   const bookings = [...requests.values()].map((booking) => {
@@ -85,6 +87,7 @@ export async function getBookingCalendar() {
     rates: [...rates.values()].sort((a, b) => a.arrival.localeCompare(b.arrival)),
     discounts: [...discounts.values()].map((discount) => ({ ...discount, chargeCleaning: false })).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt))),
     emailTemplates: [...emailTemplates.values()],
+    doorCodeRetirement,
   };
 }
 
