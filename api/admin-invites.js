@@ -98,7 +98,7 @@ export default async function handler(request, response) {
         notes: safeText(request.body?.notes, 240),
         recipientEmail: safeEmail(request.body?.recipientEmail),
         recipientPhone,
-        welcomeMessage: safeText(request.body?.welcomeMessage, 500),
+        welcomeMessage: safeText(request.body?.welcomeMessage, 800),
         complimentary: request.body?.complimentary === true,
         stayOptions: options.map(({ arrival, departure, costCents, complimentary, expiresOn }) => ({ arrival, departure, costCents, complimentary, expiresOn })),
         bookingId,
