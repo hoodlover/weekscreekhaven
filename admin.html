@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex,nofollow">
   <title>Cabin Command Center | Weeks Creek Haven</title>
+  <link rel="manifest" href="/admin-manifest.json?v=1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/webpic/wch-main-apple-180-v1.png">
+  <meta name="theme-color" content="#183c2d">
   <link rel="icon" href="/webpic/weeks-creek-haven-favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="/webpic/weeks-creek-haven-favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/webpic/weeks-creek-haven-favicon-16.png">
@@ -279,6 +282,7 @@
       </div>
       <div class="top-actions">
         <a href="/index.html" class="ghost" style="text-decoration:none">Home</a>
+        <button id="install-owner-app" class="ghost" type="button">Install Owner App</button>
         <a id="open-hub" href="/friends-hub.html" class="ghost" style="text-decoration:none" hidden>Guest Guide</a>
         <button id="enable-alerts" class="ghost" hidden>Enable alerts</button>
         <button id="logout" class="ghost" hidden>Sign out</button>
@@ -377,6 +381,42 @@
       </div>
     </section>
   </main>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('/friends-sw.js?v=38').catch(() => {}));
+    }
+
+    (() => {
+      const button = document.getElementById('install-owner-app');
+      const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+      if (!button || standalone) {
+        if (button) button.hidden = true;
+        return;
+      }
+
+      let installPrompt = null;
+      window.addEventListener('beforeinstallprompt', event => {
+        event.preventDefault();
+        installPrompt = event;
+      });
+      window.addEventListener('appinstalled', () => {
+        installPrompt = null;
+        button.hidden = true;
+      });
+      button.addEventListener('click', async () => {
+        if (installPrompt) {
+          installPrompt.prompt();
+          await installPrompt.userChoice;
+          installPrompt = null;
+          return;
+        }
+        const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+        alert(isIOS
+          ? 'In Safari, tap Share, then Add to Home Screen.'
+          : 'In your browser menu, tap Add to Home screen or Install app.');
+      });
+    })();
+  </script>
   <script type="module">
     import { applyFriendsAndFamilyDiscount, money, PRICING_CONFIG, quoteStay, weekPlan } from '/pricing.js';
     const state = { invites: [], access: [], bookings: [], reviews: [], rates: [], discounts: [], discountNameFilter: '', discountTypeFilter: 'all', emails: [], emailTriggers: [], accounting: [], accountingLoaded: false, showArchivedBookings: false, showArchivedInvites: false, bookingFilter: 'all', bookingSort: 'arrival', openBookingIds: new Set(), pricing: PRICING_CONFIG, square: {}, knownBookingIds: new Set(), knownAccessIds: new Set(), initialized: false, newInvite: null };
