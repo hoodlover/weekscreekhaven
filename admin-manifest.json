@@ -11,28 +11,16 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/webpic/wch-main-pwa-192-v1.png",
+      "src": "/webpic/owner-pwa-192-v1.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/webpic/wch-main-pwa-512-v1.png",
+      "src": "/webpic/owner-pwa-512-v1.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
-    },
-    {
-      "src": "/webpic/wch-main-pwa-192-v1.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "/webpic/wch-main-pwa-512-v1.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
     }
   ]
 }
