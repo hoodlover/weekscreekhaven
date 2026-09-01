@@ -544,7 +544,16 @@
     }
 
     const seenActivityAt = () => { try { let value=localStorage.getItem('wch_seen_activity'); if(!value){value=new Date().toISOString();localStorage.setItem('wch_seen_activity',value);} return value; } catch { return new Date().toISOString(); } };
-    const alertsEnabled = () => { try { return localStorage.getItem('wch_admin_alerts') === 'on'; } catch { return false; } };
+    function alertPreference() {
+      try { const saved=localStorage.getItem('wch_admin_alerts'); if(saved==='on'||saved==='off')return saved; } catch {}
+      const savedCookie=document.cookie.split('; ').find(item=>item.startsWith('wch_admin_alerts='));
+      return savedCookie?decodeURIComponent(savedCookie.split('=').slice(1).join('=')):'';
+    }
+    function saveAlertPreference(value) {
+      try { localStorage.setItem('wch_admin_alerts',value); } catch {}
+      document.cookie=`wch_admin_alerts=${encodeURIComponent(value)}; Max-Age=31536000; Path=/; SameSite=Lax; Secure`;
+    }
+    const alertsEnabled = () => alertPreference() === 'on';
     function updateAlertButton() { $('enable-alerts').textContent = alertsEnabled() && 'Notification' in window && Notification.permission === 'granted' ? 'Alerts on' : 'Enable alerts'; }
     function sendBrowserAlert(bookings, access) { if (!alertsEnabled() || !('Notification' in window) || Notification.permission !== 'granted' || (!bookings.length && !access.length)) return; const parts=[]; if(bookings.length)parts.push(`${bookings.length} new booking request${bookings.length===1?'':'s'}`); if(access.length)parts.push(`${access.length} new Hub entr${access.length===1?'y':'ies'}`); new Notification('Weeks Creek Haven activity',{body:parts.join(' · '),icon:'/webpic/pwa-logo-192.png'}); }
 
@@ -857,7 +866,7 @@
     $('accounting-year').addEventListener('change',renderAccounting);
     $('refresh-accounting').addEventListener('click',loadAccounting);
     $('accounting-detail').addEventListener('change',async(event)=>{ const control=event.target.closest('[data-accounting-writeoff],[data-accounting-cleaning]'); if(!control)return; const row=control.closest('[data-accounting-booking]'),writeOff=row.querySelector('[data-accounting-writeoff]').checked,cleaning=row.querySelector('[data-accounting-cleaning]').value,status=row.querySelector('.accounting-save-state'); status.textContent='Saving…'; row.querySelectorAll('input').forEach(input=>input.disabled=true); try{await request('/api/admin-accounting',{method:'PATCH',body:JSON.stringify({bookingId:row.dataset.accountingBooking,writeOff,cleaningFee:cleaning})});status.textContent='Saved';await loadAccounting();}catch(error){status.textContent=error.message;row.querySelectorAll('input').forEach(input=>input.disabled=false);} });
-    $('enable-alerts').addEventListener('click',async()=>{ if(!('Notification' in window)){alert('This browser does not support notifications.');return;} if(alertsEnabled()){try{localStorage.setItem('wch_admin_alerts','off');}catch{} updateAlertButton();return;} const permission=await Notification.requestPermission(); if(permission==='granted'){try{localStorage.setItem('wch_admin_alerts','on');}catch{}} updateAlertButton(); });
+    $('enable-alerts').addEventListener('click',async()=>{ if(!('Notification' in window)){alert('This browser does not support notifications.');return;} if(alertsEnabled()){saveAlertPreference('off');updateAlertButton();return;} const permission=await Notification.requestPermission(); if(permission==='granted')saveAlertPreference('on');updateAlertButton(); });
     $('logout').addEventListener('click',async()=>{ await request('/api/admin-logout',{method:'POST'}); location.reload(); });
     window.addEventListener('beforeunload',(event)=>{if(!state.checklistDirty.family&&!state.checklistDirty.turnover)return;event.preventDefault();event.returnValue='';});
     load();
