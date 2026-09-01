@@ -7,6 +7,7 @@ const PREFIX = 'secure-cleaner/records/';
 export const DEFAULT_INVENTORY = [
   ['toilet-paper','Toilet paper','Guest supplies'], ['paper-towels','Paper towels','Guest supplies'],
   ['trash-bags','Trash bags','Guest supplies'], ['dishwasher-pods','Dishwasher pods','Guest supplies'],
+  ['septic-treatment','Septic tank treatment','Guest supplies'],
   ['dish-soap','Dish soap','Guest supplies'], ['hand-soap','Hand soap','Guest supplies'],
   ['coffee','Coffee & Keurig pods','Guest supplies'], ['toiletries','Shampoo & body wash','Guest supplies'],
   ['all-purpose-cleaner','All-purpose cleaner','Cleaning'], ['disinfectant','Disinfectant','Cleaning'],
@@ -18,7 +19,12 @@ export const DEFAULT_INVENTORY = [
   ['washcloths','Washcloths & hand towels','Linens'], ['queen-sheets','Queen sheet sets','Linens'],
   ['king-sheets','King sheet sets','Linens'], ['pillowcases','Pillowcases','Linens'],
 ].map(([id,name,category]) => ({ id, name, category, level:'unknown', note:'', productUrl:'', productNote:'', updatedAt:'' }))
-  .map(item => item.id==='toilet-paper' ? {...item,productUrl:'https://a.co/d/08CLRmPA',productNote:'Scott Rapid-Dissolving Toilet Paper, 48 double rolls; septic-safe and designed for RVs and boats.'} : item);
+  .map(item => ({...item,...({
+    'toilet-paper':{productUrl:'https://a.co/d/08CLRmPA',productNote:'Scott Rapid-Dissolving Toilet Paper, 48 double rolls; septic-safe and designed for RVs and boats.'},
+    'trash-bags':{productUrl:'https://a.co/d/00rJHX0n',productNote:'Husky contractor clean-up bags, 42 gallon, 3 mil heavy-duty, 20-count, black.'},
+    'septic-treatment':{productUrl:'https://a.co/d/056gsRTI',productNote:'Vacplus septic tank treatment, 24 flushable dissolvable packets; a 2-year supply for waste and odor control.'},
+    'sponges':{productUrl:'https://a.co/d/0eV5B1fj',productNote:'Durable AIDEA sponges with non-scratch abrasive scour pads for tough messes; dishwasher-safe and long-lasting.'},
+  }[item.id]||{})}));
 
 function token() { return process.env.INVITE_BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN; }
 function ensureConfigured() { if (!token()) throw new Error('Cleaner storage is not configured.'); }
