@@ -4,6 +4,7 @@ import { refreshSquareBooking } from '../_lib/payment-sync.js';
 import { createAgreementToken, createReviewToken, json } from '../_lib/security.js';
 import { cancelSquareInvoice } from '../_lib/square.js';
 import { doorCodeTask, generateDoorCode } from '../_lib/door-code.js';
+import { processCleanerReminders } from '../_lib/cleaner-reminders.js';
 
 function easternToday() {
   const parts = new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
@@ -101,6 +102,7 @@ export default async function handler(request, response) {
     }
     const codeTasks=stored.map(booking=>doorCodeTask(booking,today)).filter(Boolean);
     if(codeTasks.length&&process.env.OWNER_EMAIL&&hour>=9){const rows=codeTasks.map(task=>`• ${task.label}: ${task.guestName}${task.code?` · ${task.code}`:''}${task.arrival?` · ${task.arrival} to ${task.departure}`:''}`).join('\n');const htmlRows=codeTasks.map(task=>`<li><strong>${task.label}</strong>: ${task.guestName}${task.code?` · <span style="font-family:monospace;font-size:18px">${task.code}</span>`:''}${task.arrival?` · ${task.arrival} to ${task.departure}`:''}</li>`).join('');const result=await sendEmail({to:process.env.OWNER_EMAIL,toName:'Heather & Lance',subject:`Door-code tasks · ${codeTasks.length} need attention`,text:`Door-code tasks that still need confirmation:\n\n${rows}\n\nOpen Owner Bookings to mark each code installed or removed:\nhttps://www.weekscreekhaven.com/admin.html#bookings`,html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6"><h1 style="color:#183c2d">Door-code tasks</h1><ul>${htmlRows}</ul><p>Open Owner Bookings to mark each code installed or removed.</p><p><a href="https://www.weekscreekhaven.com/admin.html#bookings" style="display:inline-block;background:#183c2d;color:#fff;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:700">Open Owner Bookings</a></p></div>`,idempotencyKey:`door-code-tasks-${today}`});if(!result?.skipped)sent++;}
+    sent+=await processCleanerReminders(new Date());
     return json(response, 200, { ok:true, checked:stored.length, sent });
   } catch (error) {
     console.error(error);

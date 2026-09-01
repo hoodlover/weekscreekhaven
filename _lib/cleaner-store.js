@@ -38,6 +38,22 @@ export async function appendCleanerRecord(record) {
   return value;
 }
 
+export async function uploadCleanerPhoto(bookingId, buffer, contentType, details={}) {
+  ensureConfigured();
+  const extension=contentType==='image/png'?'png':contentType==='image/webp'?'webp':'jpg';
+  const id=crypto.randomUUID();
+  const pathname=`secure-cleaner/photos/${bookingId}/${id}.${extension}`;
+  await put(pathname,buffer,{access:'private',token:token(),contentType,addRandomSuffix:false,cacheControlMaxAge:3600});
+  const photo={id,pathname,contentType,note:String(details.note||'').slice(0,500),capturedAt:details.capturedAt||'',uploadedAt:new Date().toISOString(),uploadedBy:details.uploadedBy||'cleaner'};
+  await appendCleanerRecord({type:'cleaning_photo',bookingId,photo,createdAt:photo.uploadedAt});
+  return photo;
+}
+
+export async function getCleanerPhoto(pathname) {
+  ensureConfigured();
+  return get(pathname,{access:'private',token:token()});
+}
+
 export async function getCleanerRecords() {
   ensureConfigured();
   const records=[]; let cursor;
@@ -53,7 +69,7 @@ export async function getCleanerState() {
   const records=await getCleanerRecords();
   const settings={ cleanerName:'Cabin Care Team', cleanerEmail:'', standardPayCents:17500, doorCode:'', closetCode:'', doorCodeUpdatedAt:'', passcodeHash:'', passcodeSalt:'', cleanerAuthVersion:'' };
   const inventory=new Map(DEFAULT_INVENTORY.map(item=>[item.id,{...item}]));
-  const assignments=new Map(); const remarks=new Map(); const tips=new Map(); const emailHistory=[];
+  const assignments=new Map(); const remarks=new Map(); const tips=new Map(); const serviceOffers=new Map(); const conversations=new Map(); const cleaningPhotos=new Map(); const emailHistory=[];
   for (const record of records) {
     if(record.type==='settings') Object.assign(settings,record.changes||{});
     if(record.type==='inventory') inventory.set(record.item.id,{...(inventory.get(record.item.id)||{}),...record.item});
@@ -63,6 +79,12 @@ export async function getCleanerState() {
     if(record.type==='tip') tips.set(record.tip.id,record.tip);
     if(record.type==='tip_update'&&tips.has(record.tipId)) Object.assign(tips.get(record.tipId),record.changes,{updatedAt:record.createdAt});
     if(record.type==='cleaner_email_sent') emailHistory.push(record.email);
+    if(record.type==='service_offer') serviceOffers.set(record.offer.id,record.offer);
+    if(record.type==='service_offer_update'&&serviceOffers.has(record.offerId)) Object.assign(serviceOffers.get(record.offerId),record.changes,{updatedAt:record.createdAt});
+    if(record.type==='conversation') conversations.set(record.conversation.id,{...record.conversation,messages:[...(record.conversation.messages||[])]});
+    if(record.type==='conversation_message'&&conversations.has(record.conversationId)) conversations.get(record.conversationId).messages.push(record.message);
+    if(record.type==='conversation_update'&&conversations.has(record.conversationId)) Object.assign(conversations.get(record.conversationId),record.changes,{updatedAt:record.createdAt});
+    if(record.type==='cleaning_photo') cleaningPhotos.set(record.photo.id,{...record.photo,bookingId:record.bookingId});
   }
-  return { settings, inventory:[...inventory.values()], assignments:[...assignments.values()], remarks:[...remarks.values()], tips:[...tips.values()], emailHistory };
+  return { settings, inventory:[...inventory.values()], assignments:[...assignments.values()], remarks:[...remarks.values()], tips:[...tips.values()], serviceOffers:[...serviceOffers.values()], conversations:[...conversations.values()], cleaningPhotos:[...cleaningPhotos.values()], emailHistory };
 }

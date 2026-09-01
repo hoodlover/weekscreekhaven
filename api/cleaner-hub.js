@@ -7,10 +7,19 @@ import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
 
 const safe=(value,max=500)=>String(value||'').trim().slice(0,max);
 const cents=value=>Math.round(Number(value)*100);
+const HUB_URL='https://www.weekscreekhaven.com/cleaner.html';
+const money=value=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format((Number(value)||0)/100);
+const dateTime=value=>new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',weekday:'long',month:'long',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'}).format(new Date(value));
+const firstName=value=>safe(value,100).split(/\s+/)[0]||'Guest';
 function todayEastern(){const p=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const o=Object.fromEntries(p.map(x=>[x.type,x.value]));return `${o.year}-${o.month}-${o.day}`;}
 function stay(booking){return booking.dateChoices?.[Number.isInteger(booking.approvedChoice)?booking.approvedChoice:0]||booking.dateChoices?.[0]||{};}
 function cleanerScheduled(booking){const dates=stay(booking),rule=booking.friendsAndFamilyDiscount||dates.quote?.friendsAndFamilyDiscount;return !(rule&&rule.chargeCleaning!==true);}
 function within(iso,days){const time=Date.parse(iso||'');return Number.isFinite(time)&&time>=Date.now()-days*86400000;}
+
+async function hubEmail({to,toName,subject,text,key}){
+  if(!to)return {skipped:true};
+  return sendEmail({to,toName,subject,text,idempotencyKey:key,html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.65;max-width:620px"><h1 style="color:#183c2d">${escapeEmailHtml(subject)}</h1><p>${escapeEmailHtml(text).replace(/\n/g,'<br>')}</p><p><a href="${HUB_URL}" style="display:inline-block;background:#183c2d;color:#fff;padding:12px 19px;border-radius:999px;text-decoration:none;font-weight:bold">Open Cleaner Hub</a></p></div>`});
+}
 
 async function syncTips(state){
   const pending=state.tips.filter(t=>t.status==='pending'&&t.squareOrderId).slice(-30);
@@ -31,30 +40,39 @@ function buildDashboard(bookings,state,isOwner){
   const booked=bookings.filter(b=>['booked','completed'].includes(b.status)||b.paymentFullyPaid);
   const bookedStays=booked.map(b=>({booking:b,dates:stay(b)})).filter(x=>x.dates.arrival&&x.dates.departure);
   const assignmentMap=new Map(state.assignments.map(a=>[a.bookingId,a]));
-  const upcoming=bookedStays.filter(x=>x.dates.departure>=today&&cleanerScheduled(x.booking)).sort((a,b)=>a.dates.departure.localeCompare(b.dates.departure)).slice(0,16).map(({booking,dates})=>{
+  const photosFor=bookingId=>state.cleaningPhotos.filter(photo=>photo.bookingId===bookingId).sort((a,b)=>String(a.capturedAt||a.uploadedAt).localeCompare(String(b.capturedAt||b.uploadedAt))).map(photo=>({id:photo.id,note:photo.note||'',capturedAt:photo.capturedAt||'',uploadedAt:photo.uploadedAt,uploadedBy:photo.uploadedBy||'cleaner',url:`/api/cleaner-photo?photoId=${encodeURIComponent(photo.id)}`}));
+  let upcoming=bookedStays.filter(x=>x.dates.departure>=today&&cleanerScheduled(x.booking)).sort((a,b)=>a.dates.departure.localeCompare(b.dates.departure)).slice(0,16).map(({booking,dates})=>{
     const assignment=assignmentMap.get(booking.id)||{};
     const nextArrival=bookedStays.find(x=>x.dates.arrival===dates.departure&&x.booking.id!==booking.id);
     return {
-      bookingId:booking.id, arrival:dates.arrival, cleanDate:dates.departure, guests:Number(booking.guests)||1, dogs:Number(booking.dogs)||0,
+      bookingId:booking.id, arrival:dates.arrival, cleanDate:dates.departure, guests:Number(booking.guests)||1, dogs:Number(booking.dogs)||0, guestFirstName:firstName(booking.name), guestRating:Number(assignment.guestRating)||0, guestReview:assignment.guestReview||'', guestRatedAt:assignment.guestRatedAt||'',
+      sessionType:assignment.sessionType||(booking.friendsAndFamilyDiscount||dates.quote?.friendsAndFamilyDiscount?'friends-family':'guest'),
       sameDayTurnaround:Boolean(nextArrival), nextGuestCount:nextArrival?Number(nextArrival.booking.guests)||1:0,
       status:assignment.status||'scheduled', ownerNote:assignment.ownerNote||'', cleanerNote:assignment.cleanerNote||'',
       basePayCents:Number.isFinite(Number(assignment.basePayCents))?Number(assignment.basePayCents):(Number.isFinite(Number(booking.accountingCleaningFeeCents))?Number(booking.accountingCleaningFeeCents):Number(state.settings.standardPayCents)||17500),
       extraPayCents:Number(assignment.extraPayCents)||0, extraTask:assignment.extraTask||'', completedAt:assignment.completedAt||'', paidAt:assignment.paidAt||'',
+      photos:photosFor(booking.id),
       ...(isOwner?{guestName:booking.name||'Guest'}:{}),
     };
   });
-  const recent=bookedStays.filter(x=>x.dates.departure<today).sort((a,b)=>b.dates.departure.localeCompare(a.dates.departure)).slice(0,8).map(({booking,dates})=>{
+  let recent=bookedStays.filter(x=>x.dates.departure<today).sort((a,b)=>b.dates.departure.localeCompare(a.dates.departure)).slice(0,8).map(({booking,dates})=>{
     const report=booking.checkoutReport||{}; const assignment=assignmentMap.get(booking.id)||{};
-    return { bookingId:booking.id,departure:dates.departure,guests:Number(booking.guests)||1,restock:report.restock||[],maintenanceCategories:report.maintenanceCategories||[],maintenanceLocation:report.maintenanceLocation||'',maintenancePriority:report.maintenancePriority||'',maintenanceIssue:report.maintenanceIssue||'',nothingToReport:report.nothingToReport===true,cleanerNote:assignment.cleanerNote||'',status:assignment.status||'',...(isOwner?{guestName:booking.name||'Guest'}:{}) };
+    return { bookingId:booking.id,departure:dates.departure,guests:Number(booking.guests)||1,guestFirstName:firstName(booking.name),guestRating:Number(assignment.guestRating)||0,guestReview:assignment.guestReview||'',guestRatedAt:assignment.guestRatedAt||'',restock:report.restock||[],maintenanceCategories:report.maintenanceCategories||[],maintenanceLocation:report.maintenanceLocation||'',maintenancePriority:report.maintenancePriority||'',maintenanceIssue:report.maintenanceIssue||'',nothingToReport:report.nothingToReport===true,cleanerNote:assignment.cleanerNote||'',status:assignment.status||'',photos:photosFor(booking.id),...(isOwner?{guestName:booking.name||'Guest'}:{}) };
   });
+  const customSessions=state.assignments.filter(item=>item.customSession&&item.cleanDate).map(item=>({bookingId:item.bookingId,arrival:item.cleanDate,cleanDate:item.cleanDate,departure:item.cleanDate,guests:Number(item.guests)||0,guestFirstName:'the group',guestRating:Number(item.guestRating)||0,guestReview:item.guestReview||'',guestRatedAt:item.guestRatedAt||'',dogs:0,sameDayTurnaround:false,nextGuestCount:0,status:item.status||'scheduled',sessionType:item.sessionType||'guest',ownerNote:item.ownerNote||'',cleanerNote:item.cleanerNote||'',basePayCents:Number(item.basePayCents)||0,extraPayCents:Number(item.extraPayCents)||0,extraTask:item.extraTask||'',completedAt:item.completedAt||'',paidAt:item.paidAt||'',customSession:true,sessionLabel:item.sessionLabel||'Additional cabin care',photos:photosFor(item.bookingId)}));
+  upcoming=[...upcoming,...customSessions.filter(item=>item.cleanDate>=today)].sort((a,b)=>a.cleanDate.localeCompare(b.cleanDate)).slice(0,20);
+  recent=[...recent,...customSessions.filter(item=>item.cleanDate<today)].sort((a,b)=>b.departure.localeCompare(a.departure)).slice(0,12);
   const paidTips=state.tips.filter(t=>t.status==='paid');
   const completedJobs=state.assignments.filter(a=>a.completedAt).map(a=>({...a,earnedCents:(Number(a.basePayCents)||Number(state.settings.standardPayCents)||17500)+(Number(a.extraPayCents)||0),earnedAt:a.completedAt}));
-  const earnings=[...paidTips.map(t=>({kind:'tip',amountCents:Number(t.amountCents)||0,earnedAt:t.paidAt,paidOutAt:t.paidOutAt||''})),...completedJobs.map(j=>({kind:'cleaning',amountCents:j.earnedCents,earnedAt:j.earnedAt,paidOutAt:j.paidAt||''}))];
+  const completedServices=state.serviceOffers.filter(o=>['completed','paid'].includes(o.status)&&o.completedAt).map(o=>({kind:'service',amountCents:Number(o.amountCents)||0,earnedAt:o.completedAt,paidOutAt:o.paidAt||''}));
+  const earnings=[...paidTips.map(t=>({kind:'tip',amountCents:Number(t.amountCents)||0,earnedAt:t.paidAt,paidOutAt:t.paidOutAt||''})),...completedJobs.map(j=>({kind:'cleaning',amountCents:j.earnedCents,earnedAt:j.earnedAt,paidOutAt:j.paidAt||''})),...completedServices];
   const totalFor=days=>earnings.filter(e=>within(e.earnedAt,days)).reduce((sum,e)=>sum+e.amountCents,0);
   return {
     isOwner, cleanerName:state.settings.cleanerName, cleanerEmail:isOwner?(state.settings.cleanerEmail||''):'', standardPayCents:state.settings.standardPayCents, doorCode:state.settings.doorCode||'', closetCode:state.settings.closetCode||'', doorCodeUpdatedAt:state.settings.doorCodeUpdatedAt||'',
     inventory:state.inventory.sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name)), upcoming, recent,
     remarks:state.remarks.filter(r=>r.status!=='resolved').sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))),
+    serviceOffers:state.serviceOffers.sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))).slice(0,50),
+    conversations:state.conversations.sort((a,b)=>String(b.messages?.at(-1)?.createdAt||b.createdAt).localeCompare(String(a.messages?.at(-1)?.createdAt||a.createdAt))).slice(0,30),
     tips:paidTips.sort((a,b)=>String(b.paidAt).localeCompare(String(a.paidAt))).slice(0,50).map(t=>({id:t.id,guestFirstName:t.guestFirstName,amountCents:t.amountCents,paidAt:t.paidAt,paidOutAt:t.paidOutAt||''})),
     money:{owedCents:earnings.filter(e=>!e.paidOutAt).reduce((sum,e)=>sum+e.amountCents,0),monthCents:totalFor(30),quarterCents:totalFor(90),yearCents:totalFor(365)},
     emailHistory:isOwner?state.emailHistory.slice(-12).reverse():[],
@@ -97,21 +115,108 @@ export default async function handler(request,response){
       await appendCleanerRecord({type:'remark',createdAt:now,remark:{id:crypto.randomUUID(),body,category:safe(request.body?.category,40)||'Help needed',priority:['normal','soon','urgent'].includes(request.body?.priority)?request.body.priority:'normal',status:'open',author:owner?'owner':'cleaner',createdAt:now}});
     } else if(action==='resolve-remark'){
       await appendCleanerRecord({type:'remark_update',remarkId:safe(request.body?.remarkId,80),createdAt:now,changes:{status:'resolved',resolvedAt:now,resolvedBy:owner?'owner':'cleaner'}});
+    } else if(action==='create-cleaning-session'){
+      if(!owner)return json(response,403,{error:'Only the owner can add a cleaning session.'});
+      const cleanDate=safe(request.body?.cleanDate,10),sessionLabel=safe(request.body?.sessionLabel,100)||'Additional cabin care',sessionType=request.body?.sessionType==='friends-family'?'friends-family':'guest',guests=Number(request.body?.guests)||0,basePayCents=cents(request.body?.basePay||0),ownerNote=safe(request.body?.ownerNote,500);
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(cleanDate)||Number.isNaN(Date.parse(`${cleanDate}T12:00:00`)))return json(response,400,{error:'Choose a valid cleaning date.'});
+      if(!Number.isInteger(basePayCents)||basePayCents<0||basePayCents>100000)return json(response,400,{error:'Enter a valid cleaning amount.'});
+      if(!Number.isInteger(guests)||guests<0||guests>30)return json(response,400,{error:'Enter a guest count from 0 to 30.'});
+      await appendCleanerRecord({type:'assignment',bookingId:`custom-${crypto.randomUUID()}`,createdAt:now,changes:{customSession:true,cleanDate,sessionLabel,sessionType,guests,basePayCents,extraPayCents:0,extraTask:'',ownerNote,status:'scheduled'}});
     } else if(action==='assignment'){
       const bookingId=safe(request.body?.bookingId,100); const state=await getCleanerState(); const current=state.assignments.find(a=>a.bookingId===bookingId)||{}; let changes={};
       if(owner){
         const basePayCents=cents(request.body?.basePay); const extraPayCents=cents(request.body?.extraPay||0);
         if(!Number.isInteger(basePayCents)||basePayCents<0||basePayCents>100000||!Number.isInteger(extraPayCents)||extraPayCents<0||extraPayCents>100000)return json(response,400,{error:'Enter valid cleaning and extra-task pay amounts.'});
-        changes={basePayCents,extraPayCents,extraTask:safe(request.body?.extraTask,500),ownerNote:safe(request.body?.ownerNote,500),status:safe(request.body?.status,30)||current.status||'scheduled'};
+        changes={basePayCents,extraPayCents,extraTask:safe(request.body?.extraTask,500),ownerNote:safe(request.body?.ownerNote,500),status:safe(request.body?.status,30)||current.status||'scheduled',sessionType:request.body?.sessionType==='friends-family'?'friends-family':'guest'};
         if(request.body?.markPaid===true)changes.paidAt=now;
       } else {
         const status=safe(request.body?.status,30); if(!['accepted','completed'].includes(status))return json(response,400,{error:'Choose accepted or completed.'});
         changes={status,cleanerNote:safe(request.body?.cleanerNote,500)}; if(status==='completed')changes.completedAt=now;
       }
       await appendCleanerRecord({type:'assignment',bookingId,createdAt:now,changes});
+    } else if(action==='guest-review'){
+      if(!cleaner)return json(response,403,{error:'Sign in as the cleaner to rate this visit.'});
+      const bookingId=safe(request.body?.bookingId,100),guestRating=Number(request.body?.rating),guestReview=safe(request.body?.review,1000);
+      const state=await getCleanerState(),bookings=await getBookingRequests();
+      if(!state.assignments.some(item=>item.bookingId===bookingId)&&!bookings.some(item=>item.id===bookingId))return json(response,404,{error:'Cleaning session not found.'});
+      if(!Number.isInteger(guestRating)||guestRating<1||guestRating>5)return json(response,400,{error:'Choose a rating from one to five stars.'});
+      if(!guestReview)return json(response,400,{error:'Add a short note about how the cabin was left.'});
+      await appendCleanerRecord({type:'assignment',bookingId,createdAt:now,changes:{guestRating,guestReview,guestRatedAt:now}});
     } else if(action==='tip-paid-out'){
       if(!owner)return json(response,403,{error:'Only the owner can record tip payout.'});
       await appendCleanerRecord({type:'tip_update',tipId:safe(request.body?.tipId,80),createdAt:now,changes:{paidOutAt:now}});
+    } else if(action==='create-service-offer'){
+      if(!owner)return json(response,403,{error:'Only the owner can create a paid service offer.'});
+      const state=await getCleanerState(),title=safe(request.body?.title,120),details=safe(request.body?.details,1500),amountCents=cents(request.body?.amount),acceptBy=safe(request.body?.acceptBy,40),completeBy=safe(request.body?.completeBy,40),operationId=safe(request.body?.operationId,80);
+      if(state.serviceOffers.some(item=>item.operationId===operationId))return json(response,200,{ok:true,alreadyCreated:true});
+      const acceptMs=Date.parse(acceptBy),completeMs=Date.parse(completeBy);
+      if(!title||!details)return json(response,400,{error:'Add the service and what you would like done.'});
+      if(!Number.isInteger(amountCents)||amountCents<100||amountCents>500000)return json(response,400,{error:'Offer an amount between $1 and $5,000.'});
+      if(!Number.isFinite(acceptMs)||acceptMs<=Date.now())return json(response,400,{error:'Choose a future acceptance deadline.'});
+      if(!Number.isFinite(completeMs)||completeMs<=acceptMs)return json(response,400,{error:'The completion deadline must be after the acceptance deadline.'});
+      if(!state.settings.cleanerEmail)return json(response,400,{error:'Add the cleaner email address before creating an offer.'});
+      const offer={id:crypto.randomUUID(),operationId,title,details,amountCents,acceptBy:new Date(acceptMs).toISOString(),completeBy:new Date(completeMs).toISOString(),status:'offered',createdAt:now,createdBy:'owner'};
+      await hubEmail({to:state.settings.cleanerEmail,toName:state.settings.cleanerName,subject:`Paid service offer · ${title}`,text:`Hi ${state.settings.cleanerName},\n\nHeather and Lance are offering ${money(amountCents)} for this service:\n\n${details}\n\nPlease accept or decline by ${dateTime(offer.acceptBy)}. If accepted, complete it by ${dateTime(offer.completeBy)}. Open the Cleaner Hub to respond.`,key:`cleaner-offer-${offer.id}-created`});
+      await appendCleanerRecord({type:'service_offer',createdAt:now,offer});
+    } else if(action==='service-offer-response'){
+      if(!cleaner)return json(response,403,{error:'Sign in as the cleaner to answer this offer.'});
+      const state=await getCleanerState(),offer=state.serviceOffers.find(item=>item.id===safe(request.body?.offerId,80)),decision=safe(request.body?.decision,20);
+      if(!offer)return json(response,404,{error:'This service offer could not be found.'});
+      if(offer.status!=='offered')return json(response,409,{error:'This offer has already been answered or closed.'});
+      if(Date.now()>Date.parse(offer.acceptBy))return json(response,409,{error:'The acceptance deadline has passed. Ask the owner to create a new offer.'});
+      if(!['accepted','declined'].includes(decision))return json(response,400,{error:'Accept or decline the service offer.'});
+      const changes={status:decision,[decision==='accepted'?'acceptedAt':'declinedAt']:now,responseNote:safe(request.body?.note,500)};
+      await appendCleanerRecord({type:'service_offer_update',offerId:offer.id,createdAt:now,changes});
+      const verb=decision==='accepted'?'accepted':'declined',note=changes.responseNote?`\n\nCleaner note: ${changes.responseNote}`:'';
+      await Promise.allSettled([
+        hubEmail({to:state.settings.cleanerEmail,toName:state.settings.cleanerName,subject:`Service offer ${verb} · ${offer.title}`,text:`Hi ${state.settings.cleanerName},\n\nYou ${verb} “${offer.title}” for ${money(offer.amountCents)}.${decision==='accepted'?` It is due by ${dateTime(offer.completeBy)}.`:''}${note}`,key:`cleaner-offer-${offer.id}-${verb}-cleaner`}),
+        hubEmail({to:process.env.OWNER_EMAIL,toName:'Heather & Lance',subject:`Cleaner ${verb} service offer · ${offer.title}`,text:`${state.settings.cleanerName} ${verb} “${offer.title}” for ${money(offer.amountCents)}.${note}`,key:`cleaner-offer-${offer.id}-${verb}-owner`}),
+      ]);
+    } else if(action==='complete-service-offer'){
+      if(!cleaner)return json(response,403,{error:'Sign in as the cleaner to complete this service.'});
+      const state=await getCleanerState(),offer=state.serviceOffers.find(item=>item.id===safe(request.body?.offerId,80));
+      if(!offer)return json(response,404,{error:'This service offer could not be found.'});
+      if(offer.status!=='accepted')return json(response,409,{error:'Only an accepted service can be marked complete.'});
+      const completionNote=safe(request.body?.note,1000);
+      await appendCleanerRecord({type:'service_offer_update',offerId:offer.id,createdAt:now,changes:{status:'completed',completedAt:now,completionNote}});
+      const note=completionNote?`\n\nCompletion note: ${completionNote}`:'';
+      await Promise.allSettled([
+        hubEmail({to:process.env.OWNER_EMAIL,toName:'Heather & Lance',subject:`Ready to pay · ${offer.title}`,text:`${state.settings.cleanerName} marked “${offer.title}” complete. Amount due: ${money(offer.amountCents)}.${note}\n\nOpen the Cleaner Hub to review and mark it paid.`,key:`cleaner-offer-${offer.id}-completed-owner`}),
+        hubEmail({to:state.settings.cleanerEmail,toName:state.settings.cleanerName,subject:`Completion recorded · ${offer.title}`,text:`Hi ${state.settings.cleanerName},\n\nYour completion of “${offer.title}” was recorded. ${money(offer.amountCents)} now appears as owed in your Cleaner Hub.${note}`,key:`cleaner-offer-${offer.id}-completed-cleaner`}),
+      ]);
+    } else if(action==='close-service-offer'){
+      if(!owner)return json(response,403,{error:'Only the owner can close or pay an offer.'});
+      const state=await getCleanerState(),offer=state.serviceOffers.find(item=>item.id===safe(request.body?.offerId,80)),decision=safe(request.body?.decision,20);
+      if(!offer)return json(response,404,{error:'This service offer could not be found.'});
+      if(decision==='paid'){
+        if(offer.status!=='completed')return json(response,409,{error:'Review the completed service before marking it paid.'});
+        await appendCleanerRecord({type:'service_offer_update',offerId:offer.id,createdAt:now,changes:{status:'paid',paidAt:now}});
+        await Promise.allSettled([hubEmail({to:state.settings.cleanerEmail,toName:state.settings.cleanerName,subject:`Payment recorded · ${offer.title}`,text:`Hi ${state.settings.cleanerName},\n\nHeather and Lance recorded ${money(offer.amountCents)} as paid for “${offer.title}.” Please send a message in the Hub if anything does not match.`,key:`cleaner-offer-${offer.id}-paid`})]);
+      }else if(decision==='withdrawn'){
+        if(!['offered','expired','declined'].includes(offer.status))return json(response,409,{error:'An accepted or completed service cannot be withdrawn.'});
+        await appendCleanerRecord({type:'service_offer_update',offerId:offer.id,createdAt:now,changes:{status:'withdrawn',withdrawnAt:now}});
+      }else return json(response,400,{error:'Choose paid or withdrawn.'});
+    } else if(action==='start-conversation'){
+      const state=await getCleanerState(),subject=safe(request.body?.subject,120),body=safe(request.body?.body,1500),author=owner?'owner':'cleaner';
+      if(!subject||!body)return json(response,400,{error:'Add a short subject and message.'});
+      const id=crypto.randomUUID(),message={id:crypto.randomUUID(),body,author,createdAt:now};
+      await appendCleanerRecord({type:'conversation',createdAt:now,conversation:{id,subject,status:'open',createdAt:now,createdBy:author,messages:[message]}});
+      const to=owner?state.settings.cleanerEmail:process.env.OWNER_EMAIL,toName=owner?state.settings.cleanerName:'Heather & Lance',from=owner?'Heather & Lance':state.settings.cleanerName;
+      await Promise.allSettled([hubEmail({to,toName,subject:`Cleaner Hub message · ${subject}`,text:`${from} posted a new message:\n\n${body}\n\nReply inside the Cleaner Hub so the full conversation stays together.`,key:`cleaner-conversation-${id}-message-${message.id}`})]);
+    } else if(action==='reply-conversation'){
+      const state=await getCleanerState(),conversation=state.conversations.find(item=>item.id===safe(request.body?.conversationId,80)),body=safe(request.body?.body,1500),author=owner?'owner':'cleaner';
+      if(!conversation)return json(response,404,{error:'This conversation could not be found.'});
+      if(conversation.status==='closed')return json(response,409,{error:'Reopen this conversation before replying.'});
+      if(!body)return json(response,400,{error:'Write a reply first.'});
+      const message={id:crypto.randomUUID(),body,author,createdAt:now};
+      await appendCleanerRecord({type:'conversation_message',conversationId:conversation.id,createdAt:now,message});
+      const to=owner?state.settings.cleanerEmail:process.env.OWNER_EMAIL,toName=owner?state.settings.cleanerName:'Heather & Lance',from=owner?'Heather & Lance':state.settings.cleanerName;
+      await Promise.allSettled([hubEmail({to,toName,subject:`Reply · ${conversation.subject}`,text:`${from} replied in the Cleaner Hub:\n\n${body}\n\nOpen the conversation to reply.`,key:`cleaner-conversation-${conversation.id}-message-${message.id}`})]);
+    } else if(action==='conversation-status'){
+      const state=await getCleanerState(),conversation=state.conversations.find(item=>item.id===safe(request.body?.conversationId,80)),status=safe(request.body?.status,20);
+      if(!conversation)return json(response,404,{error:'This conversation could not be found.'});
+      if(!['open','closed'].includes(status))return json(response,400,{error:'Choose open or closed.'});
+      await appendCleanerRecord({type:'conversation_update',conversationId:conversation.id,createdAt:now,changes:{status,[status==='closed'?'closedAt':'reopenedAt']:now}});
     } else if(action==='send-email'){
       if(!owner)return json(response,403,{error:'Only the owner can email the cleaner.'});
       if(request.body?.confirmed!==true)return json(response,400,{error:'Review and confirm this cleaner email before sending.'});

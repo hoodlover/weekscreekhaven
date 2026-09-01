@@ -1,6 +1,6 @@
 {
   "name": "weeks-creek-haven",
-  "version": "33.255.1388",
+  "version": "33.255.1389",
   "type": "module",
   "dependencies": {
     "@vercel/blob": "latest",
