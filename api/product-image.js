@@ -26,16 +26,28 @@ function metadataImage(html,baseUrl){
   return '';
 }
 
+async function previewServiceImage(productUrl){
+  const preview=await fetch(`https://api.microlink.io?url=${encodeURIComponent(productUrl)}`,{signal:AbortSignal.timeout(10000),headers:{'Accept':'application/json'}});
+  if(!preview.ok)throw new Error('Preview service unavailable');
+  const payload=await preview.json();
+  const candidate=payload?.data?.image?.url||'';
+  try{const image=new URL(candidate);return ['https:','http:'].includes(image.protocol)?image.toString():'';}catch{return '';}
+}
+
 export default async function handler(request,response){
   if(request.method!=='GET')return json(response,405,{error:'Method not allowed.'});
   const productUrl=safeRetailUrl(request.query?.url);
   if(!productUrl)return json(response,400,{error:'Use a supported retailer product link.'},{'Cache-Control':'public, max-age=300'});
   try{
-    const page=await fetch(productUrl,{redirect:'follow',signal:AbortSignal.timeout(8000),headers:{'User-Agent':'Mozilla/5.0 (compatible; WeeksCreekHaven/1.0)','Accept':'text/html,application/xhtml+xml'}});
-    if(!page.ok||!String(page.headers.get('content-type')||'').includes('text/html'))throw new Error('Product page unavailable');
-    const finalUrl=safeRetailUrl(page.url);
-    if(!finalUrl)throw new Error('Unsupported redirect');
-    const image=metadataImage((await page.text()).slice(0,2000000),finalUrl);
+    let image='';
+    try{
+      const page=await fetch(productUrl,{redirect:'follow',signal:AbortSignal.timeout(8000),headers:{'User-Agent':'Mozilla/5.0 (compatible; WeeksCreekHaven/1.0)','Accept':'text/html,application/xhtml+xml'}});
+      if(page.ok&&String(page.headers.get('content-type')||'').includes('text/html')){
+        const finalUrl=safeRetailUrl(page.url);
+        if(finalUrl)image=metadataImage((await page.text()).slice(0,2000000),finalUrl);
+      }
+    }catch{}
+    if(!image)image=await previewServiceImage(productUrl.toString());
     if(!image)throw new Error('Product image unavailable');
     response.writeHead(302,{'Location':image,'Cache-Control':'public, s-maxage=604800, stale-while-revalidate=2592000'});
     response.end();
