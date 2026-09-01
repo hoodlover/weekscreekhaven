@@ -74,7 +74,8 @@ function buildDashboard(bookings,state,isOwner){
   const completedJobs=state.assignments.filter(a=>a.completedAt).map(a=>({...a,earnedCents:(Number(a.basePayCents)||Number(state.settings.standardPayCents)||17500)+(Number(a.extraPayCents)||0),earnedAt:a.completedAt}));
   const completedServices=state.serviceOffers.filter(o=>['completed','paid'].includes(o.status)&&o.completedAt).map(o=>({kind:'service',amountCents:Number(o.amountCents)||0,earnedAt:o.completedAt,paidOutAt:o.paidAt||''}));
   const earnings=[...paidTips.map(t=>({kind:'tip',amountCents:Number(t.amountCents)||0,earnedAt:t.paidAt,paidOutAt:t.paidOutAt||''})),...completedJobs.map(j=>({kind:'cleaning',amountCents:j.earnedCents,earnedAt:j.earnedAt,paidOutAt:j.paidAt||''})),...completedServices];
-  const totalFor=days=>earnings.filter(e=>within(e.earnedAt,days)).reduce((sum,e)=>sum+e.amountCents,0);
+  const acceptedCents=upcoming.filter(item=>item.status==='accepted'&&!item.completedAt).reduce((sum,item)=>sum+(Number(item.basePayCents)||0)+(Number(item.extraPayCents)||0),0)+state.serviceOffers.filter(item=>item.status==='accepted').reduce((sum,item)=>sum+(Number(item.amountCents)||0),0);
+  const paidFor=days=>earnings.filter(e=>within(e.paidOutAt,days)).reduce((sum,e)=>sum+e.amountCents,0);
   return {
     isOwner, cleanerName:state.settings.cleanerName, cleanerEmail:isOwner?(state.settings.cleanerEmail||''):'', standardPayCents:state.settings.standardPayCents, doorCode:state.settings.doorCode||'', closetCode:state.settings.closetCode||'', doorCodeUpdatedAt:state.settings.doorCodeUpdatedAt||'',
     inventory:state.inventory.sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name)), upcoming, recent,
@@ -82,7 +83,7 @@ function buildDashboard(bookings,state,isOwner){
     serviceOffers:state.serviceOffers.sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))).slice(0,50),
     conversations:state.conversations.sort((a,b)=>String(b.messages?.at(-1)?.createdAt||b.createdAt).localeCompare(String(a.messages?.at(-1)?.createdAt||a.createdAt))).slice(0,30),
     tips:paidTips.sort((a,b)=>String(b.paidAt).localeCompare(String(a.paidAt))).slice(0,50).map(t=>({id:t.id,guestFirstName:t.guestFirstName,amountCents:t.amountCents,paidAt:t.paidAt,paidOutAt:t.paidOutAt||''})),
-    money:{owedCents:earnings.filter(e=>!e.paidOutAt).reduce((sum,e)=>sum+e.amountCents,0),monthCents:totalFor(30),quarterCents:totalFor(90),yearCents:totalFor(365)},
+    money:{acceptedCents,owedCents:earnings.filter(e=>!e.paidOutAt).reduce((sum,e)=>sum+e.amountCents,0),paidMonthCents:paidFor(30),paidYearCents:paidFor(365)},
     emailHistory:isOwner?state.emailHistory.slice(-12).reverse():[],
     updatedAt:new Date().toISOString(),
   };
