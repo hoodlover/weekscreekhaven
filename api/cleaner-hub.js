@@ -3,6 +3,7 @@ import { appendCleanerRecord, getCleanerState } from '../_lib/cleaner-store.js';
 import { getBookingRequests } from '../_lib/booking-store.js';
 import { getSquareOrder } from '../_lib/square.js';
 import { hashPasscode, json, requireAdmin, requireCleaner, sameOriginRequest } from '../_lib/security.js';
+import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
 
 const safe=(value,max=500)=>String(value||'').trim().slice(0,max);
 const cents=value=>Math.round(Number(value)*100);
@@ -51,11 +52,12 @@ function buildDashboard(bookings,state,isOwner){
   const earnings=[...paidTips.map(t=>({kind:'tip',amountCents:Number(t.amountCents)||0,earnedAt:t.paidAt,paidOutAt:t.paidOutAt||''})),...completedJobs.map(j=>({kind:'cleaning',amountCents:j.earnedCents,earnedAt:j.earnedAt,paidOutAt:j.paidAt||''}))];
   const totalFor=days=>earnings.filter(e=>within(e.earnedAt,days)).reduce((sum,e)=>sum+e.amountCents,0);
   return {
-    isOwner, cleanerName:state.settings.cleanerName, standardPayCents:state.settings.standardPayCents, doorCode:state.settings.doorCode||'', closetCode:state.settings.closetCode||'', doorCodeUpdatedAt:state.settings.doorCodeUpdatedAt||'',
+    isOwner, cleanerName:state.settings.cleanerName, cleanerEmail:isOwner?(state.settings.cleanerEmail||''):'', standardPayCents:state.settings.standardPayCents, doorCode:state.settings.doorCode||'', closetCode:state.settings.closetCode||'', doorCodeUpdatedAt:state.settings.doorCodeUpdatedAt||'',
     inventory:state.inventory.sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name)), upcoming, recent,
     remarks:state.remarks.filter(r=>r.status!=='resolved').sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))),
     tips:paidTips.sort((a,b)=>String(b.paidAt).localeCompare(String(a.paidAt))).slice(0,50).map(t=>({id:t.id,guestFirstName:t.guestFirstName,amountCents:t.amountCents,paidAt:t.paidAt,paidOutAt:t.paidOutAt||''})),
     money:{owedCents:earnings.filter(e=>!e.paidOutAt).reduce((sum,e)=>sum+e.amountCents,0),monthCents:totalFor(30),quarterCents:totalFor(90),yearCents:totalFor(365)},
+    emailHistory:isOwner?state.emailHistory.slice(-12).reverse():[],
     updatedAt:new Date().toISOString(),
   };
 }
@@ -79,11 +81,13 @@ export default async function handler(request,response){
     } else if(action==='settings'){
       if(!owner)return json(response,403,{error:'Only the owner can change pay settings.'});
       const standardPayCents=cents(request.body?.standardPay); if(!Number.isInteger(standardPayCents)||standardPayCents<0||standardPayCents>100000)return json(response,400,{error:'Enter a valid standard cleaning pay.'});
+      const cleanerEmail=safe(request.body?.cleanerEmail,160).toLowerCase();
+      if(cleanerEmail&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanerEmail))return json(response,400,{error:'Enter a valid cleaner email address.'});
       const doorCode=safe(request.body?.doorCode,12).replace(/\s+/g,'');
       if(doorCode&&!/^\d{4,10}$/.test(doorCode))return json(response,400,{error:'Use a 4–10 digit cleaner door code.'});
       const closetCode=safe(request.body?.closetCode,12).replace(/\s+/g,'');
       if(closetCode&&!/^\d{3,10}$/.test(closetCode))return json(response,400,{error:'Use a 3–10 digit closet-lock code.'});
-      await appendCleanerRecord({type:'settings',createdAt:now,changes:{cleanerName:safe(request.body?.cleanerName,80)||'Cabin Care Team',standardPayCents,doorCode,closetCode,doorCodeUpdatedAt:now}});
+      await appendCleanerRecord({type:'settings',createdAt:now,changes:{cleanerName:safe(request.body?.cleanerName,80)||'Cabin Care Team',cleanerEmail,standardPayCents,doorCode,closetCode,doorCodeUpdatedAt:now}});
     } else if(action==='inventory'){
       const id=safe(request.body?.id,80).toLowerCase().replace(/[^a-z0-9-]/g,'-'); const name=safe(request.body?.name,100); const level=safe(request.body?.level,20);
       if(!id||!name||!['stocked','low','out','unknown'].includes(level))return json(response,400,{error:'Choose an item and its current stock level.'});
@@ -108,6 +112,17 @@ export default async function handler(request,response){
     } else if(action==='tip-paid-out'){
       if(!owner)return json(response,403,{error:'Only the owner can record tip payout.'});
       await appendCleanerRecord({type:'tip_update',tipId:safe(request.body?.tipId,80),createdAt:now,changes:{paidOutAt:now}});
+    } else if(action==='send-email'){
+      if(!owner)return json(response,403,{error:'Only the owner can email the cleaner.'});
+      if(request.body?.confirmed!==true)return json(response,400,{error:'Review and confirm this cleaner email before sending.'});
+      const state=await getCleanerState(); const to=state.settings.cleanerEmail||'';
+      if(!to)return json(response,400,{error:'Add the cleaner email address in Cleaner setup first.'});
+      const subject=safe(request.body?.subject,160),body=safe(request.body?.body,5000),operationId=safe(request.body?.operationId,80);
+      if(subject.length<5||body.length<20||!operationId)return json(response,400,{error:'Finish the email subject and message before sending.'});
+      const already=state.emailHistory.find(item=>item.operationId===operationId); if(already)return json(response,200,{ok:true,alreadySent:true});
+      const htmlBody=escapeEmailHtml(body).replace(/\n/g,'<br>');
+      const result=await sendEmail({to,toName:state.settings.cleanerName||'Cabin Care Team',subject,idempotencyKey:`cleaner-${operationId}`,text:body,html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.65;max-width:640px"><div style="padding:22px;background:#183c2d;color:#fff"><div style="color:#e5b67e;font-size:12px;font-weight:bold;letter-spacing:.12em;text-transform:uppercase">Weeks Creek Haven · Cabin Care</div><h1 style="margin:6px 0 0;color:#fff;font-family:Georgia,serif">${escapeEmailHtml(subject)}</h1></div><div style="padding:24px;background:#fffdf8">${htmlBody}</div><div style="padding:16px 24px;background:#f4eee0;color:#76695e;font-size:12px">Weeks Creek Haven · Blue Ridge, Georgia</div></div>`});
+      await appendCleanerRecord({type:'cleaner_email_sent',createdAt:now,email:{id:crypto.randomUUID(),operationId,to,subject,templateId:safe(request.body?.templateId,50),sentAt:now,provider:result?.provider||''}});
     } else return json(response,400,{error:'Unknown cleaner hub update.'});
     return json(response,200,{ok:true},{'Cache-Control':'private, no-store'});
   }catch(error){console.error(error);return json(response,503,{error:error.message||'The Cleaner Hub is temporarily unavailable.'});}

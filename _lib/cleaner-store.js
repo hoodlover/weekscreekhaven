@@ -51,9 +51,9 @@ export async function getCleanerRecords() {
 
 export async function getCleanerState() {
   const records=await getCleanerRecords();
-  const settings={ cleanerName:'Cabin Care Team', standardPayCents:17500, doorCode:'', closetCode:'', doorCodeUpdatedAt:'', passcodeHash:'', passcodeSalt:'', cleanerAuthVersion:'' };
+  const settings={ cleanerName:'Cabin Care Team', cleanerEmail:'', standardPayCents:17500, doorCode:'', closetCode:'', doorCodeUpdatedAt:'', passcodeHash:'', passcodeSalt:'', cleanerAuthVersion:'' };
   const inventory=new Map(DEFAULT_INVENTORY.map(item=>[item.id,{...item}]));
-  const assignments=new Map(); const remarks=new Map(); const tips=new Map();
+  const assignments=new Map(); const remarks=new Map(); const tips=new Map(); const emailHistory=[];
   for (const record of records) {
     if(record.type==='settings') Object.assign(settings,record.changes||{});
     if(record.type==='inventory') inventory.set(record.item.id,{...(inventory.get(record.item.id)||{}),...record.item});
@@ -62,6 +62,7 @@ export async function getCleanerState() {
     if(record.type==='remark_update'&&remarks.has(record.remarkId)) Object.assign(remarks.get(record.remarkId),record.changes,{updatedAt:record.createdAt});
     if(record.type==='tip') tips.set(record.tip.id,record.tip);
     if(record.type==='tip_update'&&tips.has(record.tipId)) Object.assign(tips.get(record.tipId),record.changes,{updatedAt:record.createdAt});
+    if(record.type==='cleaner_email_sent') emailHistory.push(record.email);
   }
-  return { settings, inventory:[...inventory.values()], assignments:[...assignments.values()], remarks:[...remarks.values()], tips:[...tips.values()] };
+  return { settings, inventory:[...inventory.values()], assignments:[...assignments.values()], remarks:[...remarks.values()], tips:[...tips.values()], emailHistory };
 }
