@@ -122,7 +122,8 @@ export default async function handler(request,response){
       const id=safe(request.body?.id,80).toLowerCase().replace(/[^a-z0-9-]/g,'-'); const name=safe(request.body?.name,100); const level=safe(request.body?.level,20);
       if(!id||!name||!['stocked','low','out','unknown'].includes(level))return json(response,400,{error:'Choose an item and its current stock level.'});
       const productUrl=safeProductUrl(request.body?.productUrl);if(request.body?.productUrl&&!productUrl)return json(response,400,{error:'Paste a valid product link beginning with http:// or https://.'});
-      await appendCleanerRecord({type:'inventory',createdAt:now,item:{id,name,category:safe(request.body?.category,60)||'Other',level,note:safe(request.body?.note,240),productUrl,productNote:safe(request.body?.productNote,400),updatedAt:now,updatedBy:owner?'owner':'cleaner'}});
+      const locations=['Under sink','Laundry room','Owner closet','Bathroom','Pantry','Linen closet','Towel closet','Storage room','Other'];const location=locations.includes(request.body?.location)?request.body.location:'';
+      await appendCleanerRecord({type:'inventory',createdAt:now,item:{id,name,category:safe(request.body?.category,60)||'Other',level:level==='unknown'&&productUrl?'stocked':level,location,note:safe(request.body?.note,240),productUrl,productNote:safe(request.body?.productNote,400),updatedAt:now,updatedBy:owner?'owner':'cleaner'}});
     } else if(action==='remark'){
       const body=safe(request.body?.body,1000); if(!body)return json(response,400,{error:'Add the note or item needed.'});
       await appendCleanerRecord({type:'remark',createdAt:now,remark:{id:crypto.randomUUID(),body,category:safe(request.body?.category,40)||'Help needed',priority:['normal','soon','urgent'].includes(request.body?.priority)?request.body.priority:'normal',status:'open',author:owner?'owner':'cleaner',createdAt:now}});

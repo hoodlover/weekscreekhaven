@@ -33,7 +33,7 @@ export const DEFAULT_INVENTORY = [
   ['bath-towels','Bath towels','Linens'], ['hot-tub-towels','Hot-tub towels','Linens'],
   ['washcloths','Washcloths & hand towels','Linens'], ['queen-sheets','Queen sheet sets','Linens'],
   ['king-sheets','King sheet sets','Linens'], ['pillowcases','Pillowcases','Linens'],
-].map(([id,name,category]) => ({ id, name, category, level:'unknown', note:'', productUrl:'', productNote:'', updatedAt:'' }))
+].map(([id,name,category]) => ({ id, name, category, level:'unknown', location:'', note:'', productUrl:'', productNote:'', updatedAt:'' }))
   .map(item => ({...item,...({
     'toilet-paper':{productUrl:'https://a.co/d/08CLRmPA',productNote:'Scott Rapid-Dissolving Toilet Paper, 48 double rolls; septic-safe and designed for RVs and boats.'},
     'paper-towels':{productUrl:'https://a.co/d/04lVq6Hc',productNote:'Bounty Quick-Size paper towels with select-a-size sheets and high absorbency for using less per cleanup.'},
@@ -68,7 +68,8 @@ export const DEFAULT_INVENTORY = [
     'hot-tub-test-strips':{productUrl:'https://a.co/d/00XLoids',productNote:'Easy-read pool and spa test strips that measure seven key water parameters.'},
     'matches-extra-long':{productUrl:'https://a.co/d/0dqv0Xcy',productNote:'10.9-inch extra-long wooden safety matches, strike-on-box, 4-pack with 160 total; long reach for fireplaces, candles, grills, and firepits.'},
     'matches-fireplace':{productUrl:'https://a.co/d/0c8SK0w2',productNote:'8-inch wooden fireplace matches with black tips and included strikers, 100-count.'},
-  }[item.id]||{})}));
+  }[item.id]||{})}))
+  .map(item => item.productUrl ? {...item,level:'stocked'} : item);
 
 function token() { return process.env.INVITE_BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN; }
 function ensureConfigured() { if (!token()) throw new Error('Cleaner storage is not configured.'); }
@@ -126,7 +127,8 @@ export async function getCleanerState() {
     if(record.type==='settings') Object.assign(settings,record.changes||{});
     if(record.type==='inventory') {
       const current=inventory.get(record.item.id)||{};
-      inventory.set(record.item.id,{...current,...record.item,productUrl:record.item.productUrl||current.productUrl||'',productNote:record.item.productNote||current.productNote||''});
+      const productUrl=record.item.productUrl||current.productUrl||'',level=record.item.level==='unknown'&&productUrl?'stocked':record.item.level;
+      inventory.set(record.item.id,{...current,...record.item,level,productUrl,productNote:record.item.productNote||current.productNote||''});
     }
     if(record.type==='assignment') assignments.set(record.bookingId,{...(assignments.get(record.bookingId)||{bookingId:record.bookingId}),...(record.changes||{}),updatedAt:record.createdAt});
     if(record.type==='remark') remarks.set(record.remark.id,record.remark);
