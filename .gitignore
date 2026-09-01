@@ -7,3 +7,5 @@ config.json
 .claude/
 ~tm90EA.html
 .vercel
+_private/image-originals/
+scripts/__pycache__/
