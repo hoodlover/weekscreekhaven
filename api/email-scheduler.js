@@ -1,7 +1,7 @@
 import { appendBookingRecord, getBookingCalendar } from '../_lib/booking-store.js';
 import { sendEmail } from '../_lib/email.js';
 import { refreshSquareBooking } from '../_lib/payment-sync.js';
-import { createAgreementToken, createReviewToken, json } from '../_lib/security.js';
+import { bookingAccessCode, createAgreementToken, createReviewToken, json } from '../_lib/security.js';
 import { cancelSquareInvoice } from '../_lib/square.js';
 import { doorCodeTask, generateDoorCode } from '../_lib/door-code.js';
 import { processCleanerReminders } from '../_lib/cleaner-reminders.js';
@@ -23,6 +23,7 @@ function midpoint(arrival,departure) { const nights=Math.max(1,Math.round((Date.
 function checkoutDetails(booking) {
   const noCleaner=Boolean(booking.friendsAndFamilyDiscount) && booking.friendsAndFamilyDiscount.chargeCleaning !== true;
   return {
+    checkoutTiming:noCleaner?'Checkout is flexible—there is no set time unless Lance or Heather lets you know personally.':`Checkout is ${booking.lateCheckout?'noon':'11:00 AM'}.`,
     checkoutChecklistUrl:`https://www.weekscreekhaven.com/checkout.html?token=${encodeURIComponent(createAgreementToken(booking.id,365*86400))}`,
     checkoutExtraSteps:noCleaner?'Friends & Family checkout — no cleaner is scheduled after this stay. Please strip used beds, clean the bathrooms you used, complete at least one load of linens, and leave the cabin ready for the next adventure. Don’t let the door hit you on the way out — say “Alexa, Going Home” for the quick exit routine.':'Your cleaner will handle beds, bathrooms, and laundry. Please do not strip the beds.',
   };
@@ -73,8 +74,9 @@ export default async function handler(request, response) {
       const dates=selectedDates(booking); if (!dates.arrival || !dates.departure) continue;
       if(booking.status==='booked'&&!booking.doorCode){const doorCode=generateDoorCode(stored);const generatedAt=new Date().toISOString();await appendBookingRecord({type:'status',bookingId:booking.id,changes:{doorCode,doorCodeGeneratedAt:generatedAt,doorCodeInstalledAt:null,doorCodeRemovedAt:null,doorCodeGuestSentAt:null},createdAt:generatedAt});Object.assign(booking,{doorCode,doorCodeGeneratedAt:generatedAt});}
       const packetUrl=`https://www.weekscreekhaven.com/booking-packet.html?token=${encodeURIComponent(createAgreementToken(booking.id,365*86400))}`;
+      const guestGuideUrl=`https://www.weekscreekhaven.com/friends-hub.html?token=${encodeURIComponent(createAgreementToken(booking.id,365*86400))}`;
       const reviewUrl=`https://www.weekscreekhaven.com/review.html?token=${encodeURIComponent(createReviewToken(booking.id))}`;
-      const common={ guestName:booking.name, arrival:dates.arrival, departure:dates.departure, checkout:booking.lateCheckout?'noon':'11:00 AM', packetUrl, paymentUrl:booking.paymentUrl||packetUrl, depositAmount:money(booking.depositAmountCents), balanceAmount:money(booking.squareBalanceCents ?? booking.balanceAmountCents), reviewUrl, bookingUrl:'https://www.weekscreekhaven.com/register.html', referralCode:booking.referralCode||'', securityDeposit:money(booking.securityDepositCents||0), adminUrl:'https://www.weekscreekhaven.com/admin.html', ...checkoutDetails(booking) };
+      const common={ guestName:booking.name, arrival:dates.arrival, departure:dates.departure, checkout:booking.lateCheckout?'noon':'11:00 AM', packetUrl, guestGuideUrl, bookingCode:bookingAccessCode(booking.id), paymentUrl:booking.paymentUrl||packetUrl, depositAmount:money(booking.depositAmountCents), balanceAmount:money(booking.squareBalanceCents ?? booking.balanceAmountCents), reviewUrl, guestBookUrl:`${guestGuideUrl}#guestbook`, bookingUrl:'https://www.weekscreekhaven.com/register.html', referralCode:booking.referralCode||'', securityDeposit:money(booking.securityDepositCents||0), adminUrl:'https://www.weekscreekhaven.com/admin.html', ...checkoutDetails(booking) };
       if (booking.earlyBirdExpiresAt && !booking.earlyBirdExpiredAt && Date.now() >= Date.parse(booking.earlyBirdExpiresAt) && (!booking.paymentRequirementMet || !booking.agreementAcceptedAt)) {
         if (booking.squareInvoiceId) { try { await cancelSquareInvoice(booking.squareInvoiceId); } catch { /* record expiration even if Square already closed the invoice */ } }
         const expiredAt=new Date().toISOString();
