@@ -254,6 +254,12 @@ document.getElementById('checkout-form').addEventListener('submit', async (event
             if (payload[key]) payload[key] = [].concat(payload[key], value);
             else payload[key] = value;
         });
+        const checklistLabels = {
+            linens:'Beds & laundry', bathrooms:'Bathrooms', dishes:'Dishes', fridge:'Refrigerator', trash:'Trash', fireplace:'Fireplace', hottub:'Hot tub', lights:'Lights', lockup:'Doors & windows', walkthrough:'Final walk-through',
+            'paid-dishes':'Dishes', 'paid-food':'Personal food', 'paid-trash':'Trash', 'paid-hottub':'Hot tub', 'paid-lights':'Lights', 'paid-lockup':'Lock up',
+        };
+        payload.checklist_expected = checklistIds.map(id => checklistLabels[id]);
+        payload.checklist_items = checklistIds.filter(id => document.getElementById(id)?.checked).map(id => checklistLabels[id]);
         const response = await fetch(form.action, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

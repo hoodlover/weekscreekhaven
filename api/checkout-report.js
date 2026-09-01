@@ -52,6 +52,8 @@ export default async function handler(request, response) {
     const maintenanceIssue = safeText(request.body?.maintenance_issue, 1500);
     const nothingToReport = Boolean(request.body?.maintenance_none);
     const checklistCompleted = String(request.body?.checklist_completed || '').toLowerCase() === 'true';
+    const checklistItems = safeList(request.body?.checklist_items, 20, 100);
+    const checklistExpected = safeList(request.body?.checklist_expected, 20, 100);
     const stay = selectedStay(booking);
     const stayLabel = stay.arrival && stay.departure ? `${stay.arrival} through ${stay.departure}` : 'Booking not linked';
     const urgent = /urgent/i.test(maintenancePriority);
@@ -66,6 +68,8 @@ export default async function handler(request, response) {
       maintenanceIssue,
       nothingToReport,
       checklistCompleted,
+      checklistItems,
+      checklistExpected,
       submittedAt: completedAt,
     };
 
@@ -81,8 +85,8 @@ export default async function handler(request, response) {
       toName: 'Heather & Lance',
       subject: `${urgent ? 'URGENT · ' : ''}Checkout report from ${guestName}`,
       idempotencyKey: booking ? `${booking.id}-checkout-report` : '',
-      text: `Weeks Creek Haven checkout report\n\nGuest: ${guestName}\nStay: ${stayLabel}${guestPhone ? `\nPhone: ${guestPhone}` : ''}\nChecklist fully checked: ${checklistCompleted ? 'Yes' : 'No'}\n\nSUPPLIES RUNNING LOW\n${textList(restock)}\n\nMAINTENANCE / ATTENTION\n${maintenanceSummary || 'No details supplied'}`,
-      html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:640px"><h1 style="color:#183c2d">Checkout report</h1><p><strong>Guest:</strong> ${escapeEmailHtml(guestName)}<br><strong>Stay:</strong> ${escapeEmailHtml(stayLabel)}${guestPhone ? `<br><strong>Phone:</strong> ${escapeEmailHtml(guestPhone)}` : ''}<br><strong>Checklist fully checked:</strong> ${checklistCompleted ? 'Yes' : 'No'}</p><h2 style="color:#183c2d">Supplies running low</h2>${htmlList(restock)}<h2 style="color:#183c2d">Maintenance / attention</h2>${maintenanceHtml}</div>`,
+      text: `Weeks Creek Haven checkout report\n\nGuest: ${guestName}\nStay: ${stayLabel}${guestPhone ? `\nPhone: ${guestPhone}` : ''}\nChecklist fully checked: ${checklistCompleted ? 'Yes' : 'No'}\nChecked off: ${checklistItems.length ? checklistItems.join(', ') : 'Nothing marked'}\nNot checked: ${checklistExpected.filter(item => !checklistItems.includes(item)).join(', ') || 'None'}\n\nSUPPLIES RUNNING LOW\n${textList(restock)}\n\nMAINTENANCE / ATTENTION\n${maintenanceSummary || 'No details supplied'}`,
+      html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:640px"><h1 style="color:#183c2d">Checkout report</h1><p><strong>Guest:</strong> ${escapeEmailHtml(guestName)}<br><strong>Stay:</strong> ${escapeEmailHtml(stayLabel)}${guestPhone ? `<br><strong>Phone:</strong> ${escapeEmailHtml(guestPhone)}` : ''}<br><strong>Checklist fully checked:</strong> ${checklistCompleted ? 'Yes' : 'No'}<br><strong>Checked off:</strong> ${escapeEmailHtml(checklistItems.length ? checklistItems.join(', ') : 'Nothing marked')}<br><strong>Not checked:</strong> ${escapeEmailHtml(checklistExpected.filter(item => !checklistItems.includes(item)).join(', ') || 'None')}</p><h2 style="color:#183c2d">Supplies running low</h2>${htmlList(restock)}<h2 style="color:#183c2d">Maintenance / attention</h2>${maintenanceHtml}</div>`,
     });
 
     if (booking) {
