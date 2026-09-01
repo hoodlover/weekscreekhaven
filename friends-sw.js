@@ -1,4 +1,4 @@
-const CACHE_NAME = 'friends-hub-v53';
+const CACHE_NAME = 'friends-hub-v54';
 
 const PRECACHE_URLS = [
   '/friends-hub.html',
@@ -7,7 +7,7 @@ const PRECACHE_URLS = [
   '/site-manifest.json?v=2',
   '/manifest.json?v=22',
   '/admin-manifest.json?v=2',
-  '/cleaner-manifest.json?v=2',
+  '/cleaner-manifest.json?v=3',
   '/cleaner.html',
   '/hub-adventures.html',
   '/nav.js',
@@ -31,11 +31,9 @@ const PRECACHE_URLS = [
   '/webpic/owner-shortcut-48-v1.png',
   '/webpic/owner-shortcut-32-v1.png',
   '/webpic/owner-shortcut-16-v1.png',
-  '/webpic/cleaner-pwa-192-v2.png',
-  '/webpic/cleaner-pwa-512-v2.png',
-  '/webpic/cleaner-pwa-maskable-192-v2.png',
-  '/webpic/cleaner-pwa-maskable-512-v2.png',
-  '/webpic/cleaner-apple-180-v2.png',
+  '/webpic/cleaner-pwa-192-v3.png',
+  '/webpic/cleaner-pwa-512-v3.png',
+  '/webpic/cleaner-apple-180-v3.png',
   '/gallery/weeks-creek-haven-blue-ridge-cabin.webp',
   '/webpic/checkmark.webp',
   // check-in assets
