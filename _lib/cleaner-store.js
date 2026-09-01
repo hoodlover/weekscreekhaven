@@ -3,6 +3,19 @@ import { decryptRecord, encryptRecord } from './security.js';
 import { normalizeFamilyChecklist, normalizeTurnoverChecklist } from './checklist-defaults.js';
 
 const PREFIX = 'secure-cleaner/records/';
+const DEFAULT_LOCATIONS = {
+  'toilet-paper':'Bathroom','paper-towels':'Pantry','trash-bags':'Storage room','dishwasher-pods':'Under sink',
+  'trash-bags-30-gallon':'Storage room','trash-bags-drawstring':'Storage room','trash-bags-small':'Bathroom','trash-bags-kitchen':'Under sink',
+  'septic-treatment':'Owner closet','septic-treatment-monthly':'Owner closet','dish-soap':'Under sink',
+  'hand-soap':'Owner closet','hand-soap-citrus':'Owner closet','hand-soap-gentle':'Owner closet',
+  'coffee':'Pantry','hot-cocoa':'Pantry','toiletries':'Owner closet','clarifying-shampoo':'Bathroom',
+  'all-purpose-cleaner':'Under sink','disinfectant':'Under sink','disinfecting-wipes':'Under sink','glass-cleaner':'Under sink',
+  'bathroom-cleaner':'Bathroom','toilet-cleaner-tablets':'Bathroom','laundry':'Laundry room','dryer-sheets':'Laundry room',
+  'sponges':'Under sink','steel-wool-pads':'Under sink','hot-tub-chemicals':'Owner closet','hot-tub-balancing-kit':'Owner closet',
+  'hot-tub-line-cleaner':'Owner closet','hot-tub-test-strips':'Owner closet','charcoal':'Storage room','propane':'Other',
+  'matches-extra-long':'Owner closet','matches-fireplace':'Owner closet','bath-towels':'Towel closet','hot-tub-towels':'Towel closet',
+  'washcloths':'Towel closet','queen-sheets':'Linen closet','king-sheets':'Linen closet','pillowcases':'Linen closet',
+};
 
 export const DEFAULT_INVENTORY = [
   ['toilet-paper','Toilet paper','Guest supplies'], ['paper-towels','Paper towels','Guest supplies'],
@@ -33,7 +46,7 @@ export const DEFAULT_INVENTORY = [
   ['bath-towels','Bath towels','Linens'], ['hot-tub-towels','Hot-tub towels','Linens'],
   ['washcloths','Washcloths & hand towels','Linens'], ['queen-sheets','Queen sheet sets','Linens'],
   ['king-sheets','King sheet sets','Linens'], ['pillowcases','Pillowcases','Linens'],
-].map(([id,name,category]) => ({ id, name, category, level:'unknown', location:'', note:'', productUrl:'', productNote:'', productImageUrl:'', updatedAt:'' }))
+].map(([id,name,category]) => ({ id, name, category, level:'unknown', location:DEFAULT_LOCATIONS[id]||'', note:'', productUrl:'', productNote:'', productImageUrl:'', updatedAt:'' }))
   .map(item => ({...item,...({
     'toilet-paper':{productUrl:'https://a.co/d/08CLRmPA',productNote:'Scott Rapid-Dissolving Toilet Paper, 48 double rolls; septic-safe and designed for RVs and boats.'},
     'paper-towels':{productUrl:'https://a.co/d/04lVq6Hc',productNote:'Bounty Quick-Size paper towels with select-a-size sheets and high absorbency for using less per cleanup.'},
@@ -128,7 +141,7 @@ export async function getCleanerState() {
     if(record.type==='inventory') {
       const current=inventory.get(record.item.id)||{};
       const productUrl=record.item.productUrl||current.productUrl||'',level=record.item.level==='unknown'&&productUrl?'stocked':record.item.level;
-      inventory.set(record.item.id,{...current,...record.item,level,productUrl,productNote:record.item.productNote||current.productNote||''});
+      inventory.set(record.item.id,{...current,...record.item,level,location:record.item.location||current.location||'',productUrl,productNote:record.item.productNote||current.productNote||''});
     }
     if(record.type==='assignment') assignments.set(record.bookingId,{...(assignments.get(record.bookingId)||{bookingId:record.bookingId}),...(record.changes||{}),updatedAt:record.createdAt});
     if(record.type==='remark') remarks.set(record.remark.id,record.remark);
