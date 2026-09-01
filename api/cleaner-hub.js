@@ -7,6 +7,7 @@ import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
 import { normalizeTurnoverChecklist } from '../_lib/checklist-defaults.js';
 
 const safe=(value,max=500)=>String(value||'').trim().slice(0,max);
+function safeProductUrl(value){const raw=safe(value,1000);if(!raw)return'';try{const url=new URL(raw);return ['http:','https:'].includes(url.protocol)?url.toString():'';}catch{return'';}}
 const cents=value=>Math.round(Number(value)*100);
 const HUB_URL='https://www.weekscreekhaven.com/cleaner.html';
 const money=value=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format((Number(value)||0)/100);
@@ -120,7 +121,8 @@ export default async function handler(request,response){
     } else if(action==='inventory'){
       const id=safe(request.body?.id,80).toLowerCase().replace(/[^a-z0-9-]/g,'-'); const name=safe(request.body?.name,100); const level=safe(request.body?.level,20);
       if(!id||!name||!['stocked','low','out','unknown'].includes(level))return json(response,400,{error:'Choose an item and its current stock level.'});
-      await appendCleanerRecord({type:'inventory',createdAt:now,item:{id,name,category:safe(request.body?.category,60)||'Other',level,note:safe(request.body?.note,240),updatedAt:now,updatedBy:owner?'owner':'cleaner'}});
+      const productUrl=safeProductUrl(request.body?.productUrl);if(request.body?.productUrl&&!productUrl)return json(response,400,{error:'Paste a valid product link beginning with http:// or https://.'});
+      await appendCleanerRecord({type:'inventory',createdAt:now,item:{id,name,category:safe(request.body?.category,60)||'Other',level,note:safe(request.body?.note,240),productUrl,productNote:safe(request.body?.productNote,400),updatedAt:now,updatedBy:owner?'owner':'cleaner'}});
     } else if(action==='remark'){
       const body=safe(request.body?.body,1000); if(!body)return json(response,400,{error:'Add the note or item needed.'});
       await appendCleanerRecord({type:'remark',createdAt:now,remark:{id:crypto.randomUUID(),body,category:safe(request.body?.category,40)||'Help needed',priority:['normal','soon','urgent'].includes(request.body?.priority)?request.body.priority:'normal',status:'open',author:owner?'owner':'cleaner',createdAt:now}});

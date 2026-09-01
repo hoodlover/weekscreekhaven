@@ -17,7 +17,8 @@ export const DEFAULT_INVENTORY = [
   ['bath-towels','Bath towels','Linens'], ['hot-tub-towels','Hot-tub towels','Linens'],
   ['washcloths','Washcloths & hand towels','Linens'], ['queen-sheets','Queen sheet sets','Linens'],
   ['king-sheets','King sheet sets','Linens'], ['pillowcases','Pillowcases','Linens'],
-].map(([id,name,category]) => ({ id, name, category, level:'unknown', note:'', updatedAt:'' }));
+].map(([id,name,category]) => ({ id, name, category, level:'unknown', note:'', productUrl:'', productNote:'', updatedAt:'' }))
+  .map(item => item.id==='toilet-paper' ? {...item,productUrl:'https://a.co/d/08CLRmPA',productNote:'Scott Rapid-Dissolving Toilet Paper, 48 double rolls; septic-safe and designed for RVs and boats.'} : item);
 
 function token() { return process.env.INVITE_BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN; }
 function ensureConfigured() { if (!token()) throw new Error('Cleaner storage is not configured.'); }
