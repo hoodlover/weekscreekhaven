@@ -203,21 +203,21 @@ export default async function handler(request,response){
         await appendCleanerRecord({type:'service_offer_update',offerId:offer.id,createdAt:now,changes:{status:'withdrawn',withdrawnAt:now}});
       }else return json(response,400,{error:'Choose paid or withdrawn.'});
     } else if(action==='start-conversation'){
-      const state=await getCleanerState(),subject=safe(request.body?.subject,120),body=safe(request.body?.body,1500),author=owner?'owner':'cleaner';
+      const state=await getCleanerState(),subject=safe(request.body?.subject,120),body=safe(request.body?.body,1500),author=owner?'owner':'cleaner',alsoEmail=request.body?.alsoEmail===true;
       if(!subject||!body)return json(response,400,{error:'Add a short subject and message.'});
-      const id=crypto.randomUUID(),message={id:crypto.randomUUID(),body,author,createdAt:now};
+      const id=crypto.randomUUID(),message={id:crypto.randomUUID(),body,author,createdAt:now,delivery:alsoEmail?'email-pending':'hub'};
       await appendCleanerRecord({type:'conversation',createdAt:now,conversation:{id,subject,status:'open',createdAt:now,createdBy:author,messages:[message]}});
       const to=owner?state.settings.cleanerEmail:process.env.OWNER_EMAIL,toName=owner?state.settings.cleanerName:'Heather & Lance',from=owner?'Heather & Lance':state.settings.cleanerName;
-      await Promise.allSettled([hubEmail({to,toName,subject:`Cleaner Hub message · ${subject}`,text:`${from} posted a new message:\n\n${body}\n\nReply inside the Cleaner Hub so the full conversation stays together.`,key:`cleaner-conversation-${id}-message-${message.id}`})]);
+      if(alsoEmail){let changes={delivery:'email-failed'};try{const result=await hubEmail({to,toName,subject:`Cleaner Hub message · ${subject}`,text:`${from} posted a new message:\n\n${body}\n\nReply inside the Cleaner Hub so the full conversation stays together.`,key:`cleaner-conversation-${id}-message-${message.id}`});if(!result?.skipped)changes={delivery:'email',emailedAt:now}}catch(error){console.error('Cleaner Hub conversation email failed',error)}await appendCleanerRecord({type:'conversation_message_delivery',conversationId:id,messageId:message.id,createdAt:now,changes});}
     } else if(action==='reply-conversation'){
-      const state=await getCleanerState(),conversation=state.conversations.find(item=>item.id===safe(request.body?.conversationId,80)),body=safe(request.body?.body,1500),author=owner?'owner':'cleaner';
+      const state=await getCleanerState(),conversation=state.conversations.find(item=>item.id===safe(request.body?.conversationId,80)),body=safe(request.body?.body,1500),author=owner?'owner':'cleaner',alsoEmail=request.body?.alsoEmail===true;
       if(!conversation)return json(response,404,{error:'This conversation could not be found.'});
       if(conversation.status==='closed')return json(response,409,{error:'Reopen this conversation before replying.'});
       if(!body)return json(response,400,{error:'Write a reply first.'});
-      const message={id:crypto.randomUUID(),body,author,createdAt:now};
+      const message={id:crypto.randomUUID(),body,author,createdAt:now,delivery:alsoEmail?'email-pending':'hub'};
       await appendCleanerRecord({type:'conversation_message',conversationId:conversation.id,createdAt:now,message});
       const to=owner?state.settings.cleanerEmail:process.env.OWNER_EMAIL,toName=owner?state.settings.cleanerName:'Heather & Lance',from=owner?'Heather & Lance':state.settings.cleanerName;
-      await Promise.allSettled([hubEmail({to,toName,subject:`Reply · ${conversation.subject}`,text:`${from} replied in the Cleaner Hub:\n\n${body}\n\nOpen the conversation to reply.`,key:`cleaner-conversation-${conversation.id}-message-${message.id}`})]);
+      if(alsoEmail){let changes={delivery:'email-failed'};try{const result=await hubEmail({to,toName,subject:`Reply · ${conversation.subject}`,text:`${from} replied in the Cleaner Hub:\n\n${body}\n\nOpen the conversation to reply.`,key:`cleaner-conversation-${conversation.id}-message-${message.id}`});if(!result?.skipped)changes={delivery:'email',emailedAt:now}}catch(error){console.error('Cleaner Hub reply email failed',error)}await appendCleanerRecord({type:'conversation_message_delivery',conversationId:conversation.id,messageId:message.id,createdAt:now,changes});}
     } else if(action==='conversation-status'){
       const state=await getCleanerState(),conversation=state.conversations.find(item=>item.id===safe(request.body?.conversationId,80)),status=safe(request.body?.status,20);
       if(!conversation)return json(response,404,{error:'This conversation could not be found.'});

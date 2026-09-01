@@ -83,6 +83,10 @@ export async function getCleanerState() {
     if(record.type==='service_offer_update'&&serviceOffers.has(record.offerId)) Object.assign(serviceOffers.get(record.offerId),record.changes,{updatedAt:record.createdAt});
     if(record.type==='conversation') conversations.set(record.conversation.id,{...record.conversation,messages:[...(record.conversation.messages||[])]});
     if(record.type==='conversation_message'&&conversations.has(record.conversationId)) conversations.get(record.conversationId).messages.push(record.message);
+    if(record.type==='conversation_message_delivery'&&conversations.has(record.conversationId)){
+      const message=conversations.get(record.conversationId).messages.find(item=>item.id===record.messageId);
+      if(message)Object.assign(message,record.changes,{updatedAt:record.createdAt});
+    }
     if(record.type==='conversation_update'&&conversations.has(record.conversationId)) Object.assign(conversations.get(record.conversationId),record.changes,{updatedAt:record.createdAt});
     if(record.type==='cleaning_photo') cleaningPhotos.set(record.photo.id,{...record.photo,bookingId:record.bookingId});
   }
