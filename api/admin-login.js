@@ -1,4 +1,4 @@
-import { ADMIN_COOKIE, cookieHeader, createSession, enforceRateLimit, json, rateLimitJson, sameOriginRequest, sharedAdminCookieDomain, verifyAdminPassword } from '../_lib/security.js';
+import { ADMIN_COOKIE, cookieHeader, createSession, enforceRateLimit, json, rateLimitJson, sameOriginRequest, verifyAdminPassword } from '../_lib/security.js';
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -15,7 +15,7 @@ export default async function handler(request, response) {
     }
     const maxAge = 8 * 60 * 60;
     return json(response, 200, { ok: true }, {
-      'Set-Cookie': cookieHeader(ADMIN_COOKIE, createSession({ role: 'admin' }, maxAge), maxAge, { domain:sharedAdminCookieDomain(request) }),
+      'Set-Cookie': cookieHeader(ADMIN_COOKIE, createSession({ role: 'admin' }, maxAge), maxAge),
       'Cache-Control': 'no-store',
     });
   } catch (error) {

@@ -1,33 +1,14 @@
-const CACHE_NAME = 'friends-hub-v55';
-const PRIVATE_APP_URLS = self.location.hostname === 'owner.weekscreekhaven.com'
-  ? [
-      '/admin.html',
-      '/admin-manifest.json?v=3',
-      '/webpic/owner-pwa-192-v1.png',
-      '/webpic/owner-pwa-512-v1.png',
-      '/webpic/owner-apple-180-v1.png',
-      '/webpic/owner-shortcut-v1.ico',
-      '/webpic/owner-shortcut-48-v1.png',
-      '/webpic/owner-shortcut-32-v1.png',
-      '/webpic/owner-shortcut-16-v1.png',
-    ]
-  : self.location.hostname === 'cleaner.weekscreekhaven.com'
-    ? [
-        '/cleaner.html',
-        '/cleaner-manifest.json?v=4',
-        '/webpic/cleaner-pwa-192-v3.png',
-        '/webpic/cleaner-pwa-512-v3.png',
-        '/webpic/cleaner-apple-180-v3.png',
-      ]
-    : [];
+const CACHE_NAME = 'friends-hub-v54';
 
 const PRECACHE_URLS = [
-  ...PRIVATE_APP_URLS,
   '/friends-hub.html',
   '/index.html',
   '/privacy.html',
   '/site-manifest.json?v=2',
   '/manifest.json?v=22',
+  '/admin-manifest.json?v=2',
+  '/cleaner-manifest.json?v=3',
+  '/cleaner.html',
   '/hub-adventures.html',
   '/nav.js',
   '/footer.js',
@@ -43,6 +24,16 @@ const PRECACHE_URLS = [
   '/webpic/wch-favicon-48-v2.png',
   '/webpic/wch-favicon-32-v2.png',
   '/webpic/wch-favicon-16-v2.png',
+  '/webpic/owner-pwa-192-v1.png',
+  '/webpic/owner-pwa-512-v1.png',
+  '/webpic/owner-apple-180-v1.png',
+  '/webpic/owner-shortcut-v1.ico',
+  '/webpic/owner-shortcut-48-v1.png',
+  '/webpic/owner-shortcut-32-v1.png',
+  '/webpic/owner-shortcut-16-v1.png',
+  '/webpic/cleaner-pwa-192-v3.png',
+  '/webpic/cleaner-pwa-512-v3.png',
+  '/webpic/cleaner-apple-180-v3.png',
   '/gallery/weeks-creek-haven-blue-ridge-cabin.webp',
   '/webpic/checkmark.webp',
   // check-in assets

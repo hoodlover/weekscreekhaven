@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex,nofollow">
   <title>Cabin Command Center | Weeks Creek Haven</title>
-  <link rel="manifest" href="/admin-manifest.json?v=3">
+  <link rel="manifest" href="/admin-manifest.json?v=2">
   <link rel="apple-touch-icon" sizes="180x180" href="/webpic/owner-apple-180-v1.png">
   <meta name="theme-color" content="#183c2d">
   <link rel="shortcut icon" href="/webpic/owner-shortcut-v1.ico">
@@ -301,14 +301,14 @@
   <main class="shell">
     <header class="topbar">
       <div class="brand">
-        <a href="https://www.weekscreekhaven.com/" aria-label="Weeks Creek Haven home"><img src="webpic/weeks-creek-haven-round-logo.png" alt="Weeks Creek Haven"></a>
+        <a href="/index.html" aria-label="Weeks Creek Haven home"><img src="webpic/weeks-creek-haven-round-logo.png" alt="Weeks Creek Haven"></a>
         <div><div class="eyebrow">Weeks Creek Haven · private</div><h1>Heather &amp; Lance&rsquo;s<span class="command-title">Cabin Command Center</span></h1></div>
       </div>
       <div class="top-actions">
-        <a href="https://www.weekscreekhaven.com/" class="ghost" style="text-decoration:none">Home</a>
+        <a href="/index.html" class="ghost" style="text-decoration:none">Home</a>
         <button id="install-owner-app" class="ghost" type="button">Install Owner App</button>
-        <a id="open-hub" href="https://www.weekscreekhaven.com/friends-hub.html" class="ghost" style="text-decoration:none" hidden>Guest Guide</a>
-        <a id="open-cleaner" href="https://cleaner.weekscreekhaven.com/" class="ghost" style="text-decoration:none" hidden>Cleaner Hub</a>
+        <a id="open-hub" href="/friends-hub.html" class="ghost" style="text-decoration:none" hidden>Guest Guide</a>
+        <a id="open-cleaner" href="/cleaner.html" class="ghost" style="text-decoration:none" hidden>Cleaner Hub</a>
         <button id="enable-alerts" class="ghost" hidden>Enable alerts</button>
         <button id="logout" class="ghost" hidden>Sign out</button>
       </div>
@@ -389,7 +389,7 @@
               <button class="tab" data-tab="checklists">Master checklists</button>
               <button class="tab" data-tab="reviews">Guest reviews <span id="review-badge" class="count-badge" hidden></span></button>
               <button class="tab" data-tab="activity">Activity log <span id="activity-badge" class="count-badge" hidden></span></button>
-              <a id="open-cleaner-menu" href="https://cleaner.weekscreekhaven.com/" class="tab external">Cleaner Hub</a>
+              <a id="open-cleaner-menu" href="/cleaner.html" class="tab external">Cleaner Hub</a>
               <a id="open-handbook" href="/owner-emergency-handbook.html" class="tab external" hidden>Emergency handbook</a>
               <a href="/property-people.html" class="tab external">Property &amp; people</a>
               <a href="/api/admin-cabin-contacts-pdf" class="tab external" target="_blank" rel="noopener">Print contacts PDF</a>
@@ -403,7 +403,7 @@
           <div id="panel-pricing" class="tab-panel"><div class="pricing-layout"><div><h3>Automatic seasonal prices</h3><p class="helper">Weekend prices include the standard $200 cleaning cost. Weeknight, two-night, five-night and weekly prices are derived automatically and rounded up to the next $5.</p><div id="pricing-seasons" class="pricing-seasons"></div></div><div class="calculator"><h3>Try a stay</h3><div class="calculator-grid"><label>Arrival<input id="calc-arrival" type="date"></label><label>Checkout<input id="calc-departure" type="date"></label></div><div class="calculator-grid"><label>Guests<select id="calc-guests"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></label><label>Dogs<select id="calc-dogs"><option value="0">None</option><option value="1">1 dog</option><option value="2">2 dogs</option><option value="3">3 dogs</option><option value="4">4 dogs</option></select></label></div><label>Phone for discount preview<input id="calc-phone" type="tel" placeholder="(770) 555-0123"></label><label class="checkline"><input id="calc-late-checkout" type="checkbox"><span>Add noon checkout · $50</span></label><div id="calculator-result" class="calculator-result"><span class="helper">Choose dates to see the full calculation.</span></div></div></div></div>
           <div id="panel-discounts" class="tab-panel"><div class="discount-layout"><form id="discount-form" class="discount-form"><h3>Add contacts</h3><p class="helper">Paste one or many contacts, one per line, with the phone number first and the welcome name after it. Everyone added together receives this starting rule; you can then edit every person separately in the private database.</p><label>Starting discount<select id="discount-type"><option value="percentage">Percentage off</option><option value="amount">Dollar amount off</option><option value="flat">Set whole-stay price</option><option value="complimentary">Complimentary · no fees or taxes</option></select></label><label>Phone number and welcome name<textarea id="discount-target" rows="7" maxlength="4000" placeholder="7702413791 Matthew&#10;(678) 358-4719 Randy &amp; Tonya" required></textarea></label><label><span id="discount-value-label">Percentage off</span><input id="discount-value" type="number" min="1" max="100" step="1" placeholder="25" required></label><label>Welcome label<input id="discount-label" maxlength="80" placeholder="Friends & Family rate"></label><div data-fee-options><p class="helper"><strong>Costs this group still pays</strong></p><label class="checkline"><input id="discount-charge-cleaning" type="checkbox"><span>$175 cleaning</span></label><label class="checkline"><input id="discount-charge-dogs" type="checkbox"><span>$25 per dog for each started two-night period</span></label><label class="checkline"><input id="discount-charge-late" type="checkbox"><span>$50 noon checkout when selected</span></label><div class="calculator-grid"><label>Other fee label<input id="discount-custom-label" maxlength="60" placeholder="Firewood bundle"></label><label>Other fee amount<input id="discount-custom-fee" type="number" min="0" step="5" placeholder="0"></label></div></div><p class="helper">A complimentary stay means no rent, cleaning, pet, optional, or other required charge is collected. If any amount is collected, use a $0 whole-stay price and select the required costs instead.</p><button class="primary" type="submit">Add to private database</button><div id="discount-error" class="error" hidden></div></form><div><h3>Friends &amp; Family database</h3><p class="helper">Each person can have a different discount and different required charges. Guests never see this list.</p><div id="discount-list" class="discount-list"></div></div></div></div>
           <div id="panel-checklists" class="tab-panel">
-            <a id="return-to-cleaner" class="ghost" href="https://cleaner.weekscreekhaven.com/" style="display:none;margin-bottom:12px;text-decoration:none">← Back to this Cleaner Hub visit</a>
+            <a id="return-to-cleaner" class="ghost" href="/cleaner.html" style="display:none;margin-bottom:12px;text-decoration:none">← Back to this Cleaner Hub visit</a>
             <div class="master-intro"><strong>These are the live master copies.</strong> Changes here become the checklist shown to guests or Heather. Existing visit progress stays with that visit because every task keeps its own hidden identity even when you rewrite or reorder it.</div>
             <div class="master-layout">
               <section class="master-card" data-master-kind="family">
@@ -426,7 +426,7 @@
   </main>
   <script>
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => navigator.serviceWorker.register('/friends-sw.js?v=55').catch(() => {}));
+      window.addEventListener('load', () => navigator.serviceWorker.register('/friends-sw.js?v=54').catch(() => {}));
     }
 
     (() => {
@@ -465,7 +465,7 @@
     const state = { invites: [], access: [], bookings: [], reviews: [], rates: [], discounts: [], discountNameFilter: '', discountTypeFilter: 'all', emails: [], emailTriggers: [], accounting: [], accountingLoaded: false, showArchivedBookings: false, showArchivedInvites: false, bookingFilter: 'all', bookingSort: 'arrival', openBookingIds: new Set(), pricing: PRICING_CONFIG, square: {}, knownBookingIds: new Set(), knownAccessIds: new Set(), initialized: false, newInvite: null, checklists: { family: [], turnover: [], updatedAt: '' }, checklistDirty: { family: false, turnover: false } };
     const $ = (id) => document.getElementById(id);
     const pageParams=new URLSearchParams(location.search);let requestedPanelOpened=false;
-    const requestedCleanerReturn=(()=>{const value=pageParams.get('return');if(!value)return'';try{const url=new URL(value,'https://cleaner.weekscreekhaven.com/');return url.origin==='https://cleaner.weekscreekhaven.com'&&['/','/cleaner.html'].includes(url.pathname)?url.toString():'';}catch{return'';}})();
+    const requestedCleanerReturn=(()=>{const value=pageParams.get('return');if(!value)return'';try{const url=new URL(value,location.origin);return url.origin===location.origin&&url.pathname==='/cleaner.html'?`${url.pathname}${url.search}${url.hash}`:'';}catch{return'';}})();
     function openRequestedPanel(){if(requestedPanelOpened||pageParams.get('tab')!=='checklists')return;requestedPanelOpened=true;document.querySelectorAll('.tab,.tab-panel').forEach(el=>el.classList.remove('active'));document.querySelector('[data-tab="checklists"]').classList.add('active');$('panel-checklists').classList.add('active');if(requestedCleanerReturn){const back=$('return-to-cleaner');back.href=requestedCleanerReturn;back.style.display='inline-flex';}requestAnimationFrame(()=>$('turnover-master').scrollIntoView({behavior:'smooth',block:'start'}));}
     $('panel-invites').prepend($('invite-form'));
     const discountFilters=document.createElement('div');discountFilters.className='discount-editor-grid';discountFilters.innerHTML='<label>Filter by name<input id="discount-filter-name" type="search" placeholder="Start typing a name"></label><label>Filter by discount<select id="discount-filter-type"><option value="all">All discounts</option><option value="percentage">Percentage off</option><option value="amount">Dollar amount off</option><option value="flat">Whole-stay price</option><option value="complimentary">Complimentary</option></select></label>';$('discount-list').before(discountFilters);

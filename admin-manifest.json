@@ -1,9 +1,9 @@
 {
   "name": "WCH Owner Bookings",
   "short_name": "WCH Owner",
-  "id": "/",
+  "id": "/admin.html",
   "description": "Heather and Lance's private Weeks Creek Haven booking command center.",
-  "start_url": "/#bookings",
+  "start_url": "/admin.html#bookings",
   "scope": "/",
   "display": "standalone",
   "background_color": "#17130f",
