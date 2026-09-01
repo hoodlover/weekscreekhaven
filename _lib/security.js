@@ -47,8 +47,14 @@ export function verifySession(token, expectedRole) {
   }
 }
 
-export function cookieHeader(name, value, maxAge = 0) {
+export function sharedAdminCookieDomain(request) {
+  const hostname = String(request?.headers?.host || '').split(':')[0].toLowerCase();
+  return hostname === 'weekscreekhaven.com' || hostname.endsWith('.weekscreekhaven.com') ? '.weekscreekhaven.com' : '';
+}
+
+export function cookieHeader(name, value, maxAge = 0, options = {}) {
   const parts = [`${name}=${encodeURIComponent(value)}`, 'Path=/', 'HttpOnly', 'Secure', 'SameSite=Lax'];
+  if (options.domain) parts.push(`Domain=${options.domain}`);
   if (maxAge > 0) parts.push(`Max-Age=${maxAge}`);
   if (maxAge < 0) parts.push('Max-Age=0');
   return parts.join('; ');

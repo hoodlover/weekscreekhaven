@@ -1,9 +1,9 @@
 {
   "name": "Weeks Creek Haven Cleaner Hub",
   "short_name": "WCH Cleaner",
-  "id": "/cleaner.html",
+  "id": "/",
   "description": "Private cleaning schedules, cabin-care checklists, supplies, notes, and pay for Weeks Creek Haven.",
-  "start_url": "/cleaner.html",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#17130f",

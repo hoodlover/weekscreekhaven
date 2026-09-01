@@ -1,7 +1,7 @@
 import { appendCleanerRecord, getCleanerState } from './cleaner-store.js';
 import { escapeEmailHtml, sendEmail } from './email.js';
 
-const HUB_URL='https://www.weekscreekhaven.com/cleaner.html';
+const HUB_URL='https://cleaner.weekscreekhaven.com/';
 const money=cents=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format((Number(cents)||0)/100);
 const when=value=>new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',weekday:'long',month:'long',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'}).format(new Date(value));
 
