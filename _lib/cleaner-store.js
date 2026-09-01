@@ -16,6 +16,19 @@ const DEFAULT_LOCATIONS = {
   'matches-extra-long':'Owner closet','matches-fireplace':'Owner closet','bath-towels':'Towel closet','hot-tub-towels':'Towel closet',
   'washcloths':'Towel closet','queen-sheets':'Linen closet','king-sheets':'Linen closet','pillowcases':'Linen closet',
 };
+const ORGANIZED_CATEGORIES = {
+  'toilet-paper':'Paper goods','paper-towels':'Paper goods',
+  'trash-bags':'Trash bags','trash-bags-30-gallon':'Trash bags','trash-bags-drawstring':'Trash bags','trash-bags-small':'Trash bags','trash-bags-kitchen':'Trash bags',
+  'hand-soap':'Soap & bath','hand-soap-citrus':'Soap & bath','hand-soap-gentle':'Soap & bath','toiletries':'Soap & bath','clarifying-shampoo':'Soap & bath',
+  'dish-soap':'Kitchen supplies','dishwasher-pods':'Kitchen supplies','coffee':'Kitchen supplies','hot-cocoa':'Kitchen supplies',
+  'septic-treatment':'Septic care','septic-treatment-monthly':'Septic care',
+  'all-purpose-cleaner':'Cleaning products','disinfectant':'Cleaning products','disinfecting-wipes':'Cleaning products','glass-cleaner':'Cleaning products','bathroom-cleaner':'Cleaning products','toilet-cleaner-tablets':'Cleaning products','sponges':'Cleaning products','steel-wool-pads':'Cleaning products',
+  'laundry':'Laundry','dryer-sheets':'Laundry',
+  'hot-tub-chemicals':'Hot tub care','hot-tub-balancing-kit':'Hot tub care','hot-tub-line-cleaner':'Hot tub care','hot-tub-test-strips':'Hot tub care',
+  'charcoal':'Fire & outdoor','propane':'Fire & outdoor','matches-extra-long':'Fire & outdoor','matches-fireplace':'Fire & outdoor',
+  'bath-towels':'Linens & towels','hot-tub-towels':'Linens & towels','washcloths':'Linens & towels','queen-sheets':'Linens & towels','king-sheets':'Linens & towels','pillowcases':'Linens & towels',
+};
+const LEGACY_CATEGORIES=new Set(['Guest supplies','Cleaning','Hot tub','Outdoor','Linens']);
 
 export const DEFAULT_INVENTORY = [
   ['toilet-paper','Toilet paper','Guest supplies'], ['paper-towels','Paper towels','Guest supplies'],
@@ -160,6 +173,7 @@ export async function getCleanerState() {
     if(record.type==='conversation_update'&&conversations.has(record.conversationId)) Object.assign(conversations.get(record.conversationId),record.changes,{updatedAt:record.createdAt});
     if(record.type==='cleaning_photo') cleaningPhotos.set(record.photo.id,{...record.photo,bookingId:record.bookingId});
   }
+  for(const item of inventory.values())if(LEGACY_CATEGORIES.has(item.category)&&ORGANIZED_CATEGORIES[item.id])item.category=ORGANIZED_CATEGORIES[item.id];
   settings.familyCheckoutChecklist=normalizeFamilyChecklist(settings.familyCheckoutChecklist);
   settings.turnoverChecklistMaster=normalizeTurnoverChecklist(settings.turnoverChecklistMaster);
   return { settings, inventory:[...inventory.values()], assignments:[...assignments.values()], remarks:[...remarks.values()], tips:[...tips.values()], serviceOffers:[...serviceOffers.values()], conversations:[...conversations.values()], cleaningPhotos:[...cleaningPhotos.values()], emailHistory };
