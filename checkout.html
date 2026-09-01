@@ -102,18 +102,7 @@
                 <div><p class="kicker">One clear list</p><h2 class="section-title">Friends &amp; Family Cleaning</h2></div>
                 <p>Check each item as you finish it. This matches the cabin refrigerator list and your checkout reminder.</p>
             </div>
-            <div class="task-grid">
-                <div class="task"><input type="checkbox" id="linens"><label for="linens"><strong>Beds &amp; laundry</strong>Strip the beds you used. Wash sheets, pillowcases, and towels, then move the load to the dryer and start it before you leave.</label></div>
-                <div class="task"><input type="checkbox" id="bathrooms"><label for="bathrooms"><strong>Bathrooms</strong>Clean the sinks, toilets, and showers you used so they are ready for the next guests.</label></div>
-                <div class="task"><input type="checkbox" id="dishes"><label for="dishes"><strong>Dishes</strong>Hand-wash dishes or load and start the dishwasher. Please leave the sink empty.</label></div>
-                <div class="task"><input type="checkbox" id="fridge"><label for="fridge"><strong>Refrigerator</strong>Remove your food and wipe up any spills or crumbs.</label></div>
-                <div class="task"><input type="checkbox" id="trash"><label for="trash"><strong>Trash</strong>Bag and remove all trash. Food waste goes in the tall bear-proof can; non-food trash goes in the porch trash box.</label></div>
-                <div class="task"><input type="checkbox" id="fireplace"><label for="fireplace"><strong>Fireplace</strong>Turn the fireplace knob to <em>Pilot</em> and close the screens.</label></div>
-                <div class="task"><input type="checkbox" id="hottub"><label for="hottub"><strong>Hot tub</strong>Secure the cover, lower the temperature to 80&deg;F, and include used hot-tub towels with the laundry.</label></div>
-                <div class="task"><input type="checkbox" id="lights"><label for="lights"><strong>Lights</strong>Turn off most lights by hand. Alexa only controls the main living-room and kitchen lights. The checkout temperature adjusts automatically.</label></div>
-                <div class="task"><input type="checkbox" id="lockup"><label for="lockup"><strong>Doors &amp; windows</strong>Close the windows and lock all three smart doors, or use the Alexa routine below.</label></div>
-                <div class="task"><input type="checkbox" id="walkthrough"><label for="walkthrough"><strong>Final walk-through</strong>Leave the cabin as you found it and text us about anything that broke, needs attention, or could make a future stay better.</label></div>
-            </div>
+            <div id="friends-task-grid" class="task-grid"></div>
             <div id="all-checked" class="tip hidden"><strong>All set.</strong> Thank you for taking care of the Haven. Safe travels home.</div>
         </section>
 
@@ -197,6 +186,24 @@ const params = new URLSearchParams(location.search);
 const checkoutToken = params.get('token') || '';
 let cleanerScheduled = params.get('cleaner') === '1';
 let tipEligible = cleanerScheduled || params.get('tip-eligible') === '1';
+const DEFAULT_FAMILY_CHECKLIST = [
+    {id:'linens',title:'Beds & laundry',detail:'Strip the beds you used. Wash sheets, pillowcases, and towels, then move the load to the dryer and start it before you leave.'},
+    {id:'bathrooms',title:'Bathrooms',detail:'Clean the sinks, toilets, and showers you used so they are ready for the next guests.'},
+    {id:'dishes',title:'Dishes',detail:'Hand-wash dishes or load and start the dishwasher. Please leave the sink empty.'},
+    {id:'fridge',title:'Refrigerator',detail:'Remove your food and wipe up any spills or crumbs.'},
+    {id:'trash',title:'Trash',detail:'Bag and remove all trash. Food waste goes in the tall bear-proof can; non-food trash goes in the porch trash box.'},
+    {id:'fireplace',title:'Fireplace',detail:'Turn the fireplace knob to Pilot and close the screens.'},
+    {id:'hottub',title:'Hot tub',detail:'Secure the cover, lower the temperature to 80°F, and include used hot-tub towels with the laundry.'},
+    {id:'floors',title:'Floors & stick vacuum',detail:'Vacuum the floors, empty the stick vacuum, and plug it back in so it charges.'},
+    {id:'lights',title:'Lights',detail:'Turn off most lights by hand. Alexa only controls the main living-room and kitchen lights. The checkout temperature adjusts automatically.'},
+    {id:'lockup',title:'Doors & windows',detail:'Close the windows and lock all three smart doors, or use the Alexa routine below.'},
+    {id:'walkthrough',title:'Final walk-through',detail:'Leave the cabin as you found it and text us about anything that broke, needs attention, or could make a future stay better.'},
+];
+let familyChecklist=DEFAULT_FAMILY_CHECKLIST,friendBoxIds=[];
+const escapeHtml=value=>String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+function updateFamilyProgress(){const done=friendBoxIds.length>0&&friendBoxIds.every(boxId=>document.getElementById(boxId)?.checked);document.getElementById('all-checked').classList.toggle('hidden',!done)}
+function renderFamilyChecklist(items){const checked=new Set(friendBoxIds.filter(id=>document.getElementById(id)?.checked).map(id=>id.replace(/^family-/,'')));familyChecklist=Array.isArray(items)&&items.length?items:DEFAULT_FAMILY_CHECKLIST;friendBoxIds=familyChecklist.map(item=>`family-${item.id}`);document.getElementById('friends-task-grid').innerHTML=familyChecklist.map(item=>`<div class="task"><input type="checkbox" id="family-${escapeHtml(item.id)}" ${checked.has(item.id)?'checked':''}><label for="family-${escapeHtml(item.id)}"><strong>${escapeHtml(item.title)}</strong>${escapeHtml(item.detail)}</label></div>`).join('');friendBoxIds.forEach(id=>document.getElementById(id)?.addEventListener('change',updateFamilyProgress));updateFamilyProgress()}
+renderFamilyChecklist(DEFAULT_FAMILY_CHECKLIST);
 document.getElementById('booking-token').value = checkoutToken;
 document.getElementById('guide-back').href = checkoutToken
     ? `/friends-hub.html?token=${encodeURIComponent(checkoutToken)}&tab=checkout`
@@ -224,16 +231,11 @@ async function loadCheckoutGuest() {
         if (data.guestName) document.getElementById('checkout-heading').textContent = `Safe travels, ${data.guestName} & crew.`;
         cleanerScheduled = data.cleanerScheduled === true;
         tipEligible = data.complimentary !== true;
+        renderFamilyChecklist(data.familyCheckoutChecklist);
         applyCleanerCheckout();
     } catch { /* Keep the generic form available if booking details cannot load. */ }
 }
 loadCheckoutGuest();
-
-const friendBoxIds = ['linens','bathrooms','dishes','fridge','trash','fireplace','hottub','lights','lockup','walkthrough'];
-friendBoxIds.forEach(id => document.getElementById(id)?.addEventListener('change', () => {
-    const done = friendBoxIds.every(boxId => document.getElementById(boxId)?.checked);
-    document.getElementById('all-checked').classList.toggle('hidden', !done);
-}));
 
 function openLightbox(src) {
     document.getElementById('lightbox-image').src = src;
@@ -257,7 +259,7 @@ document.getElementById('checkout-form').addEventListener('submit', async (event
             else payload[key] = value;
         });
         const checklistLabels = {
-            linens:'Beds & laundry', bathrooms:'Bathrooms', dishes:'Dishes', fridge:'Refrigerator', trash:'Trash', fireplace:'Fireplace', hottub:'Hot tub', lights:'Lights', lockup:'Doors & windows', walkthrough:'Final walk-through',
+            ...Object.fromEntries(familyChecklist.map(item=>[`family-${item.id}`,item.title])),
             'paid-dishes':'Dishes', 'paid-food':'Personal food', 'paid-trash':'Trash', 'paid-hottub':'Hot tub', 'paid-lights':'Lights', 'paid-lockup':'Lock up',
         };
         payload.checklist_expected = checklistIds.map(id => checklistLabels[id]);

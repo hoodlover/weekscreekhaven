@@ -4,6 +4,7 @@ import { getBookingRequests } from '../_lib/booking-store.js';
 import { getSquareOrder } from '../_lib/square.js';
 import { hashPasscode, json, requireAdmin, requireCleaner, sameOriginRequest } from '../_lib/security.js';
 import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
+import { normalizeTurnoverChecklist } from '../_lib/checklist-defaults.js';
 
 const safe=(value,max=500)=>String(value||'').trim().slice(0,max);
 const cents=value=>Math.round(Number(value)*100);
@@ -11,7 +12,6 @@ const HUB_URL='https://www.weekscreekhaven.com/cleaner.html';
 const money=value=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format((Number(value)||0)/100);
 const dateTime=value=>new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',weekday:'long',month:'long',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'}).format(new Date(value));
 const firstName=value=>safe(value,100).split(/\s+/)[0]||'Guest';
-const TURNOVER_CHECK_KEYS=['arrival_photos','checkout_report','safety_scan','kitchen_dishes','kitchen_surfaces','kitchen_appliances','refrigerator','kitchen_handles','kitchen_trash','kitchen_floors','bath_toilets','bath_sinks','bath_mirrors','bath_showers','bath_linens','bath_trash_floors','beds_strip','linens_wash','beds_remake','protectors','bedroom_surfaces','living_dust','living_reset','living_floors','fireplace','hot_tub_water','hot_tub_area','outdoor_reset','grill_fireplace','fuel_check','restock','systems','doors_windows','vacuum_charge','final_walkthrough','after_photos'];
 const CHECK_STATUSES=new Set(['','inspected','done','attention']);
 function todayEastern(){const p=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const o=Object.fromEntries(p.map(x=>[x.type,x.value]));return `${o.year}-${o.month}-${o.day}`;}
 function stay(booking){return booking.dateChoices?.[Number.isInteger(booking.approvedChoice)?booking.approvedChoice:0]||booking.dateChoices?.[0]||{};}
@@ -78,7 +78,7 @@ function buildDashboard(bookings,state,isOwner){
   const paidFor=days=>compensation.filter(e=>within(e.paidOutAt,days)).reduce((sum,e)=>sum+e.amountCents,0);
   const tipSummary={owedCents:paidTips.filter(t=>!t.paidOutAt).reduce((sum,t)=>sum+(Number(t.amountCents)||0),0),paidCents:paidTips.filter(t=>t.paidOutAt).reduce((sum,t)=>sum+(Number(t.amountCents)||0),0)};
   return {
-    isOwner, cleanerName:state.settings.cleanerName, cleanerEmail:isOwner?(state.settings.cleanerEmail||''):'', standardPayCents:state.settings.standardPayCents, doorCode:state.settings.doorCode||'', closetCode:state.settings.closetCode||'', doorCodeUpdatedAt:state.settings.doorCodeUpdatedAt||'',
+    isOwner, cleanerName:state.settings.cleanerName, cleanerEmail:isOwner?(state.settings.cleanerEmail||''):'', standardPayCents:state.settings.standardPayCents, doorCode:state.settings.doorCode||'', closetCode:state.settings.closetCode||'', doorCodeUpdatedAt:state.settings.doorCodeUpdatedAt||'', turnoverChecklistMaster:normalizeTurnoverChecklist(state.settings.turnoverChecklistMaster),
     inventory:state.inventory.sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name)), upcoming, recent,
     remarks:state.remarks.filter(r=>r.status!=='resolved').sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))),
     serviceOffers:state.serviceOffers.sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))).slice(0,50),
@@ -157,7 +157,8 @@ export default async function handler(request,response){
       if(!cleaner)return json(response,403,{error:'Sign in as the cleaner to record this turnover.'});
       const bookingId=safe(request.body?.bookingId,100),state=await getCleanerState(),bookings=await getBookingRequests();
       if(!state.assignments.some(item=>item.bookingId===bookingId)&&!bookings.some(item=>item.id===bookingId))return json(response,404,{error:'Cleaning session not found.'});
-      const turnoverChecklist=checklistFrom(request.body,TURNOVER_CHECK_KEYS);
+      const turnoverKeys=normalizeTurnoverChecklist(state.settings.turnoverChecklistMaster).flatMap(group=>group.tasks.map(task=>task.id));
+      const turnoverChecklist=checklistFrom(request.body,turnoverKeys);
       await appendCleanerRecord({type:'assignment',bookingId,createdAt:now,changes:{turnoverChecklist,turnoverChecklistNote:safe(request.body?.note,1500),turnoverChecklistUpdatedAt:now}});
     } else if(action==='tip-paid-out'){
       if(!owner)return json(response,403,{error:'Only the owner can record tip payout.'});

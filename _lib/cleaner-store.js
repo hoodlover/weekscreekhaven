@@ -1,5 +1,6 @@
 import { get, list, put } from '@vercel/blob';
 import { decryptRecord, encryptRecord } from './security.js';
+import { normalizeFamilyChecklist, normalizeTurnoverChecklist } from './checklist-defaults.js';
 
 const PREFIX = 'secure-cleaner/records/';
 
@@ -67,7 +68,7 @@ export async function getCleanerRecords() {
 
 export async function getCleanerState() {
   const records=await getCleanerRecords();
-  const settings={ cleanerName:'Cabin Care Team', cleanerEmail:'', standardPayCents:17500, doorCode:'', closetCode:'', doorCodeUpdatedAt:'', passcodeHash:'', passcodeSalt:'', cleanerAuthVersion:'' };
+  const settings={ cleanerName:'Cabin Care Team', cleanerEmail:'', standardPayCents:17500, doorCode:'', closetCode:'', doorCodeUpdatedAt:'', passcodeHash:'', passcodeSalt:'', cleanerAuthVersion:'', familyCheckoutChecklist:normalizeFamilyChecklist(), turnoverChecklistMaster:normalizeTurnoverChecklist(), checklistsUpdatedAt:'' };
   const inventory=new Map(DEFAULT_INVENTORY.map(item=>[item.id,{...item}]));
   const assignments=new Map(); const remarks=new Map(); const tips=new Map(); const serviceOffers=new Map(); const conversations=new Map(); const cleaningPhotos=new Map(); const emailHistory=[];
   for (const record of records) {
@@ -90,5 +91,7 @@ export async function getCleanerState() {
     if(record.type==='conversation_update'&&conversations.has(record.conversationId)) Object.assign(conversations.get(record.conversationId),record.changes,{updatedAt:record.createdAt});
     if(record.type==='cleaning_photo') cleaningPhotos.set(record.photo.id,{...record.photo,bookingId:record.bookingId});
   }
+  settings.familyCheckoutChecklist=normalizeFamilyChecklist(settings.familyCheckoutChecklist);
+  settings.turnoverChecklistMaster=normalizeTurnoverChecklist(settings.turnoverChecklistMaster);
   return { settings, inventory:[...inventory.values()], assignments:[...assignments.values()], remarks:[...remarks.values()], tips:[...tips.values()], serviceOffers:[...serviceOffers.values()], conversations:[...conversations.values()], cleaningPhotos:[...cleaningPhotos.values()], emailHistory };
 }

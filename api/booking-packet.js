@@ -2,6 +2,8 @@ import { getBookingCalendar } from '../_lib/booking-store.js';
 import { findBookingInvite } from '../_lib/booking-invite.js';
 import { guestFirstName } from '../_lib/guest-name.js';
 import { getInvites } from '../_lib/invite-store.js';
+import { getCleanerState } from '../_lib/cleaner-store.js';
+import { normalizeFamilyChecklist } from '../_lib/checklist-defaults.js';
 import { refreshSquareBooking } from '../_lib/payment-sync.js';
 import { bookingAccessCode, json, verifyAgreementToken } from '../_lib/security.js';
 
@@ -34,9 +36,10 @@ export default async function handler(request, response) {
   try {
     const token = verifyAgreementToken(request.query?.token);
     if (!token) return json(response, 404, { error: 'This reservation link is invalid or has expired.' });
-    const [calendar, invites] = await Promise.all([
+    const [calendar, invites, cleanerState] = await Promise.all([
       getBookingCalendar(),
       getInvites().catch(() => []),
+      getCleanerState().catch(() => ({settings:{}})),
     ]);
     let booking = calendar.bookings.find((item) => item.id === token.bookingId);
     if (!booking) return json(response, 404, { error: 'Booking not found.' });
@@ -69,6 +72,7 @@ export default async function handler(request, response) {
       checkoutTime: friendsAndFamily ? 'Flexible — no set time' : (booking.lateCheckout ? 'noon' : '11:00 AM'),
       complimentary,
       cleanerScheduled,
+      familyCheckoutChecklist: normalizeFamilyChecklist(cleanerState.settings?.familyCheckoutChecklist),
       invoiceSent: Boolean(booking.squareInvoiceId),
       invoiceSentAt: booking.friendInvoiceSentAt || booking.invoiceSentAt || booking.approvedAt || null,
       invoiceUrl: booking.paymentUrl || '',
