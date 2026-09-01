@@ -3,6 +3,38 @@ import { guestFirstName } from './guest-name.js';
 const RESEND_ENDPOINT = 'https://api.resend.com/emails';
 const SENDER_ENDPOINT = 'https://api.sender.net/v2/message/send';
 
+const GUEST_TEMPLATE_ACTIONS = {
+  'booking-approved':[['paymentUrl','Open Square invoice'],['packetUrl','Complete your reservation']],
+  'booking-packet':[['packetUrl','Open reservation details']],
+  'payment-received':[['packetUrl','Sign the rental agreement']],
+  'booking-confirmed':[['packetUrl','Open reservation details']],
+  'stay-selected':[['packetUrl','Open reservation details']],
+  'guest-invitation':[['hubUrl','Open your invitation']],
+  'deposit-reminder':[['paymentUrl','Open Square invoice']],
+  'deposit-grace':[['paymentUrl','Open Square invoice']],
+  'signed-unpaid-reminder':[['paymentUrl','Open Square invoice']],
+  'selected-unpaid-reminder':[['paymentUrl','Open Square invoice']],
+  'balance-reminder':[['paymentUrl','Open Square invoice']],
+  'balance-grace':[['paymentUrl','Open Square invoice']],
+  'pre-arrival-guide':[['guestGuideUrl','Open Guest Guide']],
+  'checkin-reminder':[['guestGuideUrl','Open Guest Guide']],
+  'midstay-rebook':[['bookingUrl','Choose your next dates']],
+  'checkout-reminder':[['checkoutChecklistUrl','Open checkout checklist']],
+  'checkout-checklist-followup':[['checkoutChecklistUrl','Open checkout checklist']],
+  'thank-you-review':[['reviewUrl','Rate your stay'],['guestBookUrl','Sign the guest book']],
+  'return-referral-offer':[['bookingUrl','Book another stay']],
+};
+
+function guestTemplateHtml(text,templateKey,variables){
+  const actions=(GUEST_TEMPLATE_ACTIONS[templateKey]||[]).map(([key,label])=>({url:String(variables[key]||''),label})).filter(action=>/^https:\/\//.test(action.url));
+  let visible=String(text||'');
+  for(const action of actions)visible=visible.split(action.url).join('');
+  visible=visible.replace(/:\s*(?=\n|$)/gm,'.').replace(/[ \t]+\n/g,'\n').trim();
+  const paragraphs=visible.split(/\n{2,}/).filter(Boolean).map(part=>`<p style="margin:0 0 16px">${escapeEmailHtml(part).replace(/\n/g,'<br>')}</p>`).join('');
+  const buttons=actions.map((action,index)=>`<a href="${escapeEmailHtml(action.url)}" style="display:inline-block;background:${index?'#a45d41':'#183c2d'};color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold;margin:0 8px 10px 0">${action.label}</a>`).join('');
+  return `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:620px;margin:auto"><div style="background:#183c2d;color:#fff;padding:18px 22px;border-radius:14px 14px 0 0"><div style="color:#e5b67e;font-size:12px;font-weight:bold;letter-spacing:.16em">WEEKS CREEK HAVEN</div><div style="font-family:Georgia,serif;font-size:25px;font-weight:bold;margin-top:3px">A little piece of Blue Ridge</div></div><div style="border:1px solid #ded3c1;border-top:0;padding:24px 22px;border-radius:0 0 14px 14px;background:#fffdf8">${paragraphs}${buttons?`<div style="margin:4px 0 18px">${buttons}</div>`:''}<p style="margin:24px 0 0;color:#5f554d">Warmly,<br><strong style="color:#183c2d">Heather &amp; Lance</strong><br><span style="font-size:13px">Weeks Creek Haven</span></p></div></div>`;
+}
+
 export function emailConfigured() {
   return Boolean(
     (process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL)
@@ -85,7 +117,10 @@ export async function sendEmail({ to, toName = '', subject, text, html, attachme
         subject = renderTemplate(template.subject || subject, variables);
         if (template.body) {
           text = renderTemplate(template.body, variables);
-          html = `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px">${text.split(/\n{2,}/).map(part => `<p>${escapeEmailHtml(part).replace(/\n/g, '<br>')}</p>`).join('')}</div>`;
+          if(template.audience==='Guest'){
+            html=guestTemplateHtml(text,templateKey,variables);
+            if(!/(Heather\s*&\s*Lance|Heather and Lance)/i.test(text))text=`${text.trim()}\n\nWarmly,\nHeather & Lance\nWeeks Creek Haven`;
+          }else html = `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px">${text.split(/\n{2,}/).map(part => `<p>${escapeEmailHtml(part).replace(/\n/g, '<br>')}</p>`).join('')}</div>`;
         }
       } else if (template?.enabled === false) return { skipped: true, templateKey };
     } catch (error) {
