@@ -80,7 +80,7 @@ function buildDashboard(bookings,state,isOwner){
   const tipSummary={owedCents:paidTips.filter(t=>!t.paidOutAt).reduce((sum,t)=>sum+(Number(t.amountCents)||0),0),paidCents:paidTips.filter(t=>t.paidOutAt).reduce((sum,t)=>sum+(Number(t.amountCents)||0),0)};
   return {
     isOwner, cleanerName:state.settings.cleanerName, cleanerEmail:isOwner?(state.settings.cleanerEmail||''):'', standardPayCents:state.settings.standardPayCents, doorCode:state.settings.doorCode||'', closetCode:state.settings.closetCode||'', doorCodeUpdatedAt:state.settings.doorCodeUpdatedAt||'', turnoverChecklistMaster:normalizeTurnoverChecklist(state.settings.turnoverChecklistMaster),
-    inventory:state.inventory.sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name)), upcoming, recent,
+    inventory:state.inventory.filter(item=>!item.archivedAt).sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name)), archivedInventory:isOwner?state.inventory.filter(item=>item.archivedAt).sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name)):[], upcoming, recent,
     remarks:state.remarks.filter(r=>r.status!=='resolved').sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))),
     serviceOffers:state.serviceOffers.sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))).slice(0,50),
     conversations:state.conversations.sort((a,b)=>String(b.messages?.at(-1)?.createdAt||b.createdAt).localeCompare(String(a.messages?.at(-1)?.createdAt||a.createdAt))).slice(0,30),
@@ -124,6 +124,15 @@ export default async function handler(request,response){
       const productUrl=safeProductUrl(request.body?.productUrl);if(request.body?.productUrl&&!productUrl)return json(response,400,{error:'Paste a valid product link beginning with http:// or https://.'});
       const locations=['Under sink','Laundry room','Owner closet','Bathroom','Pantry','Linen closet','Towel closet','Storage room','Other'];const location=locations.includes(request.body?.location)?request.body.location:'';
       await appendCleanerRecord({type:'inventory',createdAt:now,item:{id,name,category:safe(request.body?.category,60)||'Other',level:level==='unknown'&&productUrl?'stocked':level,location,note:safe(request.body?.note,240),productUrl,productNote:safe(request.body?.productNote,400),updatedAt:now,updatedBy:owner?'owner':'cleaner'}});
+    } else if(action==='inventory-category'){
+      if(!owner)return json(response,403,{error:'Only the owner can rename supply categories.'});
+      const oldCategory=safe(request.body?.oldCategory,60),newCategory=safe(request.body?.newCategory,60); if(!oldCategory||!newCategory)return json(response,400,{error:'Enter the current and new category names.'});
+      const state=await getCleanerState(),items=state.inventory.filter(item=>item.category===oldCategory); if(!items.length)return json(response,404,{error:'That supply category was not found.'});
+      await Promise.all(items.map(item=>appendCleanerRecord({type:'inventory',createdAt:now,item:{...item,category:newCategory,updatedAt:now,updatedBy:'owner'}})));
+    } else if(action==='inventory-archive'){
+      if(!owner)return json(response,403,{error:'Only the owner can archive supply items.'});
+      const id=safe(request.body?.id,80),state=await getCleanerState(),item=state.inventory.find(entry=>entry.id===id); if(!item)return json(response,404,{error:'That supply item was not found.'});
+      await appendCleanerRecord({type:'inventory',createdAt:now,item:{...item,archivedAt:request.body?.restore===true?'':now,updatedAt:now,updatedBy:'owner'}});
     } else if(action==='remark'){
       const body=safe(request.body?.body,1000); if(!body)return json(response,400,{error:'Add the note or item needed.'});
       await appendCleanerRecord({type:'remark',createdAt:now,remark:{id:crypto.randomUUID(),body,category:safe(request.body?.category,40)||'Help needed',priority:['normal','soon','urgent'].includes(request.body?.priority)?request.body.priority:'normal',status:'open',author:owner?'owner':'cleaner',createdAt:now}});
