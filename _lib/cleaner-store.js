@@ -7,23 +7,48 @@ const PREFIX = 'secure-cleaner/records/';
 export const DEFAULT_INVENTORY = [
   ['toilet-paper','Toilet paper','Guest supplies'], ['paper-towels','Paper towels','Guest supplies'],
   ['trash-bags','Trash bags','Guest supplies'], ['dishwasher-pods','Dishwasher pods','Guest supplies'],
+  ['trash-bags-30-gallon','30-gallon trash bags','Guest supplies'],
+  ['trash-bags-drawstring','Heavy-duty drawstring trash bags','Guest supplies'],
+  ['trash-bags-small','Small bathroom trash bags','Guest supplies'],
+  ['trash-bags-kitchen','13-gallon kitchen trash bags','Guest supplies'],
   ['septic-treatment','Septic tank treatment','Guest supplies'],
+  ['septic-treatment-monthly','Monthly septic treatment packets','Guest supplies'],
   ['dish-soap','Dish soap','Guest supplies'], ['hand-soap','Hand soap','Guest supplies'],
-  ['coffee','Coffee & Keurig pods','Guest supplies'], ['toiletries','Shampoo & body wash','Guest supplies'],
+  ['hand-soap-citrus','Citrus hand soap refill','Guest supplies'],
+  ['hand-soap-gentle','Gentle hand soap refill','Guest supplies'],
+  ['coffee','Coffee & Keurig pods','Guest supplies'], ['hot-cocoa','Hot cocoa K-Cup pods','Guest supplies'],
+  ['toiletries','Shampoo & body wash','Guest supplies'],
   ['all-purpose-cleaner','All-purpose cleaner','Cleaning'], ['disinfectant','Disinfectant','Cleaning'],
   ['glass-cleaner','Glass cleaner','Cleaning'], ['bathroom-cleaner','Bathroom & toilet cleaner','Cleaning'],
   ['laundry','Laundry detergent & stain remover','Cleaning'], ['sponges','Sponges & scrub pads','Cleaning'],
+  ['steel-wool-pads','Steel wool soap pads','Cleaning'],
   ['hot-tub-chemicals','Hot-tub chemicals','Hot tub'], ['hot-tub-test-strips','Hot-tub test strips','Hot tub'],
   ['charcoal','Charcoal','Outdoor'], ['propane','Grill & deck-heater propane','Outdoor'],
+  ['matches-extra-long','10.9-inch safety matches','Outdoor'],
+  ['matches-fireplace','8-inch fireplace matches','Outdoor'],
   ['bath-towels','Bath towels','Linens'], ['hot-tub-towels','Hot-tub towels','Linens'],
   ['washcloths','Washcloths & hand towels','Linens'], ['queen-sheets','Queen sheet sets','Linens'],
   ['king-sheets','King sheet sets','Linens'], ['pillowcases','Pillowcases','Linens'],
 ].map(([id,name,category]) => ({ id, name, category, level:'unknown', note:'', productUrl:'', productNote:'', updatedAt:'' }))
   .map(item => ({...item,...({
     'toilet-paper':{productUrl:'https://a.co/d/08CLRmPA',productNote:'Scott Rapid-Dissolving Toilet Paper, 48 double rolls; septic-safe and designed for RVs and boats.'},
+    'paper-towels':{productUrl:'https://a.co/d/04lVq6Hc',productNote:'Bounty Quick-Size paper towels with select-a-size sheets and high absorbency for using less per cleanup.'},
     'trash-bags':{productUrl:'https://a.co/d/00rJHX0n',productNote:'Husky contractor clean-up bags, 42 gallon, 3 mil heavy-duty, 20-count, black.'},
+    'trash-bags-30-gallon':{productUrl:'https://a.co/d/09IWm3VV',productNote:'Hefty 30-gallon trash bags, 1.05 mil, with a puncture-resistant design for household cleanup.'},
+    'trash-bags-drawstring':{productUrl:'https://a.co/d/08azjWUm',productNote:'Thick, leak-resistant trash bags made from durable HDPE with a convenient drawstring closure.'},
+    'trash-bags-small':{productUrl:'https://a.co/d/025IdyQm',productNote:'Heihaily 2.6-gallon clear drawstring bags, 60-count, with a leak-resistant bottom for bathroom, office, or bedroom bins.'},
+    'trash-bags-kitchen':{productUrl:'https://a.co/d/045xyUbR',productNote:'Glad ForceFlex 13-gallon tall kitchen bags, Pine-Sol Original scent, 40-count.'},
     'septic-treatment':{productUrl:'https://a.co/d/056gsRTI',productNote:'Vacplus septic tank treatment, 24 flushable dissolvable packets; a 2-year supply for waste and odor control.'},
+    'septic-treatment-monthly':{productUrl:'https://a.co/d/0j14nivN',productNote:'Monthly dissolvable septic packets with selected bacteria cultures to break down waste and help maintain a healthy septic system.'},
+    'hand-soap':{productUrl:'https://a.co/d/04fnFTTd',productNote:'Mango and coconut hand soap refills, two 50-ounce bottles; dermatologist-tested and triclosan-free.'},
+    'hand-soap-citrus':{productUrl:'https://a.co/d/0ipOB1XI',productNote:'Amazon Basics citrus hand soap refills, two 50-fluid-ounce bottles; dermatologist-tested and pH-balanced.'},
+    'hand-soap-gentle':{productUrl:'https://a.co/d/0cE5rLNV',productNote:'Dermatologist-tested, pH-balanced hand soap refill made without harsh chemicals.'},
+    'coffee':{productUrl:'https://a.co/d/0fI2yO1U',productNote:'Starbucks Pike Place medium-roast coffee K-Cup pods with a smooth, balanced flavor.'},
+    'hot-cocoa':{productUrl:'https://a.co/d/03b1nhul',productNote:'Swiss Miss Milk Chocolate hot cocoa K-Cup pods for Keurig brewers.'},
     'sponges':{productUrl:'https://a.co/d/0eV5B1fj',productNote:'Durable AIDEA sponges with non-scratch abrasive scour pads for tough messes; dishwasher-safe and long-lasting.'},
+    'steel-wool-pads':{productUrl:'https://a.co/d/03uW5Pva',productNote:'Reusable lemon-scented steel wool soap pads for cutting through tough kitchen grease and grime.'},
+    'matches-extra-long':{productUrl:'https://a.co/d/0dqv0Xcy',productNote:'10.9-inch extra-long wooden safety matches, strike-on-box, 4-pack with 160 total; long reach for fireplaces, candles, grills, and firepits.'},
+    'matches-fireplace':{productUrl:'https://a.co/d/0c8SK0w2',productNote:'8-inch wooden fireplace matches with black tips and included strikers, 100-count.'},
   }[item.id]||{})}));
 
 function token() { return process.env.INVITE_BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN; }
@@ -80,7 +105,10 @@ export async function getCleanerState() {
   const assignments=new Map(); const remarks=new Map(); const tips=new Map(); const serviceOffers=new Map(); const conversations=new Map(); const cleaningPhotos=new Map(); const emailHistory=[];
   for (const record of records) {
     if(record.type==='settings') Object.assign(settings,record.changes||{});
-    if(record.type==='inventory') inventory.set(record.item.id,{...(inventory.get(record.item.id)||{}),...record.item});
+    if(record.type==='inventory') {
+      const current=inventory.get(record.item.id)||{};
+      inventory.set(record.item.id,{...current,...record.item,productUrl:record.item.productUrl||current.productUrl||'',productNote:record.item.productNote||current.productNote||''});
+    }
     if(record.type==='assignment') assignments.set(record.bookingId,{...(assignments.get(record.bookingId)||{bookingId:record.bookingId}),...(record.changes||{}),updatedAt:record.createdAt});
     if(record.type==='remark') remarks.set(record.remark.id,record.remark);
     if(record.type==='remark_update'&&remarks.has(record.remarkId)) Object.assign(remarks.get(record.remarkId),record.changes,{updatedAt:record.createdAt});
