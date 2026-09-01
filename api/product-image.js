@@ -52,7 +52,10 @@ export default async function handler(request,response){
     }catch{}
     if(!image)image=await previewServiceImage(productUrl.toString());
     if(!image)throw new Error('Product image unavailable');
-    response.writeHead(302,{'Location':image,'Cache-Control':'public, s-maxage=604800, stale-while-revalidate=2592000'});
+    response.statusCode=302;
+    response.setHeader('Location',image);
+    response.setHeader('Cache-Control','public, max-age=604800, immutable');
+    response.setHeader('CDN-Cache-Control','public, max-age=2592000, stale-while-revalidate=2592000');
     response.end();
   }catch{
     return json(response,404,{error:'No product image was found.'},{'Cache-Control':'public, s-maxage=3600'});
