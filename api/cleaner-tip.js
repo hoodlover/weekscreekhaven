@@ -13,9 +13,8 @@ export default async function handler(request,response){
     if(!token)return json(response,401,{error:'This private reservation link is invalid or expired.'});
     const booking=(await getBookingRequests()).find(item=>item.id===token.bookingId);
     if(!booking||['cancelled','declined'].includes(booking.status))return json(response,404,{error:'This stay could not be found.'});
-    const dates=booking.dateChoices?.[Number.isInteger(booking.approvedChoice)?booking.approvedChoice:0]||booking.dateChoices?.[0]||{};
-    const cleaningRule=booking.friendsAndFamilyDiscount||dates.quote?.friendsAndFamilyDiscount;
-    if(cleaningRule&&cleaningRule.chargeCleaning!==true)return json(response,409,{error:'No cleaner was scheduled for this stay.'});
+    const complimentary=booking.paymentPlan==='complimentary'||booking.complimentary===true||Number(booking.amountCents)===0;
+    if(complimentary)return json(response,409,{error:'The cleaner tip option is not available for a fully complimentary stay.'});
     const amountCents=Math.round(Number(request.body?.amount)*100);
     if(!Number.isInteger(amountCents)||amountCents<100||amountCents>50000)return json(response,400,{error:'Choose a tip between $1 and $500.'});
     const state=await getCleanerState();

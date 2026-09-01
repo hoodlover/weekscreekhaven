@@ -74,7 +74,7 @@
     <section id="cleaner-tip" class="parchment rounded-2xl p-8 shadow-2xl mb-8 fade-up-4 border-t-8 border-[#4a9b6f]" hidden>
         <p class="font-black text-[#4a9b6f] text-xs uppercase tracking-widest mb-2">Entirely optional</p>
         <h2 class="text-3xl text-[#183c2d] mb-3">Leave a thank-you for the cleaner</h2>
-        <p class="text-stone-600 leading-relaxed mb-5">If the cabin care made your stay feel especially easy, you can leave the cleaner a tip. Every paid tip is listed in her private Cleaner Hub so she can see your thank-you and the amount herself.</p>
+        <p class="text-stone-600 leading-relaxed mb-5">If you would like to thank the person who helps care for the cabin, you can leave the cleaner a tip. Every paid tip is listed in her private Cleaner Hub so she can see your thank-you and the amount herself.</p>
         <form id="tip-form">
             <div class="grid grid-cols-4 gap-2 mb-3">
                 <button type="button" data-tip="10" class="tip-choice border-2 border-[#4a9b6f] text-[#183c2d] font-black py-2 rounded-xl">$10</button>
@@ -155,7 +155,7 @@ document.addEventListener("contextmenu", function(e){ e.preventDefault(); });
 const departureParams = new URLSearchParams(location.search);
 const departureToken = departureParams.get('token') || '';
 if (departureParams.get('tip') === 'thanks') document.getElementById('tip-thanks').hidden = false;
-if (departureToken && departureParams.get('cleaner') === '1') document.getElementById('cleaner-tip').hidden = false;
+if (departureToken && (departureParams.get('tip-eligible') === '1' || departureParams.get('cleaner') === '1')) document.getElementById('cleaner-tip').hidden = false;
 document.querySelectorAll('[data-tip]').forEach(button => button.addEventListener('click', () => {
     document.getElementById('tip-amount').value = button.dataset.tip;
     document.querySelectorAll('[data-tip]').forEach(item => item.classList.remove('bg-[#4a9b6f]','text-white'));
