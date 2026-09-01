@@ -30,6 +30,9 @@ async function previewServiceImage(productUrl){
   const preview=await fetch(`https://api.microlink.io?url=${encodeURIComponent(productUrl)}`,{signal:AbortSignal.timeout(10000),headers:{'Accept':'application/json'}});
   if(!preview.ok)throw new Error('Preview service unavailable');
   const payload=await preview.json();
+  const resolvedUrl=String(payload?.data?.url||'');
+  const amazonAsin=resolvedUrl.match(/amazon\.[^/]+\/(?:[^/]+\/)?dp\/([A-Z0-9]{10})(?:[/?]|$)/i)?.[1];
+  if(amazonAsin)return `https://images-na.ssl-images-amazon.com/images/P/${amazonAsin.toUpperCase()}.01.LZZZZZZZ.jpg`;
   const candidate=payload?.data?.image?.url||'';
   try{const image=new URL(candidate);return ['https:','http:'].includes(image.protocol)?image.toString():'';}catch{return '';}
 }
