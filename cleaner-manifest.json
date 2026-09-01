@@ -1,0 +1,38 @@
+{
+  "name": "Weeks Creek Haven Cleaner Hub",
+  "short_name": "WCH Cleaner",
+  "id": "/cleaner.html",
+  "description": "Private cleaning schedules, cabin-care checklists, supplies, notes, and pay for Weeks Creek Haven.",
+  "start_url": "/cleaner.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#17130f",
+  "theme_color": "#183c2d",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/webpic/cleaner-pwa-192-v1.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/webpic/cleaner-pwa-512-v1.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/webpic/cleaner-pwa-maskable-192-v1.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/webpic/cleaner-pwa-maskable-512-v1.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
