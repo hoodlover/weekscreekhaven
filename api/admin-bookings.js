@@ -2,7 +2,7 @@ import { appendBookingRecord, getBookingCalendar, getBookingRequests, rangesOver
 import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
 import { mergeEmailTemplates } from '../_lib/email-library.js';
 import { getInvites } from '../_lib/invite-store.js';
-import { createAgreementToken, createReviewToken, json, requireAdmin } from '../_lib/security.js';
+import { bookingAccessCode, createAgreementToken, createReviewToken, json, requireAdmin } from '../_lib/security.js';
 import { cancelSquareInvoice, createSquareBookingInvoice, createSquareFriendInvoice, getSquareInvoice, squareStatus } from '../_lib/square.js';
 import { refreshSquareBooking } from '../_lib/payment-sync.js';
 import { finalizeBookingFlow } from '../_lib/booking-finalization.js';
@@ -60,10 +60,11 @@ async function sendBookingPacketEmail(booking, packetUrl) {
     : paid
       ? 'We received your payment. Please open the packet and sign the rental agreement to finish your booking.'
       : 'Open the packet to review payment details and sign the rental agreement.';
+  const bookingCode=bookingAccessCode(booking.id);
   await sendEmail({
     to: booking.email,
     toName: booking.name,
-    templateKey:'booking-packet', templateVariables:{ guestName:booking.name, nextStep, arrival:dates.arrival || 'To be confirmed', departure:dates.departure || 'To be confirmed', packetUrl, checkout:booking.lateCheckout?'noon':'11:00 AM' },
+    templateKey:'booking-packet', templateVariables:{ guestName:booking.name, nextStep, arrival:dates.arrival || 'To be confirmed', departure:dates.departure || 'To be confirmed', packetUrl, bookingCode, checkout:booking.lateCheckout?'noon':'11:00 AM' },
     subject: signed ? 'Your Weeks Creek Haven stay' : 'Please sign your Weeks Creek Haven agreement',
     text: `Hi ${booking.name},\n\n${nextStep}\n\nStay: ${dates.arrival || 'To be confirmed'} through ${dates.departure || 'To be confirmed'}\n\nOpen your private reservation details: ${packetUrl}\n\nCheck-in begins at 4:00 PM. Checkout is ${booking.lateCheckout ? 'noon' : '11:00 AM'}.`,
     html: `<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6;max-width:600px"><h1 style="color:#183c2d">Your Weeks Creek Haven stay</h1><p>Hi ${escapeEmailHtml(booking.name)},</p><p>${escapeEmailHtml(nextStep)}</p><p><strong>${escapeEmailHtml(dates.arrival || 'To be confirmed')} through ${escapeEmailHtml(dates.departure || 'To be confirmed')}</strong></p><p><a href="${packetUrl}" style="display:inline-block;background:#183c2d;color:#fff;padding:13px 20px;border-radius:999px;text-decoration:none;font-weight:bold">${signed ? 'Open reservation details' : 'Complete your reservation'}</a></p><p>Check-in begins at <strong>4:00 PM</strong>. Checkout is <strong>${booking.lateCheckout ? 'noon' : '11:00 AM'}</strong>.</p></div>`,
