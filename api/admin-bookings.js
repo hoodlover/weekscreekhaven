@@ -5,6 +5,7 @@ import { getInvites } from '../_lib/invite-store.js';
 import { createAgreementToken, createReviewToken, json, requireAdmin } from '../_lib/security.js';
 import { cancelSquareInvoice, createSquareBookingInvoice, createSquareFriendInvoice, getSquareInvoice, squareStatus } from '../_lib/square.js';
 import { refreshSquareBooking } from '../_lib/payment-sync.js';
+import { finalizeBookingFlow } from '../_lib/booking-finalization.js';
 import { findBookingInvite } from '../_lib/booking-invite.js';
 import { daysBetween, PRICING_CONFIG, quoteStay, withEstimatedTaxesAndFees } from '../pricing.js';
 import { generateDoorCode, selectedStay } from '../_lib/door-code.js';
@@ -121,6 +122,16 @@ export default async function handler(request, response) {
     const createdAt = new Date().toISOString();
     const booking = bookings.find((item) => item.id === String(request.body?.bookingId || ''));
     if (!booking) return json(response, 404, { error: 'Booking request not found.' });
+    if (action === 'force-lock-booking') {
+      if (!['reserved', 'pending-payment'].includes(booking.status)) return json(response, 409, { error:'Only a reservation waiting on payment or agreement can be locked in manually.' });
+      const stay=selectedStay(booking);
+      const conflicts=unavailableRanges(await getBookingCalendar()).filter((range)=>range.bookingId!==booking.id);
+      if (!stay.arrival || !stay.departure || conflicts.some((range)=>rangesOverlap(stay,range))) return json(response, 409, { error:'Those dates conflict with another locked stay or owner hold.' });
+      const changes={ status:'booked', bookedAt:booking.bookedAt||createdAt, bookedManually:true, ownerLockedAt:createdAt, ownerLockOverride:true };
+      await appendBookingRecord({ type:'status', bookingId:booking.id, changes, createdAt });
+      const updated=await finalizeBookingFlow({ ...booking, ...changes });
+      return json(response, 200, { ok:true, status:updated.status, paymentPending:!updated.paymentRequirementMet, agreementPending:!updated.agreementAcceptedAt });
+    }
     if (action === 'generate-door-code') {
       if (booking.status !== 'booked') return json(response, 409, { error:'Door codes are created only after a stay is Booked.' });
       if (booking.doorCode && !booking.doorCodeRemovedAt) return json(response, 200, { ok:true, doorCode:booking.doorCode });
@@ -129,6 +140,17 @@ export default async function handler(request, response) {
       const stay=selectedStay(booking);
       if (process.env.OWNER_EMAIL) await sendEmail({ to:process.env.OWNER_EMAIL, toName:'Heather & Lance', subject:`Set ${booking.name}’s guest door code`, text:`A new guest door code is ready.\n\nGuest: ${booking.name}\nStay: ${stay.arrival || ''} through ${stay.departure || ''}\nDoor code: ${doorCode}\n\nProgram this code on all cabin doors, then open Owner Bookings and select “Code installed.”\n\nhttps://www.weekscreekhaven.com/admin.html#bookings`, html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6"><h1 style="color:#183c2d">Set the guest door code</h1><p><strong>${escapeEmailHtml(booking.name)}</strong><br>${escapeEmailHtml(stay.arrival || '')} through ${escapeEmailHtml(stay.departure || '')}</p><p style="font-size:28px;font-weight:800;letter-spacing:.14em">${doorCode}</p><p>Program this code on all cabin doors, then confirm <strong>Code installed</strong> in Owner Bookings.</p><p><a href="https://www.weekscreekhaven.com/admin.html#bookings" style="display:inline-block;background:#183c2d;color:#fff;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:700">Open Owner Bookings</a></p></div>` });
       return json(response, 200, { ok:true, doorCode });
+    }
+    if (action === 'replace-door-code') {
+      if (booking.status !== 'booked' || !booking.doorCode) return json(response, 409, { error:'A current booked-stay code is required before it can be replaced.' });
+      const previousDoorCode=String(booking.doorCode);
+      const retiredDoorCodes=[...new Set([...(booking.retiredDoorCodes||[]).map(String),previousDoorCode])];
+      const doorCode=generateDoorCode(bookings.map((item)=>item.id===booking.id?{...item,retiredDoorCodes}:item));
+      const changes={ doorCode, previousDoorCode, retiredDoorCodes, doorCodeReplacedAt:createdAt, doorCodeGeneratedAt:createdAt, doorCodeInstalledAt:null, doorCodeRemovedAt:null, doorCodeGuestSentAt:null };
+      await appendBookingRecord({ type:'status', bookingId:booking.id, changes, createdAt });
+      const stay=selectedStay(booking);
+      if(process.env.OWNER_EMAIL)await sendEmail({to:process.env.OWNER_EMAIL,toName:'Heather & Lance',subject:`Replace ${booking.name}’s guest door code`,text:`The old guest code ${previousDoorCode} is revoked in Owner Bookings. Remove it from every cabin door and program the new code below.\n\nGuest: ${booking.name}\nStay: ${stay.arrival||''} through ${stay.departure||''}\nNew door code: ${doorCode}\n\nOpen Owner Bookings and select “Code installed” after every door is updated.\n\nhttps://www.weekscreekhaven.com/admin.html#bookings`,html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6"><h1 style="color:#183c2d">Replace the guest door code</h1><p>Remove retired code <strong>${previousDoorCode}</strong> from every cabin door.</p><p><strong>${escapeEmailHtml(booking.name)}</strong><br>${escapeEmailHtml(stay.arrival||'')} through ${escapeEmailHtml(stay.departure||'')}</p><p>New code:</p><p style="font-size:28px;font-weight:800;letter-spacing:.14em">${doorCode}</p><p><a href="https://www.weekscreekhaven.com/admin.html#bookings" style="display:inline-block;background:#183c2d;color:#fff;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:700">Open Owner Bookings</a></p></div>`});
+      return json(response,200,{ok:true,doorCode,previousDoorCode});
     }
     if (action === 'door-code-installed') {
       if (!booking.doorCode) return json(response, 409, { error:'Generate the guest code first.' });
