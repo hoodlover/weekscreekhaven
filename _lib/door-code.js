@@ -3,7 +3,7 @@ import { randomInt } from 'node:crypto';
 const unsafe = (code) => /^(\d)\1+$/.test(code) || '0123456789'.includes(code) || '9876543210'.includes(code);
 
 export function generateDoorCode(bookings = []) {
-  const used = new Set(bookings.map(item => String(item.doorCode || '')).filter(Boolean));
+  const used = new Set(bookings.flatMap(item => [item.doorCode, ...(Array.isArray(item.retiredDoorCodes) ? item.retiredDoorCodes : [])]).map(String).filter(Boolean));
   for (let attempt = 0; attempt < 200; attempt += 1) {
     const code = String(randomInt(100000, 1000000));
     if (!used.has(code) && !unsafe(code)) return code;
