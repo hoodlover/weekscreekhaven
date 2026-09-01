@@ -9,7 +9,7 @@ import { normalizeTurnoverChecklist } from '../_lib/checklist-defaults.js';
 const safe=(value,max=500)=>String(value||'').trim().slice(0,max);
 function safeProductUrl(value){const raw=safe(value,1000);if(!raw)return'';try{const url=new URL(raw);return ['http:','https:'].includes(url.protocol)?url.toString():'';}catch{return'';}}
 const cents=value=>Math.round(Number(value)*100);
-const HUB_URL='https://www.weekscreekhaven.com/cleaner.html';
+const HUB_URL='https://cleaner.weekscreekhaven.com/';
 const money=value=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format((Number(value)||0)/100);
 const dateTime=value=>new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',weekday:'long',month:'long',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'}).format(new Date(value));
 const firstName=value=>safe(value,100).split(/\s+/)[0]||'Guest';

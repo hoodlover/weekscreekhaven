@@ -1,4 +1,4 @@
-import { next } from '@vercel/functions';
+import { next, rewrite } from '@vercel/functions';
 
 const INVITE_COOKIE = 'wch_invite';
 const ADMIN_COOKIE = 'wch_admin';
@@ -34,7 +34,26 @@ async function validSession(token, expectedRole) {
 }
 
 export default async function middleware(request) {
-  const pathname = new URL(request.url).pathname;
+  const requestUrl = new URL(request.url);
+  const pathname = requestUrl.pathname;
+  const hostname = requestUrl.hostname.toLowerCase();
+  const publicHosts = new Set(['weekscreekhaven.com', 'www.weekscreekhaven.com']);
+
+  if (hostname === 'owner.weekscreekhaven.com' && pathname === '/') {
+    return rewrite(new URL('/admin.html', request.url));
+  }
+  if (hostname === 'cleaner.weekscreekhaven.com' && pathname === '/') {
+    return rewrite(new URL('/cleaner.html', request.url));
+  }
+  if (publicHosts.has(hostname) && (pathname === '/admin' || pathname === '/admin.html')) {
+    return Response.redirect(new URL(`https://owner.weekscreekhaven.com/${requestUrl.search}${requestUrl.hash}`), 307);
+  }
+  if (publicHosts.has(hostname) && (pathname === '/cleaner' || pathname === '/cleaner.html')) {
+    return Response.redirect(new URL(`https://cleaner.weekscreekhaven.com/${requestUrl.search}${requestUrl.hash}`), 307);
+  }
+  if (pathname === '/' || pathname === '/admin' || pathname === '/admin.html' || pathname === '/cleaner' || pathname === '/cleaner.html') {
+    return next();
+  }
   const ownerOnly = pathname === '/owner-emergency-handbook' || pathname === '/owner-emergency-handbook.html';
   const adminSession = await validSession(cookieValue(request, ADMIN_COOKIE), 'admin');
   if (adminSession) return next();
@@ -60,5 +79,5 @@ export default async function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/friends-hub', '/friends-hub.html', '/welcome-friends', '/welcome-friends.html', '/owner-emergency-handbook', '/owner-emergency-handbook.html'],
+  matcher: ['/', '/admin', '/admin.html', '/cleaner', '/cleaner.html', '/friends-hub', '/friends-hub.html', '/welcome-friends', '/welcome-friends.html', '/owner-emergency-handbook', '/owner-emergency-handbook.html'],
 };
