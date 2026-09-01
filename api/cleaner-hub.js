@@ -11,10 +11,19 @@ const HUB_URL='https://www.weekscreekhaven.com/cleaner.html';
 const money=value=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format((Number(value)||0)/100);
 const dateTime=value=>new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',weekday:'long',month:'long',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'}).format(new Date(value));
 const firstName=value=>safe(value,100).split(/\s+/)[0]||'Guest';
+const FAMILY_CHECK_KEYS=['beds_laundry','bathrooms','toilet','dishes','refrigerator','trash','fireplace','hot_tub','floors','lights','doors_windows','final_walkthrough'];
+const TURNOVER_CHECK_KEYS=['arrival_photos','checkout_report','safety_scan','kitchen_dishes','kitchen_surfaces','kitchen_appliances','refrigerator','kitchen_handles','kitchen_trash','kitchen_floors','bath_toilets','bath_sinks','bath_mirrors','bath_showers','bath_linens','bath_trash_floors','beds_strip','linens_wash','beds_remake','protectors','bedroom_surfaces','living_dust','living_reset','living_floors','fireplace','hot_tub_water','hot_tub_area','outdoor_reset','grill_fireplace','fuel_check','restock','systems','doors_windows','vacuum_charge','final_walkthrough','after_photos'];
+const CHECK_STATUSES=new Set(['','inspected','done','attention']);
 function todayEastern(){const p=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const o=Object.fromEntries(p.map(x=>[x.type,x.value]));return `${o.year}-${o.month}-${o.day}`;}
 function stay(booking){return booking.dateChoices?.[Number.isInteger(booking.approvedChoice)?booking.approvedChoice:0]||booking.dateChoices?.[0]||{};}
 function cleanerScheduled(booking){const dates=stay(booking),rule=booking.friendsAndFamilyDiscount||dates.quote?.friendsAndFamilyDiscount;return !(rule&&rule.chargeCleaning!==true);}
 function within(iso,days){const time=Date.parse(iso||'');return Number.isFinite(time)&&time>=Date.now()-days*86400000;}
+function checkoutReportFor(booking){
+  const report=booking.checkoutReport;
+  if(!report||(!report.submittedAt&&!report.restock?.length&&!report.maintenanceCategories?.length&&!report.maintenanceIssue&&!report.nothingToReport))return null;
+  return {restock:Array.isArray(report.restock)?report.restock.slice(0,30):[],maintenanceCategories:Array.isArray(report.maintenanceCategories)?report.maintenanceCategories.slice(0,20):[],maintenanceLocation:safe(report.maintenanceLocation,200),maintenancePriority:safe(report.maintenancePriority,40),maintenanceIssue:safe(report.maintenanceIssue,1500),nothingToReport:report.nothingToReport===true,checklistCompleted:report.checklistCompleted===true,submittedAt:safe(report.submittedAt,40)};
+}
+function checklistFrom(body,keys){return Object.fromEntries(keys.map(key=>[key,CHECK_STATUSES.has(body?.[key])?body[key]:'']));}
 
 async function hubEmail({to,toName,subject,text,key}){
   if(!to)return {skipped:true};
@@ -45,7 +54,7 @@ function buildDashboard(bookings,state,isOwner){
     const assignment=assignmentMap.get(booking.id)||{};
     const nextArrival=bookedStays.find(x=>x.dates.arrival===dates.departure&&x.booking.id!==booking.id);
     return {
-      bookingId:booking.id, arrival:dates.arrival, cleanDate:dates.departure, guests:Number(booking.guests)||1, dogs:Number(booking.dogs)||0, guestFirstName:firstName(booking.name), guestRating:Number(assignment.guestRating)||0, guestReview:assignment.guestReview||'', guestRatedAt:assignment.guestRatedAt||'', familyChecklist:assignment.familyChecklist||{}, familyChecklistNote:assignment.familyChecklistNote||'', familyChecklistUpdatedAt:assignment.familyChecklistUpdatedAt||'',
+      bookingId:booking.id, arrival:dates.arrival, cleanDate:dates.departure, guests:Number(booking.guests)||1, dogs:Number(booking.dogs)||0, guestFirstName:firstName(booking.name), guestRating:Number(assignment.guestRating)||0, guestReview:assignment.guestReview||'', guestRatedAt:assignment.guestRatedAt||'', familyChecklist:assignment.familyChecklist||{}, familyChecklistNote:assignment.familyChecklistNote||'', familyChecklistUpdatedAt:assignment.familyChecklistUpdatedAt||'', turnoverChecklist:assignment.turnoverChecklist||{}, turnoverChecklistNote:assignment.turnoverChecklistNote||'', turnoverChecklistUpdatedAt:assignment.turnoverChecklistUpdatedAt||'', checkoutReport:checkoutReportFor(booking),
       sessionType:assignment.sessionType||(booking.friendsAndFamilyDiscount||dates.quote?.friendsAndFamilyDiscount?'friends-family':'guest'),
       sameDayTurnaround:Boolean(nextArrival), nextGuestCount:nextArrival?Number(nextArrival.booking.guests)||1:0,
       status:assignment.status||'scheduled', ownerNote:assignment.ownerNote||'', cleanerNote:assignment.cleanerNote||'',
@@ -56,10 +65,10 @@ function buildDashboard(bookings,state,isOwner){
     };
   });
   let recent=bookedStays.filter(x=>x.dates.departure<today).sort((a,b)=>b.dates.departure.localeCompare(a.dates.departure)).slice(0,8).map(({booking,dates})=>{
-    const report=booking.checkoutReport||{}; const assignment=assignmentMap.get(booking.id)||{};
-    return { bookingId:booking.id,departure:dates.departure,guests:Number(booking.guests)||1,guestFirstName:firstName(booking.name),guestRating:Number(assignment.guestRating)||0,guestReview:assignment.guestReview||'',guestRatedAt:assignment.guestRatedAt||'',sessionType:assignment.sessionType||(booking.friendsAndFamilyDiscount||dates.quote?.friendsAndFamilyDiscount?'friends-family':'guest'),familyChecklist:assignment.familyChecklist||{},familyChecklistNote:assignment.familyChecklistNote||'',familyChecklistUpdatedAt:assignment.familyChecklistUpdatedAt||'',restock:report.restock||[],maintenanceCategories:report.maintenanceCategories||[],maintenanceLocation:report.maintenanceLocation||'',maintenancePriority:report.maintenancePriority||'',maintenanceIssue:report.maintenanceIssue||'',nothingToReport:report.nothingToReport===true,cleanerNote:assignment.cleanerNote||'',status:assignment.status||'',photos:photosFor(booking.id),...(isOwner?{guestName:booking.name||'Guest'}:{}) };
+    const report=checkoutReportFor(booking); const assignment=assignmentMap.get(booking.id)||{};
+    return { bookingId:booking.id,departure:dates.departure,guests:Number(booking.guests)||1,guestFirstName:firstName(booking.name),guestRating:Number(assignment.guestRating)||0,guestReview:assignment.guestReview||'',guestRatedAt:assignment.guestRatedAt||'',sessionType:assignment.sessionType||(booking.friendsAndFamilyDiscount||dates.quote?.friendsAndFamilyDiscount?'friends-family':'guest'),familyChecklist:assignment.familyChecklist||{},familyChecklistNote:assignment.familyChecklistNote||'',familyChecklistUpdatedAt:assignment.familyChecklistUpdatedAt||'',turnoverChecklist:assignment.turnoverChecklist||{},turnoverChecklistNote:assignment.turnoverChecklistNote||'',turnoverChecklistUpdatedAt:assignment.turnoverChecklistUpdatedAt||'',checkoutReport:report,restock:report?.restock||[],maintenanceCategories:report?.maintenanceCategories||[],maintenanceLocation:report?.maintenanceLocation||'',maintenancePriority:report?.maintenancePriority||'',maintenanceIssue:report?.maintenanceIssue||'',nothingToReport:report?.nothingToReport===true,cleanerNote:assignment.cleanerNote||'',status:assignment.status||'',photos:photosFor(booking.id),...(isOwner?{guestName:booking.name||'Guest'}:{}) };
   });
-  const customSessions=state.assignments.filter(item=>item.customSession&&item.cleanDate).map(item=>({bookingId:item.bookingId,arrival:item.cleanDate,cleanDate:item.cleanDate,departure:item.cleanDate,guests:Number(item.guests)||0,guestFirstName:'the group',guestRating:Number(item.guestRating)||0,guestReview:item.guestReview||'',guestRatedAt:item.guestRatedAt||'',familyChecklist:item.familyChecklist||{},familyChecklistNote:item.familyChecklistNote||'',familyChecklistUpdatedAt:item.familyChecklistUpdatedAt||'',dogs:0,sameDayTurnaround:false,nextGuestCount:0,status:item.status||'scheduled',sessionType:item.sessionType||'guest',ownerNote:item.ownerNote||'',cleanerNote:item.cleanerNote||'',basePayCents:Number(item.basePayCents)||0,extraPayCents:Number(item.extraPayCents)||0,extraTask:item.extraTask||'',completedAt:item.completedAt||'',paidAt:item.paidAt||'',customSession:true,sessionLabel:item.sessionLabel||'Additional cabin care',photos:photosFor(item.bookingId)}));
+  const customSessions=state.assignments.filter(item=>item.customSession&&item.cleanDate).map(item=>({bookingId:item.bookingId,arrival:item.cleanDate,cleanDate:item.cleanDate,departure:item.cleanDate,guests:Number(item.guests)||0,guestFirstName:'the group',guestRating:Number(item.guestRating)||0,guestReview:item.guestReview||'',guestRatedAt:item.guestRatedAt||'',familyChecklist:item.familyChecklist||{},familyChecklistNote:item.familyChecklistNote||'',familyChecklistUpdatedAt:item.familyChecklistUpdatedAt||'',turnoverChecklist:item.turnoverChecklist||{},turnoverChecklistNote:item.turnoverChecklistNote||'',turnoverChecklistUpdatedAt:item.turnoverChecklistUpdatedAt||'',checkoutReport:null,dogs:0,sameDayTurnaround:false,nextGuestCount:0,status:item.status||'scheduled',sessionType:item.sessionType||'guest',ownerNote:item.ownerNote||'',cleanerNote:item.cleanerNote||'',basePayCents:Number(item.basePayCents)||0,extraPayCents:Number(item.extraPayCents)||0,extraTask:item.extraTask||'',completedAt:item.completedAt||'',paidAt:item.paidAt||'',customSession:true,sessionLabel:item.sessionLabel||'Additional cabin care',photos:photosFor(item.bookingId)}));
   upcoming=[...upcoming,...customSessions.filter(item=>item.cleanDate>=today)].sort((a,b)=>a.cleanDate.localeCompare(b.cleanDate)).slice(0,20);
   recent=[...recent,...customSessions.filter(item=>item.cleanDate<today)].sort((a,b)=>b.departure.localeCompare(a.departure)).slice(0,12);
   const paidTips=state.tips.filter(t=>t.status==='paid');
@@ -146,8 +155,14 @@ export default async function handler(request,response){
       if(!cleaner)return json(response,403,{error:'Sign in as the cleaner to record this inspection.'});
       const bookingId=safe(request.body?.bookingId,100),state=await getCleanerState(),bookings=await getBookingRequests();
       if(!state.assignments.some(item=>item.bookingId===bookingId)&&!bookings.some(item=>item.id===bookingId))return json(response,404,{error:'Cleaning session not found.'});
-      const keys=['laundry','bathrooms','toilet','kitchen','trash','reset','secure'],familyChecklist=Object.fromEntries(keys.map(key=>[key,request.body?.[key]===true]));
+      const familyChecklist=checklistFrom(request.body,FAMILY_CHECK_KEYS);
       await appendCleanerRecord({type:'assignment',bookingId,createdAt:now,changes:{familyChecklist,familyChecklistNote:safe(request.body?.note,1000),familyChecklistUpdatedAt:now}});
+    } else if(action==='turnover-checklist'){
+      if(!cleaner)return json(response,403,{error:'Sign in as the cleaner to record this turnover.'});
+      const bookingId=safe(request.body?.bookingId,100),state=await getCleanerState(),bookings=await getBookingRequests();
+      if(!state.assignments.some(item=>item.bookingId===bookingId)&&!bookings.some(item=>item.id===bookingId))return json(response,404,{error:'Cleaning session not found.'});
+      const turnoverChecklist=checklistFrom(request.body,TURNOVER_CHECK_KEYS);
+      await appendCleanerRecord({type:'assignment',bookingId,createdAt:now,changes:{turnoverChecklist,turnoverChecklistNote:safe(request.body?.note,1500),turnoverChecklistUpdatedAt:now}});
     } else if(action==='tip-paid-out'){
       if(!owner)return json(response,403,{error:'Only the owner can record tip payout.'});
       await appendCleanerRecord({type:'tip_update',tipId:safe(request.body?.tipId,80),createdAt:now,changes:{paidOutAt:now}});
