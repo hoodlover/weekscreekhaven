@@ -36,5 +36,5 @@ export function mergeEmailTemplates(overrides = []) {
 }
 
 export function renderTemplate(value, variables = {}) {
-  return String(value || '').replace(/\{\{([a-zA-Z0-9]+)\}\}/g, (_, key) => String(variables[key] ?? `{{${key}}}`));
+  return String(value || '').replace(/\{\{([a-zA-Z0-9]+)\}\}/g, (_, key) => String(variables[key] ?? ''));
 }
