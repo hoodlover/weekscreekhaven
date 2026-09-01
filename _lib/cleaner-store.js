@@ -33,7 +33,7 @@ export const DEFAULT_INVENTORY = [
   ['bath-towels','Bath towels','Linens'], ['hot-tub-towels','Hot-tub towels','Linens'],
   ['washcloths','Washcloths & hand towels','Linens'], ['queen-sheets','Queen sheet sets','Linens'],
   ['king-sheets','King sheet sets','Linens'], ['pillowcases','Pillowcases','Linens'],
-].map(([id,name,category]) => ({ id, name, category, level:'unknown', location:'', note:'', productUrl:'', productNote:'', updatedAt:'' }))
+].map(([id,name,category]) => ({ id, name, category, level:'unknown', location:'', note:'', productUrl:'', productNote:'', productImageUrl:'', updatedAt:'' }))
   .map(item => ({...item,...({
     'toilet-paper':{productUrl:'https://a.co/d/08CLRmPA',productNote:'Scott Rapid-Dissolving Toilet Paper, 48 double rolls; septic-safe and designed for RVs and boats.'},
     'paper-towels':{productUrl:'https://a.co/d/04lVq6Hc',productNote:'Bounty Quick-Size paper towels with select-a-size sheets and high absorbency for using less per cleanup.'},
@@ -52,7 +52,7 @@ export const DEFAULT_INVENTORY = [
     'dish-soap':{productUrl:'https://a.co/d/05k2V7QE',productNote:'Versatile grease-cutting dish soap designed to reduce scrubbing and handle dishes, stains, and household cleaning.'},
     'dishwasher-pods':{productUrl:'https://a.co/d/0fyZXB48',productNote:'Cascade Platinum Plus dishwasher detergent pods, clean scent, 62-count.'},
     'clarifying-shampoo':{productUrl:'https://foodlion.com/product/suave-essentials-daily-clarifying-shampoo-22.5-oz-btl/397851',productNote:'Suave Essentials Daily Clarifying Shampoo, 22.5-fluid-ounce bottle.'},
-    'all-purpose-cleaner':{productUrl:'https://a.co/d/08P5fVaD',productNote:'Formula 409 Lemon Fresh multi-surface cleaner, three 32-fluid-ounce bottles; cuts grease and grime and kills 99.9% of germs.'},
+    'all-purpose-cleaner':{productUrl:'https://a.co/d/08P5fVaD',productNote:'Formula 409 Lemon Fresh multi-surface cleaner, three 32-fluid-ounce bottles; cuts grease and grime and kills 99.9% of germs.',productImageUrl:'https://m.media-amazon.com/images/I/715-07w5icL._AC_SY300_SX300_QL70_ML2_.jpg'},
     'disinfectant':{productUrl:'https://a.co/d/0a2dOiYy',productNote:'Versatile all-purpose cleaner and disinfectant that cuts through grime and kills 99.9% of bacteria in 5 seconds.'},
     'disinfecting-wipes':{productUrl:'https://a.co/d/07xyX2ge',productNote:'Lysol disinfecting wipes, 4-pack, for sanitizing hard surfaces and eliminating 99.9% of viruses and bacteria.'},
     'glass-cleaner':{productUrl:'https://a.co/d/0egY6Rda',productNote:'Zep professional-grade glass cleaner for quickly removing dirt, fingerprints, and grime from windows and mirrors.'},
