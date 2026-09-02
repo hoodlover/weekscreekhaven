@@ -80,7 +80,8 @@ export default async function middleware(request) {
     destination.hash = requestUrl.hash;
     return Response.redirect(destination, 307);
   }
-  if (pathname === '/' || pathname === '/admin' || pathname === '/admin.html' || pathname === '/cleaner' || pathname === '/cleaner.html') {
+  const guestGuideLogin = hostname === GUEST_GUIDE_HOST && (pathname === '/important-info' || pathname === '/important-info.html');
+  if (pathname === '/' || pathname === '/admin' || pathname === '/admin.html' || pathname === '/cleaner' || pathname === '/cleaner.html' || guestGuideLogin) {
     return next();
   }
   const ownerOnly = pathname === '/owner-emergency-handbook' || pathname === '/owner-emergency-handbook.html';
