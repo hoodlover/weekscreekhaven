@@ -21,7 +21,7 @@ export default async function handler(request, response) {
     const recipientEmail = validEmail(request.body?.recipientEmail || invite.recipientEmail);
     if (!recipientEmail) return json(response, 400, { error: 'Add a valid guest email address.' });
     const guestName = invite.label;
-    const url = 'https://www.weekscreekhaven.com/important-info.html?invite=1';
+    const url = 'https://guestguide.weekscreekhaven.com/important-info.html?invite=1';
     const safeName = escapeEmailHtml(guestName);
     const code = invite.passcode;
     const safeCode = escapeEmailHtml(code);

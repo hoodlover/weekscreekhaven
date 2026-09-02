@@ -4,7 +4,7 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
   <title>Cleaner Hub | Weeks Creek Haven</title>
   <meta name="theme-color" content="#183c2d">
-  <link rel="manifest" href="/cleaner-manifest.json?v=3">
+  <link rel="manifest" href="/cleaner-manifest.json?v=4">
   <link rel="icon" type="image/png" sizes="192x192" href="/webpic/cleaner-pwa-192-v3.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/webpic/cleaner-apple-180-v3.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -177,5 +177,5 @@ document.addEventListener('click',e=>{const thumb=e.target.closest('.photo-thumb
 $('photo-lightbox').addEventListener('click',e=>{if(e.target===$('photo-lightbox'))$('photo-lightbox').close()});
 document.addEventListener('keydown',e=>{if(!$('photo-lightbox').open)return;if(e.key==='ArrowLeft')showLightbox(lightboxIndex-1);if(e.key==='ArrowRight')showLightbox(lightboxIndex+1);});
 let hiddenAt=0;load();document.addEventListener('visibilitychange',()=>{if(document.hidden){hiddenAt=Date.now();return}if(hiddenAt&&Date.now()-hiddenAt>300000&&!formDirty&&!document.activeElement?.matches('input,textarea,select'))load();hiddenAt=0});
-if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/friends-sw.js?v=54').catch(()=>{}));
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/friends-sw.js?v=56').catch(()=>{}));
 </script></body></html>

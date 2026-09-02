@@ -2,6 +2,7 @@ import { next, rewrite } from '@vercel/functions';
 
 const INVITE_COOKIE = 'wch_invite';
 const ADMIN_COOKIE = 'wch_admin';
+const GUEST_GUIDE_HOST = 'guestguide.weekscreekhaven.com';
 const encoder = new TextEncoder();
 
 function cookieValue(request, name) {
@@ -33,6 +34,21 @@ async function validSession(token, expectedRole) {
   }
 }
 
+async function validAgreementToken(token) {
+  try {
+    const secret = process.env.SESSION_SECRET;
+    if (!secret || secret.length < 32 || !token) return null;
+    const [body, signature] = String(token).split('.');
+    const key = await crypto.subtle.importKey('raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']);
+    const valid = await crypto.subtle.verify('HMAC', key, fromBase64url(signature || ''), encoder.encode(body));
+    if (!valid) return null;
+    const payload = JSON.parse(new TextDecoder().decode(fromBase64url(body)));
+    return payload.purpose === 'rental-agreement' && payload.bookingId && payload.exp > Math.floor(Date.now() / 1000) ? payload : null;
+  } catch {
+    return null;
+  }
+}
+
 export default async function middleware(request) {
   const requestUrl = new URL(request.url);
   const pathname = requestUrl.pathname;
@@ -45,11 +61,24 @@ export default async function middleware(request) {
   if (hostname === 'cleaner.weekscreekhaven.com' && pathname === '/') {
     return rewrite(new URL('/cleaner.html', request.url));
   }
+  if (hostname === GUEST_GUIDE_HOST && pathname === '/') {
+    const login = new URL('/important-info.html', request.url);
+    login.search = requestUrl.search;
+    login.hash = requestUrl.hash;
+    return Response.redirect(login, 307);
+  }
   if (publicHosts.has(hostname) && (pathname === '/admin' || pathname === '/admin.html')) {
     return Response.redirect(new URL(`https://owner.weekscreekhaven.com/${requestUrl.search}${requestUrl.hash}`), 307);
   }
   if (publicHosts.has(hostname) && (pathname === '/cleaner' || pathname === '/cleaner.html')) {
     return Response.redirect(new URL(`https://cleaner.weekscreekhaven.com/${requestUrl.search}${requestUrl.hash}`), 307);
+  }
+  const guestGuidePaths = new Set(['/important-info', '/important-info.html', '/friends-hub', '/friends-hub.html', '/welcome-friends', '/welcome-friends.html']);
+  if (publicHosts.has(hostname) && guestGuidePaths.has(pathname)) {
+    const destination = new URL(pathname, `https://${GUEST_GUIDE_HOST}`);
+    destination.search = requestUrl.search;
+    destination.hash = requestUrl.hash;
+    return Response.redirect(destination, 307);
   }
   if (pathname === '/' || pathname === '/admin' || pathname === '/admin.html' || pathname === '/cleaner' || pathname === '/cleaner.html') {
     return next();
@@ -62,6 +91,8 @@ export default async function middleware(request) {
     login.searchParams.set('returnTo', pathname);
     return Response.redirect(login, 302);
   }
+  const agreement = guestGuidePaths.has(pathname) && await validAgreementToken(requestUrl.searchParams.get('token'));
+  if (agreement) return next();
   const session = await validSession(cookieValue(request, INVITE_COOKIE), 'invite');
   if (session) {
     const statusUrl = new URL('/api/invite-status', request.url);
@@ -79,5 +110,5 @@ export default async function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/', '/admin', '/admin.html', '/cleaner', '/cleaner.html', '/friends-hub', '/friends-hub.html', '/welcome-friends', '/welcome-friends.html', '/owner-emergency-handbook', '/owner-emergency-handbook.html'],
+  matcher: ['/', '/admin', '/admin.html', '/cleaner', '/cleaner.html', '/important-info', '/important-info.html', '/friends-hub', '/friends-hub.html', '/welcome-friends', '/welcome-friends.html', '/owner-emergency-handbook', '/owner-emergency-handbook.html'],
 };

@@ -426,7 +426,7 @@
   </main>
   <script>
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => navigator.serviceWorker.register('/friends-sw.js?v=55').catch(() => {}));
+      window.addEventListener('load', () => navigator.serviceWorker.register('/friends-sw.js?v=56').catch(() => {}));
     }
 
     (() => {
@@ -849,7 +849,7 @@
     $('copy-invite').addEventListener('click', async () => {
       if(!state.newInvite) return;
       const offer=state.newInvite.complimentary?'This stay is our treat, with no rent, taxes, government lodging fees, or required charges.':state.newInvite.recipientPhone?'We saved your phone number with this invitation, and any matching private Friends & Family rate will appear automatically as you choose dates.':'Your saved Friends & Family rate will appear automatically if your phone number matches our private list.';
-      const message = `${state.newInvite.welcomeMessage||'We’d love for you to enjoy some time at Weeks Creek Haven.'}\n\nUse your private invitation to see the live calendar and pick any open dates that work for you. ${offer}\n\nOpen: ${location.origin}/important-info.html?invite=1\nInvitation code: ${state.newInvite.passcode}\n\nThe invitation form opens automatically. Enter your name, then paste the full code or enter just the 8 characters after WCH-.`;
+      const message = `${state.newInvite.welcomeMessage||'We’d love for you to enjoy some time at Weeks Creek Haven.'}\n\nUse your private invitation to see the live calendar and pick any open dates that work for you. ${offer}\n\nOpen: https://guestguide.weekscreekhaven.com/important-info.html?invite=1\nInvitation code: ${state.newInvite.passcode}\n\nThe invitation form opens automatically. Enter your name, then paste the full code or enter just the 8 characters after WCH-.`;
       await navigator.clipboard.writeText(message); $('copy-invite').textContent='Message copied'; setTimeout(()=>$('copy-invite').textContent='Copy message',1400);
     });
     $('panel-checklists').addEventListener('input',(event)=>{
