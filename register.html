@@ -9,6 +9,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/webpic/weeks-creek-haven-favicon-16.png?v=20260830">
   <script src="/phone-format.js" defer></script>
   <link rel="stylesheet" href="/site-interactions.css">
+  <link rel="stylesheet" href="/savings.css?v=1">
   <meta name="description" content="Book available dates directly at Weeks Creek Haven, a private creekside cabin rental for up to 11 guests near Blue Ridge and the Aska Adventure Area.">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="https://www.weekscreekhaven.com/register.html">
@@ -41,6 +42,7 @@
     .hero-line { display:block; white-space:nowrap; }
     .next-title { margin:30px 0 12px; color:#ffd2a6; font:700 2rem/1 'Crimson Text',serif; text-shadow:0 2px 12px rgba(0,0,0,.9); }
     .intro>p { max-width:530px; line-height:1.7; color:#eee6dc; font-size:1rem; }
+    .intro-actions { display:flex; flex-wrap:wrap; gap:9px; }
     .steps { margin-top:28px; display:grid; gap:11px; }
     .step { display:flex; gap:12px; align-items:flex-start; font-size:.78rem; line-height:1.55; color:#e7ddd2; }
     .step b { display:grid; place-items:center; flex:0 0 27px; height:27px; border-radius:50%; background:var(--rust); color:white; }
@@ -207,7 +209,7 @@
         <div class="eyebrow">Your Blue Ridge stay</div>
         <h1><span class="hero-line">Pick your dates.</span><span class="hero-line">Picture the rest.</span></h1>
         <p>Choose available dates and see the complete price immediately. Your reservation details, Square invoice, and rental agreement are created when you continue—your dates remain open to others until payment and the agreement are complete.</p>
-        <p><a class="home" href="/availability.html">See available dates &amp; nightly rates</a></p>
+        <p class="intro-actions"><a class="home" href="/availability.html">See available dates &amp; nightly rates</a><a class="home savings-trigger" href="#ways-to-save" data-savings-open>Ways to save on your stay</a></p>
         <h3 class="next-title">What happens next</h3>
         <div class="steps">
           <div class="step"><b>1</b><span><span class="inline-action">Choose available dates</span> and review the stay price, taxes, government fees, and any applicable refundable security deposit.</span></div>
@@ -532,5 +534,6 @@
       finally { button.disabled=false; updateBookingIntent(); }
     });
   </script>
+  <script src="/savings.js?v=1"></script>
 </body>
 </html>
