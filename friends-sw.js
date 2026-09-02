@@ -1,4 +1,4 @@
-const CACHE_NAME = 'friends-hub-v57';
+const CACHE_NAME = 'friends-hub-v58';
 const PRIVATE_APP_URLS = self.location.hostname === 'owner.weekscreekhaven.com'
   ? [
       '/admin.html',
@@ -47,6 +47,7 @@ const PRECACHE_URLS = [
   '/webpic/barn.webp',
   // icons & UI
   '/webpic/Weeks_Creek_Haven_Favicon.webp',
+  '/webpic/weeks-creek-haven-favicon.ico',
   '/webpic/wch-favicon-v2.ico',
   '/webpic/wch-favicon-48-v2.png',
   '/webpic/wch-favicon-32-v2.png',
