@@ -1,11 +1,11 @@
-const CACHE_NAME = 'friends-hub-v59';
+const CACHE_NAME = 'friends-hub-v60';
 const PRIVATE_APP_URLS = self.location.hostname === 'owner.weekscreekhaven.com'
   ? [
       '/admin.html',
-      '/admin-manifest.json?v=4',
-      '/webpic/owner-pwa-192-v2.png',
-      '/webpic/owner-pwa-512-v2.png',
-      '/webpic/owner-apple-180-v2.png',
+      '/admin-manifest.json?v=5',
+      '/webpic/owner-pwa-192-v3.png',
+      '/webpic/owner-pwa-512-v3.png',
+      '/webpic/owner-apple-180-v3.png',
       '/webpic/owner-shortcut-v1.ico',
       '/webpic/owner-shortcut-48-v1.png',
       '/webpic/owner-shortcut-32-v1.png',
