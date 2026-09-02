@@ -1,0 +1,18 @@
+.savings-trigger { cursor:pointer; }
+.savings-dialog { width:min(720px,calc(100% - 24px)); max-height:calc(100vh - 28px); padding:0; overflow:auto; color:#332820; background:#fffdf8; border:0; border-top:8px solid #173f2b; border-radius:20px; box-shadow:0 28px 90px rgba(0,0,0,.6); }
+.savings-dialog::backdrop { background:rgba(10,14,11,.78); backdrop-filter:blur(3px); }
+.savings-dialog-inner { position:relative; padding:32px; }
+.savings-close { position:absolute; top:18px; right:18px; width:42px; height:42px; margin:0; padding:0; display:grid; place-items:center; color:#173f2b; background:#f4eee0; border:1px solid #d9cfbf; border-radius:50%; box-shadow:none; font:700 1.35rem/1 Montserrat,sans-serif; letter-spacing:0; text-transform:none; }
+.savings-close:hover,.savings-close:focus-visible { color:white; background:#a45d41; border-color:#a45d41; outline:none; }
+.savings-kicker { margin:0 54px 7px 0; color:#a45d41; font:800 .7rem/1.4 Montserrat,sans-serif; letter-spacing:.18em; text-transform:uppercase; }
+.savings-dialog h2 { margin:0 54px 10px 0; color:#173f2b; font:700 clamp(2rem,6vw,3rem)/.95 'Crimson Text',serif; }
+.savings-lead { margin:0; color:#74685e; font:600 .92rem/1.65 Montserrat,sans-serif; }
+.savings-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:22px; }
+.savings-option { padding:15px; background:#f7f1e7; border:1px solid #ded2c1; border-radius:13px; }
+.savings-option strong { display:block; color:#173f2b; font:800 .72rem/1.35 Montserrat,sans-serif; letter-spacing:.05em; text-transform:uppercase; }
+.savings-option span { display:block; margin-top:5px; color:#74685e; font:600 .78rem/1.5 Montserrat,sans-serif; }
+.savings-note { margin:18px 0 0; padding:13px 15px; color:#65410f; background:#fff3cf; border:1px solid #dfbd78; border-radius:11px; font:700 .75rem/1.5 Montserrat,sans-serif; }
+.savings-actions { display:flex; flex-wrap:wrap; gap:9px; margin-top:18px; }
+.savings-actions a { min-height:46px; padding:13px 19px; display:inline-flex; align-items:center; justify-content:center; color:white; background:#173f2b; border-radius:999px; font:800 .7rem/1 Montserrat,sans-serif; letter-spacing:.08em; text-decoration:none; text-transform:uppercase; }
+.savings-actions a.secondary { color:#173f2b; background:white; border:1px solid #cdbfae; }
+@media(max-width:560px){.savings-dialog-inner{padding:25px 17px 20px}.savings-grid{grid-template-columns:1fr}.savings-option{padding:13px}.savings-actions{display:grid}.savings-actions a{width:100%}}
