@@ -1,11 +1,11 @@
-const CACHE_NAME = 'friends-hub-v61';
+const CACHE_NAME = 'friends-hub-v62';
 const PRIVATE_APP_URLS = self.location.hostname === 'owner.weekscreekhaven.com'
   ? [
       '/admin.html',
-      '/admin-manifest.json?v=5',
-      '/webpic/owner-pwa-192-v3.png',
-      '/webpic/owner-pwa-512-v3.png',
-      '/webpic/owner-apple-180-v3.png',
+      '/admin-manifest.json?v=6',
+      '/webpic/owner-pwa-192-v4.png',
+      '/webpic/owner-pwa-512-v4.png',
+      '/webpic/owner-apple-180-v4.png',
       '/webpic/owner-shortcut-v1.ico',
       '/webpic/owner-shortcut-48-v1.png',
       '/webpic/owner-shortcut-32-v1.png',
@@ -14,21 +14,19 @@ const PRIVATE_APP_URLS = self.location.hostname === 'owner.weekscreekhaven.com'
   : self.location.hostname === 'cleaner.weekscreekhaven.com'
     ? [
         '/cleaner.html',
-        '/cleaner-manifest.json?v=4',
-        '/webpic/cleaner-pwa-192-v3.png',
-        '/webpic/cleaner-pwa-512-v3.png',
-        '/webpic/cleaner-apple-180-v3.png',
+        '/cleaner-manifest.json?v=5',
+        '/webpic/cleaner-pwa-192-v4.png',
+        '/webpic/cleaner-pwa-512-v4.png',
+        '/webpic/cleaner-apple-180-v4.png',
       ]
     : self.location.hostname === 'guestguide.weekscreekhaven.com'
       ? [
           '/friends-hub.html',
           '/important-info.html',
-          '/manifest.json?v=25',
-          '/webpic/pwa-guest-guide-192-v4.png',
-          '/webpic/pwa-guest-guide-512-v4.png',
-          '/webpic/pwa-guest-guide-maskable-192-v4.png',
-          '/webpic/pwa-guest-guide-maskable-512-v4.png',
-          '/webpic/pwa-guest-guide-apple-180-v4.png',
+          '/manifest.json?v=26',
+          '/webpic/pwa-guest-guide-192-v5.png',
+          '/webpic/pwa-guest-guide-512-v5.png',
+          '/webpic/pwa-guest-guide-apple-180-v5.png',
         ]
       : [];
 
@@ -37,8 +35,8 @@ const PRECACHE_URLS = [
   '/friends-hub.html',
   '/index.html',
   '/privacy.html',
-  '/site-manifest.json?v=2',
-  '/manifest.json?v=25',
+  '/site-manifest.json?v=3',
+  '/manifest.json?v=26',
   '/hub-adventures.html',
   '/nav.js',
   '/footer.js',
@@ -76,14 +74,12 @@ const PRECACHE_URLS = [
   '/webpic/policon.png',
   '/webpic/wpaicon.png',
   // PWA icons
-  '/webpic/pwa-guest-guide-192-v4.png',
-  '/webpic/wch-main-pwa-192-v1.png',
-  '/webpic/wch-main-pwa-512-v1.png',
-  '/webpic/wch-main-apple-180-v1.png',
-  '/webpic/pwa-guest-guide-512-v4.png',
-  '/webpic/pwa-guest-guide-maskable-192-v4.png',
-  '/webpic/pwa-guest-guide-maskable-512-v4.png',
-  '/webpic/pwa-guest-guide-apple-180-v4.png',
+  '/webpic/pwa-guest-guide-192-v5.png',
+  '/webpic/wch-main-pwa-192-v2.png',
+  '/webpic/wch-main-pwa-512-v2.png',
+  '/webpic/wch-main-apple-180-v2.png',
+  '/webpic/pwa-guest-guide-512-v5.png',
+  '/webpic/pwa-guest-guide-apple-180-v5.png',
   '/webpic/weeks-creek-haven-round-logo.png',
   // checkout
   '/webpic/bidet.webp',
