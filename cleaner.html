@@ -179,5 +179,5 @@ document.addEventListener('click',e=>{const thumb=e.target.closest('.photo-thumb
 $('photo-lightbox').addEventListener('click',e=>{if(e.target===$('photo-lightbox'))$('photo-lightbox').close()});
 document.addEventListener('keydown',e=>{if(!$('photo-lightbox').open)return;if(e.key==='ArrowLeft')showLightbox(lightboxIndex-1);if(e.key==='ArrowRight')showLightbox(lightboxIndex+1);});
 let hiddenAt=0;load();document.addEventListener('visibilitychange',()=>{if(document.hidden){hiddenAt=Date.now();return}if(hiddenAt&&Date.now()-hiddenAt>300000&&!formDirty&&!document.activeElement?.matches('input,textarea,select'))load();hiddenAt=0});
-if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/friends-sw.js?v=60').catch(()=>{}));
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/friends-sw.js?v=61').catch(()=>{}));
 </script></body></html>
