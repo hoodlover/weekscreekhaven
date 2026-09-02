@@ -19,6 +19,6 @@ export function doorCodeTask(booking, today) {
   const stay = selectedStay(booking);
   if (!booking.doorCode && booking.status === 'booked') return { type:'setup', bookingId:booking.id, guestName:booking.name, arrival:stay.arrival, departure:stay.departure, label:'Generate and install a door code' };
   if (booking.doorCode && !booking.doorCodeInstalledAt && booking.status === 'booked') return { type:'setup', bookingId:booking.id, guestName:booking.name, arrival:stay.arrival, departure:stay.departure, code:booking.doorCode, label:'Install guest door code' };
-  if (booking.doorCode && booking.doorCodeInstalledAt && !booking.doorCodeRemovedAt && (booking.status === 'completed' || (stay.departure && today > stay.departure))) return { type:'remove', bookingId:booking.id, guestName:booking.name, arrival:stay.arrival, departure:stay.departure, code:booking.doorCode, label:'Remove expired guest door code' };
+  if (booking.doorCode && booking.doorCodeInstalledAt && !booking.doorCodeRemovedAt && (['cancelled','completed'].includes(booking.status) || (stay.departure && today > stay.departure))) return { type:'remove', bookingId:booking.id, guestName:booking.name, arrival:stay.arrival, departure:stay.departure, code:booking.doorCode, label:booking.status==='cancelled'?'Remove cancelled guest door code':'Remove expired guest door code' };
   return null;
 }

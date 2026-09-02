@@ -2,6 +2,7 @@ import { appendBookingRecord, getBookingCalendar, rangesOverlap, unavailableRang
 import { escapeEmailHtml, sendEmail } from './email.js';
 import { bookingAccessCode, createAgreementToken } from './security.js';
 import { generateDoorCode } from './door-code.js';
+import { provisionDoorCode, provisioningChanges } from './lock-service.js';
 
 function selectedDates(booking) {
   return booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || booking.dateChoices?.[0] || {};
@@ -75,13 +76,16 @@ export async function finalizeBookingFlow(booking) {
     try {
       const calendar = await getBookingCalendar();
       const doorCode = generateDoorCode(calendar.bookings || []);
-      current = await record(current, { doorCode, doorCodeGeneratedAt:now, doorCodeInstalledAt:null, doorCodeRemovedAt:null, doorCodeGuestSentAt:null }, now);
+      const generated={ ...current, doorCode, doorCodeGeneratedAt:now, doorCodeInstalledAt:null, doorCodeRemovedAt:null, doorCodeGuestSentAt:null };
+      const provisioning = await provisionDoorCode(generated, { now });
+      current = await record(current, { doorCode, doorCodeGeneratedAt:now, doorCodeGuestSentAt:null, ...provisioningChanges(provisioning) }, now);
       if (process.env.OWNER_EMAIL) {
         const dates=selectedDates(current);
+        const installedAutomatically=Boolean(current.doorCodeInstalledAt);
         await sendEmail({
-          to:process.env.OWNER_EMAIL, toName:'Heather & Lance', subject:`Set ${current.name}’s guest door code`,
-          text:`A new guest door code is ready.\n\nGuest: ${current.name}\nStay: ${dates.arrival || ''} through ${dates.departure || ''}\nDoor code: ${doorCode}\n\nProgram it on every cabin door, then open Owner Bookings and confirm “Code installed.”\n\nhttps://www.weekscreekhaven.com/admin.html#bookings`,
-          html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6"><h1 style="color:#183c2d">Set the guest door code</h1><p><strong>${escapeEmailHtml(current.name)}</strong><br>${escapeEmailHtml(dates.arrival || '')} through ${escapeEmailHtml(dates.departure || '')}</p><p style="font-size:28px;font-weight:800;letter-spacing:.14em">${doorCode}</p><p>Program it on every cabin door, then confirm <strong>Code installed</strong> in Owner Bookings.</p><p><a href="https://www.weekscreekhaven.com/admin.html#bookings" style="display:inline-block;background:#183c2d;color:#fff;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:700">Open Owner Bookings</a></p></div>`,
+          to:process.env.OWNER_EMAIL, toName:'Heather & Lance', subject:installedAutomatically?`${current.name}’s door code was installed`:`Set ${current.name}’s guest door code`,
+          text:`A new guest door code is ready.\n\nGuest: ${current.name}\nStay: ${dates.arrival || ''} through ${dates.departure || ''}\nDoor code: ${doorCode}\n\n${installedAutomatically?'The lock service confirmed installation on every configured cabin door.':'Program it on every cabin door, then open Owner Bookings and confirm “Code installed.”'}\n\nhttps://www.weekscreekhaven.com/admin.html#bookings`,
+          html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6"><h1 style="color:#183c2d">${installedAutomatically?'Door code installed':'Set the guest door code'}</h1><p><strong>${escapeEmailHtml(current.name)}</strong><br>${escapeEmailHtml(dates.arrival || '')} through ${escapeEmailHtml(dates.departure || '')}</p><p style="font-size:28px;font-weight:800;letter-spacing:.14em">${doorCode}</p><p>${installedAutomatically?'The lock service confirmed installation on every configured cabin door.':'Program it on every cabin door, then confirm <strong>Code installed</strong> in Owner Bookings.'}</p><p><a href="https://www.weekscreekhaven.com/admin.html#bookings" style="display:inline-block;background:#183c2d;color:#fff;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:700">Open Owner Bookings</a></p></div>`,
         });
         current = await record(current, { doorCodeOwnerEmailSentAt:now }, now);
       }

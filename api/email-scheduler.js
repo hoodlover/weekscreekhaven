@@ -5,6 +5,7 @@ import { bookingAccessCode, createAgreementToken, createReviewToken, json } from
 import { cancelSquareInvoice } from '../_lib/square.js';
 import { doorCodeTask, generateDoorCode } from '../_lib/door-code.js';
 import { processCleanerReminders } from '../_lib/cleaner-reminders.js';
+import { lockProviderName, provisionDoorCode, provisioningChanges, removeDoorCode, removalChanges } from '../_lib/lock-service.js';
 
 function easternToday() {
   const parts = new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
@@ -69,10 +70,28 @@ export default async function handler(request, response) {
     const stored=calendar.bookings||[];
     let sent=0;
     for (let booking of stored) {
+      const dates=selectedDates(booking);
+      if(dates.arrival&&dates.departure&&booking.doorCode&&booking.doorCodeInstalledAt&&!booking.doorCodeRemovedAt&&(['cancelled','completed'].includes(booking.status)||today>dates.departure)&&lockProviderName()!=='manual'){
+        const attemptedAt=new Date().toISOString(),removal=await removeDoorCode(booking,{now:attemptedAt}),changes=removalChanges(removal);
+        await appendBookingRecord({type:'status',bookingId:booking.id,changes,createdAt:attemptedAt});
+        Object.assign(booking,changes);
+      }
       if (!['pending-payment','reserved','booked','completed'].includes(booking.status) || !booking.email) continue;
       if (booking.squareInvoiceId && !booking.paymentFullyPaid) { try { booking=await refreshSquareBooking(booking); } catch { /* use last confirmed payment state */ } }
-      const dates=selectedDates(booking); if (!dates.arrival || !dates.departure) continue;
-      if(booking.status==='booked'&&!booking.doorCode){const doorCode=generateDoorCode(stored);const generatedAt=new Date().toISOString();await appendBookingRecord({type:'status',bookingId:booking.id,changes:{doorCode,doorCodeGeneratedAt:generatedAt,doorCodeInstalledAt:null,doorCodeRemovedAt:null,doorCodeGuestSentAt:null},createdAt:generatedAt});Object.assign(booking,{doorCode,doorCodeGeneratedAt:generatedAt});}
+      if (!dates.arrival || !dates.departure) continue;
+      if(booking.status==='booked'&&!booking.doorCode){
+        const doorCode=generateDoorCode(stored),generatedAt=new Date().toISOString();
+        const generated={...booking,doorCode,doorCodeGeneratedAt:generatedAt,doorCodeInstalledAt:null,doorCodeRemovedAt:null,doorCodeGuestSentAt:null};
+        const provisioning=await provisionDoorCode(generated,{now:generatedAt});
+        const changes={doorCode,doorCodeGeneratedAt:generatedAt,doorCodeGuestSentAt:null,...provisioningChanges(provisioning)};
+        await appendBookingRecord({type:'status',bookingId:booking.id,changes,createdAt:generatedAt});
+        Object.assign(booking,changes);
+      }
+      if(booking.status==='booked'&&booking.doorCode&&!booking.doorCodeInstalledAt&&lockProviderName()!=='manual'){
+        const attemptedAt=new Date().toISOString(),provisioning=await provisionDoorCode(booking,{now:attemptedAt}),changes=provisioningChanges(provisioning);
+        await appendBookingRecord({type:'status',bookingId:booking.id,changes,createdAt:attemptedAt});
+        Object.assign(booking,changes);
+      }
       const packetUrl=`https://www.weekscreekhaven.com/booking-packet.html?token=${encodeURIComponent(createAgreementToken(booking.id,365*86400))}`;
       const guestGuideUrl=`https://guestguide.weekscreekhaven.com/friends-hub.html?token=${encodeURIComponent(createAgreementToken(booking.id,365*86400))}`;
       const reviewUrl=`https://www.weekscreekhaven.com/review.html?token=${encodeURIComponent(createReviewToken(booking.id))}`;

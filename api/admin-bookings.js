@@ -9,6 +9,7 @@ import { finalizeBookingFlow } from '../_lib/booking-finalization.js';
 import { findBookingInvite } from '../_lib/booking-invite.js';
 import { daysBetween, PRICING_CONFIG, quoteStay, withEstimatedTaxesAndFees } from '../pricing.js';
 import { generateDoorCode, selectedStay } from '../_lib/door-code.js';
+import { lockProviderName, manualConfirmation, provisionDoorCode, provisioningChanges, removeDoorCode, removalChanges } from '../_lib/lock-service.js';
 
 function completedInvoiceCents(invoice) {
   return (invoice?.payment_requests || []).reduce((sum, paymentRequest) => sum + (Number(paymentRequest.total_completed_amount_money?.amount) || 0), 0);
@@ -137,9 +138,12 @@ export default async function handler(request, response) {
       if (booking.status !== 'booked') return json(response, 409, { error:'Door codes are created only after a stay is Booked.' });
       if (booking.doorCode && !booking.doorCodeRemovedAt) return json(response, 200, { ok:true, doorCode:booking.doorCode });
       const doorCode = generateDoorCode(bookings);
-      await appendBookingRecord({ type:'status', bookingId:booking.id, changes:{ doorCode, doorCodeGeneratedAt:createdAt, doorCodeInstalledAt:null, doorCodeRemovedAt:null, doorCodeGuestSentAt:null }, createdAt });
+      const generated={ ...booking, doorCode, doorCodeGeneratedAt:createdAt, doorCodeInstalledAt:null, doorCodeRemovedAt:null, doorCodeGuestSentAt:null };
+      const provisioning=await provisionDoorCode(generated,{now:createdAt});
+      await appendBookingRecord({ type:'status', bookingId:booking.id, changes:{ doorCode, doorCodeGeneratedAt:createdAt, doorCodeGuestSentAt:null, ...provisioningChanges(provisioning) }, createdAt });
       const stay=selectedStay(booking);
-      if (process.env.OWNER_EMAIL) await sendEmail({ to:process.env.OWNER_EMAIL, toName:'Heather & Lance', subject:`Set ${booking.name}’s guest door code`, text:`A new guest door code is ready.\n\nGuest: ${booking.name}\nStay: ${stay.arrival || ''} through ${stay.departure || ''}\nDoor code: ${doorCode}\n\nProgram this code on all cabin doors, then open Owner Bookings and select “Code installed.”\n\nhttps://www.weekscreekhaven.com/admin.html#bookings`, html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6"><h1 style="color:#183c2d">Set the guest door code</h1><p><strong>${escapeEmailHtml(booking.name)}</strong><br>${escapeEmailHtml(stay.arrival || '')} through ${escapeEmailHtml(stay.departure || '')}</p><p style="font-size:28px;font-weight:800;letter-spacing:.14em">${doorCode}</p><p>Program this code on all cabin doors, then confirm <strong>Code installed</strong> in Owner Bookings.</p><p><a href="https://www.weekscreekhaven.com/admin.html#bookings" style="display:inline-block;background:#183c2d;color:#fff;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:700">Open Owner Bookings</a></p></div>` });
+      const installedAutomatically=provisioning.status==='installed';
+      if (process.env.OWNER_EMAIL) await sendEmail({ to:process.env.OWNER_EMAIL, toName:'Heather & Lance', subject:installedAutomatically?`${booking.name}’s door code was installed`:`Set ${booking.name}’s guest door code`, text:`A new guest door code is ready.\n\nGuest: ${booking.name}\nStay: ${stay.arrival || ''} through ${stay.departure || ''}\nDoor code: ${doorCode}\n\n${installedAutomatically?'The lock service confirmed installation on every configured cabin door.':'Program this code on all cabin doors, then open Owner Bookings and select “Code installed.”'}\n\nhttps://www.weekscreekhaven.com/admin.html#bookings`, html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6"><h1 style="color:#183c2d">${installedAutomatically?'Door code installed':'Set the guest door code'}</h1><p><strong>${escapeEmailHtml(booking.name)}</strong><br>${escapeEmailHtml(stay.arrival || '')} through ${escapeEmailHtml(stay.departure || '')}</p><p style="font-size:28px;font-weight:800;letter-spacing:.14em">${doorCode}</p><p>${installedAutomatically?'The lock service confirmed installation on every configured cabin door.':'Program this code on all cabin doors, then confirm <strong>Code installed</strong> in Owner Bookings.'}</p><p><a href="https://www.weekscreekhaven.com/admin.html#bookings" style="display:inline-block;background:#183c2d;color:#fff;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:700">Open Owner Bookings</a></p></div>` });
       return json(response, 200, { ok:true, doorCode });
     }
     if (action === 'replace-door-code') {
@@ -147,15 +151,27 @@ export default async function handler(request, response) {
       const previousDoorCode=String(booking.doorCode);
       const retiredDoorCodes=[...new Set([...(booking.retiredDoorCodes||[]).map(String),previousDoorCode])];
       const doorCode=generateDoorCode(bookings.map((item)=>item.id===booking.id?{...item,retiredDoorCodes}:item));
-      const changes={ doorCode, previousDoorCode, retiredDoorCodes, doorCodeReplacedAt:createdAt, doorCodeGeneratedAt:createdAt, doorCodeInstalledAt:null, doorCodeRemovedAt:null, doorCodeGuestSentAt:null };
+      let retiredResult=null;
+      if(lockProviderName()!=='manual'){
+        retiredResult=await removeDoorCode(booking,{now:createdAt});
+        if(retiredResult.status!=='removed'){
+          await appendBookingRecord({type:'status',bookingId:booking.id,changes:removalChanges(retiredResult),createdAt});
+          return json(response,503,{error:'The old code could not be removed from every cabin door. No replacement code was installed.',doorCodeRemoval:retiredResult});
+        }
+      }
+      const nextBooking={...booking,doorCode,previousDoorCode,retiredDoorCodes,doorCodeReplacedAt:createdAt,doorCodeGeneratedAt:createdAt,doorCodeInstalledAt:null,doorCodeRemovedAt:null,doorCodeGuestSentAt:null};
+      const provisioning=await provisionDoorCode(nextBooking,{now:createdAt});
+      const changes={ doorCode, previousDoorCode, retiredDoorCodes, doorCodeReplacedAt:createdAt, doorCodeGeneratedAt:createdAt, doorCodeGuestSentAt:null, ...(retiredResult?{previousDoorCodeRemoval:retiredResult}:{}), ...provisioningChanges(provisioning) };
       await appendBookingRecord({ type:'status', bookingId:booking.id, changes, createdAt });
       const stay=selectedStay(booking);
-      if(process.env.OWNER_EMAIL)await sendEmail({to:process.env.OWNER_EMAIL,toName:'Heather & Lance',subject:`Replace ${booking.name}’s guest door code`,text:`The old guest code ${previousDoorCode} is revoked in Owner Bookings. Remove it from every cabin door and program the new code below.\n\nGuest: ${booking.name}\nStay: ${stay.arrival||''} through ${stay.departure||''}\nNew door code: ${doorCode}\n\nOpen Owner Bookings and select “Code installed” after every door is updated.\n\nhttps://www.weekscreekhaven.com/admin.html#bookings`,html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6"><h1 style="color:#183c2d">Replace the guest door code</h1><p>Remove retired code <strong>${previousDoorCode}</strong> from every cabin door.</p><p><strong>${escapeEmailHtml(booking.name)}</strong><br>${escapeEmailHtml(stay.arrival||'')} through ${escapeEmailHtml(stay.departure||'')}</p><p>New code:</p><p style="font-size:28px;font-weight:800;letter-spacing:.14em">${doorCode}</p><p><a href="https://www.weekscreekhaven.com/admin.html#bookings" style="display:inline-block;background:#183c2d;color:#fff;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:700">Open Owner Bookings</a></p></div>`});
+      const replacedAutomatically=retiredResult?.status==='removed'&&provisioning.status==='installed';
+      if(process.env.OWNER_EMAIL)await sendEmail({to:process.env.OWNER_EMAIL,toName:'Heather & Lance',subject:replacedAutomatically?`${booking.name}’s replacement door code was installed`:`Replace ${booking.name}’s guest door code`,text:replacedAutomatically?`The lock service removed ${previousDoorCode} and installed ${doorCode} on every configured cabin door for ${booking.name}.\n\nhttps://www.weekscreekhaven.com/admin.html#bookings`:`The old guest code ${previousDoorCode} is revoked in Owner Bookings. Remove it from every cabin door and program the new code below.\n\nGuest: ${booking.name}\nStay: ${stay.arrival||''} through ${stay.departure||''}\nNew door code: ${doorCode}\n\nOpen Owner Bookings and select “Code installed” after every door is updated.\n\nhttps://www.weekscreekhaven.com/admin.html#bookings`,html:replacedAutomatically?`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6"><h1 style="color:#183c2d">Replacement code installed</h1><p>The lock service removed <strong>${previousDoorCode}</strong> and installed the new code on every configured cabin door for <strong>${escapeEmailHtml(booking.name)}</strong>.</p><p style="font-size:28px;font-weight:800;letter-spacing:.14em">${doorCode}</p></div>`:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6"><h1 style="color:#183c2d">Replace the guest door code</h1><p>Remove retired code <strong>${previousDoorCode}</strong> from every cabin door.</p><p><strong>${escapeEmailHtml(booking.name)}</strong><br>${escapeEmailHtml(stay.arrival||'')} through ${escapeEmailHtml(stay.departure||'')}</p><p>New code:</p><p style="font-size:28px;font-weight:800;letter-spacing:.14em">${doorCode}</p><p><a href="https://www.weekscreekhaven.com/admin.html#bookings" style="display:inline-block;background:#183c2d;color:#fff;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:700">Open Owner Bookings</a></p></div>`});
       return json(response,200,{ok:true,doorCode,previousDoorCode});
     }
     if (action === 'door-code-installed') {
       if (!booking.doorCode) return json(response, 409, { error:'Generate the guest code first.' });
-      await appendBookingRecord({ type:'status', bookingId:booking.id, changes:{ doorCodeInstalledAt:createdAt, doorCodeRemovedAt:null }, createdAt });
+      const doorCodeProvisioning=manualConfirmation(booking,'install',createdAt);
+      await appendBookingRecord({ type:'status', bookingId:booking.id, changes:{ doorCodeProvisioning, doorCodeInstalledAt:createdAt, doorCodeRemovedAt:null }, createdAt });
       return json(response, 200, { ok:true, installedAt:createdAt });
     }
     if (action === 'send-door-code') {
@@ -169,7 +185,14 @@ export default async function handler(request, response) {
     }
     if (action === 'door-code-removed') {
       if (!booking.doorCode) return json(response, 409, { error:'This booking has no recorded door code.' });
-      await appendBookingRecord({ type:'status', bookingId:booking.id, changes:{ doorCodeRemovedAt:createdAt }, createdAt });
+      if(lockProviderName()!=='manual'){
+        const result=await removeDoorCode(booking,{now:createdAt});
+        await appendBookingRecord({type:'status',bookingId:booking.id,changes:removalChanges(result),createdAt});
+        if(result.status!=='removed')return json(response,503,{error:'The code could not be removed from every cabin door.',doorCodeRemoval:result});
+      }else{
+        const doorCodeRemoval=manualConfirmation(booking,'remove',createdAt);
+        await appendBookingRecord({ type:'status', bookingId:booking.id, changes:{ doorCodeRemoval, doorCodeRemovedAt:createdAt }, createdAt });
+      }
       return json(response, 200, { ok:true, removedAt:createdAt });
     }
     if (action === 'correct-guest-contact') {
@@ -315,7 +338,11 @@ export default async function handler(request, response) {
       if (paidCents > 0 || booking.paymentRequirementMet) return json(response, 409, { error: 'A payment has already been received. Use the refund controls instead of unpaid cancellation.' });
       if (currentInvoice && !['CANCELED', 'PAID', 'REFUNDED'].includes(currentInvoice.status)) await cancelSquareInvoice(booking.squareInvoiceId);
       const reason = String(request.body?.reason || 'Canceled before payment').trim().slice(0, 192);
-      await appendBookingRecord({ type: 'status', bookingId: booking.id, changes: { status: 'cancelled', cancelledAt: createdAt, cancellationReason: reason, paymentUrl: null, squareInvoiceStatus: 'CANCELED' }, createdAt });
+      let lockChanges={};
+      if(booking.doorCode&&booking.doorCodeInstalledAt&&!booking.doorCodeRemovedAt&&lockProviderName()!=='manual'){
+        lockChanges=removalChanges(await removeDoorCode(booking,{now:createdAt}));
+      }
+      await appendBookingRecord({ type: 'status', bookingId: booking.id, changes: { status:'cancelled', cancelledAt:createdAt, cancellationReason:reason, paymentUrl:null, squareInvoiceStatus:'CANCELED', ...lockChanges }, createdAt });
       if (booking.email) {
         const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || booking.dateChoices?.[0] || {};
         await sendEmail({

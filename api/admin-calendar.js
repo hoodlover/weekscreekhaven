@@ -6,6 +6,7 @@ import { cancelSquareInvoice } from '../_lib/square.js';
 import { refreshSquareBooking } from '../_lib/payment-sync.js';
 import { findBookingInvite } from '../_lib/booking-invite.js';
 import { finalizeBookingFlow } from '../_lib/booking-finalization.js';
+import { lockProviderName, provisionDoorCode, provisioningChanges, removeDoorCode, removalChanges } from '../_lib/lock-service.js';
 
 const text = (value, max = 120) => String(value || '').trim().slice(0, max);
 const date = (value) => /^\d{4}-\d{2}-\d{2}$/.test(String(value || '')) ? String(value) : '';
@@ -108,7 +109,11 @@ export default async function handler(request, response) {
         const conflicts = unavailableRanges(calendar).filter((range) => range.bookingId !== booking.id);
         if (conflicts.some((range) => rangesOverlap({ arrival, departure }, range))) return json(response, 409, { error: 'Those dates overlap another reservation, booking, or owner block.' });
         dateChoices[choiceIndex] = { ...dateChoices[choiceIndex], arrival, departure };
-        await appendBookingRecord({ type: 'status', bookingId, changes: { name: text(request.body?.name, 100) || booking.name, calendarNote: text(request.body?.note, 240), dateChoices }, createdAt });
+        const changes={ name:text(request.body?.name,100)||booking.name, calendarNote:text(request.body?.note,240), dateChoices };
+        if(booking.status==='booked'&&booking.doorCode){
+          Object.assign(changes,provisioningChanges(await provisionDoorCode({...booking,...changes},{now:createdAt})));
+        }
+        await appendBookingRecord({ type:'status', bookingId, changes, createdAt });
         return json(response, 200, { ok: true });
       }
       if (action === 'reserve-request') {
@@ -129,7 +134,11 @@ export default async function handler(request, response) {
       }
       if (action === 'cancel-booking') {
         if (booking.squareInvoiceId) await cancelSquareInvoice(booking.squareInvoiceId);
-        await appendBookingRecord({ type: 'status', bookingId, changes: { status: 'cancelled', cancelledAt: createdAt }, createdAt });
+        let lockChanges={};
+        if(booking.doorCode&&booking.doorCodeInstalledAt&&!booking.doorCodeRemovedAt&&lockProviderName()!=='manual'){
+          lockChanges=removalChanges(await removeDoorCode(booking,{now:createdAt}));
+        }
+        await appendBookingRecord({ type: 'status', bookingId, changes: { status:'cancelled', cancelledAt:createdAt, ...lockChanges }, createdAt });
         const choice = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0];
         try {
           await sendEmail({
