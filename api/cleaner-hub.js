@@ -61,7 +61,7 @@ function buildDashboard(bookings,state,isOwner){
       basePayCents:Number.isFinite(Number(assignment.basePayCents))?Number(assignment.basePayCents):(Number.isFinite(Number(booking.accountingCleaningFeeCents))?Number(booking.accountingCleaningFeeCents):Number(state.settings.standardPayCents)||17500),
       extraPayCents:Number(assignment.extraPayCents)||0, extraTask:assignment.extraTask||'', completedAt:assignment.completedAt||'', paidAt:assignment.paidAt||'',
       photos:photosFor(booking.id),
-      ...(isOwner?{guestName:booking.name||'Guest'}:{}),
+      ...(isOwner?{guestName:booking.name||'Guest',nextGuestName:nextArrival?.booking?.name||'',nextGuestCount:nextArrival?Number(nextArrival.booking.guests)||1:0,nextGuestDogs:nextArrival?Number(nextArrival.booking.dogs)||0:0,nextArrival:nextArrival?.dates?.arrival||''}:{}),
     };
   });
   let recent=bookedStays.filter(x=>x.dates.departure<today).sort((a,b)=>b.dates.departure.localeCompare(a.dates.departure)).slice(0,8).map(({booking,dates})=>{
@@ -258,12 +258,13 @@ export default async function handler(request,response){
       if(request.body?.confirmed!==true)return json(response,400,{error:'Review and confirm this cleaner email before sending.'});
       const state=await getCleanerState(); const to=state.settings.cleanerEmail||'';
       if(!to)return json(response,400,{error:'Add the cleaner email address in Cleaner setup first.'});
-      const subject=safe(request.body?.subject,160),body=safe(request.body?.body,5000),operationId=safe(request.body?.operationId,80);
+      const subject=safe(request.body?.subject,160),body=safe(request.body?.body,5000),operationId=safe(request.body?.operationId,80),bookingId=safe(request.body?.bookingId,100);
       if(subject.length<5||body.length<20||!operationId)return json(response,400,{error:'Finish the email subject and message before sending.'});
+      if(bookingId){const bookings=await getBookingRequests();if(!bookings.some(item=>item.id===bookingId))return json(response,404,{error:'That booking is no longer available. Refresh the Cleaner Hub and choose it again.'});}
       const already=state.emailHistory.find(item=>item.operationId===operationId); if(already)return json(response,200,{ok:true,alreadySent:true});
       const htmlBody=escapeEmailHtml(body.replace(/\n+(?:Thank you,\s*\n+)?Heather\s*&\s*Lance(?:\s*\n+Weeks Creek Haven)?\s*$/i,'').trim()).replace(/\n/g,'<br>');
       const result=await sendEmail({to,toName:state.settings.cleanerName||'Cabin Care Team',subject,idempotencyKey:`cleaner-${operationId}`,text:body,html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.65;max-width:640px"><div style="padding:22px;background:#183c2d;color:#fff"><div style="color:#e5b67e;font-size:12px;font-weight:bold;letter-spacing:.12em;text-transform:uppercase">Weeks Creek Haven · Cabin Care</div><h1 style="margin:6px 0 0;color:#fff;font-family:Georgia,serif">${escapeEmailHtml(subject)}</h1></div><div style="padding:24px;background:#fffdf8">${htmlBody}</div><div style="padding:16px 24px;background:#f4eee0;color:#76695e;font-size:12px">Weeks Creek Haven · Blue Ridge, Georgia</div></div>`});
-      await appendCleanerRecord({type:'cleaner_email_sent',createdAt:now,email:{id:crypto.randomUUID(),operationId,to,subject,templateId:safe(request.body?.templateId,50),sentAt:now,provider:result?.provider||''}});
+      const templateId=safe(request.body?.templateId,50);await appendCleanerRecord({type:'cleaner_email_sent',createdAt:now,email:{id:crypto.randomUUID(),operationId,to,subject,templateId,bookingId,sentAt:now,provider:result?.provider||''}});if(bookingId)await appendCleanerRecord({type:'assignment',bookingId,createdAt:now,changes:{cleanerEmailSentAt:now,cleanerEmailTemplateId:templateId}});
     } else return json(response,400,{error:'Unknown cleaner hub update.'});
     return json(response,200,{ok:true},{'Cache-Control':'private, no-store'});
   }catch(error){console.error(error);return json(response,503,{error:error.message||'The Cleaner Hub is temporarily unavailable.'});}
