@@ -6,13 +6,13 @@
     <meta name="robots" content="noindex,nofollow">
     <title>Weeks Creek Guest Guide | Weeks Creek Haven</title>
   <link rel="icon" href="/webpic/weeks-creek-haven-favicon.ico" sizes="any">
-    <link rel="manifest" href="/manifest.json?v=23">
+    <link rel="manifest" href="/manifest.json?v=24">
     <meta name="theme-color" content="#A45D41">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Weeks Creek Guest Guide">
-    <link rel="apple-touch-icon" sizes="192x192" href="/webpic/pwa-guest-guide-192-v2.png">
-    <meta name="msapplication-TileImage" content="/webpic/pwa-guest-guide-512-v2.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/webpic/pwa-guest-guide-192-v3.png">
+    <meta name="msapplication-TileImage" content="/webpic/pwa-guest-guide-512-v3.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -432,7 +432,7 @@
 </head>
 <body>
     <div id="guest-pwa-splash" class="guest-pwa-splash" role="status" aria-label="Opening Weeks Creek Guest Guide">
-        <img src="/webpic/pwa-guest-guide-512-v2.png" alt="">
+        <img src="/webpic/pwa-guest-guide-512-v3.png" alt="">
     </div>
 
 <div id="nav-placeholder"></div>
@@ -493,7 +493,7 @@
         <div class="max-w-2xl mx-auto">
             <!-- Title row + dismiss -->
             <div class="flex items-center gap-3 mb-3">
-                <img src="webpic/pwa-guest-guide-192-v2.png" alt="Install App" class="w-14 h-14 object-contain flex-shrink-0">
+                <img src="webpic/pwa-guest-guide-192-v3.png" alt="Install App" class="w-14 h-14 object-contain flex-shrink-0">
                 <div class="flex-1">
                     <p class="font-black text-[#d4a373] text-sm uppercase tracking-wide leading-tight">Install Weeks Creek Guest Guide on Your Phone</p>
                     <p class="text-stone-400 text-xs mt-0.5">Works like an app — offline-ready, no App Store needed</p>
@@ -1857,7 +1857,7 @@ document.addEventListener('keydown', e => {
 <script>
 // Register service worker
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/friends-sw.js?v=58')
+    navigator.serviceWorker.register('/friends-sw.js?v=59')
         .then(() => console.log('Weeks Creek Guest Guide SW registered'))
         .catch(e => console.error('SW error:', e));
 }
