@@ -261,7 +261,7 @@ export default async function handler(request,response){
       const subject=safe(request.body?.subject,160),body=safe(request.body?.body,5000),operationId=safe(request.body?.operationId,80);
       if(subject.length<5||body.length<20||!operationId)return json(response,400,{error:'Finish the email subject and message before sending.'});
       const already=state.emailHistory.find(item=>item.operationId===operationId); if(already)return json(response,200,{ok:true,alreadySent:true});
-      const htmlBody=escapeEmailHtml(body).replace(/\n/g,'<br>');
+      const htmlBody=escapeEmailHtml(body.replace(/\n+(?:Thank you,\s*\n+)?Heather\s*&\s*Lance(?:\s*\n+Weeks Creek Haven)?\s*$/i,'').trim()).replace(/\n/g,'<br>');
       const result=await sendEmail({to,toName:state.settings.cleanerName||'Cabin Care Team',subject,idempotencyKey:`cleaner-${operationId}`,text:body,html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.65;max-width:640px"><div style="padding:22px;background:#183c2d;color:#fff"><div style="color:#e5b67e;font-size:12px;font-weight:bold;letter-spacing:.12em;text-transform:uppercase">Weeks Creek Haven · Cabin Care</div><h1 style="margin:6px 0 0;color:#fff;font-family:Georgia,serif">${escapeEmailHtml(subject)}</h1></div><div style="padding:24px;background:#fffdf8">${htmlBody}</div><div style="padding:16px 24px;background:#f4eee0;color:#76695e;font-size:12px">Weeks Creek Haven · Blue Ridge, Georgia</div></div>`});
       await appendCleanerRecord({type:'cleaner_email_sent',createdAt:now,email:{id:crypto.randomUUID(),operationId,to,subject,templateId:safe(request.body?.templateId,50),sentAt:now,provider:result?.provider||''}});
     } else return json(response,400,{error:'Unknown cleaner hub update.'});
