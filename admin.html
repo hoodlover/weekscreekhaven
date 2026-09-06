@@ -877,8 +877,6 @@
     $('logout').addEventListener('click',async()=>{ await request('/api/admin-logout',{method:'POST'}); location.reload(); });
     window.addEventListener('beforeunload',(event)=>{if(!state.checklistDirty.family&&!state.checklistDirty.turnover)return;event.preventDefault();event.returnValue='';});
     load();
-    setInterval(()=>load(true),60000);
-    document.addEventListener('visibilitychange',()=>{ if(!document.hidden) load(true); });
   </script>
 </body>
 </html>
