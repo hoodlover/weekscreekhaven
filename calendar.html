@@ -62,6 +62,11 @@
     .event-arrival-details a { color:inherit; font-weight:800; text-decoration:underline; text-underline-offset:2px; }
     .event.request { background:var(--request); } .event.reserved { background:var(--reserved); color:#102b39; } .event.booked { background:var(--booked); color:white; } .event.blocked { background:var(--blocked); color:white; } .event.flexible { background:#e7d8a4; color:#463b20; border:1px dashed #8d7530; }
     .event.checkout { background:transparent; color:var(--muted); border:1px dashed currentColor; }
+    .event-boundary-short { display:none; }
+    @media (max-width:600px) {
+      .event-boundary-full { display:none; }
+      .event-boundary-short { display:inline; }
+    }
     .sidebar { display:grid; gap:15px; }
     .side-panel { padding:20px; }
     .side-panel h3 { color:var(--pine); font-size:1.55rem; }
@@ -185,7 +190,7 @@
       $('month-title').textContent=new Intl.DateTimeFormat(undefined,{month:'long',year:'numeric'}).format(state.month);
       const start=new Date(state.month); start.setDate(1-start.getDay()); const all=events(); const today=key(new Date()); let html='';
       for(let index=0;index<42;index++){ const date=new Date(start); date.setDate(start.getDate()+index); const dateKey=key(date); const outside=date.getMonth()!==state.month.getMonth(); const dayEvents=all.filter(event=>!event.hiddenFromCalendar&&dateKey>=event.arrival&&dateKey<=event.departure); const price=priceForDay(dateKey); const hasBooked=dayEvents.some(event=>event.type==='booked');
-        html+=`<div class="day ${outside?'outside':''} ${dateKey===today?'today':''}" data-date="${dateKey}" data-price-day="true"><div class="day-number">${date.getDate()}</div>${price&&!hasBooked?`<div class="day-rate ${price.special?'special':''} ${price.package?'package':''}" title="${esc(price.title)}">${esc(price.label)}</div>`:''}${dayEvents.map(event=>{ const checkout=dateKey===event.departure; const title=event.status==='pending-payment'?`${event.name} · checkout pending`:`${event.name}${event.type==='request'?` · choice ${event.dateChoice}`:''}`; return `<div class="event ${event.type} ${checkout?'checkout':''}" title="${esc(title)}${event.note?` · ${esc(event.note)}`:''}${checkout?' checkout':''}"><span class="event-main">${checkout?'Checkout · ':''}${esc(title)}</span>${event.note?`<small class="event-note">${esc(event.note)}</small>`:''}${bookedArrivalDetails(event,dateKey)}</div>`; }).join('')}</div>`;
+        html+=`<div class="day ${outside?'outside':''} ${dateKey===today?'today':''}" data-date="${dateKey}" data-price-day="true"><div class="day-number">${date.getDate()}</div>${price&&!hasBooked?`<div class="day-rate ${price.special?'special':''} ${price.package?'package':''}" title="${esc(price.title)}">${esc(price.label)}</div>`:''}${dayEvents.map(event=>{ const checkout=dateKey===event.departure,checkin=dateKey===event.arrival; const title=event.status==='pending-payment'?`${event.name} · checkout pending`:`${event.name}${event.type==='request'?` · choice ${event.dateChoice}`:''}`; const boundary=checkout?'<span class="event-boundary-full">Check-out · </span><span class="event-boundary-short">C/O · </span>':checkin?'<span class="event-boundary-full">Check-in · </span><span class="event-boundary-short">C/I · </span>':''; return `<div class="event ${event.type} ${checkout?'checkout':''}" title="${esc(title)}${event.note?` · ${esc(event.note)}`:''}${checkout?' · check-out':checkin?' · check-in':''}"><span class="event-main">${boundary}${esc(title)}</span>${event.note?`<small class="event-note">${esc(event.note)}</small>`:''}${bookedArrivalDetails(event,dateKey)}</div>`; }).join('')}</div>`;
       }
       $('calendar').innerHTML=html;
       const upcoming=all.filter(event=>event.departure>=today).sort((a,b)=>a.arrival.localeCompare(b.arrival));
