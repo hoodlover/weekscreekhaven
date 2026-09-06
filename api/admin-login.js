@@ -13,7 +13,7 @@ export default async function handler(request, response) {
       await wait(350);
       return json(response, 401, { error: 'That admin password is not correct.' });
     }
-    const maxAge = 8 * 60 * 60;
+    const maxAge = 7 * 24 * 60 * 60;
     return json(response, 200, { ok: true }, {
       'Set-Cookie': cookieHeader(ADMIN_COOKIE, createSession({ role: 'admin' }, maxAge), maxAge, { domain:sharedAdminCookieDomain(request) }),
       'Cache-Control': 'no-store',
