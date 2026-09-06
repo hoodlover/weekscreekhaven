@@ -31,6 +31,22 @@ function easternToday() {
   return `${value.year}-${value.month}-${value.day}`;
 }
 
+function friendlyStayDate(dateKey) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(dateKey || ''))) return String(dateKey || '');
+  const [year, month, day] = dateKey.split('-').map(Number);
+  return new Intl.DateTimeFormat('en-US', { month:'long', day:'numeric', year:'numeric', timeZone:'America/New_York' })
+    .format(new Date(Date.UTC(year, month - 1, day, 16)));
+}
+
+function declinedDateMessage(booking) {
+  const stays = (booking.dateChoices || [])
+    .filter(choice => choice?.arrival && choice?.departure)
+    .map(choice => `${friendlyStayDate(choice.arrival)} through ${friendlyStayDate(choice.departure)}`);
+  if (stays.length === 1) return `We can’t make your requested stay of ${stays[0]} work this time.`;
+  if (stays.length > 1) return `We can’t make these requested stays work this time: ${stays.join('; ')}.`;
+  return 'We can’t make the requested dates work this time.';
+}
+
 function stayEmailVariables(booking) {
   const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || booking.dateChoices?.[0] || {};
   const packetUrl = bookingPacketUrl(booking.id);
@@ -444,12 +460,13 @@ export default async function handler(request, response) {
       return json(response, 200, { ok:true, templateName:template.name, guestName:booking.name });
     }
     if (action === 'decline') {
+      const dateMessage = declinedDateMessage(booking);
       await appendBookingRecord({ type: 'status', bookingId: booking.id, changes: { status: 'declined', declinedAt: createdAt }, createdAt });
       await sendEmail({
         to: booking.email, toName: booking.name, subject: 'Your Weeks Creek Haven date request',
-        templateKey:'request-declined', templateVariables:{ guestName:booking.name },
-        text: `Hi ${booking.name},\n\nThanks for checking with us. We can’t make either requested date work this time, but we’d love for you to try another weekend.`,
-        html: `<p>Hi ${escapeEmailHtml(booking.name)},</p><p>Thanks for checking with us. We can’t make either requested date work this time, but we’d love for you to try another weekend.</p>`,
+        templateKey:'request-declined', templateVariables:{ guestName:booking.name, declinedDateMessage:dateMessage },
+        text: `Hi ${booking.name},\n\nThanks for checking with us. ${dateMessage} We’d love for you to try another weekend.`,
+        html: `<p>Hi ${escapeEmailHtml(booking.name)},</p><p>Thanks for checking with us. ${escapeEmailHtml(dateMessage)} We’d love for you to try another weekend.</p>`,
       });
       return json(response, 200, { ok: true });
     }
