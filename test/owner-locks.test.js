@@ -43,7 +43,7 @@ test('permanent access uses native attribute zero rather than a distant expiry',
 });
 test('single-use PIN uses the dedicated native temporary command and refuses an occupied slot',async()=>{
   let key='',calls=0;
-  const client={listDevices:async()=>[{id:'D',esn:'D'}],getTemporaryKey:async()=>({key}),insertTemporaryKey:async p=>{calls++;key=p.tempPwd;}};
+  const client={listDevices:async()=>[{id:'D',esn:'D'}],listKeys:async()=>key?[{key,type:253}]:[],getTemporaryKey:async()=>{throw new Error('Temporary video-call codes are not single-use inventory');},insertTemporaryKey:async p=>{calls++;key=p.tempPwd;}};
   const provider=createKKHomeLockProvider({}, {client,wait:async()=>{}});
   assert.equal((await provider.installOneTime({door:doors[0],code:'592718'})).status,'installed');
   await assert.rejects(()=>provider.installOneTime({door:doors[0],code:'785219'}),/already has/);assert.equal(calls,1);

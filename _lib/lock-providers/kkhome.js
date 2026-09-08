@@ -145,24 +145,24 @@ export function createKKHomeLockProvider(env=process.env, options={}) {
     },
     async inspectOneTime({ door, code }) {
       const device = await selectedDevice(door);
-      const record = await client.getTemporaryKey(device.partSn || device.esn);
-      return { matches: String(record?.key || '') === String(code), occupied: Boolean(record?.key), endsAt: record?.endTimeUTC || record?.endTime || null,
-        recordInfo: { fields:Object.keys(record || {}), pinLength:String(record?.key || '').length,
-          startsAt:record?.startTime ?? null, endTime:record?.endTime ?? null, endTimeUTC:record?.endTimeUTC ?? null } };
+      const records = keysFrom(await client.listKeys(device.partSn || device.esn)).filter(item => Number(first(item,'attribute','type')) === 253);
+      return { matches:records.some(item => keyCode(item) === String(code)), occupied:records.length > 0, verification:'cloud-key-list' };
     },
     async installOneTime({ door, code }) {
       const device = await selectedDevice(door);
       const esn = device.partSn || device.esn;
-      const current = await client.getTemporaryKey(esn);
-      if (current?.key) throw new Error('This door already has a one-time code. Use or clear it in KK Home first.');
+      // get-temporary-key belongs to the app's video-call temporary-code display;
+      // it is not the inventory of saved, attribute-253 single-use codes.
+      const current = keysFrom(await client.listKeys(esn));
+      if (current.some(item => Number(first(item,'attribute','type')) === 253)) throw new Error('This door already has a one-time code. Use or clear it in KK Home first.');
       // The app uses the dedicated temporary-PIN command, not a reusable scheduled PIN.
       await client.insertTemporaryKey({ esn, msgId: Math.floor(Math.random() * 1000000), tempPwd: String(code) });
       for (let attempt = 0; attempt < 4; attempt++) {
-        const saved = await client.getTemporaryKey(esn);
-        if (String(saved?.key || '') === String(code)) return { status: 'installed', verification: 'cloud-record', endsAt: saved.endTimeUTC || saved.endTime || null };
+        const saved = keysFrom(await client.listKeys(esn));
+        if (saved.some(item => Number(first(item,'attribute','type')) === 253 && keyCode(item) === String(code))) return { status: 'installed', verification: 'cloud-record', commandSent:true };
         if (attempt < 3) await wait(750);
       }
-      return { status: 'unconfirmed', message: 'One-time command sent; check the lock. This code will not be automatically reissued.' };
+      return { status: 'unconfirmed', commandSent:true, message: 'One-time command sent; check the lock. This code will not be automatically reissued.' };
     },
     async removeCode({ door, code, providerCodeId }) {
       const saved = decodeReference(providerCodeId);

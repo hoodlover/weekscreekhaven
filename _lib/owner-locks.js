@@ -39,7 +39,7 @@ export async function applyOwnerLock(entry, { provider, doors, save, revoke = fa
     entry.attemptedAt = new Date().toISOString(); entry.status = 'unconfirmed'; await save(entry);
     try {
       const result = await provider.installOneTime({ door: doors.find(d => d.id === entry.doorIds[0]), code: entry.code });
-      entry.status = result.status; entry.verification = result.verification; entry.providerExpiresAt = result.endsAt || null;
+      entry.status = result.status; entry.verification = result.verification; entry.providerExpiresAt = result.endsAt || null; entry.commandSent = Boolean(result.commandSent);
     } catch (error) {
       entry.status = 'unconfirmed';
       entry.failure = { operation:error.operation || null, providerCode:error.providerCode || null,
