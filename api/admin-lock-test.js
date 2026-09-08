@@ -1,4 +1,5 @@
 import { createKKHomeLockProvider } from '../_lib/lock-providers/kkhome.js';
+import { createKKHomeClient } from '../_lib/kkhome-client.js';
 import { json, requireAdmin } from '../_lib/security.js';
 
 // An owner-approved, short-lived test configured on the server. Never uses a booking.
@@ -22,6 +23,29 @@ export function createLockTestHandler({ env = process.env, providerFactory = cre
     }
     const requests = [];
     try {
+      if (request.body?.action === 'inspect') {
+        const client = createKKHomeClient({ email: env.KKHOME_EMAIL, password: env.KKHOME_PASSWORD,
+          appPrivateKey: env.KKHOME_APP_PRIVATE_KEY, fetchImpl: (url, options) => fetchImpl(url, { ...options, signal: AbortSignal.timeout(15000) }) });
+        const payload = await client.listKeys(door.deviceId);
+        const shapes = new Set(), matches = [];
+        const timingFields = ['startTime', 'endTime', 'beginTime', 'expireTime', 'validStartTime', 'validEndTime', 'num', 'keyNum'];
+        function visit(value) {
+          if (!value || typeof value !== 'object') return;
+          if (!Array.isArray(value)) {
+            const fields = Object.keys(value);
+            shapes.add(fields.sort().join(','));
+            if (Object.values(value).some(item => typeof item !== 'object' && String(item) === config.code)) {
+              matches.push(Object.fromEntries(timingFields.filter(key => value[key] !== undefined && Number.isFinite(Number(value[key])))
+                .map(key => [key, Number(value[key])])));
+            }
+          }
+          for (const child of Object.values(value)) if (child && typeof child === 'object') visit(child);
+        }
+        visit(payload);
+        return json(response, 200, { status: 'inspected', door: door.name, matchingRecords: matches,
+          expectedStartTime: Date.parse(config.startsAt) / 1000, expectedEndTime: Date.parse(config.endsAt) / 1000,
+          recordFields: [...shapes].slice(0, 12) });
+      }
       const provider = providerFactory(env, { fetchImpl: async (url, options) => {
         const path = new URL(url).pathname;
         if (!['/v3/user/login/get-user-by-mail', '/v3/user/device/list', '/v3/device/key-list', '/v3/device/insert-pwd'].includes(path)) {
