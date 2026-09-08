@@ -14,11 +14,15 @@ export function createLockTestHandler({ env = process.env, providerFactory = cre
     try {
       config = JSON.parse(env.KKHOME_TEST_JSON || 'null');
       const doors = JSON.parse(env.LOCK_DOORS_JSON || '[]');
-      const matches = doors.filter(item => item.id === config?.doorId);
+      const target = request.body?.doorId || config?.doorId;
+      const allowed = config?.doorIds || [config?.doorId];
+      if (!allowed.includes(target)) throw new Error();
+      const matches = doors.filter(item => item.id === target);
       const start = Date.parse(config?.startsAt), end = Date.parse(config?.endsAt);
+      const cleanup = ['remove', 'inspect'].includes(request.body?.action);
       if (!config?.id || request.body?.testId !== config.id || !/^\d{6}$/.test(config.code)
         || matches.length !== 1 || !matches[0].deviceId || !Number.isFinite(start) || !Number.isFinite(end)
-        || end <= now() || start > now() + 3600000 || end <= start || end - start > 3600000) throw new Error();
+        || end + (cleanup ? 86400000 : 0) <= now() || start > now() + 3600000 || end <= start || end - start > 3600000) throw new Error();
       door = matches[0];
     } catch {
       return json(response, 409, { error: 'No matching, unexpired owner-configured test.' });
@@ -65,16 +69,20 @@ export function createLockTestHandler({ env = process.env, providerFactory = cre
       }
       const provider = providerFactory(env, { fetchImpl: async (url, options) => {
         const path = new URL(url).pathname;
-        if (!['/v3/user/login/get-user-by-mail', '/v3/user/device/list', '/v3/device/key-list', '/v3/device/insert-pwd'].includes(path)) {
+        const permitted = ['/v3/user/login/get-user-by-mail', '/v3/user/device/list', '/v3/device/key-list'];
+        permitted.push(...(request.body?.action === 'remove' ? ['/v3/device/remove-pwd', '/v3/device/ble-remove-pwd-list']
+          : ['/v3/device/insert-pwd', '/v3/device/ble-add-key-list']));
+        if (!permitted.includes(path)) {
           throw new Error('Unsupported test operation.');
         }
         const result = await fetchImpl(url, { ...options, signal: AbortSignal.timeout(15000) });
         requests.push({ operation: path.split('/').at(-1), status: result.status });
         return result;
       } });
-      const result = await provider.installCode({ door, code: config.code, startsAt: config.startsAt, endsAt: config.endsAt });
+      const input = { door, code: config.code, startsAt: config.startsAt, endsAt: config.endsAt, name:'WCH automation test', providerCodeId:request.body?.providerCodeId };
+      const result = request.body?.action === 'remove' ? await provider.removeCode(input) : await provider.installCode(input);
       return json(response, 200, { status: result.status, door: door.name, code: config.code,
-        startsAt: config.startsAt, endsAt: config.endsAt, requests });
+        startsAt: config.startsAt, endsAt: config.endsAt, providerCodeId:result.providerCodeId, verification:result.verification, requests });
     } catch (error) {
       const message = String(error?.message || '');
       const failure = message.startsWith('KK Home did not verify') ? 'not_verified'

@@ -71,7 +71,8 @@ export default async function handler(request, response) {
     let sent=0;
     for (let booking of stored) {
       const dates=selectedDates(booking);
-      if(dates.arrival&&dates.departure&&booking.doorCode&&booking.doorCodeInstalledAt&&!booking.doorCodeRemovedAt&&(['cancelled','completed'].includes(booking.status)||today>dates.departure)&&lockProviderName()!=='manual'){
+      const automaticCode = booking.doorCodeProvisioning?.provider === 'kkhome' && booking.doorCodeProvisioning?.doors?.some(door => door.providerCodeId);
+      if(dates.arrival&&dates.departure&&booking.doorCode&&automaticCode&&!booking.doorCodeRemovedAt&&(['cancelled','completed'].includes(booking.status)||today>dates.departure)&&lockProviderName()!=='manual'){
         const attemptedAt=new Date().toISOString(),removal=await removeDoorCode(booking,{now:attemptedAt}),changes=removalChanges(removal);
         await appendBookingRecord({type:'status',bookingId:booking.id,changes,createdAt:attemptedAt});
         Object.assign(booking,changes);
@@ -79,7 +80,7 @@ export default async function handler(request, response) {
       if (!['pending-payment','reserved','booked','completed'].includes(booking.status) || !booking.email) continue;
       if (booking.squareInvoiceId && !booking.paymentFullyPaid) { try { booking=await refreshSquareBooking(booking); } catch { /* use last confirmed payment state */ } }
       if (!dates.arrival || !dates.departure) continue;
-      if(booking.status==='booked'&&!booking.doorCode){
+      if(booking.status==='booked'&&today<=dates.departure&&!booking.doorCode){
         const doorCode=generateDoorCode(stored),generatedAt=new Date().toISOString();
         const generated={...booking,doorCode,doorCodeGeneratedAt:generatedAt,doorCodeInstalledAt:null,doorCodeRemovedAt:null,doorCodeGuestSentAt:null};
         const provisioning=await provisionDoorCode(generated,{now:generatedAt});
@@ -87,7 +88,7 @@ export default async function handler(request, response) {
         await appendBookingRecord({type:'status',bookingId:booking.id,changes,createdAt:generatedAt});
         Object.assign(booking,changes);
       }
-      if(booking.status==='booked'&&booking.doorCode&&!booking.doorCodeInstalledAt&&lockProviderName()!=='manual'){
+      if(booking.status==='booked'&&today<=dates.departure&&booking.doorCode&&!booking.doorCodeInstalledAt&&lockProviderName()!=='manual'){
         const attemptedAt=new Date().toISOString(),provisioning=await provisionDoorCode(booking,{now:attemptedAt}),changes=provisioningChanges(provisioning);
         await appendBookingRecord({type:'status',bookingId:booking.id,changes,createdAt:attemptedAt});
         Object.assign(booking,changes);

@@ -111,7 +111,8 @@ async function runForEveryDoor({ booking, action, env, now }) {
         : await provider.removeCode({ door, code:String(booking.doorCode), providerCodeId:previousProviderCodeId, ...window, idempotencyKey });
       return { ...value, doorId:door.id, doorName:door.name, providerCodeId:value.providerCodeId || previousProviderCodeId };
     } catch (error) {
-      return { doorId:door.id, doorName:door.name, status:'failed', message:error.message || `${action} failed.`, ...(previousProviderCodeId?{providerCodeId:previousProviderCodeId}:{}) };
+      const reference = error.providerCodeId || previousProviderCodeId;
+      return { doorId:door.id, doorName:door.name, status:'failed', message:error.message || `${action} failed.`, ...(reference?{providerCodeId:reference}:{}) };
     }
   }));
   const successStatus = action === 'install' ? 'installed' : 'removed';

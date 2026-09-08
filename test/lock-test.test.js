@@ -19,12 +19,17 @@ test('test code requires owner authentication', async () => {
 });
 test('test uses only the server-configured door, code, and window', async () => {
   const res = response(), req = request();
-  req.body.doorId = 'basement'; req.body.code = '111111';
+  req.body.code = '111111';
   await createLockTestHandler({ env, now: () => timestamp, providerFactory: () => ({ installCode: async input => {
     assert.equal(input.door.id, 'deck'); assert.equal(input.code, config.code);
     assert.equal(input.endsAt, config.endsAt); return { status: 'installed' };
   } }) })(req, res);
   assert.equal(res.body.status, 'installed');
+});
+test('test cannot switch to a door outside the configured test set', async () => {
+  const res = response(), req = request(); req.body.doorId = 'basement';
+  await createLockTestHandler({env, now:()=>timestamp, providerFactory:()=>assert.fail('must not contact another door')})(req,res);
+  assert.equal(res.statusCode,409);
 });
 test('expired and mismatched tests cannot contact a lock', async () => {
   for (const [now, testId] of [[timestamp + 3600000, 'test-1'], [timestamp, 'another-test']]) {

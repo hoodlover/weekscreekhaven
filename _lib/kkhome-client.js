@@ -32,6 +32,7 @@ export function createKKHomeClient({ email, password, appPrivateKey, fetchImpl=g
   try { privateKey = createPrivateKey({ key:Buffer.from(appPrivateKey, 'base64'), format:'der', type:'pkcs1' }); }
   catch { throw new Error('KKHOME_APP_PRIVATE_KEY is invalid.'); }
   let token;
+  let authentication;
 
   function decrypt(encryptData) {
     const bytes = Buffer.from(encryptData, 'base64');
@@ -84,9 +85,12 @@ export function createKKHomeClient({ email, password, appPrivateKey, fetchImpl=g
 
   async function authenticate() {
     if (token) return;
-    const data = await request('/v3/user/login/get-user-by-mail', { body:{ mail:email, password }, encryptBody:true, unauthenticated:true });
-    token = findToken(data);
-    if (!token) throw new Error('KK Home login returned no access token.');
+    if (!authentication) authentication = (async () => {
+      const data = await request('/v3/user/login/get-user-by-mail', { body:{ mail:email, password }, encryptBody:true, unauthenticated:true });
+      token = findToken(data);
+      if (!token) throw new Error('KK Home login returned no access token.');
+    })().catch(error => { authentication = null; throw error; });
+    await authentication;
   }
 
   return {
@@ -96,5 +100,6 @@ export function createKKHomeClient({ email, password, appPrivateKey, fetchImpl=g
     async updateKey(payload) { await authenticate(); return request('/v3/device/update-pwd', { body:payload, encryptBody:true }); },
     async saveKeyMetadata(payload) { await authenticate(); return request('/v3/device/ble-add-key-list', { body:payload, normalBody:true }); },
     async removeKey(payload) { await authenticate(); return request('/v3/device/remove-pwd', { body:payload }); },
+    async removeKeyMetadata(payload) { await authenticate(); return request('/v3/device/ble-remove-pwd-list', { body:payload, normalBody:true }); },
   };
 }
