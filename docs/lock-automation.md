@@ -28,6 +28,14 @@ Store that JSON as `LOCK_DOORS_JSON`. Device credentials and API secrets must re
 
 The `kkhome` adapter uses the same remote cloud connection as the KK Home phone app. It creates a duration-limited PIN, reads the lock's key list to verify the PIN and its exact access window, saves the returned key number, and later removes that exact key and verifies it is gone.
 
+KK Home represents local clock fields as UTC-shaped timestamps. The adapter converts each endpoint through `America/New_York`, including the offset on that date, before encoding it. Sending ordinary UTC epoch seconds directly produces a four- or five-hour error in the app.
+
+Lock commands and the app's saved code list are separate operations. The adapter saves the code metadata after an accepted command and checks that the resulting cloud entry contains the expected PIN and local schedule. Its results explicitly identify this as `verification: cloud-record`; this is not a physical keypad or offline-expiration test. Removal likewise checks the saved PIN and resolved door before removing the exact slot and its cloud entry.
+
+References include the device, slot, and a PIN fingerprint. Failed metadata saves retain that reference for safe retries. An unknown hidden entry with the same window stops automatic insertion for owner review instead of creating another code. Old manually installed codes remain owner-managed, and the scheduler does not install codes for past stays.
+
+The owner-only `/api/admin-lock-test` endpoint is limited to the exact temporary PIN, door set, and maximum one-hour window in `KKHOME_TEST_JSON`. It does not read or write bookings. Remove that environment variable after acceptance testing. `/api/admin-lock-status` performs only sign-in and device-list checks.
+
 Required server-side variables:
 
 - `KKHOME_EMAIL` — the email used to sign in to KK Home.
