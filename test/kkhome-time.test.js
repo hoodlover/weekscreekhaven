@@ -18,15 +18,21 @@ test('each endpoint uses the offset on its date across daylight saving changes',
 
 test('time correction edits the existing test slot and is idempotent', async () => {
   const config = { code: '388387', startsAt: '2026-09-08T03:11:00Z', endsAt: '2026-09-08T03:56:00Z' };
-  let records = [{ num: 6, startTime: Date.parse(config.startsAt) / 1000, endTime: Date.parse(config.endsAt) / 1000 }];
-  let updates = 0;
+  let records = [{ num: 6, pwdType: 0, type: 1, nickName: 'Test', startTime: Date.parse(config.startsAt) / 1000, endTime: Date.parse(config.endsAt) / 1000 }];
+  let updates = 0, saves = 0;
   const client = { listKeys: async () => ({ pwdList: records }), updateKey: async payload => {
     updates++; assert.equal(payload.keyNum, 6); assert.equal(payload.key, config.code);
-    records = [{ num: 6, startTime: payload.startTime, endTime: payload.endTime }];
+  }, saveKeyMetadata: async payload => {
+    saves++; assert.equal(updates, 1); assert.equal(payload.pwdList.length, 1);
+    assert.equal(payload.pwdList[0].num, 6); assert.equal(payload.pwdList[0].nickName, 'Test');
+    records = payload.pwdList;
   } };
-  assert.equal((await correctTestTime(client, { deviceId: 'deck' }, config)).status, 'time_corrected');
+  const result = await correctTestTime(client, { deviceId: 'deck' }, config);
+  assert.equal(result.status, 'schedule_saved');
+  assert.equal(result.physicalTimingVerified, false);
   await correctTestTime(client, { deviceId: 'deck' }, config);
   assert.equal(updates, 1);
+  assert.equal(saves, 1);
 });
 
 test('time correction refuses to edit an unrelated code', async () => {

@@ -90,6 +90,7 @@ export function createKKHomeClient({ email, password, appPrivateKey, fetchImpl=g
     async listKeys(esn) { await authenticate(); return request('/v3/device/key-list', { body:{ esn } }); },
     async insertKey(payload) { await authenticate(); return request('/v3/device/insert-pwd', { body:payload, encryptBody:true }); },
     async updateKey(payload) { await authenticate(); return request('/v3/device/update-pwd', { body:payload, encryptBody:true }); },
+    async saveKeyMetadata(payload) { await authenticate(); return request('/v3/device/ble-add-key-list', { body:payload }); },
     async removeKey(payload) { await authenticate(); return request('/v3/device/remove-pwd', { body:payload }); },
   };
 }

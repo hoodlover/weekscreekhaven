@@ -18,11 +18,17 @@ export async function correctTestTime(client, door, config, wait = milliseconds 
   if (existing.pwdValue !== undefined && String(existing.pwdValue) !== config.code) throw new Error('Test PIN does not match.');
   if (Number(existing.startTime) !== startTime || Number(existing.endTime) !== endTime) {
     await client.updateKey({ esn: door.deviceId, keyNum, keyType: 0, key: config.code, attribute: 1, week: 0, startTime, endTime });
+    // The app separately saves its edited code-list entry after sending update-pwd.
+    // This confirms cloud metadata only; physical acknowledgement remains separate.
+    const metadata = Object.fromEntries(['createTime', 'nickName', 'pwdType', 'type', 'items']
+      .filter(key => existing[key] !== undefined).map(key => [key, existing[key]]));
+    await client.saveKeyMetadata({ esn: door.deviceId,
+      pwdList: [{ ...metadata, num: keyNum, pwdValue: config.code, startTime, endTime }] });
   }
   for (let attempt = 0; attempt < 4; attempt++) {
     const saved = keys(await client.listKeys(door.deviceId)).find(key => Number(key.num) === keyNum
       && Number(key.startTime) === startTime && Number(key.endTime) === endTime);
-    if (saved) return { status: 'time_corrected', keyNum, startTime, endTime, timezone: 'America/New_York' };
+    if (saved) return { status: 'schedule_saved', keyNum, startTime, endTime, timezone: 'America/New_York', physicalTimingVerified: false };
     if (attempt < 3) await wait(1000);
   }
   throw new Error('KK Home did not verify the corrected time.');
