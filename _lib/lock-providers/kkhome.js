@@ -96,11 +96,13 @@ export function createKKHomeLockProvider(env=process.env, options={}) {
       if (!Number.isInteger(keyNumber(matches[0]))) throw new Error('The cleaner code has no valid lock reference.');
       return { providerCodeId: encodeReference(device, keyNumber(matches[0]), code) };
     },
-    async installCode({ door, code, startsAt, endsAt, name, providerCodeId, timezone = 'America/New_York' }) {
+    async installCode({ door, code, startsAt, endsAt, name, providerCodeId, timezone = 'America/New_York', accessType = 'scheduled' }) {
       const device = await selectedDevice(door);
-      const startTime = kkhomeLocalTimestamp(startsAt, timezone);
-      const endTime = kkhomeLocalTimestamp(endsAt, timezone);
-      if (!Number.isFinite(startTime) || !Number.isFinite(endTime) || endTime <= startTime) throw new Error('The guest-code access window is invalid.');
+      if (!['scheduled', 'permanent'].includes(accessType)) throw new Error('Unsupported access type.');
+      const attribute = accessType === 'permanent' ? 0 : 1;
+      const startTime = attribute ? kkhomeLocalTimestamp(startsAt, timezone) : 0;
+      const endTime = attribute ? kkhomeLocalTimestamp(endsAt, timezone) : 0;
+      if (!Number.isFinite(startTime) || !Number.isFinite(endTime) || (attribute && endTime <= startTime)) throw new Error('The guest-code access window is invalid.');
       const initial = keysFrom(await client.listKeys(device.partSn || device.esn));
       let match = matchingKey(initial, code, startTime, endTime);
       if (providerCodeId) {
@@ -110,7 +112,7 @@ export function createKKHomeLockProvider(env=process.env, options={}) {
         if (found.length !== 1 || (keyCode(found[0]) && keyCode(found[0]) !== code)) throw new Error('Saved code entry changed; owner review is required.');
         match = found[0];
         if (!sameWindow(match, startTime, endTime)) {
-          await client.updateKey({ esn:device.esn, ...(device.partSn ? { partSn:device.partSn } : {}), keyNum:saved.keyNum, keyType:0, key:code, attribute:1, week:0, startTime, endTime });
+          await client.updateKey({ esn:device.esn, ...(device.partSn ? { partSn:device.partSn } : {}), keyNum:saved.keyNum, keyType:0, key:code, attribute, week:0, startTime, endTime });
           match = { ...match, startTime, endTime, key:undefined, pwdValue:undefined };
         }
       }
@@ -118,7 +120,7 @@ export function createKKHomeLockProvider(env=process.env, options={}) {
         if (initial.some(item => !keyCode(item) && sameWindow(item, startTime, endTime))) throw new Error('An unconfirmed code already uses this window; owner review is required before retrying.');
         if (initial.some(item => keyCode(item) === code)) throw new Error('This PIN already has another access window; owner review is required.');
         const before = new Set(initial.map(keyNumber));
-        await client.insertKey({ attribute:1, key:code, keyType:0, week:0, startTime, endTime, esn:device.esn,
+        await client.insertKey({ attribute, key:code, keyType:0, week:0, startTime, endTime, esn:device.esn,
           ...(device.partSn ? { partSn:device.partSn, partMac:device.partMac, partMode:device.partMode } : {}) });
         match = await verify(device, keys => {
           const visible = matchingKey(keys, code, startTime, endTime);
@@ -132,7 +134,7 @@ export function createKKHomeLockProvider(env=process.env, options={}) {
       const reference = encodeReference(device, keyNum, code);
       if (keyCode(match) !== code) {
         try {
-          await client.saveKeyMetadata({ esn:device.partSn || device.esn, pwdList:[{ num:keyNum, pwdType:1, type:1,
+          await client.saveKeyMetadata({ esn:device.partSn || device.esn, pwdList:[{ num:keyNum, pwdType:1, type:attribute,
             pwdValue:code, startTime, endTime, createTime:kkhomeLocalTimestamp(new Date()), nickName:name || match.nickName || 'WCH guest' }] });
           if (!await verify(device, keys => keys.find(item => keyNumber(item) === keyNum && keyCode(item) === code && sameWindow(item,startTime,endTime)))) {
             throw new Error(`KK Home did not verify the scheduled code on ${door.name}.`);
@@ -140,6 +142,25 @@ export function createKKHomeLockProvider(env=process.env, options={}) {
         } catch (error) { error.providerCodeId = reference; throw error; }
       }
       return { status:'installed', providerCodeId:reference, verification:'cloud-record', message:'Code and local schedule confirmed in KK Home.' };
+    },
+    async inspectOneTime({ door, code }) {
+      const device = await selectedDevice(door);
+      const record = await client.getTemporaryKey(device.partSn || device.esn);
+      return { matches: String(record?.key || '') === String(code), occupied: Boolean(record?.key), endsAt: record?.endTimeUTC || record?.endTime || null };
+    },
+    async installOneTime({ door, code }) {
+      const device = await selectedDevice(door);
+      const esn = device.partSn || device.esn;
+      const current = await client.getTemporaryKey(esn);
+      if (current?.key) throw new Error('This door already has a one-time code. Use or clear it in KK Home first.');
+      // The app uses the dedicated temporary-PIN command, not a reusable scheduled PIN.
+      await client.insertTemporaryKey({ esn, msgId: Math.floor(Math.random() * 1000000), tempPwd: String(code) });
+      for (let attempt = 0; attempt < 4; attempt++) {
+        const saved = await client.getTemporaryKey(esn);
+        if (String(saved?.key || '') === String(code)) return { status: 'installed', verification: 'cloud-record', endsAt: saved.endTimeUTC || saved.endTime || null };
+        if (attempt < 3) await wait(750);
+      }
+      return { status: 'unconfirmed', message: 'One-time command sent; check the lock. This code will not be automatically reissued.' };
     },
     async removeCode({ door, code, providerCodeId }) {
       const saved = decodeReference(providerCodeId);

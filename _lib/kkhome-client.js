@@ -96,6 +96,8 @@ export function createKKHomeClient({ email, password, appPrivateKey, fetchImpl=g
   return {
     async listDevices() { await authenticate(); return request('/v3/user/device/list', { body:{} }); },
     async listKeys(esn) { await authenticate(); return request('/v3/device/key-list', { body:{ esn } }); },
+    async getTemporaryKey(esn) { await authenticate(); return request('/v3/device/get-temporary-key', { body:{ esn } }); },
+    async insertTemporaryKey(payload) { await authenticate(); return request('/v3/device/insert-temp-pwd', { body:payload, encryptBody:true }); },
     async insertKey(payload) { await authenticate(); return request('/v3/device/insert-pwd', { body:payload, encryptBody:true }); },
     async updateKey(payload) { await authenticate(); return request('/v3/device/update-pwd', { body:payload, encryptBody:true }); },
     async saveKeyMetadata(payload) { await authenticate(); return request('/v3/device/ble-add-key-list', { body:payload, normalBody:true }); },
