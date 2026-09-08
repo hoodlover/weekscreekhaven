@@ -24,6 +24,21 @@ The default doors are Front door, Side door, and Back door. A future provider ca
 
 Store that JSON as `LOCK_DOORS_JSON`. Device credentials and API secrets must remain server-side environment variables and must never be returned to the browser or stored in booking records.
 
+## KK Home provider
+
+The `kkhome` adapter uses the same remote cloud connection as the KK Home phone app. It creates a duration-limited PIN, reads the lock's key list to verify the PIN and its exact access window, saves the returned key number, and later removes that exact key and verifies it is gone.
+
+Required server-side variables:
+
+- `KKHOME_EMAIL` — the email used to sign in to KK Home.
+- `KKHOME_PASSWORD` — the KK Home password. Enter it only in the deployment's encrypted environment-variable settings, never in chat, source code, or `LOCK_DOORS_JSON`.
+- `KKHOME_APP_PRIVATE_KEY` — the base64 app protocol key obtained from the installed KK Home package. Treat it as a secret and store it only as an encrypted deployment variable.
+- `LOCK_DOORS_JSON` — all three doors with an exact, unique KK Home device ID.
+- `LOCK_PROVIDER=kkhome` — selects the adapter.
+- `KKHOME_LIVE_ENABLED=true` — final safety switch, enabled only for the acceptance test and production after the identities have been confirmed.
+
+Until both `LOCK_PROVIDER=kkhome` and `KKHOME_LIVE_ENABLED=true` are set, no KK Home device is contacted. Missing, unknown, or duplicate device IDs fail closed.
+
 Friends & Family stays currently have flexible checkout. To avoid locking out a guest when no departure time was promised, their codes default to expiring at 11:45 PM Eastern on the departure date. `LOCK_FLEXIBLE_CHECKOUT_HOUR` can set a different hour after the owners settle the final policy. Standard codes begin at 3:45 PM Eastern on arrival day and end 15 minutes after the confirmed checkout time.
 
 ## Provider contract
@@ -53,4 +68,4 @@ Keep `LOCK_PROVIDER=manual` until one non-critical lock passes the complete test
 7. Repeat after a temporary Wi-Fi outage.
 8. Add the other doors only after the full test passes.
 
-After a real adapter passes, add its explicit provider name to `createLockProvider()` in `_lib/lock-service.js`. Never reuse `simulated` for a physical integration.
+After all three locks pass, retain their exact IDs in `LOCK_DOORS_JSON` and keep the live switch enabled. Never reuse `simulated` for a physical integration.

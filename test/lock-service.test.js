@@ -88,6 +88,14 @@ test('an invalid provider fails closed instead of releasing the code', async () 
   assert.equal(provisioningChanges(result).doorCodeInstalledAt, null);
 });
 
+test('KK Home stays safety-locked until cabin testing is explicitly approved', async () => {
+  const result = await provisionDoorCode(booking, {
+    env:{ LOCK_PROVIDER:'kkhome' }, now:'2026-09-02T13:00:00.000Z',
+  });
+  assert.equal(result.status, 'failed');
+  assert.match(result.message, /safety-locked/);
+});
+
 test('manual confirmation records every door', () => {
   const result = manualConfirmation(booking, 'install', '2026-09-02T14:00:00.000Z');
   assert.equal(result.status, 'installed');

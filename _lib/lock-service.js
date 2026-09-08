@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { createManualLockProvider } from './lock-providers/manual.js';
 import { createSimulatedLockProvider } from './lock-providers/simulated.js';
+import { createKKHomeLockProvider } from './lock-providers/kkhome.js';
 
 const DEFAULT_DOORS = [
   { id: 'front', name: 'Front door' },
@@ -41,6 +42,12 @@ export function createLockProvider(env = process.env) {
       return { id:'simulated-blocked', installCode:blocked, removeCode:blocked };
     }
     return createSimulatedLockProvider(env);
+  }
+  if (name === 'kkhome') {
+    if (env.KKHOME_LIVE_ENABLED !== 'true') {
+      throw new Error('KK Home is safety-locked. Set KKHOME_LIVE_ENABLED=true only after all three device IDs pass owner testing.');
+    }
+    return createKKHomeLockProvider(env);
   }
   throw new Error(`Unsupported LOCK_PROVIDER "${name}". Keep LOCK_PROVIDER=manual until an adapter has passed cabin testing.`);
 }
