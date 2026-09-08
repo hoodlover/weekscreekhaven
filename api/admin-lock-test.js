@@ -79,7 +79,7 @@ export function createLockTestHandler({ env = process.env, providerFactory = cre
         requests.push({ operation: path.split('/').at(-1), status: result.status });
         return result;
       } });
-      const input = { door, code: config.code, startsAt: config.startsAt, endsAt: config.endsAt, name:'WCH automation test', providerCodeId:request.body?.providerCodeId };
+      const input = { door, code: config.code, startsAt: config.startsAt, endsAt: config.endsAt, name:String(config.name || 'WCH automation test').slice(0, 80), providerCodeId:request.body?.providerCodeId };
       const result = request.body?.action === 'remove' ? await provider.removeCode(input) : await provider.installCode(input);
       return json(response, 200, { status: result.status, door: door.name, code: config.code,
         startsAt: config.startsAt, endsAt: config.endsAt, providerCodeId:result.providerCodeId, verification:result.verification, requests });

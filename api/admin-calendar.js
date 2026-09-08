@@ -17,6 +17,7 @@ export default async function handler(request, response) {
   if (!requireAdmin(request)) return json(response, 401, { error: 'Please sign in as the site owner.' });
   try {
     if (request.method === 'GET') {
+      if (request.query?.readOnly === '1') return json(response, 200, await getBookingCalendar(), { 'Cache-Control': 'private, no-store' });
       const [calendar, invites] = await Promise.all([getBookingCalendar(), getInvites()]);
       calendar.bookings = await Promise.all((calendar.bookings || []).map(async (booking) => {
         let current = booking;
