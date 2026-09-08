@@ -71,7 +71,7 @@ export function createLockTestHandler({ env = process.env, providerFactory = cre
         const path = new URL(url).pathname;
         const permitted = ['/v3/user/login/get-user-by-mail', '/v3/user/device/list', '/v3/device/key-list'];
         permitted.push(...(request.body?.action === 'remove' ? ['/v3/device/remove-pwd', '/v3/device/ble-remove-pwd-list']
-          : ['/v3/device/insert-pwd', '/v3/device/ble-add-key-list']));
+          : ['/v3/device/insert-pwd', '/v3/device/ble-add-key-list', ...(request.body?.providerCodeId ? ['/v3/device/update-pwd'] : [])]));
         if (!permitted.includes(path)) {
           throw new Error('Unsupported test operation.');
         }

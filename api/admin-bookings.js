@@ -156,6 +156,17 @@ export default async function handler(request, response) {
       const updated=await finalizeBookingFlow({ ...booking, ...changes });
       return json(response, 200, { ok:true, status:updated.status, paymentPending:!updated.paymentRequirementMet, agreementPending:!updated.agreementAcceptedAt });
     }
+    if (action === 'sync-door-code') {
+      if (booking.status !== 'booked' || !booking.doorCode || lockProviderName() !== 'kkhome') return json(response, 409, { error: 'A booked stay with a KK Home code is required.' });
+      const references = request.body?.references;
+      if (!Array.isArray(references) || !references.length || references.some(item => !item?.doorId || !item?.providerCodeId)
+        || new Set(references.map(item => item.doorId)).size !== references.length) return json(response, 400, { error: 'Verified lock references are required.' });
+      // KK Home validates each reference against the exact door, PIN hash, and current slot.
+      const input = { ...booking, doorCodeProvisioning: { doors: references.map(({ doorId, providerCodeId }) => ({ doorId, providerCodeId })) } };
+      const provisioning = await provisionDoorCode(input, { now: createdAt });
+      await appendBookingRecord({ type: 'status', bookingId: booking.id, changes: provisioningChanges(provisioning), createdAt });
+      return json(response, provisioning.status === 'installed' ? 200 : 503, { ok: provisioning.status === 'installed', provisioning });
+    }
     if (action === 'generate-door-code') {
       if (booking.status !== 'booked') return json(response, 409, { error:'Door codes are created only after a stay is Booked.' });
       if (booking.doorCode && !booking.doorCodeRemovedAt) return json(response, 200, { ok:true, doorCode:booking.doorCode });
