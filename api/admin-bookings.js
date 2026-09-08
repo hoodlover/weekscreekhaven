@@ -92,6 +92,12 @@ export default async function handler(request, response) {
   if (!requireAdmin(request)) return json(response, 401, { error: 'Please sign in as the site owner.' });
   try {
     if (request.method === 'GET') {
+      // Owner inspection must not refresh payments or trigger booking emails.
+      if (request.query?.readOnly === '1' && request.query?.bookingId) {
+        const booking = (await getBookingRequests()).find(item => item.id === String(request.query.bookingId));
+        if (!booking) return json(response, 404, { error: 'Booking not found.' });
+        return json(response, 200, { bookings: [booking] }, { 'Cache-Control': 'private, no-store' });
+      }
       const [storedBookings, calendar, invites] = await Promise.all([getBookingRequests(), getBookingCalendar(), getInvites()]);
       const bookings = await Promise.all(storedBookings.map(async (booking) => {
         if (!booking.squareInvoiceId || (booking.status === 'booked' && booking.paymentFullyPaid && booking.bookedWelcomeSentAt)) return booking;
