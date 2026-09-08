@@ -146,7 +146,9 @@ export function createKKHomeLockProvider(env=process.env, options={}) {
     async inspectOneTime({ door, code }) {
       const device = await selectedDevice(door);
       const record = await client.getTemporaryKey(device.partSn || device.esn);
-      return { matches: String(record?.key || '') === String(code), occupied: Boolean(record?.key), endsAt: record?.endTimeUTC || record?.endTime || null };
+      return { matches: String(record?.key || '') === String(code), occupied: Boolean(record?.key), endsAt: record?.endTimeUTC || record?.endTime || null,
+        recordInfo: { fields:Object.keys(record || {}), pinLength:String(record?.key || '').length,
+          startsAt:record?.startTime ?? null, endTime:record?.endTime ?? null, endTimeUTC:record?.endTimeUTC ?? null } };
     },
     async installOneTime({ door, code }) {
       const device = await selectedDevice(door);

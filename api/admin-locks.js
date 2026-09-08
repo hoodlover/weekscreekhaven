@@ -36,7 +36,7 @@ export default async function handler(request,response) {
         if (!['retry','revoke','check'].includes(action)) throw new Error('Unknown lock action.');
         if (action === 'check' && entry.mode === 'once') {
           const status = await provider.inspectOneTime({door:doors.find(d=>d.id===entry.doorIds[0]),code:entry.code});
-          entry.status = status.matches ? 'installed' : 'not-active'; await saveOwnerLock(entry); return entry;
+          entry.status = status.matches ? 'installed' : 'not-active'; entry.inspection = status; await saveOwnerLock(entry); return entry;
         }
       }
       return applyOwnerLock(entry,{provider,doors,save:saveOwnerLock,revoke:action==='revoke'});
