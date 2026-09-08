@@ -35,6 +35,30 @@ test('unreferenced uncertain installation cannot claim successful revocation',as
   const entry=newOwnerLock({name:'Kids',mode:'permanent',doorIds:['deck']},options);entry.doors.deck={status:'failed'};
   await applyOwnerLock(entry,{doors,provider:{findCode:async()=>null},save:async()=>{},revoke:true});assert.equal(entry.status,'revoking');
 });
+
+test('deleting a named code covers all three doors and preserves a failed removal for retry',async()=>{
+  const allDoors=[...doors,{id:'basement',name:'Basement',deviceId:'B'}];
+  const entry=newOwnerLock({name:'Kids',mode:'permanent',doorIds:allDoors.map(d=>d.id)}, {...options,doors:allDoors});
+  for(const door of allDoors)entry.doors[door.id]={status:'installed',providerCodeId:door.id+'-ref'};
+  let fail=true;const removed=[];
+  const provider={removeCode:async({door,providerCodeId})=>{
+    assert.equal(providerCodeId,door.id+'-ref');
+    if(door.id==='front'&&fail)throw new Error('offline');
+    removed.push(door.id);
+  }};
+  const deps={doors:allDoors,provider,save:async()=>{},revoke:true};
+  await applyOwnerLock(entry,deps);
+  assert.equal(entry.status,'revoking');assert.deepEqual(removed,['deck','basement']);
+  assert.equal(entry.doors.front.providerCodeId,'front-ref');assert.equal(entry.doors.front.status,'failed');
+  fail=false;await applyOwnerLock(entry,deps);
+  assert.equal(entry.status,'revoked');assert.ok(allDoors.every(d=>entry.doors[d.id].status==='removed'));
+});
+
+test('single-use deletion cannot hide access or claim it was removed',async()=>{
+  const entry=newOwnerLock({name:'Visitor',mode:'once',doorIds:['deck']},options);
+  await assert.rejects(()=>applyOwnerLock(entry,{doors,provider:{},save:async()=>{},revoke:true}),/cannot be safely revoked/);
+  assert.equal(entry.status,'pending');
+});
 test('permanent access uses native attribute zero rather than a distant expiry',async()=>{
   let keys=[],payload;
   const client={listDevices:async()=>[{id:'D',esn:'D'}],listKeys:async()=>keys,insertKey:async p=>{payload=p;keys=[{num:4,startTime:0,endTime:0}];},saveKeyMetadata:async p=>{keys=p.pwdList;}};
