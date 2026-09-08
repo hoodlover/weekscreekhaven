@@ -42,7 +42,10 @@ export function createLockStatusHandler({ env = process.env, clientFactory = cre
         const matches = devices.filter(device => identifiers.some(key => String(device[key] ?? '') === String(door.deviceId))).length;
         return { id: door.id, name: door.name, found: matches === 1, matches };
       });
-      return json(response, 200, { connected: true, allDoorsFound: results.every(door => door.found), doors: results, requests });
+      return json(response, 200, { connected: true, allDoorsFound: results.every(door => door.found), doors: results, requests,
+        provider: String(env.LOCK_PROVIDER || 'manual').trim(),
+        automationEnabled: String(env.LOCK_PROVIDER || '').trim() === 'kkhome' && env.KKHOME_LIVE_ENABLED === 'true',
+        temporaryTestConfigured: Boolean(env.KKHOME_TEST_JSON) });
     } catch (error) {
       // Never expose provider responses, account details, tokens, or key material.
       const failure = ['TimeoutError', 'AbortError'].includes(error?.name) ? 'timeout' : 'connection_failed';

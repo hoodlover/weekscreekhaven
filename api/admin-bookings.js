@@ -175,7 +175,7 @@ export default async function handler(request, response) {
           return json(response,503,{error:'The old code could not be removed from every cabin door. No replacement code was installed.',doorCodeRemoval:retiredResult});
         }
       }
-      const nextBooking={...booking,doorCode,previousDoorCode,retiredDoorCodes,doorCodeReplacedAt:createdAt,doorCodeGeneratedAt:createdAt,doorCodeInstalledAt:null,doorCodeRemovedAt:null,doorCodeGuestSentAt:null};
+      const nextBooking={...booking,doorCode,previousDoorCode,retiredDoorCodes,doorCodeProvisioning:null,doorCodeReplacedAt:createdAt,doorCodeGeneratedAt:createdAt,doorCodeInstalledAt:null,doorCodeRemovedAt:null,doorCodeGuestSentAt:null};
       const provisioning=await provisionDoorCode(nextBooking,{now:createdAt});
       const changes={ doorCode, previousDoorCode, retiredDoorCodes, doorCodeReplacedAt:createdAt, doorCodeGeneratedAt:createdAt, doorCodeGuestSentAt:null, ...(retiredResult?{previousDoorCodeRemoval:retiredResult}:{}), ...provisioningChanges(provisioning) };
       await appendBookingRecord({ type:'status', bookingId:booking.id, changes, createdAt });
