@@ -20,8 +20,9 @@ export async function correctTestTime(client, door, config, wait = milliseconds 
     await client.updateKey({ esn: door.deviceId, keyNum, keyType: 0, key: config.code, attribute: 1, week: 0, startTime, endTime });
     // The app separately saves its edited code-list entry after sending update-pwd.
     // This confirms cloud metadata only; physical acknowledgement remains separate.
-    const metadata = Object.fromEntries(['createTime', 'nickName', 'pwdType', 'type', 'items']
-      .filter(key => existing[key] !== undefined).map(key => [key, existing[key]]));
+    // Match LockKeyAddBeanReq rather than copying database timestamp/enum fields.
+    const metadata = { createTime: kkhomeLocalTimestamp(new Date()), pwdType: 1, type: 1 };
+    if (typeof existing.nickName === 'string') metadata.nickName = existing.nickName;
     await client.saveKeyMetadata({ esn: door.deviceId,
       pwdList: [{ ...metadata, num: keyNum, pwdValue: config.code, startTime, endTime }] });
   }

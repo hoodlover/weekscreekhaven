@@ -57,7 +57,7 @@ export function createKKHomeClient({ email, password, appPrivateKey, fetchImpl=g
     return { encryptData:Buffer.concat(chunks).toString('base64') };
   }
 
-  async function request(path, { body, encryptBody=false, unauthenticated=false } = {}) {
+  async function request(path, { body, encryptBody=false, unauthenticated=false, normalBody=false } = {}) {
     const headers = {
       Accept:'*/*', 'Content-Type':'application/json', 'k-language':'en_US', 'k-signv':'1.0.0',
       'k-tenant':'kawden', 'k-version':'3.3.1', phoneName:'iPhone17,1',
@@ -65,6 +65,7 @@ export function createKKHomeClient({ email, password, appPrivateKey, fetchImpl=g
     };
     if (token && !unauthenticated) headers.token = token;
     if (encryptBody) headers.encrypt_data = 'encrypt_data';
+    else if (normalBody) headers.encrypt_data = 'normal';
     const response = await fetchImpl(`https://api.kksecurityhome.com${path}`, {
       method:'POST', headers, ...(body === undefined ? {} : { body:JSON.stringify(encryptBody ? encrypted(body) : signed(body)) }),
     });
@@ -93,7 +94,7 @@ export function createKKHomeClient({ email, password, appPrivateKey, fetchImpl=g
     async listKeys(esn) { await authenticate(); return request('/v3/device/key-list', { body:{ esn } }); },
     async insertKey(payload) { await authenticate(); return request('/v3/device/insert-pwd', { body:payload, encryptBody:true }); },
     async updateKey(payload) { await authenticate(); return request('/v3/device/update-pwd', { body:payload, encryptBody:true }); },
-    async saveKeyMetadata(payload) { await authenticate(); return request('/v3/device/ble-add-key-list', { body:payload }); },
+    async saveKeyMetadata(payload) { await authenticate(); return request('/v3/device/ble-add-key-list', { body:payload, normalBody:true }); },
     async removeKey(payload) { await authenticate(); return request('/v3/device/remove-pwd', { body:payload }); },
   };
 }
