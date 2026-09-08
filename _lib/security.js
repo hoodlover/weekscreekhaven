@@ -98,6 +98,20 @@ export function bookingAccessCode(bookingId) {
   return `WCH-${Array.from(digest.subarray(0, 10), (byte) => alphabet[byte % alphabet.length]).join('')}`;
 }
 
+export function createCalendarFeedToken() {
+  return createHmac('sha256', sessionSecret()).update('owner-calendar-feed:v1').digest('base64url');
+}
+
+export function verifyCalendarFeedToken(token) {
+  try {
+    const supplied = Buffer.from(String(token || ''), 'base64url');
+    const expected = Buffer.from(createCalendarFeedToken(), 'base64url');
+    return supplied.length === expected.length && timingSafeEqual(supplied, expected);
+  } catch {
+    return false;
+  }
+}
+
 function encryptionKey() {
   return createHash('sha256').update(`${sessionSecret()}:weeks-creek-private-data`).digest();
 }
