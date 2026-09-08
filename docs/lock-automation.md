@@ -36,6 +36,10 @@ References include the device, slot, and a PIN fingerprint. Failed metadata save
 
 The owner-only `/api/admin-lock-test` endpoint is limited to the exact temporary PIN, door set, and maximum one-hour window in `KKHOME_TEST_JSON`. It does not read or write bookings. Remove that environment variable after acceptance testing. `/api/admin-lock-status` performs only sign-in and device-list checks.
 
+The owner-only `/api/admin-lock-booking-test` exercises the production booking lock service using an in-memory fixture, without booking storage or guest communications. It requires `KKHOME_BOOKING_TEST_JSON` with `id`, six-digit `code`, `arrival`, `departure`, and `expiresAt` within the next hour. The future access window must end within three days and last at most two days. POST `{testId, action:"install"}`; save the returned `doors` as `references` for retry and `{testId, action:"remove", references}` cleanup. Removal remains available for 24 hours after fixture expiry. Remove the environment variable and redeploy after testing. Never run the email scheduler as an acceptance test.
+
+September 8, 2026 UTC acceptance: the real booking service installed and verified one temporary PIN on basement, deck, and front doors for September 8 at 3:45 PM through September 9 at 11:15 AM Eastern. A retry reused all three provider references. Removal verified absence on all three doors. These are cloud-record checks; physical keypad activation and expiration still require an on-site test.
+
 Required server-side variables:
 
 - `KKHOME_EMAIL` — the email used to sign in to KK Home.
