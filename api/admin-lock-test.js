@@ -1,6 +1,7 @@
 import { createKKHomeLockProvider } from '../_lib/lock-providers/kkhome.js';
 import { createKKHomeClient } from '../_lib/kkhome-client.js';
 import { correctTestTime } from '../_lib/kkhome-test-time.js';
+import { kkhomeLocalTimestamp } from '../_lib/kkhome-time.js';
 import { json, requireAdmin } from '../_lib/security.js';
 
 // An owner-approved, short-lived test configured on the server. Never uses a booking.
@@ -45,7 +46,8 @@ export function createLockTestHandler({ env = process.env, providerFactory = cre
             const matchesTime = ['startTime', 'endTime'].some((key, index) => {
               let time = Number(value[key]);
               if (time > 1e12) time /= 1000;
-              return Math.abs(time - Date.parse(index ? config.endsAt : config.startsAt) / 1000) < 120;
+              const instant = index ? config.endsAt : config.startsAt;
+              return Math.abs(time - Date.parse(instant) / 1000) < 120 || Math.abs(time - kkhomeLocalTimestamp(instant)) < 120;
             });
             if (matchesCode || matchesTime) {
               matches.push({ matchesCode, hasPassword: value.pwdValue !== undefined,
