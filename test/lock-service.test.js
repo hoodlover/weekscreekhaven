@@ -14,7 +14,9 @@ const booking = {
 
 test('uses the three cabin doors by default', () => {
   assert.deepEqual(configuredDoors({}), [
-    { id:'front', name:'Front door' }, { id:'side', name:'Side door' }, { id:'back', name:'Back door' },
+    { id:'basement', name:'Basement door', deviceId:'V273253812525' },
+    { id:'deck', name:'Deck door', deviceId:'V273253812458' },
+    { id:'front', name:'Front door', deviceId:'V273253812530' },
   ]);
 });
 
@@ -63,10 +65,10 @@ test('simulator installs and removes a code on every door', async () => {
 
 test('does not report overall success when one door fails', async () => {
   const result = await provisionDoorCode(booking, {
-    env:{ LOCK_PROVIDER:'simulated', LOCK_SIMULATOR_FAIL_DOORS:'side' }, now:'2026-09-02T13:00:00.000Z',
+    env:{ LOCK_PROVIDER:'simulated', LOCK_SIMULATOR_FAIL_DOORS:'deck' }, now:'2026-09-02T13:00:00.000Z',
   });
   assert.equal(result.status, 'partial');
-  assert.equal(result.doors.find((door) => door.doorId === 'side').status, 'failed');
+  assert.equal(result.doors.find((door) => door.doorId === 'deck').status, 'failed');
   assert.equal(provisioningChanges(result).doorCodeInstalledAt, null);
 });
 

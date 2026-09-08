@@ -4,9 +4,9 @@ import { createSimulatedLockProvider } from './lock-providers/simulated.js';
 import { createKKHomeLockProvider } from './lock-providers/kkhome.js';
 
 const DEFAULT_DOORS = [
-  { id: 'front', name: 'Front door' },
-  { id: 'side', name: 'Side door' },
-  { id: 'back', name: 'Back door' },
+  { id: 'basement', name: 'Basement door', deviceId: 'V273253812525' },
+  { id: 'deck', name: 'Deck door', deviceId: 'V273253812458' },
+  { id: 'front', name: 'Front door', deviceId: 'V273253812530' },
 ];
 
 function cleanDoor(value, index) {

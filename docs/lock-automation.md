@@ -12,13 +12,13 @@ Weeks Creek Haven keeps lock access behind a provider-neutral service. The booki
 
 ## Configuration
 
-The default doors are Front door, Side door, and Back door. A future provider can attach real device IDs without changing booking code:
+The configured cabin doors and KK Home ESNs are:
 
 ```json
 [
-  { "id": "front", "name": "Front door", "deviceId": "provider-device-id" },
-  { "id": "side", "name": "Side door", "deviceId": "provider-device-id" },
-  { "id": "back", "name": "Back door", "deviceId": "provider-device-id" }
+  { "id": "basement", "name": "Basement door", "deviceId": "V273253812525" },
+  { "id": "deck", "name": "Deck door", "deviceId": "V273253812458" },
+  { "id": "front", "name": "Front door", "deviceId": "V273253812530" }
 ]
 ```
 
