@@ -5,6 +5,9 @@ import { getSquareOrder } from '../_lib/square.js';
 import { hashPasscode, json, requireAdmin, requireCleaner, sameOriginRequest } from '../_lib/security.js';
 import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
 import { normalizeTurnoverChecklist } from '../_lib/checklist-defaults.js';
+import { cleanerAccessDates, syncCleanerLocks, validCleaningDate } from '../_lib/cleaner-locks.js';
+
+export const config = { maxDuration: 60 };
 
 const safe=(value,max=500)=>String(value||'').trim().slice(0,max);
 function safeProductUrl(value){const raw=safe(value,1000);if(!raw)return'';try{const url=new URL(raw);return ['http:','https:'].includes(url.protocol)?url.toString():'';}catch{return'';}}
@@ -79,6 +82,7 @@ function buildDashboard(bookings,state,isOwner){
   const paidFor=days=>compensation.filter(e=>within(e.paidOutAt,days)).reduce((sum,e)=>sum+e.amountCents,0);
   const tipSummary={owedCents:paidTips.filter(t=>!t.paidOutAt).reduce((sum,t)=>sum+(Number(t.amountCents)||0),0),paidCents:paidTips.filter(t=>t.paidOutAt).reduce((sum,t)=>sum+(Number(t.amountCents)||0),0)};
   return {
+    cleanerAccess: { dates: cleanerAccessDates(state).filter(date => date >= today), status: state.settings.cleanerLockState?.status || 'pending', window: state.settings.cleanerLockState?.window || null, checkedAt: state.settings.cleanerLockState?.checkedAt || '' },
     isOwner, cleanerName:state.settings.cleanerName, cleanerEmail:isOwner?(state.settings.cleanerEmail||''):'', standardPayCents:state.settings.standardPayCents, doorCode:state.settings.doorCode||'', closetCode:state.settings.closetCode||'', doorCodeUpdatedAt:state.settings.doorCodeUpdatedAt||'', turnoverChecklistMaster:normalizeTurnoverChecklist(state.settings.turnoverChecklistMaster),
     inventory:state.inventory.filter(item=>!item.archivedAt).sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name)), archivedInventory:isOwner?state.inventory.filter(item=>item.archivedAt).sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name)):[], upcoming, recent,
     remarks:state.remarks.filter(r=>r.status!=='resolved').sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))),
@@ -99,12 +103,20 @@ export default async function handler(request,response){
   if(request.method!=='GET'&&!sameOriginRequest(request))return json(response,403,{error:'This update was blocked.'});
   try{
     if(request.method==='GET'){
-      let state=await getCleanerState(); state=await syncTips(state);
+      let state=await getCleanerState(); if(request.query?.readOnly !== '1') state=await syncTips(state);
       return json(response,200,buildDashboard(await getBookingRequests(),state,owner),{'Cache-Control':'private, no-store'});
     }
     if(request.method!=='POST')return json(response,405,{error:'Method not allowed.'});
     const action=safe(request.body?.action,40); const now=new Date().toISOString();
-    if(action==='setup-access'){
+    if(action==='cleaner-access-date'){
+      if(!owner)return json(response,403,{error:'Only the owner can schedule door access.'});
+      const date=safe(request.body?.date,10);
+      if(!validCleaningDate(date)||date<todayEastern())return json(response,400,{error:'Choose today or a future cleaning date.'});
+      const state=await getCleanerState();
+      const dates=new Set(state.settings.cleanerAccessDates||[]),excluded=new Set(state.settings.cleanerAccessExcludedDates||[]);
+      if(request.body?.remove===true){dates.delete(date);excluded.add(date);}else{dates.add(date);excluded.delete(date);}
+      await appendCleanerRecord({type:'settings',createdAt:now,changes:{cleanerAccessDates:[...dates].sort(),cleanerAccessExcludedDates:[...excluded].sort()}});
+    } else if(action==='setup-access'){
       if(!owner)return json(response,403,{error:'Only the owner can change cleaner access.'});
       const passcode=safe(request.body?.passcode,80); if(passcode.length<6)return json(response,400,{error:'Use at least 6 characters for the cleaner access code.'});
       const hashed=hashPasscode(passcode); await appendCleanerRecord({type:'settings',createdAt:now,changes:{passcodeHash:hashed.hash,passcodeSalt:hashed.salt,cleanerAuthVersion:crypto.randomUUID()}});
@@ -266,6 +278,10 @@ export default async function handler(request,response){
       const result=await sendEmail({to,toName:state.settings.cleanerName||'Cabin Care Team',subject,idempotencyKey:`cleaner-${operationId}`,text:body,html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.65;max-width:640px"><div style="padding:22px;background:#183c2d;color:#fff"><div style="color:#e5b67e;font-size:12px;font-weight:bold;letter-spacing:.12em;text-transform:uppercase">Weeks Creek Haven · Cabin Care</div><h1 style="margin:6px 0 0;color:#fff;font-family:Georgia,serif">${escapeEmailHtml(subject)}</h1></div><div style="padding:24px;background:#fffdf8">${htmlBody}</div><div style="padding:16px 24px;background:#f4eee0;color:#76695e;font-size:12px">Weeks Creek Haven · Blue Ridge, Georgia</div></div>`});
       const templateId=safe(request.body?.templateId,50);await appendCleanerRecord({type:'cleaner_email_sent',createdAt:now,email:{id:crypto.randomUUID(),operationId,to,subject,templateId,bookingId,sentAt:now,provider:result?.provider||''}});if(bookingId)await appendCleanerRecord({type:'assignment',bookingId,createdAt:now,changes:{cleanerEmailSentAt:now,cleanerEmailTemplateId:templateId}});
     } else return json(response,400,{error:'Unknown cleaner hub update.'});
-    return json(response,200,{ok:true},{'Cache-Control':'private, no-store'});
+    let accessStatus;
+    if(['settings','cleaner-access-date','create-cleaning-session','assignment'].includes(action)){
+      try{accessStatus=(await syncCleanerLocks()).status;}catch{accessStatus='needs-attention';}
+    }
+    return json(response,200,{ok:true,...(accessStatus?{accessStatus}:{})},{'Cache-Control':'private, no-store'});
   }catch(error){console.error(error);return json(response,503,{error:error.message||'The Cleaner Hub is temporarily unavailable.'});}
 }

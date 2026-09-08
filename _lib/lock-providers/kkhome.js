@@ -88,6 +88,14 @@ export function createKKHomeLockProvider(env=process.env, options={}) {
 
   return {
     id:'kkhome',
+    async findCode({ door, code }) {
+      const device = await selectedDevice(door);
+      const matches = keysFrom(await client.listKeys(device.partSn || device.esn)).filter(item => keyCode(item) === String(code));
+      if (matches.length > 1) throw new Error('More than one lock entry uses the cleaner PIN; owner review is required.');
+      if (!matches.length) return null;
+      if (!Number.isInteger(keyNumber(matches[0]))) throw new Error('The cleaner code has no valid lock reference.');
+      return { providerCodeId: encodeReference(device, keyNumber(matches[0]), code) };
+    },
     async installCode({ door, code, startsAt, endsAt, name, providerCodeId, timezone = 'America/New_York' }) {
       const device = await selectedDevice(door);
       const startTime = kkhomeLocalTimestamp(startsAt, timezone);
