@@ -38,6 +38,11 @@ export async function reconcileCleanerLocks({ state, bookings, provider, doors, 
   const window = desiredCode ? cleanerAccessWindow(state, now) : null;
   const ledger = structuredClone(state.settings.cleanerLockState || { doors: {} });
   ledger.doors ||= {};
+  const expectedStatus = window ? 'scheduled' : 'inactive';
+  if (ledger.status === expectedStatus && ledger.code === desiredCode && JSON.stringify(ledger.window) === JSON.stringify(window)
+    && doors.every(door => ledger.doors[door.id]?.status === (window ? 'installed' : 'removed'))
+    && now.getTime() - Date.parse(ledger.checkedAt || '') < 86400000) return ledger;
+  ledger.code = desiredCode;
   ledger.checkedAt = now.toISOString();
   ledger.window = window;
   // Persist each reference before proceeding to the next door, including failed writes.

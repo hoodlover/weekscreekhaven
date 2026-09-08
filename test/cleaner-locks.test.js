@@ -51,3 +51,9 @@ test('a changed PIN removes old references first and failures retain cleanup ref
 test('a guest PIN collision blocks all cleaner lock operations', async () => {
   await assert.rejects(()=>reconcileCleanerLocks({state:state(['2026-09-10']),bookings:[{doorCode:'593827'}],doors,now,save:()=>assert.fail(),provider:{findCode:()=>assert.fail()}}),/separate/);
 });
+
+test('unchanged confirmed schedules do not rewrite records or contact locks every five minutes', async () => {
+  const s=state(['2026-09-10']);s.settings.cleanerLockState={status:'scheduled',code:s.settings.doorCode,window:cleanerAccessWindow(s,now),checkedAt:now.toISOString(),doors:Object.fromEntries(doors.map(door=>[door.id,{status:'installed',code:s.settings.doorCode,providerCodeId:door.id}]))};
+  const result=await reconcileCleanerLocks({state:s,bookings:[],doors,now:new Date(now.getTime()+300000),save:()=>assert.fail(),provider:{findCode:()=>assert.fail(),installCode:()=>assert.fail()}});
+  assert.equal(result.status,'scheduled');
+});
