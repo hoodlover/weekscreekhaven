@@ -6,7 +6,7 @@ export function createLockStatusHandler({ env = process.env, clientFactory = cre
   return async function handler(request, response) {
     response.setHeader('Cache-Control', 'no-store');
     if (!requireAdmin(request)) return json(response, 401, { error: 'Owner sign-in required.' });
-    if (request.method !== 'POST') return json(response, 405, { error: 'Use POST.' }, { Allow: 'POST' });
+    if (!['GET', 'POST'].includes(request.method)) return json(response, 405, { error: 'Use GET or POST.' }, { Allow: 'GET, POST' });
     const required = ['KKHOME_EMAIL', 'KKHOME_PASSWORD', 'KKHOME_APP_PRIVATE_KEY', 'LOCK_DOORS_JSON'];
     const missing = required.filter(name => !env[name]?.trim());
     if (missing.length) return json(response, 200, { connected: false, missing });
