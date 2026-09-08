@@ -34,9 +34,17 @@ export function createLockTestHandler({ env = process.env, providerFactory = cre
           if (!Array.isArray(value)) {
             const fields = Object.keys(value);
             shapes.add(fields.sort().join(','));
-            if (Object.values(value).some(item => typeof item !== 'object' && String(item) === config.code)) {
-              matches.push(Object.fromEntries(timingFields.filter(key => value[key] !== undefined && Number.isFinite(Number(value[key])))
-                .map(key => [key, Number(value[key])])));
+            const matchesCode = Object.values(value).some(item => typeof item !== 'object' && String(item) === config.code);
+            const matchesTime = ['startTime', 'endTime'].some((key, index) => {
+              let time = Number(value[key]);
+              if (time > 1e12) time /= 1000;
+              return Math.abs(time - Date.parse(index ? config.endsAt : config.startsAt) / 1000) < 120;
+            });
+            if (matchesCode || matchesTime) {
+              matches.push({ matchesCode, hasPassword: value.pwdValue !== undefined,
+                passwordLength: String(value.pwdValue ?? '').length,
+                ...Object.fromEntries(timingFields.filter(key => value[key] !== undefined && Number.isFinite(Number(value[key])))
+                  .map(key => [key, Number(value[key])])) });
             }
           }
           for (const child of Object.values(value)) if (child && typeof child === 'object') visit(child);
