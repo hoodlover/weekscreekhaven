@@ -1,5 +1,6 @@
 import { createKKHomeLockProvider } from '../_lib/lock-providers/kkhome.js';
 import { createKKHomeClient } from '../_lib/kkhome-client.js';
+import { correctTestTime } from '../_lib/kkhome-test-time.js';
 import { json, requireAdmin } from '../_lib/security.js';
 
 // An owner-approved, short-lived test configured on the server. Never uses a booking.
@@ -23,6 +24,12 @@ export function createLockTestHandler({ env = process.env, providerFactory = cre
     }
     const requests = [];
     try {
+      if (request.body?.action === 'correct-time') {
+        const client = createKKHomeClient({ email: env.KKHOME_EMAIL, password: env.KKHOME_PASSWORD,
+          appPrivateKey: env.KKHOME_APP_PRIVATE_KEY, fetchImpl: (url, options) => fetchImpl(url, { ...options, signal: AbortSignal.timeout(15000) }) });
+        const result = await correctTestTime(client, door, config);
+        return json(response, 200, { ...result, door: door.name, startsAt: config.startsAt, endsAt: config.endsAt });
+      }
       if (request.body?.action === 'inspect') {
         const client = createKKHomeClient({ email: env.KKHOME_EMAIL, password: env.KKHOME_PASSWORD,
           appPrivateKey: env.KKHOME_APP_PRIVATE_KEY, fetchImpl: (url, options) => fetchImpl(url, { ...options, signal: AbortSignal.timeout(15000) }) });

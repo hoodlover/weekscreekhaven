@@ -1,4 +1,5 @@
 import { createKKHomeClient } from '../kkhome-client.js';
+import { kkhomeLocalTimestamp } from '../kkhome-time.js';
 
 const first = (value, ...keys) => keys.map((key) => value?.[key]).find((item) => item !== undefined && item !== null && item !== '');
 
@@ -80,10 +81,10 @@ export function createKKHomeLockProvider(env=process.env, options={}) {
 
   return {
     id:'kkhome',
-    async installCode({ door, code, startsAt, endsAt }) {
+    async installCode({ door, code, startsAt, endsAt, timezone = 'America/New_York' }) {
       const device = await selectedDevice(door);
-      const startTime = Math.floor(new Date(startsAt).getTime()/1000);
-      const endTime = Math.floor(new Date(endsAt).getTime()/1000);
+      const startTime = kkhomeLocalTimestamp(startsAt, timezone);
+      const endTime = kkhomeLocalTimestamp(endsAt, timezone);
       if (!Number.isFinite(startTime) || !Number.isFinite(endTime) || endTime <= startTime) throw new Error('The guest-code access window is invalid.');
       let match = matchingKey(keysFrom(await client.listKeys(device.partSn || device.esn)), code, startTime, endTime);
       if (!match) {
