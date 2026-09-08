@@ -1,3 +1,4 @@
+import { doorCodeAvailable, DOOR_CODE_RELEASE_TEXT } from '../_lib/door-code-release.js';
 import { getBookingCalendar } from '../_lib/booking-store.js';
 import { findBookingInvite } from '../_lib/booking-invite.js';
 import { guestFirstName } from '../_lib/guest-name.js';
@@ -6,30 +7,6 @@ import { getCleanerState } from '../_lib/cleaner-store.js';
 import { normalizeFamilyChecklist } from '../_lib/checklist-defaults.js';
 import { refreshSquareBooking } from '../_lib/payment-sync.js';
 import { bookingAccessCode, json, verifyAgreementToken } from '../_lib/security.js';
-
-function easternParts(date = new Date()) {
-  const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'America/New_York',
-    year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
-  }).formatToParts(date);
-  return Object.fromEntries(parts.map((part) => [part.type, part.value]));
-}
-
-function doorCodeRelease(booking, arrival) {
-  const now = easternParts();
-  const today = `${now.year}-${now.month}-${now.day}`;
-  const released = Boolean(
-    booking.status === 'booked' && booking.doorCode && booking.doorCodeInstalledAt &&
-    !booking.doorCodeRemovedAt && arrival &&
-    (today > arrival || (today === arrival && Number(now.hour) >= 9))
-  );
-  return {
-    doorCode: released ? String(booking.doorCode) : '',
-    doorCodeAvailable: released,
-    doorCodeReleaseText: 'Available at 9:00 AM Eastern on check-in day',
-  };
-}
 
 export default async function handler(request, response) {
   if (request.method !== 'GET') return json(response, 405, { error: 'Method not allowed.' });
@@ -52,7 +29,8 @@ export default async function handler(request, response) {
     const linkedInvite = findBookingInvite(booking, invites);
     const discountId = booking.friendsAndFamilyDiscount?.id || dates.quote?.friendsAndFamilyDiscount?.id || '';
     const linkedDiscount = discountId ? (calendar.discounts || []).find((rule) => rule.id === discountId) : null;
-    const doorAccess = doorCodeRelease(booking, dates.arrival || '');
+    const released = doorCodeAvailable(booking);
+    const doorAccess = { doorCode: released ? String(booking.doorCode) : '', doorCodeAvailable: released, doorCodeReleaseText: DOOR_CODE_RELEASE_TEXT };
     const cleaningRule = booking.friendsAndFamilyDiscount || dates.quote?.friendsAndFamilyDiscount;
     const cleanerScheduled = !(cleaningRule && cleaningRule.chargeCleaning !== true);
     return json(response, 200, {

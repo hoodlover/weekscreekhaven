@@ -81,3 +81,7 @@ Keep `LOCK_PROVIDER=manual` until one non-critical lock passes the complete test
 8. Add the other doors only after the full test passes.
 
 After all three locks pass, retain their exact IDs in `LOCK_DOORS_JSON` and keep the live switch enabled. Never reuse `simulated` for a physical integration.
+
+Door-code emails and guest code display release at 9:00 AM America/New_York on the calendar day before arrival. Unsent codes retry during the stay after all doors confirm installation; cancelled, removed, and past-stay codes do not send. Replacements use a new email idempotency revision. Physical lock access still begins at 3:45 PM Eastern on arrival day.
+
+September 8 on-site verification: the owner confirmed unlock and rejection after removal on deck, front, and basement. The basement also rejected a code before its scheduled start. Automatic start/expiration boundaries were not both physically verified. Abby’s existing code subsequently unlocked all three doors during an owner-approved temporary window; that tested code was then retired and replaced for her October 23–25 stay. Her new code email is due October 22 at 9:00 AM Eastern.
