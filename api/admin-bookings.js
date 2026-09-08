@@ -8,6 +8,7 @@ import { refreshSquareBooking } from '../_lib/payment-sync.js';
 import { finalizeBookingFlow } from '../_lib/booking-finalization.js';
 import { findBookingInvite } from '../_lib/booking-invite.js';
 import { daysBetween, PRICING_CONFIG, quoteStay, withEstimatedTaxesAndFees } from '../pricing.js';
+import { guestFirstName } from '../_lib/guest-name.js';
 import { generateDoorCode, selectedStay } from '../_lib/door-code.js';
 import { lockProviderName, manualConfirmation, provisionDoorCode, provisioningChanges, removeDoorCode, removalChanges } from '../_lib/lock-service.js';
 
@@ -207,14 +208,17 @@ export default async function handler(request, response) {
       await appendBookingRecord({ type:'status', bookingId:booking.id, changes:{ doorCodeProvisioning, doorCodeInstalledAt:createdAt, doorCodeRemovedAt:null }, createdAt });
       return json(response, 200, { ok:true, installedAt:createdAt });
     }
-    if (action === 'send-door-code') {
+    if (action === 'send-door-code' || action === 'preview-door-code') {
       if (!booking.doorCode || !booking.doorCodeInstalledAt) return json(response, 409, { error:'Confirm that the code is installed before sending it.' });
-      if (!booking.email) return json(response, 400, { error:'This booking does not have a guest email address.' });
-      if (String(process.env.OWNER_EMAIL || '').trim().toLowerCase() === String(booking.email).trim().toLowerCase()) return json(response, 409, { error:'Correct the guest email before sending the door code.' });
+      const preview = action === 'preview-door-code';
+      const recipient = preview ? validEmail(request.body?.to) : booking.email;
+      const firstName = guestFirstName(booking.name);
+      if (!recipient) return json(response, 400, { error:'This booking does not have a guest email address.' });
+      if (!preview && String(process.env.OWNER_EMAIL || '').trim().toLowerCase() === String(booking.email).trim().toLowerCase()) return json(response, 409, { error:'Correct the guest email before sending the door code.' });
       const stay=selectedStay(booking);
-      await sendEmail({ to:booking.email, toName:booking.name, subject:'Your Weeks Creek Haven door code', text:`Hi ${booking.name},\n\nYour private door code for ${stay.arrival || 'your stay'} through ${stay.departure || ''} is ${booking.doorCode}. It activates for your stay and should not be shared outside your registered group.\n\nYour reservation details have the remaining arrival information.`, html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6"><h1 style="color:#183c2d">Your cabin door code</h1><p>Hi ${escapeEmailHtml(booking.name)},</p><p>Your private code for <strong>${escapeEmailHtml(stay.arrival || 'your stay')} through ${escapeEmailHtml(stay.departure || '')}</strong> is:</p><p style="font-size:30px;font-weight:800;letter-spacing:.14em">${booking.doorCode}</p><p>Please keep it within your registered group. Your reservation details contain the remaining arrival information.</p></div>` });
-      await appendBookingRecord({ type:'status', bookingId:booking.id, changes:{ doorCodeGuestSentAt:createdAt }, createdAt });
-      return json(response, 200, { ok:true, sentAt:createdAt });
+      await sendEmail({ to:recipient, toName:preview?'Lance':firstName, subject:preview?`Owner preview: ${firstName}’s Weeks Creek Haven door code`:'Your Weeks Creek Haven door code', text:`Hi ${firstName},\n\nYour private door code for ${stay.arrival || 'your stay'} through ${stay.departure || ''} is ${booking.doorCode}. It activates for your stay and should not be shared outside your registered group.\n\nYour reservation details have the remaining arrival information.`, html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.6"><h1 style="color:#183c2d">Your cabin door code</h1><p>Hi ${escapeEmailHtml(firstName)},</p><p>Your private code for <strong>${escapeEmailHtml(stay.arrival || 'your stay')} through ${escapeEmailHtml(stay.departure || '')}</strong> is:</p><p style="font-size:30px;font-weight:800;letter-spacing:.14em">${booking.doorCode}</p><p>Please keep it within your registered group. Your reservation details contain the remaining arrival information.</p></div>` });
+      await appendBookingRecord({ type:'status', bookingId:booking.id, changes:preview?{ doorCodeOwnerPreviewSentAt:createdAt, doorCodeOwnerPreviewRecipient:recipient }:{ doorCodeGuestSentAt:createdAt }, createdAt });
+      return json(response, 200, { ok:true, sentAt:createdAt, preview, recipient });
     }
     if (action === 'door-code-removed') {
       if (!booking.doorCode) return json(response, 409, { error:'This booking has no recorded door code.' });
