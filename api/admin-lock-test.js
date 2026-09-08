@@ -80,7 +80,14 @@ export function createLockTestHandler({ env = process.env, providerFactory = cre
       const failure = message.startsWith('KK Home did not verify') ? 'not_verified'
         : message.includes('was not found') ? 'device_not_found'
         : message.startsWith('KK Home request failed') ? 'provider_rejected' : 'test_failed';
-      return json(response, 200, { status: 'unconfirmed', door: door.name, failure, requests });
+      let reason;
+      if (failure === 'provider_rejected') {
+        reason = message;
+        for (const secret of [env.KKHOME_EMAIL, env.KKHOME_PASSWORD, env.KKHOME_APP_PRIVATE_KEY, config.code].filter(Boolean)) reason = reason.split(secret).join('[redacted]');
+        reason = reason.replace(/[A-Za-z0-9+/_=-]{24,}/g, '[redacted]').replace(/\d{6,}/g, '[redacted]').slice(0, 160);
+      }
+      return json(response, 200, { status: 'unconfirmed', door: door.name, failure, operation: error.operation,
+        providerCode: error.providerCode, reason, requests });
     }
   };
 }

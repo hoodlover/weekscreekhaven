@@ -73,7 +73,10 @@ export function createKKHomeClient({ email, password, appPrivateKey, fetchImpl=g
     if (parsed?.encryptData) parsed = decrypt(parsed.encryptData);
     const message = parsed?.msg || parsed?.message;
     if (!response.ok || parsed?.success === false || ('code' in (parsed || {}) && ![0,200,'0','200'].includes(parsed.code))) {
-      throw new Error(`KK Home request failed${message ? `: ${message}` : ` (HTTP ${response.status})`}.`);
+      const error = new Error(`KK Home request failed${message ? `: ${message}` : ` (HTTP ${response.status})`}.`);
+      error.operation = path.split('/').at(-1);
+      error.providerCode = typeof parsed?.code === 'number' ? parsed.code : undefined;
+      throw error;
     }
     return parsed && Object.hasOwn(parsed, 'data') ? parsed.data : parsed;
   }
