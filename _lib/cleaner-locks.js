@@ -43,6 +43,7 @@ export async function reconcileCleanerLocks({ state, bookings, provider, doors, 
     && doors.every(door => ledger.doors[door.id]?.status === (window ? 'installed' : 'removed'))
     && now.getTime() - Date.parse(ledger.checkedAt || '') < 86400000) return ledger;
   ledger.code = desiredCode;
+  ledger.status = 'updating';
   ledger.checkedAt = now.toISOString();
   ledger.window = window;
   // Persist each reference before proceeding to the next door, including failed writes.

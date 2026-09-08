@@ -5,7 +5,7 @@ import { getSquareOrder } from '../_lib/square.js';
 import { hashPasscode, json, requireAdmin, requireCleaner, sameOriginRequest } from '../_lib/security.js';
 import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
 import { normalizeTurnoverChecklist } from '../_lib/checklist-defaults.js';
-import { cleanerAccessDates, syncCleanerLocks, validCleaningDate } from '../_lib/cleaner-locks.js';
+import { cleanerAccessDates, cleanerAccessWindow, syncCleanerLocks, validCleaningDate } from '../_lib/cleaner-locks.js';
 
 export const config = { maxDuration: 60 };
 
@@ -82,7 +82,7 @@ function buildDashboard(bookings,state,isOwner){
   const paidFor=days=>compensation.filter(e=>within(e.paidOutAt,days)).reduce((sum,e)=>sum+e.amountCents,0);
   const tipSummary={owedCents:paidTips.filter(t=>!t.paidOutAt).reduce((sum,t)=>sum+(Number(t.amountCents)||0),0),paidCents:paidTips.filter(t=>t.paidOutAt).reduce((sum,t)=>sum+(Number(t.amountCents)||0),0)};
   return {
-    cleanerAccess: { dates: cleanerAccessDates(state).filter(date => date >= today), status: state.settings.cleanerLockState?.status || 'pending', window: state.settings.cleanerLockState?.window || null, checkedAt: state.settings.cleanerLockState?.checkedAt || '' },
+    cleanerAccess: { dates: cleanerAccessDates(state).filter(date => date >= today), status: JSON.stringify(state.settings.cleanerLockState?.window) === JSON.stringify(state.settings.doorCode ? cleanerAccessWindow(state) : null) && state.settings.cleanerLockState?.code === String(state.settings.doorCode || '') ? state.settings.cleanerLockState.status : 'pending', window: state.settings.cleanerLockState?.window || null, checkedAt: state.settings.cleanerLockState?.checkedAt || '' },
     isOwner, cleanerName:state.settings.cleanerName, cleanerEmail:isOwner?(state.settings.cleanerEmail||''):'', standardPayCents:state.settings.standardPayCents, doorCode:state.settings.doorCode||'', closetCode:state.settings.closetCode||'', doorCodeUpdatedAt:state.settings.doorCodeUpdatedAt||'', turnoverChecklistMaster:normalizeTurnoverChecklist(state.settings.turnoverChecklistMaster),
     inventory:state.inventory.filter(item=>!item.archivedAt).sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name)), archivedInventory:isOwner?state.inventory.filter(item=>item.archivedAt).sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name)):[], upcoming, recent,
     remarks:state.remarks.filter(r=>r.status!=='resolved').sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))),
