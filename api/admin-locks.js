@@ -45,6 +45,7 @@ export default async function handler(request,response) {
   } catch(error) {
     const raw=String(error.message||'');
     const safe = /^(Enter|Choose|Select|One successful|Use |That PIN|This PIN|This time|This code|This scheduled|The end|Refresh|Access code|Unknown lock|Another lock)/.test(raw);
-    return json(response,409,{error:safe?raw:'The lock update could not be confirmed. Refresh the list before trying again.'});
+    return json(response,409,{error:safe?raw:'The lock update could not be confirmed. Refresh the list before trying again.',
+      ...(error.operation ? {operation:error.operation,providerCode:error.providerCode} : {})});
   }
 }
