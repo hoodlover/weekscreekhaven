@@ -40,7 +40,11 @@ export async function applyOwnerLock(entry, { provider, doors, save, revoke = fa
     try {
       const result = await provider.installOneTime({ door: doors.find(d => d.id === entry.doorIds[0]), code: entry.code });
       entry.status = result.status; entry.verification = result.verification; entry.providerExpiresAt = result.endsAt || null;
-    } catch { entry.status = 'unconfirmed'; }
+    } catch (error) {
+      entry.status = 'unconfirmed';
+      entry.failure = { operation:error.operation || null, providerCode:error.providerCode || null,
+        reason:error.message === 'This door already has a one-time code. Use or clear it in KK Home first.' ? error.message : 'The one-time request was not confirmed by KK Home.' };
+    }
     await save(entry); return entry;
   }
   if (!revoke && ['revoked','revoking'].includes(entry.status)) throw new Error('This code was revoked. Create a new code instead.');
