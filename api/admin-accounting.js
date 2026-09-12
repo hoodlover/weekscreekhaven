@@ -25,7 +25,7 @@ export default async function handler(request, response) {
       const actualNights = choice.arrival && choice.departure ? daysBetween(choice.arrival, choice.departure) : 0;
       const preTaxAmountCents = Number(booking.preTaxAmountCents ?? choice.quote?.totalCents ?? choice.amountCents ?? booking.amountCents) || 0;
       const tax = withEstimatedTaxesAndFees({ totalCents: preTaxAmountCents, actualNights });
-      let paidCents = Number(booking.squarePaidCents) || (booking.paymentPlan === 'complimentary' ? 0 : Number(booking.amountCents) || 0);
+      let paidCents = Number(booking.offlinePaidCents) || Number(booking.squarePaidCents) || (booking.paymentPlan === 'complimentary' ? 0 : Number(booking.amountCents) || 0);
       let refundedCents = (booking.refunds || []).reduce((sum, refund) => sum + (Number(refund.amountCents) || 0), 0);
       let squareFeeCents = null;
       let squareFeeStatus = booking.squareInvoiceId ? 'unavailable' : 'not-applicable';
@@ -52,7 +52,8 @@ export default async function handler(request, response) {
         bookedAt: booking.bookedAt || booking.paymentReceivedAt || booking.approvedAt || '',
         preTaxAmountCents,
         writeOff: booking.accountingWriteOff === true,
-        writeOffCents: booking.accountingWriteOff === true ? preTaxAmountCents : 0,
+        writeOffCents: booking.accountingWriteOff === true ? Number(booking.accountingWriteOffCents ?? booking.ownerPriceAdjustmentCents ?? preTaxAmountCents) || 0 : 0,
+        paymentMethod: booking.offlinePaymentMethod || (booking.squareInvoiceId ? 'square' : booking.paymentPlan === 'complimentary' ? 'complimentary' : ''),
         cleaningFeeCents: Number.isFinite(Number(booking.accountingCleaningFeeCents)) ? Number(booking.accountingCleaningFeeCents) : 17500,
         paidCents,
         refundedCents,

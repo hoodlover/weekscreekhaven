@@ -336,7 +336,7 @@ export default async function handler(request, response) {
       const enteredDiscountCents = Math.round(Number(request.body?.discountAmount || 0) * 100);
       const revisedPreTaxAmountCents = enteredPreTaxAmountCents - enteredDiscountCents;
       if (!Number.isInteger(enteredDiscountCents) || enteredDiscountCents < 0) return json(response, 400, { error: 'Enter the discount as a valid dollar amount.' });
-      if (!Number.isInteger(revisedPreTaxAmountCents) || revisedPreTaxAmountCents < 100) return json(response, 400, { error: 'Enter a revised pre-tax stay price of at least $1.00.' });
+      if (!Number.isInteger(revisedPreTaxAmountCents) || revisedPreTaxAmountCents < 0 || enteredDiscountCents > enteredPreTaxAmountCents) return json(response, 400, { error: 'Enter a valid stay price and a discount no greater than that price.' });
       const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0] || booking.dateChoices?.[0];
       if (!dates?.arrival || !dates?.departure) return json(response, 400, { error: 'The selected stay dates could not be found.' });
       const previousPreTaxAmountCents = Number(booking.preTaxAmountCents) || 0;
@@ -350,12 +350,27 @@ export default async function handler(request, response) {
       const amountCents = stayAmountCents + securityDepositCents;
       const invoiceRevision = (Number(booking.invoiceRevision) || 0) + 1;
       if (currentInvoice && !['CANCELED', 'PAID', 'REFUNDED'].includes(currentInvoice.status)) await cancelSquareInvoice(booking.squareInvoiceId);
+      const invoiceHistory = [...(booking.invoiceHistory || []), ...(booking.squareInvoiceId ? [{ invoiceId: booking.squareInvoiceId, orderId: booking.squareOrderId || null, paymentUrl: booking.paymentUrl || null, replacedAt: createdAt, amountCents: Number(booking.amountCents) || 0 }] : [])];
+      if (revisedPreTaxAmountCents === 0) {
+        const changes = {
+          status: booking.status === 'booked' ? 'booked' : 'reserved', paymentPlan:'complimentary', complimentary:true,
+          previousPreTaxAmountCents, originalAmountCents, preTaxAmountCents:0, stayAmountCents:0, securityDepositCents:0, amountCents:0,
+          discountAmountCents, ownerPriceAdjustmentCents, ownerPriceAdjustedAt:createdAt, accountingWriteOff:true,
+          accountingWriteOffCents:Math.max(0, ownerPriceAdjustmentCents), invoiceRevision, invoiceHistory,
+          salesTaxCents:0, lodgingTaxCents:0, stateHotelMotelFeeCents:0, taxesAndFeesCents:0,
+          paymentUrl:null, squareInvoiceId:null, squareOrderId:null, squareCustomerId:null, squareInvoiceStatus:'CANCELED',
+          squarePaidCents:0, squareBalanceCents:0, paymentRequirementCents:0, paymentRequirementMet:true, paymentFullyPaid:true,
+          depositAmountCents:0, balanceAmountCents:0, balanceDueDate:null, depositDueDate:null,
+        };
+        await appendBookingRecord({ type:'status', bookingId:booking.id, changes, createdAt });
+        await finalizeBookingFlow({ ...booking, ...changes });
+        return json(response, 200, { ok:true, amountCents:0, ownerPriceAdjustmentCents, complimentary:true });
+      }
       const payment = isFriendInvoice
         ? await createSquareFriendInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, amountCents, securityDepositCents, arrival: dates.arrival, paymentChoice: booking.friendsPaymentChoice, revisionKey: invoiceRevision })
         : await createSquareBookingInvoice({ bookingId: booking.id, guestName: booking.name, email: booking.email, address: { line1: booking.billingAddress, city: booking.billingCity, state: booking.billingState, postalCode: booking.billingPostalCode }, amountCents, securityDepositCents, depositBaseCents: revisedPreTaxAmountCents, arrival: dates.arrival, discountCents: discountAmountCents, depositDueDays: booking.earlyBirdDiscountCents ? 7 : 1, revisionKey: invoiceRevision });
       const paymentPlan = isFriendInvoice ? (payment.fullPaymentRequired ? 'friends-family-full' : 'friends-family-deposit') : payment.fullPaymentRequired ? 'full-payment' : 'deposit-balance';
       const hasBalancePlan = ['deposit-balance', 'friends-family-deposit'].includes(paymentPlan);
-      const invoiceHistory = [...(booking.invoiceHistory || []), ...(booking.squareInvoiceId ? [{ invoiceId: booking.squareInvoiceId, orderId: booking.squareOrderId || null, paymentUrl: booking.paymentUrl || null, replacedAt: createdAt, amountCents: Number(booking.amountCents) || 0 }] : [])];
       const changes = {
         status: 'pending-payment', previousPreTaxAmountCents, originalAmountCents, preTaxAmountCents: revisedPreTaxAmountCents, stayAmountCents, securityDepositCents, amountCents,
         discountAmountCents, ownerPriceAdjustmentCents, ownerPriceAdjustedAt: createdAt, invoiceRevision, invoiceHistory,
@@ -367,6 +382,23 @@ export default async function handler(request, response) {
       };
       await appendBookingRecord({ type: 'status', bookingId: booking.id, changes, createdAt });
       return json(response, 200, { ok: true, amountCents, ownerPriceAdjustmentCents, paymentUrl: payment.url });
+    }
+    if (action === 'record-offline-payment') {
+      if (['cancelled','declined'].includes(booking.status) || booking.paymentPlan === 'complimentary') return json(response, 409, { error:'This booking cannot be marked paid outside Square.' });
+      if (booking.paymentRequirementMet || booking.paymentFullyPaid) return json(response, 409, { error:'This booking is already recorded as paid.' });
+      const method = ['cash','check','other'].includes(request.body?.method) ? request.body.method : '';
+      if (!method) return json(response, 400, { error:'Choose how the payment was received.' });
+      const paidCents = Number(booking.amountCents) || 0;
+      if (paidCents < 1) return json(response, 409, { error:'There is no balance to record as paid.' });
+      const currentInvoice = booking.squareInvoiceId ? await getSquareInvoice(booking.squareInvoiceId) : null;
+      if (completedInvoiceCents(currentInvoice) > 0) return json(response, 409, { error:'Square already shows a payment. Use Check Square now instead.' });
+      if (currentInvoice && !['CANCELED','PAID','REFUNDED'].includes(currentInvoice.status)) await cancelSquareInvoice(booking.squareInvoiceId);
+      const invoiceHistory=[...(booking.invoiceHistory||[]),...(booking.squareInvoiceId?[{invoiceId:booking.squareInvoiceId,orderId:booking.squareOrderId||null,paymentUrl:booking.paymentUrl||null,replacedAt:createdAt,amountCents:paidCents}]:[])];
+      const changes={paymentPlan:'offline-full',offlinePaymentMethod:method,offlinePaidCents:paidCents,offlinePaidAt:createdAt,paymentReceivedAt:createdAt,
+        paymentRequirementMet:true,paymentFullyPaid:true,squarePaidCents:0,squareBalanceCents:0,squareInvoiceStatus:'CANCELED',paymentUrl:null,squareInvoiceId:null,squareOrderId:null,squareCustomerId:null,invoiceHistory};
+      await appendBookingRecord({type:'status',bookingId:booking.id,changes,createdAt});
+      await finalizeBookingFlow({...booking,...changes});
+      return json(response,200,{ok:true,paidCents,method});
     }
     if (action === 'cancel-unpaid') {
       if (['cancelled', 'declined'].includes(booking.status)) return json(response, 409, { error: 'This booking is already canceled or declined.' });
