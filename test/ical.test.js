@@ -7,6 +7,8 @@ test('builds a subscribable calendar with booked stays and owner holds', () => {
     bookings: [
       { id:'booked-1', name:'Abby, Family', status:'booked', createdAt:'2026-09-01T12:00:00Z', bookedAt:'2026-09-02T12:00:00Z', approvedChoice:0, dateChoices:[{ arrival:'2026-10-02', departure:'2026-10-05' }] },
       { id:'pending-1', name:'Not confirmed', status:'pending', createdAt:'2026-09-01T12:00:00Z', dateChoices:[{ arrival:'2026-11-01', departure:'2026-11-03' }] },
+      { id:'reserved-1', name:'Reserved guest', status:'reserved', createdAt:'2026-09-01T12:00:00Z', approvedChoice:0, dateChoices:[{ arrival:'2026-11-10', departure:'2026-11-12' }] },
+      { id:'hidden-1', name:'Hidden request', status:'pending', hiddenFromCalendar:true, createdAt:'2026-09-01T12:00:00Z', dateChoices:[{ arrival:'2026-11-20', departure:'2026-11-22' }] },
     ],
     blocks: [
       { id:'hold-1', label:'Family; time', holdType:'flexible', arrival:'2026-12-10', departure:'2026-12-13', createdAt:'2026-09-03T12:00:00Z' },
@@ -19,7 +21,10 @@ test('builds a subscribable calendar with booked stays and owner holds', () => {
   assert.match(output, /DTEND;VALUE=DATE:20261005/);
   assert.match(output, /SUMMARY:WCH — Family\\; time/);
   assert.match(output, /STATUS:TENTATIVE/);
-  assert.doesNotMatch(output, /Not confirmed/);
+  assert.match(output, /SUMMARY:WCH — Not confirmed/);
+  assert.match(output, /STATUS:TENTATIVE/);
+  assert.match(output, /SUMMARY:WCH — Reserved guest/);
+  assert.doesNotMatch(output, /Hidden request/);
   assert.match(output, /END:VCALENDAR\r\n$/);
 });
 
