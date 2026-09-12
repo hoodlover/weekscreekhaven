@@ -63,6 +63,14 @@ test('simulator installs and removes a code on every door', async () => {
   assert.equal(removalChanges(removed).doorCodeRemovedAt, '2026-11-09T17:00:00.000Z');
 });
 
+test('removal confirms an already-cleared code when an older booking has no saved lock references', async () => {
+  const result = await removeDoorCode(booking, {
+    env:{ LOCK_PROVIDER:'simulated' }, now:'2026-11-09T17:00:00.000Z',
+  });
+  assert.equal(result.status, 'removed');
+  assert.ok(result.doors.every((door) => door.status === 'removed'));
+});
+
 test('does not report overall success when one door fails', async () => {
   const result = await provisionDoorCode(booking, {
     env:{ LOCK_PROVIDER:'simulated', LOCK_SIMULATOR_FAIL_DOORS:'deck' }, now:'2026-09-02T13:00:00.000Z',

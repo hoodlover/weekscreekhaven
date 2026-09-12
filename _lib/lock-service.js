@@ -104,8 +104,13 @@ async function runForEveryDoor({ booking, action, env, now }) {
   const revision = String(booking.doorCodeGeneratedAt || booking.doorCodeReplacedAt || booking.doorCode);
   const attempts = await Promise.all(doors.map(async (door) => {
     const idempotencyKey = createHash('sha256').update(JSON.stringify([booking.id,revision,window.startsAt,window.endsAt,action,door.id])).digest('hex');
-    const previousProviderCodeId=booking.doorCodeProvisioning?.doors?.find((item) => item.doorId === door.id)?.providerCodeId;
+    let previousProviderCodeId=booking.doorCodeProvisioning?.doors?.find((item) => item.doorId === door.id)?.providerCodeId;
     try {
+      if(action==='remove'&&!previousProviderCodeId&&typeof provider.findCode==='function'){
+        const existing=await provider.findCode({door,code:String(booking.doorCode)});
+        previousProviderCodeId=existing?.providerCodeId;
+        if(!previousProviderCodeId)return {doorId:door.id,doorName:door.name,status:'removed',verification:'cloud-record',message:'Code was already absent from KK Home.'};
+      }
       const value = action === 'install'
         ? await provider.installCode({ door, code:String(booking.doorCode), name:`${booking.name || 'Guest'} · ${window.startsAt.slice(0, 10)}`, providerCodeId:previousProviderCodeId, ...window, idempotencyKey })
         : await provider.removeCode({ door, code:String(booking.doorCode), providerCodeId:previousProviderCodeId, ...window, idempotencyKey });
