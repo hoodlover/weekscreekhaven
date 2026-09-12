@@ -570,7 +570,7 @@
         state.bookings = bookingData.bookings || [];
         state.reviews = reviewData.reviews || []; state.square = bookingData.square || {}; state.rates=bookingData.rates||[]; state.discounts=discountData.discounts||[]; state.emails=emailData.templates||[]; state.emailTriggers=emailData.availableTriggers||[]; state.pricing=bookingData.pricing||PRICING_CONFIG; state.checklists={family:state.checklistDirty.family?state.checklists.family:(checklistData.family||[]),turnover:state.checklistDirty.turnover?state.checklists.turnover:(checklistData.turnover||[]),updatedAt:checklistData.updatedAt||state.checklists.updatedAt||''};
         state.knownBookingIds = new Set(state.bookings.map(item=>item.id)); state.knownAccessIds = new Set(state.access.map(item=>item.id)); if(requestedBookingId)state.openBookingIds.add(requestedBookingId); state.initialized=true;
-        state.calendarFeedUrl=calendarFeed.feedUrl;$('calendar-sync').hidden=false;$('add-google-calendar').href=`https://calendar.google.com/calendar/render?cid=${encodeURIComponent(calendarFeed.feedUrl.replace(/^https:/,'webcal:'))}`;
+        state.calendarFeedUrl=calendarFeed.feedUrl;$('calendar-sync').hidden=false;$('add-google-calendar').href=`https://calendar.google.com/calendar/u/0/r?cid=${encodeURIComponent(calendarFeed.feedUrl)}`;
         $('login').style.display = 'none'; $('dashboard').style.display = 'block'; $('open-calendar').hidden = false; $('open-hub').hidden = false; $('open-cleaner').hidden = false; $('open-handbook').hidden = false; $('enable-alerts').hidden=false; $('logout').hidden = false; updateAlertButton();
         render();openRequestedPanel();scrollToRequestedBooking();window.dispatchEvent(new Event('owner-dashboard-ready'));
       } catch (error) {
