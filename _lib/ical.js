@@ -58,6 +58,26 @@ function bookingDates(booking) {
   return booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0];
 }
 
+function bookingCalendarEntries(booking) {
+  const status = booking.status === 'approved' ? 'reserved' : (booking.status || 'pending');
+  if (booking.hiddenFromCalendar || ['cancelled', 'declined', 'expired'].includes(status)) return [];
+
+  const choices = booking.dateChoices || [];
+  if (Number.isInteger(booking.approvedChoice) || ['reserved', 'booked', 'completed'].includes(status)) {
+    const dates = bookingDates(booking);
+    return dates ? [{ dates, choice: Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0, status }] : [];
+  }
+  return choices.map((dates, choice) => ({ dates, choice, status }));
+}
+
+function bookingLabel(status) {
+  if (status === 'booked' || status === 'completed') return 'Guest stay';
+  if (status === 'reserved') return 'Reserved stay';
+  if (status === 'pending-payment') return 'Payment pending';
+  if (status === 'offered') return 'Date option';
+  return 'Booking request';
+}
+
 function bookingUpdatedAt(booking) {
   const values = [booking.updatedAt, booking.bookedAt, booking.completedAt, booking.createdAt].filter(Boolean).sort();
   return values.at(-1) || new Date(0).toISOString();
@@ -77,18 +97,19 @@ export function buildOwnerCalendar(calendar) {
   ];
 
   for (const booking of calendar.bookings || []) {
-    if (!['booked', 'completed'].includes(booking.status)) continue;
-    const dates = bookingDates(booking);
-    if (!dates) continue;
-    lines.push(...event({
-      uid: `booking-${booking.id}`,
-      createdAt: booking.createdAt,
-      updatedAt: bookingUpdatedAt(booking),
-      arrival: dates.arrival,
-      departure: dates.departure,
-      summary: `WCH — ${booking.name || 'Guest stay'}`,
-      description: `Guest stay at Weeks Creek Haven. Check-in: ${dates.arrival}. Checkout: ${dates.departure}. Owner Hub: https://owner.weekscreekhaven.com/`,
-    }));
+    for (const entry of bookingCalendarEntries(booking)) {
+      const label = bookingLabel(entry.status);
+      lines.push(...event({
+        uid: `booking-${booking.id}-choice-${entry.choice + 1}`,
+        createdAt: booking.createdAt,
+        updatedAt: bookingUpdatedAt(booking),
+        arrival: entry.dates.arrival,
+        departure: entry.dates.departure,
+        summary: `WCH — ${booking.name || label}`,
+        description: `${label} at Weeks Creek Haven. Check-in: ${entry.dates.arrival}. Checkout: ${entry.dates.departure}. Owner Hub: https://owner.weekscreekhaven.com/`,
+        status: ['booked', 'completed', 'reserved'].includes(entry.status) ? 'CONFIRMED' : 'TENTATIVE',
+      }));
+    }
   }
 
   for (const block of calendar.blocks || []) {
