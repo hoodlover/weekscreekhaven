@@ -19,11 +19,17 @@ test('builds a subscribable calendar with booked stays and owner holds', () => {
   assert.match(output, /SUMMARY:WCH — Abby\\, Family/);
   assert.match(output, /DTSTART;VALUE=DATE:20261002/);
   assert.match(output, /DTEND;VALUE=DATE:20261005/);
+  assert.match(output, /SUMMARY:Checkout — Abby\\, Family/);
+  assert.match(output, /DTSTART;VALUE=DATE:20261005/);
+  assert.match(output, /DTEND;VALUE=DATE:20261006/);
+  assert.match(output, /TRANSP:TRANSPARENT/);
   assert.match(output, /SUMMARY:WCH — Family\\; time/);
   assert.match(output, /STATUS:TENTATIVE/);
   assert.match(output, /SUMMARY:WCH — Not confirmed/);
   assert.match(output, /STATUS:TENTATIVE/);
   assert.match(output, /SUMMARY:WCH — Reserved guest/);
+  assert.match(output, /SUMMARY:Checkout — Reserved guest/);
+  assert.doesNotMatch(output, /SUMMARY:Checkout — Not confirmed/);
   assert.doesNotMatch(output, /Hidden request/);
   assert.match(output, /END:VCALENDAR\r\n$/);
 });

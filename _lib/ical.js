@@ -17,6 +17,13 @@ function date(value) {
   return /^\d{4}-\d{2}-\d{2}$/.test(String(value || '')) ? String(value).replace(/-/g, '') : '';
 }
 
+function nextDate(value) {
+  if (!date(value)) return '';
+  const parsed = new Date(`${value}T00:00:00Z`);
+  parsed.setUTCDate(parsed.getUTCDate() + 1);
+  return parsed.toISOString().slice(0, 10);
+}
+
 function fold(line) {
   const chunks = [];
   let rest = line;
@@ -36,7 +43,7 @@ function fold(line) {
   return chunks.join(CRLF);
 }
 
-function event({ uid, createdAt, updatedAt, arrival, departure, summary, description, status = 'CONFIRMED' }) {
+function event({ uid, createdAt, updatedAt, arrival, departure, summary, description, status = 'CONFIRMED', transparency = 'OPAQUE' }) {
   if (!date(arrival) || !date(departure) || departure <= arrival) return [];
   return [
     'BEGIN:VEVENT',
@@ -49,7 +56,7 @@ function event({ uid, createdAt, updatedAt, arrival, departure, summary, descrip
     `SUMMARY:${escapeText(summary)}`,
     `DESCRIPTION:${escapeText(description)}`,
     `STATUS:${status}`,
-    'TRANSP:OPAQUE',
+    `TRANSP:${transparency}`,
     'END:VEVENT',
   ];
 }
@@ -109,6 +116,18 @@ export function buildOwnerCalendar(calendar) {
         description: `${label} at Weeks Creek Haven. Check-in: ${entry.dates.arrival}. Checkout: ${entry.dates.departure}. Owner Hub: https://owner.weekscreekhaven.com/`,
         status: ['booked', 'completed', 'reserved'].includes(entry.status) ? 'CONFIRMED' : 'TENTATIVE',
       }));
+      if (['booked', 'completed', 'reserved'].includes(entry.status)) {
+        lines.push(...event({
+          uid: `booking-${booking.id}-choice-${entry.choice + 1}-checkout`,
+          createdAt: booking.createdAt,
+          updatedAt: bookingUpdatedAt(booking),
+          arrival: entry.dates.departure,
+          departure: nextDate(entry.dates.departure),
+          summary: `Checkout — ${booking.name || label}`,
+          description: `Checkout day for ${booking.name || label} at Weeks Creek Haven. Owner Hub: https://owner.weekscreekhaven.com/`,
+          transparency: 'TRANSPARENT',
+        }));
+      }
     }
   }
 
