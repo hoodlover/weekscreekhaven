@@ -1,4 +1,6 @@
 import { combinedReviews } from '../_lib/legacy-reviews.js';
+import { getBookingRequests } from '../_lib/booking-store.js';
+import { publicReviewLocation } from '../_lib/review-location.js';
 import { getReviews } from '../_lib/review-store.js';
 import { json } from '../_lib/security.js';
 
@@ -7,12 +9,15 @@ export default async function handler(request, response) {
   try {
     let storedReviews = [];
     try { storedReviews = await getReviews(); } catch (error) { console.error('Stored reviews unavailable:', error); }
+    let bookings = [];
+    try { bookings = await getBookingRequests(); } catch (error) { console.error('Booking locations unavailable:', error); }
+    const bookingsById = new Map(bookings.map((booking) => [booking.id, booking]));
     const reviews = combinedReviews(storedReviews)
       .filter((review) => review.allowTestimonial && review.publicComments)
       .map((review) => ({
         id: review.id,
         displayName: review.displayName || review.guestName,
-        location: review.location || '',
+        location: publicReviewLocation(review, bookingsById.get(review.bookingId)),
         overall: Number(review.overall) || 5,
         publicComments: review.publicComments,
         createdAt: review.createdAt,
