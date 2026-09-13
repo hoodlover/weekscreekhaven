@@ -111,6 +111,17 @@
         color: var(--pine);
         font-size: 1.03rem;
       }
+      .stage-focus {
+        margin-bottom: 24px;
+        padding: clamp(20px, 4vw, 30px);
+        border: 1px solid #c7d9cb;
+        border-left: 7px solid var(--pine);
+        border-radius: 18px;
+        background: linear-gradient(135deg, #edf5ef, #fffdf8);
+      }
+      .stage-focus .eyebrow { color: var(--rust); }
+      .stage-focus h2 { margin: 7px 0 8px; }
+      .stage-focus p { margin: 0; color: var(--muted); }
       .letter {
         padding: clamp(20px, 4vw, 34px);
         background: linear-gradient(145deg, #fff, #f7efe3);
@@ -317,32 +328,38 @@
           <p id="headline"></p>
         </header>
         <div class="inner">
+          <section id="stage-focus" class="stage-focus">
+            <div id="stage-label" class="eyebrow"></div>
+            <h2 id="stage-title"></h2>
+            <p id="stage-detail"></p>
+            <div class="actions"><a id="stage-primary" class="button"></a><a id="stage-secondary" class="button secondary"></a></div>
+          </section>
           <div class="summary">
-            <div><span>Stay</span><strong id="dates"></strong></div>
-            <div><span>Guests</span><strong id="guests"></strong></div>
-            <div><span>Check-in</span><strong>4:00 PM Eastern</strong></div>
-            <div><span>Checkout</span><strong id="checkout"></strong></div>
-            <div>
+            <div id="summary-stay"><span>Stay</span><strong id="dates"></strong></div>
+            <div id="summary-guests"><span>Guests</span><strong id="guests"></strong></div>
+            <div id="summary-checkin"><span>Check-in</span><strong>4:00 PM Eastern</strong></div>
+            <div id="summary-checkout"><span>Checkout</span><strong id="checkout"></strong></div>
+            <div id="summary-door-code">
               <span>Private door code</span><strong id="door-code"></strong>
             </div>
-            <div>
+            <div id="summary-guide-code">
               <span>Guest Guide code</span
               ><strong id="reservation-code"></strong>
             </div>
-            <div>
+            <div id="summary-stay-total">
               <span>Stay &amp; taxes</span><strong id="stay-total"></strong>
             </div>
-            <div>
+            <div id="summary-deposit">
               <span>Refundable security deposit</span
               ><strong id="security-deposit"></strong>
             </div>
-            <div><span>Total due</span><strong id="total"></strong></div>
-            <div>
+            <div id="summary-total"><span>Total due</span><strong id="total"></strong></div>
+            <div id="summary-balance">
               <span>Remaining balance</span><strong id="balance"></strong>
             </div>
           </div>
-          <h2>A note from Lance &amp; Heather</h2>
-          <section class="letter">
+          <h2 id="host-note-title">A note from Lance &amp; Heather</h2>
+          <section id="host-note" class="letter">
             <p>Dear <span id="letter-name"></span>,</p>
             <p>
               We’re so glad you’re coming to Weeks Creek Haven. We created this
@@ -360,8 +377,8 @@
               Welcome to the Haven,<br />Lance &amp; Heather
             </p>
           </section>
-          <h2>Your booking checklist</h2>
-          <div class="steps">
+          <h2 id="booking-checklist-title">Your booking checklist</h2>
+          <div id="booking-checklist" class="steps">
             <div id="payment-step" class="step">
               <span class="dot">1</span>
               <div>
@@ -390,8 +407,8 @@
               </div>
             </div>
           </div>
-          <h2>Before you head to the mountains</h2>
-          <div class="cards">
+          <h2 id="essentials-title">Before you head to the mountains</h2>
+          <div id="essentials" class="cards">
             <section class="card">
               <h3>Cabin address</h3>
               <p>421 Weeks Creek Road<br />Blue Ridge, GA 30513</p>
@@ -418,7 +435,7 @@
               </p>
             </section>
           </div>
-          <p class="notice">
+          <p id="safety-notice" class="notice">
             <strong>Mountain safety:</strong> Call 911 for emergencies. Keep
             food and trash secured from wildlife, supervise children near the
             creek and slopes, and observe all current burn restrictions. Before
@@ -426,8 +443,8 @@
             phone so your door code, directions, cabin details, and other
             essentials remain available even when cell service disappears.
           </p>
-          <h2>Your Guest Guide</h2>
-          <div class="cards">
+          <h2 id="guide-title">Your Guest Guide</h2>
+          <div id="guide-cards" class="cards">
             <a
               id="checkin-guide-link"
               class="card guide-link"
@@ -511,7 +528,7 @@
               <span>Open guide →</span></a
             >
           </div>
-          <h2>Your documents</h2>
+          <h2 id="documents-title">Your documents</h2>
           <div class="documents">
             <section class="document">
               <h3>Rental agreement</h3>
@@ -537,7 +554,7 @@
                 </button>
               </div>
             </section>
-            <section class="document">
+            <section id="guest-guide-document" class="document">
               <h3>Weeks Creek Guest Guide</h3>
               <p>
                 Your private welcome page holds the cabin-specific details
@@ -630,6 +647,35 @@
           );
           document.getElementById("checkout-guide-link").href =
             "/checkout.html?token=" + encodeURIComponent(token) + (data.cleanerScheduled ? "&cleaner=1" : "");
+          const setHidden=(ids,hidden=true)=>ids.forEach(id=>document.getElementById(id).hidden=hidden);
+          const stagePrimary=document.getElementById("stage-primary"),stageSecondary=document.getElementById("stage-secondary");
+          const setStageAction=(element,label,href)=>{element.textContent=label;element.href=href;element.hidden=!label;};
+          if(data.stayStage==="after"){
+            document.getElementById("stage-label").textContent="Stay complete";
+            document.getElementById("stage-title").textContent=`Thank you for staying with us, ${data.guestName}`;
+            document.getElementById("stage-detail").textContent=data.reviewSubmitted?"Your review has been received. We hope the Haven gave you a wonderful Blue Ridge getaway.":"We hope you had a wonderful stay. Your review and favorite memories are the most helpful things to share now.";
+            setStageAction(stagePrimary,data.reviewSubmitted?"":"Leave a review",data.reviewSubmitted?"":data.reviewUrl);
+            setStageAction(stageSecondary,"Sign the guest book",data.guestBookUrl);
+            setHidden(["host-note-title","host-note","booking-checklist-title","booking-checklist","essentials-title","essentials","safety-notice","guide-title","guide-cards","summary-checkin","summary-checkout","summary-door-code","summary-guide-code","summary-total","summary-balance","guest-guide-document"]);
+            document.getElementById("documents-title").textContent="Past stay records";
+          }else if(data.stayStage==="during"){
+            document.getElementById("stage-label").textContent="Current stay";
+            document.getElementById("stage-title").textContent="Everything you need at the cabin";
+            document.getElementById("stage-detail").textContent="Open the Guest Guide for entry, Wi-Fi, cabin help, weather, and local information. Your checkout checklist is ready whenever you need it.";
+            setStageAction(stagePrimary,"Open Guest Guide",guide);
+            setStageAction(stageSecondary,"Open checkout checklist",document.getElementById("checkout-guide-link").href);
+            setHidden(["host-note-title","host-note","booking-checklist-title","booking-checklist"]);
+            document.getElementById("essentials-title").textContent="Your stay essentials";
+            document.getElementById("guide-title").textContent="Cabin help & local guide";
+            document.getElementById("summary-door-code").hidden=!data.doorCodeAvailable||data.doorCodeRemoved;
+          }else{
+            document.getElementById("stage-label").textContent=data.booked?"Before check-in":"Reservation in progress";
+            document.getElementById("stage-title").textContent=data.booked?"Your stay is confirmed":"Finish your reservation";
+            document.getElementById("stage-detail").textContent=data.booked?"Save the Guest Guide now, review directions, and return here as your arrival gets closer.":"Complete any highlighted payment or agreement steps below to lock in your stay.";
+            setStageAction(stagePrimary,data.booked?"Open Guest Guide":"Go to next step",data.booked?guide:(data.paymentRequirementMet?agreement:(data.invoiceUrl||agreement)));
+            setStageAction(stageSecondary,data.booked?"View directions":"",data.booked?guide+"&tab=directions":"");
+            document.getElementById("summary-door-code").hidden=data.doorCodeRemoved;
+          }
           const paymentStep = document.getElementById("payment-step"),
             agreementStep = document.getElementById("agreement-step"),
             bookedStep = document.getElementById("booked-step");

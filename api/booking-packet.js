@@ -6,7 +6,14 @@ import { getInvites } from '../_lib/invite-store.js';
 import { getCleanerState } from '../_lib/cleaner-store.js';
 import { normalizeFamilyChecklist } from '../_lib/checklist-defaults.js';
 import { refreshSquareBooking } from '../_lib/payment-sync.js';
-import { bookingAccessCode, json, verifyAgreementToken } from '../_lib/security.js';
+import { bookingAccessCode, createReviewToken, json, verifyAgreementToken } from '../_lib/security.js';
+import { stayStage } from '../_lib/stay-stage.js';
+
+function easternToday() {
+  const parts = new Intl.DateTimeFormat('en-US', { timeZone:'America/New_York', year:'numeric', month:'2-digit', day:'2-digit' }).formatToParts(new Date());
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${values.year}-${values.month}-${values.day}`;
+}
 
 export default async function handler(request, response) {
   if (request.method !== 'GET') return json(response, 405, { error: 'Method not allowed.' });
@@ -33,6 +40,7 @@ export default async function handler(request, response) {
     const doorAccess = { doorCode: released ? String(booking.doorCode) : '', doorCodeAvailable: released, doorCodeReleaseText: DOOR_CODE_RELEASE_TEXT };
     const cleaningRule = booking.friendsAndFamilyDiscount || dates.quote?.friendsAndFamilyDiscount;
     const cleanerScheduled = !(cleaningRule && cleaningRule.chargeCleaning !== true);
+    const stage = stayStage({ status:booking.status, arrival:dates.arrival, departure:dates.departure }, easternToday());
     return json(response, 200, {
       guestName: guestFirstName(booking.name),
       guestFullName: booking.name || '',
@@ -46,6 +54,7 @@ export default async function handler(request, response) {
       stayAmountCents: Number(booking.stayAmountCents ?? booking.amountCents) || 0,
       securityDepositCents: Number(booking.securityDepositCents) || 0,
       status: booking.status || 'pending',
+      stayStage: stage,
       checkInTime: '4:00 PM',
       checkoutTime: friendsAndFamily ? 'Flexible — no set time' : (booking.lateCheckout ? 'noon' : '11:00 AM'),
       complimentary,
@@ -61,7 +70,11 @@ export default async function handler(request, response) {
       paymentFullyPaid: complimentary || booking.paymentFullyPaid === true,
       agreementAccepted: Boolean(booking.agreementAcceptedAt),
       agreementAcceptedAt: booking.agreementAcceptedAt || null,
-      booked: booking.status === 'booked',
+      booked: ['booked','completed'].includes(booking.status),
+      doorCodeRemoved: Boolean(booking.doorCodeRemovedAt),
+      reviewSubmitted: Boolean(booking.reviewSubmittedAt),
+      reviewUrl: `https://www.weekscreekhaven.com/review.html?token=${encodeURIComponent(createReviewToken(booking.id))}`,
+      guestBookUrl: `https://www.weekscreekhaven.com/friends-hub.html?token=${encodeURIComponent(request.query?.token || '')}&tab=guestbook`,
       ...doorAccess,
     }, { 'Cache-Control': 'no-store' });
   } catch (error) {
