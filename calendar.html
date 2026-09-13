@@ -41,7 +41,7 @@
     .month-actions { display:flex; align-items:center; gap:7px; }
     .month-actions button,.small { border:1px solid var(--line); background:white; border-radius:999px; padding:9px 12px; color:var(--ink); font-weight:800; }
     .weekdays,.calendar { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); }
-    .calendar { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--line); gap:1px; }
+    .calendar { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--line); gap:1px; touch-action:pan-y; }
     .weekdays div { padding:9px 3px; text-align:center; color:var(--muted); text-transform:uppercase; letter-spacing:.09em; font-size:.6rem; font-weight:800; }
     .day { position:relative; min-height:125px; padding:9px 9px 30px; background:#fff; overflow:hidden; }
     .day[data-price-day] { cursor:crosshair; }
@@ -199,7 +199,7 @@
     $('previous').onclick=$('previous-bottom').onclick=previousMonth;
     $('next').onclick=$('next-bottom').onclick=nextMonth;
     $('today').onclick=$('today-bottom').onclick=currentMonth;
-    let dragStart=null,dragCurrent=null,dragging=false;
+    let dragStart=null,dragCurrent=null,dragging=false,swipeStart=null;
     function paintDragSelection(){ if(!dragStart||!dragCurrent)return; const first=dragStart<dragCurrent?dragStart:dragCurrent,last=dragStart<dragCurrent?dragCurrent:dragStart; document.querySelectorAll('[data-price-day]').forEach((day)=>{ const selected=day.dataset.date>=first&&day.dataset.date<=last; day.classList.toggle('price-selected',selected); day.classList.toggle('price-checkout',selected&&day.dataset.date===last); }); }
     function finishPriceDrag(){
       if(!dragging)return; dragging=false; $('calendar').classList.remove('price-selecting');
@@ -208,9 +208,10 @@
       if(nightCount<2){ document.querySelectorAll('.price-selected,.price-checkout').forEach((day)=>day.classList.remove('price-selected','price-checkout')); alert('Select arrival through checkout for at least two nights (three calendar dates).'); return; }
       state.priceSelection={arrival,departure,nightCount}; $('rate-selection-summary').textContent=`${friendlyDate(arrival)} to ${friendlyDate(departure)} · ${nightCount} nights · the last highlighted day is checkout`; $('drag-rate-amount').value=''; $('drag-rate-error').hidden=true; $('rate-dialog').showModal();
     }
-    $('calendar').addEventListener('pointerdown',(event)=>{ if(window.matchMedia('(pointer:coarse)').matches||event.target.closest('a,button'))return; const day=event.target.closest('[data-price-day]'); if(!day||event.button!==0)return; dragStart=dragCurrent=day.dataset.date; dragging=true; $('calendar').classList.add('price-selecting'); paintDragSelection(); event.preventDefault(); });
+    $('calendar').addEventListener('pointerdown',(event)=>{ if(event.pointerType==='touch'){swipeStart={x:event.clientX,y:event.clientY,pointerId:event.pointerId};return;} if(window.matchMedia('(pointer:coarse)').matches||event.target.closest('a,button'))return; const day=event.target.closest('[data-price-day]'); if(!day||event.button!==0)return; dragStart=dragCurrent=day.dataset.date; dragging=true; $('calendar').classList.add('price-selecting'); paintDragSelection(); event.preventDefault(); });
     $('calendar').addEventListener('pointermove',(event)=>{ if(!dragging)return; const day=document.elementFromPoint(event.clientX,event.clientY)?.closest('[data-price-day]'); if(day&&day.dataset.date!==dragCurrent){ dragCurrent=day.dataset.date; paintDragSelection(); } });
-    window.addEventListener('pointerup',finishPriceDrag);
+    window.addEventListener('pointerup',(event)=>{if(swipeStart&&event.pointerId===swipeStart.pointerId){const gesture=swipeStart;swipeStart=null;const dx=event.clientX-gesture.x,dy=event.clientY-gesture.y;if(Math.abs(dx)>=55&&Math.abs(dx)>Math.abs(dy)*1.25){event.preventDefault();(dx<0?nextMonth:previousMonth)();}return;}finishPriceDrag();});
+    window.addEventListener('pointercancel',()=>{swipeStart=null;});
     $('drag-rate-mode').addEventListener('change',()=>{ const total=$('drag-rate-mode').value==='total'; $('drag-rate-label').textContent=total?'Total for selected stay':'Nightly rate'; $('drag-rate-amount').placeholder=total?'1200':'325'; $('drag-rate-helper').textContent=total?'The calendar will show one package total across arrival through checkout.':'This amount will appear in each selected night on the guest calendar.'; });
     function clearPriceSelection(){ document.querySelectorAll('.price-selected,.price-checkout').forEach((day)=>day.classList.remove('price-selected','price-checkout')); state.priceSelection=null; }
     $('drag-rate-cancel').onclick=()=>{ $('rate-dialog').close(); clearPriceSelection(); };

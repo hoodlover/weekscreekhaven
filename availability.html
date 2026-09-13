@@ -45,7 +45,7 @@
     .calendar-title h2 { color:var(--pine); font-size:2.15rem; }
     .month-actions { display:flex; align-items:center; gap:7px; }
     .weekdays,.calendar { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); }
-    .calendar { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--line); gap:1px; }
+    .calendar { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--line); gap:1px; touch-action:pan-y; }
     .calendar.selecting { user-select:none; touch-action:none; }
     .weekdays div { padding:9px 3px; text-align:center; color:var(--muted); font-size:.6rem; font-weight:800; letter-spacing:.09em; text-transform:uppercase; }
     .day { position:relative; min-height:96px; padding:9px; background:white; }
@@ -181,12 +181,13 @@
       if(!selectionIsAvailable(first,departure)){ state.selection=null; paintSelection(); $('selection-bar').hidden=true; $('selection-placeholder').hidden=false; $('selection-error').textContent='That range crosses an unavailable night. Please choose consecutive available nights.'; $('selection-error').hidden=false; return; }
       state.selection={first,last:departure,departure}; $('selection-error').hidden=true; paintSelection();
     }
-    let dragStart=null,dragCurrent=null,dragging=false;
+    let dragStart=null,dragCurrent=null,dragging=false,swipeStart=null;
     function beginSelection(dateKey){ const pending=state.selection?.pending?state.selection.first:null; dragStart=pending||dateKey; dragCurrent=dateKey; dragging=true; state.selection=null; $('selection-bar').hidden=true; $('selection-error').hidden=true; $('calendar').classList.add('selecting'); paintSelection(); }
-    $('calendar').addEventListener('pointerdown',(event)=>{ const day=event.target.closest('[data-selectable]'); if(!day||event.button!==0)return; beginSelection(day.dataset.date); event.preventDefault(); });
-    $('calendar').addEventListener('pointermove',(event)=>{ if(!dragging)return; const day=document.elementFromPoint(event.clientX,event.clientY)?.closest('[data-date]'); if(day&&day.dataset.date!==dragCurrent){ dragCurrent=day.dataset.date; paintSelection(); } });
+    $('calendar').addEventListener('pointerdown',(event)=>{ const day=event.target.closest('[data-selectable]'); if(event.pointerType==='touch'){swipeStart={x:event.clientX,y:event.clientY,pointerId:event.pointerId,date:day?.dataset.date||''};return;} if(!day||event.button!==0)return; beginSelection(day.dataset.date); event.preventDefault(); });
+    $('calendar').addEventListener('pointermove',(event)=>{ if(event.pointerType==='touch'||!dragging)return; const day=document.elementFromPoint(event.clientX,event.clientY)?.closest('[data-date]'); if(day&&day.dataset.date!==dragCurrent){ dragCurrent=day.dataset.date; paintSelection(); } });
     $('calendar').addEventListener('keydown',(event)=>{ if(!['Enter',' '].includes(event.key))return; const day=event.target.closest('[data-selectable]'); if(!day)return; event.preventDefault(); beginSelection(day.dataset.date); finishSelection(); });
-    window.addEventListener('pointerup',finishSelection);
+    window.addEventListener('pointerup',(event)=>{ if(swipeStart&&event.pointerId===swipeStart.pointerId){const gesture=swipeStart;swipeStart=null;const dx=event.clientX-gesture.x,dy=event.clientY-gesture.y;if(Math.abs(dx)>=55&&Math.abs(dx)>Math.abs(dy)*1.25){event.preventDefault();(dx<0?nextMonth:previousMonth)();return;}if(gesture.date&&Math.abs(dx)<14&&Math.abs(dy)<14){beginSelection(gesture.date);finishSelection();}return;}finishSelection(); });
+    window.addEventListener('pointercancel',()=>{swipeStart=null;});
     $('clear-selection').onclick=clearSelection;
     $('calendar-guests').addEventListener('change',()=>{ if(dragging||state.selection)paintSelection(); });
     $('calendar-late-checkout').addEventListener('change',()=>{ if(dragging||state.selection)paintSelection(); });
