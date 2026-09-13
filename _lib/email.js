@@ -22,6 +22,7 @@ const GUEST_TEMPLATE_ACTIONS = {
   'checkout-reminder':[['checkoutChecklistUrl','Open checkout checklist']],
   'checkout-checklist-followup':[['checkoutChecklistUrl','Open checkout checklist']],
   'thank-you-review':[['reviewUrl','Rate your stay'],['guestBookUrl','Sign the guest book']],
+  'review-update-invitation':[['reviewUrl','Update your review']],
   'return-referral-offer':[['bookingUrl','Book another stay']],
 };
 

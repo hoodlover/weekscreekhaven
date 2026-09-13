@@ -26,15 +26,18 @@ export default async function handler(request, response) {
     const rawToken = request.method === 'GET' ? request.query?.token : request.body?.token;
     const context = await reviewContext(rawToken);
     if (!context) return json(response, 404, { error: 'This review link is invalid or has expired.' });
+    const canEdit = Boolean(context.existing && context.booking.reviewEditExpiresAt && Date.parse(context.booking.reviewEditExpiresAt) > Date.now());
     if (request.method === 'GET') {
       return json(response, 200, {
         guestName: context.booking.name,
         dates: context.dates,
         submitted: Boolean(context.existing),
+        canEdit,
+        review: canEdit ? context.existing : undefined,
       }, { 'Cache-Control': 'no-store' });
     }
     if (request.method !== 'POST') return json(response, 405, { error: 'Method not allowed.' });
-    if (context.existing) return json(response, 409, { error: 'Thank you — a review has already been submitted from this link.' });
+    if (context.existing && !canEdit) return json(response, 409, { error: 'Thank you — a review has already been submitted from this link.' });
 
     const overall = rating(request.body?.overall);
     if (!overall) return json(response, 400, { error: 'Choose an overall star rating.' });
@@ -53,10 +56,12 @@ export default async function handler(request, response) {
       privateComments: safeText(request.body?.privateComments, 1500),
       allowTestimonial: request.body?.allowTestimonial === true,
       createdAt: new Date().toISOString(),
+      revisionOf: context.existing?.id || null,
+      revisionNumber: context.existing ? Number(context.existing.revisionNumber || 1) + 1 : 1,
     };
     if (!review.publicComments && !review.privateComments) return json(response, 400, { error: 'Add a short note about the stay.' });
     await appendReview(review);
-    await appendBookingRecord({ type: 'status', bookingId: context.booking.id, changes: { reviewSubmittedAt: review.createdAt, reviewRating: overall }, createdAt: review.createdAt });
+    await appendBookingRecord({ type: 'status', bookingId: context.booking.id, changes: { reviewSubmittedAt: review.createdAt, reviewRating: overall, reviewEditExpiresAt:null, reviewUpdatedAt:context.existing ? review.createdAt : null }, createdAt: review.createdAt });
     return json(response, 201, { ok: true });
   } catch (error) {
     console.error(error);

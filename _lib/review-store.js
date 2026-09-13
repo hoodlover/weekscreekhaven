@@ -41,3 +41,13 @@ export async function getReviews() {
   } while (cursor);
   return reviews.sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
 }
+
+export function currentReviewVersions(reviews = []) {
+  const current = new Map();
+  for (const review of reviews) {
+    const key = review.bookingId || review.id;
+    if (!current.has(key)) current.set(key, { ...review, previousVersions: [] });
+    else current.get(key).previousVersions.push(review);
+  }
+  return [...current.values()];
+}
