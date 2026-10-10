@@ -1,5 +1,6 @@
 import { get, list, put } from '@vercel/blob';
 import { decryptRecord, encryptRecord } from './security.js';
+import { readCalendarSync } from './calendar-sync.js';
 
 const PREFIX = 'secure-bookings/records/';
 
@@ -44,7 +45,7 @@ async function getRecords() {
 }
 
 export async function getBookingCalendar() {
-  const records = await getRecords();
+  const [records, calendarSync] = await Promise.all([getRecords(), readCalendarSync()]);
   const requests = new Map();
   const blocks = new Map();
   const rates = new Map();
@@ -81,6 +82,7 @@ export async function getBookingCalendar() {
     return inquiryExpiresAt ? { ...booking, inquiryExpiresAt } : booking;
   });
   return {
+    externalEntries: calendarSync.entries || [],
     bookings: bookings.sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
     blocks: [...blocks.values()].sort((a, b) => a.arrival.localeCompare(b.arrival)),
     defaultNightlyRateCents,
@@ -109,5 +111,5 @@ export function unavailableRanges(calendar) {
     const dates = booking.dateChoices?.[Number.isInteger(booking.approvedChoice) ? booking.approvedChoice : 0];
     return dates ? [{ ...dates, type: status, label: booking.name, bookingId: booking.id }] : [];
   });
-  return [...bookingRanges, ...calendar.blocks.filter((block) => block.holdType !== 'flexible').map((block) => ({ ...block, type: 'blocked' }))];
+  return [...bookingRanges, ...calendar.blocks.filter((block) => block.holdType !== 'flexible').map((block) => ({ ...block, type: 'blocked' })), ...(calendar.externalEntries || []).map(entry => ({...entry,type:'blocked'}))];
 }
