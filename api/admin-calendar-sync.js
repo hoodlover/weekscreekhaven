@@ -9,7 +9,7 @@ export default async function handler(request, response) {
   try {
     let saved = await readCalendarSync();
     if (request.method === 'POST' || (cron && saved.feedUrl)) saved = await refreshCalendarSync(request.body?.feedUrl);
-    const exportUrl = `https://www.weekscreekhaven.com/api/channel-calendar-feed?token=${encodeURIComponent(createCalendarFeedToken())}`;
+    const exportUrl = `https://www.weekscreekhaven.com/calendar/availability.ics?token=${encodeURIComponent(createCalendarFeedToken())}`;
     return json(response,200,{ connected:Boolean(saved.feedUrl), syncedAt:saved.syncedAt || null, count:saved.entries?.length || 0, exportUrl },{'Cache-Control':'private, no-store'});
   } catch { return json(response,503,{error:'Calendar sync could not refresh. Existing blocked dates have been kept. Check the Airbnb .ics link and try again.'}); }
 }

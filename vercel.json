@@ -1,4 +1,5 @@
 {
+  "rewrites": [{ "source": "/calendar/availability.ics", "destination": "/api/channel-calendar-feed" }],
   "crons": [
     { "path": "/api/admin-calendar-sync", "schedule": "*/5 * * * *" },
     { "path": "/api/email-scheduler", "schedule": "0 * * * *" },
