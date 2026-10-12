@@ -140,7 +140,7 @@ import { money } from '/pricing.js';
       if(conflict){
         fieldset.classList.add('unavailable'); status.classList.add('conflict'); text.textContent='These dates overlap a reserved or blocked stay. Choose another arrival and checkout above.';status.append(text);
       }else{
-        status.classList.add('available'); text.textContent='These dates are currently available. Review your price below, then continue to your details.'; status.append(text);
+        status.classList.add('available'); text.textContent='These dates are currently available. Review your price, then continue to your details.'; status.append(text);
       }
       status.hidden=false; return conflict;
     }
