@@ -1,3 +1,5 @@
+import { matchingGuestDiscount } from './guest-identity.js';
+
 export const PRICING_CONFIG = Object.freeze({
   currency: 'USD',
   maxGuests: 11,
@@ -247,20 +249,9 @@ export function quoteStay({ arrival, departure, guests = 1, dogs = 0, rates = []
   });
 }
 
-function normalizedPhone(value) {
-  const digits = String(value || '').replace(/\D/g, '');
-  return digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : digits;
-}
-
-function matchingDiscount(phone, discounts = []) {
-  const target = normalizedPhone(phone);
-  if (target.length !== 10) return null;
-  return discounts.find((rule) => rule.matchType === 'phone' && rule.target === target) || null;
-}
-
-export function applyFriendsAndFamilyDiscount(quote, phone, discounts = []) {
+export function applyFriendsAndFamilyDiscount(quote, identity, discounts = []) {
   if (!quote) return null;
-  const rule = matchingDiscount(phone, discounts);
+  const rule = matchingGuestDiscount(identity, discounts);
   if (!rule) return quote;
   const noChargeStay = rule.discountType === 'complimentary';
   const cleaningFeeCents = !noChargeStay && rule.chargeCleaning ? 17500 : 0;

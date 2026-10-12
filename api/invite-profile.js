@@ -2,6 +2,7 @@ import { getInvites } from '../_lib/invite-store.js';
 import { getBookingCalendar } from '../_lib/booking-store.js';
 import { createAgreementToken, json, requireInvite } from '../_lib/security.js';
 import { findInviteBooking } from '../_lib/booking-invite.js';
+import { matchingGuestDiscount } from '../guest-identity.js';
 
 export default async function handler(request, response) {
   if (request.method !== 'GET') return json(response, 405, { error: 'Method not allowed.' });
@@ -18,8 +19,7 @@ export default async function handler(request, response) {
     const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
     const todayValues = Object.fromEntries(parts.map((part) => [part.type, part.value]));
     const today = `${todayValues.year}-${todayValues.month}-${todayValues.day}`;
-    const invitePhone = String(booking?.phone || invite.recipientPhone || '').replace(/\D/g, '').replace(/^1(?=\d{10}$)/, '');
-    const privatePricingConnected = invitePhone.length === 10 && (calendar.discounts || []).some((rule) => rule.matchType === 'phone' && rule.target === invitePhone);
+    const privatePricingConnected = Boolean(matchingGuestDiscount({ phone: invite.recipientPhone, email: invite.recipientEmail }, calendar.discounts || []));
     return json(response, 200, {
       visitorName: session.visitorName,
       inviteLabel: invite.label,

@@ -1,20 +1,28 @@
 import { appendBookingRecord, getBookingCalendar } from '../_lib/booking-store.js';
-import { json, requireAdmin } from '../_lib/security.js';
+import { json, requireAdmin, sameOriginRequest } from '../_lib/security.js';
 import { roundUpCents } from '../pricing.js';
+import { normalizedPhone as normalizePhone, normalizedEmail, discountPhone, discountEmail } from '../guest-identity.js';
 
 const safeText = (value, max = 120) => String(value || '').trim().slice(0, max);
 
-function normalizePhone(value) {
-  const digits = String(value || '').replace(/\D/g, '');
-  const normalized = digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : digits;
-  return normalized.length === 10 ? normalized : '';
+function contactValues(phoneValue, emailValue) {
+  const phone = normalizePhone(phoneValue), email = normalizedEmail(emailValue);
+  if ((String(phoneValue || '').trim() && !phone) || (String(emailValue || '').trim() && !email) || (!phone && !email)) throw new Error('Add a valid 10-digit phone number or email. You may save both.');
+  return { matchType: phone ? 'phone' : 'email', target: phone || email, email };
 }
 
-function parsePhoneLine(value) {
-  const line = String(value || '').trim();
-  const target = normalizePhone(line);
-  const guestName = safeText(line.replace(/^\s*(?:\+?1[\s().-]*)?(?:\(?\d{3}\)?[\s.-]*)\d{3}[\s.-]*\d{4}\s*/, ''), 60);
-  return { target, guestName };
+function parseContactLine(value) {
+  let line = String(value || '').trim();
+  const emailToken = line.match(/\S+@\S+/)?.[0] || '';
+  if (emailToken) line = line.replace(emailToken, '').trim();
+  const phoneToken = line.match(/^(?:\+?1[\s().-]*)?(?:\(?\d{3}\)?[\s.-]*)\d{3}[\s.-]*\d{4}(?=\s|$)/)?.[0] || '';
+  if (phoneToken) line = line.slice(phoneToken.length).trim();
+  if (!phoneToken && /^\+?\d/.test(line)) throw new Error('A phone number is incomplete. Use one contact per line: phone, optional email, then welcome name.');
+  return { ...contactValues(phoneToken, emailToken), guestName: safeText(line, 60) };
+}
+
+function contactsOverlap(a, b) {
+  return Boolean((discountPhone(a) && discountPhone(a) === discountPhone(b)) || (discountEmail(a) && discountEmail(a) === discountEmail(b)));
 }
 
 function pricingValues(body) {
@@ -42,6 +50,7 @@ function pricingValues(body) {
 
 export default async function handler(request, response) {
   if (!requireAdmin(request)) return json(response, 401, { error: 'Please sign in as the site owner.' });
+  if (request.method !== 'GET' && !sameOriginRequest(request)) return json(response, 403, { error: 'Open the owner page directly from this website.' });
   try {
     if (request.method === 'GET') {
       const calendar = await getBookingCalendar();
@@ -65,34 +74,33 @@ export default async function handler(request, response) {
     const createdAt = new Date().toISOString();
     if (request.method === 'POST') {
       const suppliedTargets = String(request.body?.target || '').split(/[\n,;]+/).map((value) => value.trim()).filter(Boolean);
-      const parsedTargets = suppliedTargets.map(parsePhoneLine);
-      if (!parsedTargets.length) return json(response, 400, { error: 'Enter at least one valid 10-digit phone number.' });
-      if (parsedTargets.some((item) => !item.target)) return json(response, 400, { error: 'At least one phone number is incomplete. Use one 10-digit U.S. number and display name on each line.' });
+      let parsedTargets;
+      try { parsedTargets = suppliedTargets.map(parseContactLine); } catch (error) { return json(response, 400, { error: error.message }); }
+      if (!parsedTargets.length) return json(response, 400, { error: 'Enter at least one phone number or email.' });
       let values;
       try { values = pricingValues(request.body); } catch (error) { return json(response, 400, { error: error.message }); }
       const calendar = await getBookingCalendar();
-      const existing = new Set((calendar.discounts || []).filter((rule) => rule.matchType === 'phone').map((rule) => rule.target));
-      const uniqueTargets = [...new Map(parsedTargets.map((item) => [item.target, item])).values()].filter((item) => !existing.has(item.target));
-      if (!uniqueTargets.length) return json(response, 409, { error: 'Every phone number entered already has a rule. Remove an old rule before replacing it.' });
-      const discounts = uniqueTargets.map(({ target, guestName }) => ({
-        id: crypto.randomUUID(), matchType: 'phone', target, guestName, ...values,
+      const existing = calendar.discounts || [];
+      if (parsedTargets.some((contact, index) => [...existing, ...parsedTargets.slice(0, index)].some((other) => contactsOverlap(contact, other)))) return json(response, 409, { error: 'A phone number or email already belongs to a contact. Edit that contact, or remove the duplicate line.' });
+      const discounts = parsedTargets.map((contact) => ({
+        id: crypto.randomUUID(), ...contact, ...values,
         createdAt,
       }));
       for (const discount of discounts) await appendBookingRecord({ type: 'discount_created', discount, createdAt });
-      return json(response, 201, { discounts, skipped: parsedTargets.length - uniqueTargets.length });
+      return json(response, 201, { discounts, skipped: 0 });
     }
     if (request.method === 'PATCH') {
       const discountId = safeText(request.body?.discountId, 80);
       const calendar = await getBookingCalendar();
       const current = (calendar.discounts || []).find((rule) => rule.id === discountId);
       if (!current) return json(response, 404, { error: 'Friends & Family contact not found.' });
-      const target = normalizePhone(request.body?.target);
+      let contact;
+      try { contact = contactValues(request.body?.target, request.body?.email ?? discountEmail(current)); } catch (error) { return json(response, 400, { error: error.message }); }
       const guestName = safeText(request.body?.guestName, 60);
-      if (!target) return json(response, 400, { error: 'Enter a complete 10-digit U.S. phone number.' });
-      if ((calendar.discounts || []).some((rule) => rule.id !== discountId && rule.target === target)) return json(response, 409, { error: 'That phone number already belongs to another contact.' });
+      if ((calendar.discounts || []).some((rule) => rule.id !== discountId && contactsOverlap(rule, contact))) return json(response, 409, { error: 'That phone number or email already belongs to another contact.' });
       let values;
       try { values = pricingValues(request.body); } catch (error) { return json(response, 400, { error: error.message }); }
-      const discount = { ...current, matchType: 'phone', target, guestName, ...values, updatedAt: createdAt };
+      const discount = { ...current, ...contact, guestName, ...values, updatedAt: createdAt };
       await appendBookingRecord({ type: 'discount_updated', discount, createdAt });
       return json(response, 200, { discount });
     }

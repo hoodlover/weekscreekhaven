@@ -1,10 +1,10 @@
 import { appendBookingRecord, getBookingCalendar, rangesOverlap, unavailableRanges } from '../_lib/booking-store.js';
 import { emailConfigured, escapeEmailHtml, sendEmail } from '../_lib/email.js';
 import { createAgreementToken, enforceRateLimit, json, rateLimitJson, requireInvite, sameOriginRequest } from '../_lib/security.js';
-import { applyFriendsAndFamilyDiscount, money, quoteStay } from '../pricing.js';
+import { money } from '../pricing.js';
 import { automaticallyApproveBooking } from '../_lib/auto-booking.js';
 import { getInvites } from '../_lib/invite-store.js';
-import { applyInviteComplimentary } from '../_lib/invite-pricing.js';
+import { guestQuote, totalWithDeposit, validStayDates } from '../_lib/guest-quote.js';
 
 const text = (value, max = 240) => String(value || '').trim().slice(0, max);
 const emailValue = (value) => {
@@ -42,7 +42,7 @@ export default async function handler(request, response) {
     const email = emailValue(activeInvite?.recipientEmail || request.body?.email);
     const first = dateChoice(request, 1);
     if (name.length < 2 || !email) return json(response, 400, { error: 'Add your name and a valid email address.' });
-    if (!first.arrival || !first.departure || first.departure <= first.arrival) {
+    if (!validStayDates(first.arrival, first.departure)) {
       return json(response, 400, { error: 'Choose a valid arrival and departure.' });
     }
     if (nights(first) < 1) return json(response, 400, { error: 'Choose at least one night. One-night stays are billed at the two-night minimum price.' });
@@ -75,9 +75,7 @@ export default async function handler(request, response) {
   if (guests > 1 && guestNames.length < 2) return json(response, 400, { error: 'List the other registered guests in your party.' });
     const lateCheckout = ['1', 'true', 'on', true, 1].includes(request.body?.lateCheckout);
     const dateChoices = [first].map((choice) => {
-      const standardQuote = quoteStay({ ...choice, guests, dogs, lateCheckout, rates: calendar.rates || [] });
-      const discountedQuote = applyFriendsAndFamilyDiscount(standardQuote, phone, calendar.discounts || []);
-      const quote = applyInviteComplimentary(discountedQuote, activeInvite);
+      const quote = guestQuote({ ...choice, guests, dogs, lateCheckout, phone, email }, calendar, activeInvite);
       return { ...choice, amountCents: quote.totalCents, quote };
     });
     const unavailableChoices = dateChoices.map((choice) => unavailable.some((range) => rangesOverlap(choice, range)));
@@ -85,6 +83,7 @@ export default async function handler(request, response) {
       const choices = unavailableChoices.map((blocked, index) => blocked ? `choice ${index + 1}` : '').filter(Boolean).join(' and ');
       return json(response, 409, { error: `Your ${choices} overlaps dates that are already reserved. Please choose another option.`, unavailableChoices });
     }
+    if (request.body?.reviewedTotalCents !== undefined && Number(request.body.reviewedTotalCents) !== totalWithDeposit(dateChoices[0].quote)) return json(response, 409, { error: 'Your price has changed. Review the updated total before continuing.', priceChanged: true });
     const createdAt = new Date().toISOString();
     const inquiryExpiresAt = bookingIntent === 'questions' ? new Date(Date.parse(createdAt) + 48 * 60 * 60 * 1000).toISOString() : null;
     const booking = {
@@ -157,6 +156,7 @@ export default async function handler(request, response) {
     const bookingPacketUrl = bookingIntent === 'questions' ? null : `/booking-packet.html?token=${encodeURIComponent(createAgreementToken(booking.id, 365 * 86400))}`;
     return json(response, 201, { ok: true, requestId: booking.id, autoApproved:Boolean(approvedBooking.autoApproved), questionsOnly:bookingIntent==='questions', paymentUrl:approvedBooking.paymentUrl||null, bookingPacketUrl, confirmationSent, quotes: dateChoices.map((choice) => choice.quote) });
   } catch (error) {
+    if (error.status === 409) return json(response, 409, { error: error.message });
     console.error(error);
     return json(response, 503, { error: 'We could not save that request. Please try again.' });
   }

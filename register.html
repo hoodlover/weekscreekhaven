@@ -203,43 +203,62 @@
 </head>
 <body>
   <div class="page">
-    <header class="top"><div class="brand"><a href="/index.html" aria-label="Weeks Creek Haven home"><img src="webpic/weeks-creek-haven-round-logo.png" alt="Weeks Creek Haven"></a><span class="brand-name"><span>Weeks Creek</span><span>Haven</span></span></div><div class="top-actions"><a class="home" href="/availability.html">View calendar</a><a class="home" href="/index.html">Home</a><a class="home admin-pill" href="https://owner.weekscreekhaven.com/">H&amp;L</a></div></header>
+    <header class="top"><div class="brand"><a href="/index.html" aria-label="Weeks Creek Haven home"><img src="webpic/weeks-creek-haven-round-logo.png" alt="Weeks Creek Haven"></a><span class="brand-name"><span>Weeks Creek</span><span>Haven</span></span></div><div class="top-actions"><a class="home" href="#dates-heading" id="back-to-dates">Dates &amp; price</a><a class="home" href="/index.html">Home</a><a class="home admin-pill" href="https://owner.weekscreekhaven.com/">H&amp;L</a></div></header>
     <main class="layout">
       <section class="intro">
         <div class="eyebrow">Your Blue Ridge stay</div>
         <h1><span class="hero-line">Pick your dates.</span><span class="hero-line">Picture the rest.</span></h1>
-        <p>Choose available dates and see the complete price immediately. Your reservation details, Square invoice, and rental agreement are created when you continue—your dates remain open to others until payment and the agreement are complete.</p>
-        <p class="intro-actions"><a class="home" href="/availability.html">See available dates &amp; nightly rates</a><a class="home savings-trigger" href="#ways-to-save" data-savings-open>Ways to save on your stay</a></p>
-        <h3 class="next-title">What happens next</h3>
+        <p>Find your dates and see the full price in one place. Have a guest profile? Your phone number or email checks for a discount from Lance and Heather.</p>
+        <h3 class="next-title">Plan your stay</h3>
         <div class="steps">
-          <div class="step"><b>1</b><span><span class="inline-action">Choose available dates</span> and review the stay price, taxes, government fees, and any applicable refundable security deposit.</span></div>
-          <div class="step"><b>2</b><span>Click <span class="inline-action">Book Now</span> to receive your private reservation details, Square invoice, and rental agreement immediately.</span></div>
-          <div class="step"><b>3</b><span>Your dates remain available to other guests until both the <span class="inline-action">required payment and rental agreement</span> are complete.</span></div>
-          <div class="step"><b>4</b><span>The first guest to complete both steps <span class="inline-action">locks in</span> the dates. The remaining balance is due seven days before check-in.</span></div>
-          <div class="step"><b>5</b><span>Need more time or have a question? Choose <span class="inline-action">Inquire</span> to send Lance and Heather your dates and question without reserving the dates yet.</span></div>
+          <div class="step"><b>1</b><span>Choose available dates and see your discount, stay charges, taxes, and refundable deposit together.</span></div>
+          <div class="step"><b>2</b><span>Happy with the price? Continue to add your details and book or ask a question.</span></div>
+          <div class="step"><b>3</b><span>Complete your rental agreement and any required payment to secure your dates.</span></div>
         </div>
       </section>
 
-      <form id="booking-form" class="card">
-        <div class="eyebrow">Secure direct booking</div>
-        <h2>Choose your stay by the creek</h2>
+      <form id="booking-form" class="card" novalidate>
+        <div id="form-message" class="message" hidden role="status"></div>
+        <section id="dates-step" aria-labelledby="dates-heading">
+        <div class="eyebrow">Step 1 · Dates &amp; price</div>
+        <h2 id="dates-heading" tabindex="-1">Choose your dates. See your price.</h2>
+        <p id="guest-welcome" class="helper" role="status">Choose available dates to see your full price before filling out a booking form.</p>
+        <button id="check-profile" class="clear-choice" type="button">Check your profile discount · phone or email</button>
         <div class="minimum">One-night stays available &middot; two-night minimum charge</div>
-        <p class="helper">Choose your dates and guest count to see the price immediately. One-night stays are welcome but billed at the two-night minimum price. Continuing creates your reservation details but does not charge a card. Your dates are secured only after both payment and the rental agreement are complete.</p>
-        <section class="confidence-panel" aria-labelledby="confidence-title">
-          <h3 class="confidence-title" id="confidence-title">Book with confidence</h3>
-          <div class="confidence-grid">
-            <div class="confidence-item"><strong>No surprise charge</strong><span>Continuing never charges a card. You choose when to pay securely through Square.</span></div>
-            <div class="confidence-item"><strong>See the full total</strong><span>The live estimate includes stay charges, taxes, government fees, and any applicable refundable deposit.</span></div>
-            <div class="confidence-item"><strong>Secure final step</strong><span>The first guest to complete payment and the signed agreement secures the dates.</span></div>
-          </div>
-        </section>
         <div id="calendar-selection" class="message picked" hidden role="status"></div>
         <div class="grid">
-          <label>Mobile phone<input name="phone" type="tel" autocomplete="tel" maxlength="40" placeholder="555 867-5309" required><small class="field-note">Enter this first. It checks Friends &amp; Family pricing and helps recognize returning guests.</small></label>
+          <label>Number of guests<select id="guest-count" name="guests" required><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></label>
+          <label id="dog-field" hidden>Dogs <small>(approved guests)</small><select id="dog-count" name="dogs"><option value="0">None</option><option value="1">1 dog</option><option value="2">2 dogs</option><option value="3">3 dogs</option><option value="4">4 dogs</option></select></label>
+        </div>
+        <label class="check"><input id="late-checkout" name="lateCheckout" type="checkbox" value="1"><span><strong>Add noon checkout for $50.</strong> Standard checkout is 11:00 AM. Check-in begins at 4:00 PM.</span></label>
+        <fieldset id="choice-1" class="choice">
+          <legend>Choose your dates</legend>
+          <input name="arrival1" type="hidden"><input name="departure1" type="hidden">
+          <div class="calendar-picker" data-calendar="1">
+            <div class="calendar-toolbar"><button class="calendar-nav" type="button" data-calendar-prev="1" aria-label="Show previous months">&#8592;</button><p class="calendar-prompt" id="calendar-prompt-1">Loading live availability&hellip;</p><button class="calendar-nav" type="button" data-calendar-next="1" aria-label="Show next months">&#8594;</button></div>
+            <div class="calendar-months" id="calendar-months-1" aria-live="polite"></div>
+            <div class="calendar-legend"><span class="calendar-key"><i class="calendar-swatch"></i>Available</span><span class="calendar-key"><i class="calendar-swatch requested"></i>Booking started &middot; dates still open</span><span class="calendar-key"><i class="calendar-swatch deposit-pending"></i>Payment pending &middot; dates still open</span><span class="calendar-key"><i class="calendar-swatch blocked"></i>Unavailable night</span><span class="calendar-key"><i class="calendar-swatch selected"></i>Arrival / checkout</span><span class="calendar-key"><i class="calendar-swatch range"></i>Your stay</span></div>
+            <div class="calendar-summary" id="calendar-summary-1">Choose an arrival date, then choose your checkout date.</div>
+            <div class="calendar-price" id="calendar-price-1" hidden><div class="calendar-price-main"><span>Estimated total</span><strong></strong></div><div class="calendar-price-detail"><span></span><strong class="calendar-deposit-note"></strong></div><p class="calendar-season" id="profile-discount"></p></div>
+            <div class="discount-picker"><label>Optional special offer<select id="discount-request-1" name="discountRequest1" data-discount-request="1"><option value="">No special offer request</option><option>Pay in full · ask about 10% off</option><option>Returning guest · use my return code</option><option>Guest referral · use my referral code</option><option>Rebook before checkout · ask about 15% off next stay</option></select></label><p id="possible-savings-1" class="possible-savings">Choose dates and an offer to see possible savings.</p></div>
+          </div>
+          <div id="availability-1" class="availability-status" hidden role="status"></div>
+        </fieldset>
+        <p id="price-status" class="helper" role="status" aria-live="polite">Select arrival and checkout to see your total.</p>
+        <button id="retry-price" type="button" class="clear-choice" hidden>Try price again</button>
+        <button id="continue-dates" type="button" disabled>Continue with these dates</button>
+        <p class="fine">Next, add your details to book or ask a question. Choosing dates does not send a request or charge a card.</p>
+        </section>
+        <section id="details-step" aria-labelledby="details-heading" hidden>
+        <div class="eyebrow">Step 2 · Your details</div>
+        <h2 id="details-heading" tabindex="-1">Make this stay yours</h2>
+        <div id="reviewed-stay" class="message picked" role="status"></div>
+        <button id="edit-dates" class="clear-choice" type="button">Edit dates or review price</button>
+        <p class="helper">Add your booking details below, then choose Book now or Inquire. Your phone and email are both needed for booking communication.</p>
+        <div class="grid">
+          <label>Mobile phone<input name="phone" type="tel" autocomplete="tel" maxlength="40" placeholder="555 867-5309" required><small class="field-note">We use your phone number to check your guest profile discount and contact you about your stay.</small></label>
           <label>Email address<input name="email" type="email" autocomplete="email" maxlength="160" required><small class="field-note">Returning details fill only when both phone and email match a prior booking.</small></label>
           <label>Primary guest legal name<input name="name" autocomplete="name" maxlength="100" required><small class="field-note">Must match the booking guest’s photo ID if verification is requested.</small></label>
-          <label>Number of guests<select id="guest-count" name="guests" required><option value="">Choose</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></label>
-          <label id="dog-field" hidden>Dogs <small>(approved guests)</small><select id="dog-count" name="dogs"><option value="0">None</option><option value="1">1 dog</option><option value="2">2 dogs</option><option value="3">3 dogs</option><option value="4">4 dogs</option></select></label>
         </div>
         <div class="grid">
           <label>Billing street address<input name="billingAddress" autocomplete="address-line1" maxlength="160" required></label>
@@ -249,19 +268,6 @@
           <label>Vehicles<select name="vehicleCount" required><option value="">Choose</option><option value="0">No vehicle</option><option value="1">1 vehicle</option><option value="2">2 vehicles</option><option value="3">3 vehicles</option><option value="4">4 vehicles</option></select></label>
         </div>
         <label>Other registered guests <small>(required for parties of 2+)</small><textarea name="guestNames" rows="2" maxlength="500" placeholder="List the other adults and children staying at the cabin."></textarea></label>
-        <fieldset id="choice-1" class="choice">
-          <legend>Choose your dates</legend>
-          <input name="arrival1" type="hidden"><input name="departure1" type="hidden">
-          <div class="calendar-picker" data-calendar="1">
-            <div class="calendar-toolbar"><button class="calendar-nav" type="button" data-calendar-prev="1" aria-label="Show previous months">&#8592;</button><p class="calendar-prompt" id="calendar-prompt-1">Loading live availability&hellip;</p><button class="calendar-nav" type="button" data-calendar-next="1" aria-label="Show next months">&#8594;</button></div>
-            <div class="calendar-months" id="calendar-months-1" aria-live="polite"></div>
-            <div class="calendar-legend"><span class="calendar-key"><i class="calendar-swatch"></i>Available</span><span class="calendar-key"><i class="calendar-swatch requested"></i>Booking started &middot; dates still open</span><span class="calendar-key"><i class="calendar-swatch deposit-pending"></i>Payment pending &middot; dates still open</span><span class="calendar-key"><i class="calendar-swatch blocked"></i>Unavailable night</span><span class="calendar-key"><i class="calendar-swatch selected"></i>Arrival / checkout</span><span class="calendar-key"><i class="calendar-swatch range"></i>Your stay</span></div>
-            <div class="calendar-summary" id="calendar-summary-1">Choose an arrival date, then choose your checkout date.</div>
-            <div class="calendar-price" id="calendar-price-1" hidden><div class="calendar-price-main"><span>Live stay estimate</span><strong></strong></div><div class="calendar-price-detail"><span></span><strong class="calendar-deposit-note"></strong></div><p class="calendar-season"></p></div>
-            <div class="discount-picker"><label>Optional special offer<select id="discount-request-1" name="discountRequest1" data-discount-request="1"><option value="">No special offer request</option><option>Pay in full · ask about 10% off</option><option>Returning guest · use my return code</option><option>Guest referral · use my referral code</option><option>Rebook before checkout · ask about 15% off next stay</option></select></label><p id="possible-savings-1" class="possible-savings">Choose dates and an offer to see possible savings.</p></div>
-          </div>
-          <div id="availability-1" class="availability-status" hidden role="status"></div><div id="quote-1" class="stay-quote" hidden><strong></strong><span></span></div>
-        </fieldset>
         <fieldset id="friends-payment" class="choice booking-intent" hidden>
           <legend>Friends &amp; Family payment</legend>
           <div class="booking-intent-options">
@@ -270,7 +276,6 @@
           </div>
           <p class="booking-intent-help">The $25 payment secures your dates. Pay the rest whenever you like through the same Square invoice, with the remaining balance due seven days before arrival. If arrival is already within seven days, the full total is due today. Both choices include a separate $50 refundable security deposit.</p>
         </fieldset>
-        <label class="check"><input id="late-checkout" name="lateCheckout" type="checkbox" value="1"><span><strong>Add noon checkout for $50.</strong> Standard checkout is 11:00 AM. Check-in begins at 4:00 PM.</span></label>
         <div class="grid">
           <label>How did you find us?<select name="relationship"><option value="">Choose one</option><option>Family</option><option>Friend</option><option>Friend of a friend</option><option>Previous guest</option><option>Found the cabin online</option><option>Other</option></select></label>
           <label>Reference (optional)<input name="reference" maxlength="160" placeholder="Who sent you our way?"></label>
@@ -287,253 +292,24 @@
         <input name="formStartedAt" type="hidden">
         <label class="honeypot">Website<input name="website" tabindex="-1" autocomplete="off"></label>
         <button id="submit" type="submit">Start secure checkout</button>
-        <div id="form-message" class="message" hidden role="status"></div>
-        <p class="fine">Displayed estimates include the standard $200 cleaning cost and any larger-group cleaning adjustment. Eligible Friends &amp; Family pricing is applied automatically when the entered phone number matches the private discount list. Dog fees or other required costs appear only when they apply to that rate. Estimated taxes and government lodging fees are shown separately and added when a stay is booked. Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the applicable reservation payment is retained and the remaining amount paid is refunded. The separately listed refundable security deposit is $50 for Friends &amp; Family stays and $300 for public-rate stays; it is normally refunded within seven days after checkout, less documented damage, missing property, rule-violation costs, or excessive cleaning.</p>
+        <p class="fine">Displayed estimates include the standard $200 cleaning cost and any larger-group cleaning adjustment. Eligible Friends &amp; Family pricing is applied automatically when your phone number or email matches your saved guest profile. Dog fees or other required costs appear only when they apply to that rate. Estimated taxes and government lodging fees are shown separately and added when a stay is booked. Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the applicable reservation payment is retained and the remaining amount paid is refunded. The separately listed refundable security deposit is $50 for Friends &amp; Family stays and $300 for public-rate stays; it is normally refunded within seven days after checkout, less documented damage, missing property, rule-violation costs, or excessive cleaning.</p>
+        </section>
       </form>
     </main>
   </div>
+  <dialog id="guest-dialog" class="confirmation-dialog" aria-labelledby="guest-dialog-title" aria-describedby="guest-dialog-help"><form id="guest-check" class="confirmation-dialog-inner">
+    <div class="eyebrow">Welcome to Weeks Creek Haven</div>
+    <h2 id="guest-dialog-title">Have a guest profile?</h2>
+    <p id="guest-dialog-help" class="helper">Enter your phone number or email to check whether your guest profile has a discount from Lance and Heather. You only need one.</p>
+    <label>Your first name <small>(optional)</small><input name="firstName" autocomplete="given-name" maxlength="60"></label>
+    <label>Phone number or email<input name="contact" type="text" autocomplete="on" maxlength="160" placeholder="555 867-5309 or you@example.com" required aria-describedby="guest-dialog-help"></label>
+    <p id="guest-error" class="message error" role="alert" hidden></p>
+    <button id="guest-check-submit" type="submit">Check my discount &amp; choose dates</button>
+    <button id="guest-skip" class="clear-choice" type="button">Just browse dates &amp; prices</button>
+    <p class="fine">Checking your profile does not create a booking. Any matching discount appears with your price after you choose dates.</p>
+  </form></dialog>
   <dialog id="confirmation-dialog" class="confirmation-dialog"><div class="confirmation-dialog-inner"><div class="eyebrow">Weeks Creek Haven</div><h2 id="confirmation-title">Request received</h2><pre id="confirmation-copy" class="confirmation-copy"></pre><div class="confirmation-actions"><a id="my-booking-link" href="/booking-packet.html">My Booking</a><button id="confirmation-close" type="button">Close</button></div></div></dialog>
-  <script type="module">
-    import { money, quoteStay, seasonForDate } from '/pricing.js';
-    const form=document.getElementById('booking-form'); const button=document.getElementById('submit'); const message=document.getElementById('form-message');
-    const confirmationDialog=document.getElementById('confirmation-dialog'),confirmationTitle=document.getElementById('confirmation-title'),confirmationCopy=document.getElementById('confirmation-copy'),myBookingLink=document.getElementById('my-booking-link'),confirmationClose=document.getElementById('confirmation-close');
-    confirmationClose.addEventListener('click',()=>confirmationDialog.close());
-    const pricingState={rates:[],unavailable:[],requested:[],loaded:false,calendarError:'',discountQuotes:{},discountTimer:null,discountRequest:0,inviteSession:false,invitePricing:false};
-    const friendsPayment=document.getElementById('friends-payment');
-    const today=new Date(); today.setHours(0,0,0,0); const minimum=today.toISOString().slice(0,10);
-    const addDays=(value,days)=>{ const date=new Date(`${value}T12:00:00`); date.setDate(date.getDate()+days); return date.toISOString().slice(0,10); };
-    const validDate=(value)=>/^\d{4}-\d{2}-\d{2}$/.test(value||'')&&!Number.isNaN(Date.parse(`${value}T12:00:00`));
-    const friendlyDate=(value)=>new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric',year:'numeric'}).format(new Date(`${value}T12:00:00`));
-    const rangesOverlap=(first,second)=>first.arrival<second.departure&&second.arrival<first.departure;
-    const monthStart=(date)=>new Date(date.getFullYear(),date.getMonth(),1,12);
-    const monthKey=(date)=>`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}`;
-    const dateKey=(date)=>`${monthKey(date)}-${String(date.getDate()).padStart(2,'0')}`;
-    const addMonths=(date,amount)=>new Date(date.getFullYear(),date.getMonth()+amount,1,12);
-    const firstCalendarMonth=monthStart(today), lastCalendarStart=addMonths(firstCalendarMonth,17);
-    const calendarState={1:{month:firstCalendarMonth}};
-    const weekdays=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    const stayNights=(arrival,departure)=>Math.round((Date.parse(`${departure}T12:00:00`)-Date.parse(`${arrival}T12:00:00`))/86400000);
-    const unavailableNight=(value)=>pricingState.unavailable.some((range)=>value>=range.arrival&&value<range.departure);
-    const unavailableCheckout=(value)=>!unavailableNight(value)&&pricingState.unavailable.some((range)=>value===range.departure);
-    const requestMarkerForDate=(value)=>{
-      const night=pricingState.requested.find((range)=>range.state==='deposit-pending'&&value>=range.arrival&&value<range.departure)||pricingState.requested.find((range)=>value>=range.arrival&&value<range.departure);
-      if(night)return {state:night.state,checkout:false};
-      const checkout=pricingState.requested.find((range)=>range.state==='deposit-pending'&&value===range.departure)||pricingState.requested.find((range)=>value===range.departure);
-      return checkout?{state:checkout.state,checkout:true}:null;
-    };
-    const stayConflicts=(arrival,departure)=>pricingState.unavailable.some((range)=>rangesOverlap({arrival,departure},range));
-    function seasonalNote(arrival){
-      const season=seasonForDate(arrival),month=Number(arrival.slice(5,7));
-      if(season.id==='thanksgiving')return 'Thanksgiving in the mountains · peak holiday demand';
-      if(season.id==='christmas-new-year')return 'Winter wonderland to Happy New Year · holiday pricing';
-      if(season.id==='october')return 'Leaf season · peak color weekends';
-      if(season.id==='late-september')return 'Leaf season begins · fall demand';
-      if(season.id==='early-september')return 'Early fall value · warm days and cool nights';
-      if(season.id==='november')return 'Late-fall quiet · crisp days and firelight nights';
-      if(season.id==='december')return 'December cabin glow · winter holiday season';
-      if(season.id==='winter')return 'Quiet winter value · peaceful mountain days and gentler seasonal pricing';
-      return month<=5?'Early spring value · cool creek days and lighter seasonal demand':'Summer creek days · long afternoons in our favorite warm-weather season';
-    }
-    function possibleOfferPercent(index,quote){
-      const offer=document.getElementById(`discount-request-${index}`).value,arrival=form.elements[`arrival${index}`].value,departure=form.elements[`departure${index}`].value,nights=quote?.actualNights||0;
-      if(!offer||!quote)return 0;
-      if(offer.startsWith('Pay in full')||offer.startsWith('Book direct')||offer.startsWith('Returning guest')||offer.startsWith('Guest referral'))return 10;
-      if(offer.startsWith('Rebook before checkout')||offer.startsWith('Last-minute opening'))return offer.startsWith('Last-minute')&&Math.floor((Date.parse(`${arrival}T12:00:00`)-today.getTime())/86400000)>7?0:15;
-      if(offer.startsWith('Extended stay'))return nights>=7?20:nights>=4?10:0;
-      if(offer.startsWith('Off-season')){for(let value=arrival;value<departure;value=addDays(value,1)){const month=Number(value.slice(5,7));if(month<1||month>3)return 0;}return 20;}
-      if(offer.startsWith('Midweek stay')){for(let value=arrival;value<departure;value=addDays(value,1)){const day=new Date(`${value}T12:00:00`).getDay();if(day===5||day===6)return 0;}return 20;}
-      return 0;
-    }
-    function renderPossibleSavings(index,quote){
-      const output=document.getElementById(`possible-savings-${index}`),offer=document.getElementById(`discount-request-${index}`).value;
-      if(!offer){output.textContent='Choose an offer to see possible savings for these dates.';return;}
-      if(!quote){output.textContent='Choose dates to see possible savings.';return;}
-      if(quote.friendsAndFamilyDiscount){output.textContent='Your preferred rate is already applied. Offers do not stack.';return;}
-      const percent=possibleOfferPercent(index,quote);
-      if(!percent){output.textContent='These dates do not currently meet this offer’s listed conditions.';return;}
-      const offerBase=quote.standardTotalCents||quote.totalCents,savings=Math.round(offerBase*percent/100),discounted=Math.max(0,offerBase-savings);
-      output.textContent=`Possible ${percent}% savings: ${money(savings)} · about ${money(discounted)} before taxes if available.`;
-    }
-    function renderCalendarPrice(index,arrival,departure){
-      const panel=document.getElementById(`calendar-price-${index}`),guests=Number(form.elements.guests.value)||1,dogs=Number(form.elements.dogs.value),cached=pricingState.discountQuotes[index];
-      if(!pricingState.loaded||!validDate(arrival)||!validDate(departure)||departure<=arrival){panel.hidden=true;renderPossibleSavings(index,null);return;}
-      if(pricingState.invitePricing&&cached?.signature!==quoteSignature(index)){panel.hidden=true;return;}
-      const quote=cached?.signature===quoteSignature(index)?cached.quote:quoteStay({arrival,departure,guests,dogs,lateCheckout:form.elements.lateCheckout.checked,rates:pricingState.rates});
-      if(!quote){panel.hidden=true;return;}
-      panel.querySelector('.calendar-price-main strong').textContent=`${money(quote.totalCents)} before taxes`;
-      const calendarSecurityDeposit=quote.complimentary?0:quote.friendsAndFamilyDiscount?5000:30000;
-      panel.querySelector('.calendar-price-detail span').textContent=`${money(quote.estimatedGrandTotalCents+calendarSecurityDeposit)} estimated total including taxes and the ${money(calendarSecurityDeposit)} refundable security deposit · ${form.elements.guests.value?`${guests} guest${guests===1?'':'s'}`:'priced for 1–4 guests'} · ${quote.cleaningAdjustmentCents?`${money(quote.cleaningAdjustmentCents)} group cleaning adjustment`:'standard cleaning included'}`;
-      panel.querySelector('.calendar-deposit-note').textContent=quote.complimentary?'Approved guest stay · no payment required':quote.friendsAndFamilyDiscount?'Approved guest pricing · final payment details appear in your reservation details':quote.earlyBirdDiscount?`After the booking request begins, sign and pay the 20% deposit (about ${money(Math.round(quote.totalCents*.20))}) within 7 days to keep this Early Bird price`:`After the booking request begins, a 20% deposit (about ${money(Math.round(quote.totalCents*.20))}) is due within 24 hours · balance due 7 days before check-in · stays started within 7 days are due in full`;
-      panel.querySelector('.calendar-season').textContent=pricingState.invitePricing&&quote.friendsAndFamilyDiscount?`${quote.friendsAndFamilyDiscount.label} is already applied · ${quote.pricingRule}`:`${seasonalNote(arrival)} · ${quote.pricingRule}${quote.actualNights>=7?' · Automatic 7+ night weekday rate · no weekend surcharge':''}${quote.automaticPromotion?` · ${quote.automaticPromotion.label}: ${quote.automaticPromotion.percentage}% off · save ${money(quote.discountAmountCents)}`:''}`;
-      renderPossibleSavings(index,quote);
-      panel.hidden=false;
-    }
-    function renderCalendar(index){
-      const months=document.getElementById(`calendar-months-${index}`),prompt=document.getElementById(`calendar-prompt-${index}`),summary=document.getElementById(`calendar-summary-${index}`),arrival=form.elements[`arrival${index}`].value,departure=form.elements[`departure${index}`].value,state=calendarState[index];
-      const previous=document.querySelector(`[data-calendar-prev="${index}"]`),next=document.querySelector(`[data-calendar-next="${index}"]`);
-      months.replaceChildren(); previous.disabled=!pricingState.loaded||monthKey(state.month)<=monthKey(firstCalendarMonth); next.disabled=!pricingState.loaded||monthKey(state.month)>=monthKey(lastCalendarStart);
-      if(!pricingState.loaded){prompt.textContent=pricingState.calendarError||'Loading live availability…';summary.textContent=pricingState.calendarError?'Please refresh the page or open the full availability calendar.':'Reserved and owner-blocked nights will appear here.';return;}
-      prompt.textContent=!arrival?'Choose your arrival date':!departure?'Arrival selected — now choose checkout':'Dates selected — choose a new arrival date to change them';
-      const visibleMonthCount=window.matchMedia('(max-width:560px)').matches?1:2;
-      for(let monthOffset=0;monthOffset<visibleMonthCount;monthOffset++){
-        const visibleMonth=addMonths(state.month,monthOffset),month=document.createElement('section'),heading=document.createElement('h4'),weekdayRow=document.createElement('div'),days=document.createElement('div');
-        month.className='calendar-month'; heading.textContent=new Intl.DateTimeFormat(undefined,{month:'long',year:'numeric'}).format(visibleMonth); weekdayRow.className='calendar-weekdays'; days.className='calendar-days';
-        weekdays.forEach((label)=>{const day=document.createElement('span');day.className='calendar-weekday';day.textContent=label;weekdayRow.append(day);});
-        for(let blank=0;blank<visibleMonth.getDay();blank++){const spacer=document.createElement('span');spacer.className='calendar-blank';spacer.setAttribute('aria-hidden','true');days.append(spacer);}
-        const dayCount=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()+1,0).getDate();
-        for(let dayNumber=1;dayNumber<=dayCount;dayNumber++){
-          const value=dateKey(new Date(visibleMonth.getFullYear(),visibleMonth.getMonth(),dayNumber,12)),day=document.createElement('button'),isPast=value<minimum,isBlocked=unavailableNight(value),blockedCheckout=unavailableCheckout(value),requestMarker=requestMarkerForDate(value),requestState=requestMarker?.state||'',bookingCheckout=blockedCheckout||Boolean(requestMarker?.checkout),choosingCheckout=Boolean(arrival&&!departure),validCheckout=choosingCheckout&&value>arrival&&!stayConflicts(arrival,value),checkoutOnly=validCheckout&&isBlocked;
-          day.type='button';day.className='calendar-day';day.dataset.calendarDay=value;day.dataset.calendarIndex=index;day.textContent=String(dayNumber);
-          day.disabled=isPast||(choosingCheckout&&value>arrival?!validCheckout:isBlocked);
-          if(value===minimum)day.classList.add('is-today');
-          if(isPast)day.classList.add('is-past');
-          if(isBlocked)day.classList.add('is-blocked');
-          if(requestState&&!isPast)day.classList.add(requestState==='deposit-pending'?'is-deposit-pending':'is-requested');
-          if(bookingCheckout&&!isPast)day.classList.add('is-booking-checkout');
-          if(arrival&&departure&&value>arrival&&value<departure)day.classList.add('is-in-range');
-          if(value===arrival)day.classList.add('is-arrival');
-          if(value===departure)day.classList.add('is-departure');
-          if(checkoutOnly)day.classList.add('is-checkout-only');
-          const spoken=new Intl.DateTimeFormat(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'}).format(new Date(`${value}T12:00:00`));
-          const stateLabel=isPast?'past date':checkoutOnly?'available as checkout only':value===arrival?'selected arrival':value===departure?'selected checkout':bookingCheckout?'checkout date, available for a new arrival':requestState==='deposit-pending'?'deposit pending, temporarily held':requestState==='requested'?'requested, still available':day.disabled&&isBlocked?'unavailable':'available';
-          day.setAttribute('aria-label',`${spoken}, ${stateLabel}`);day.setAttribute('aria-pressed',String(value===arrival||value===departure));
-          days.append(day);
-        }
-        month.append(heading,weekdayRow,days);months.append(month);
-      }
-      renderCalendarPrice(index,arrival,departure);
-      summary.replaceChildren();
-      if(!arrival){summary.textContent='Choose an arrival date, then choose your checkout date.';return;}
-      const strong=document.createElement('strong');
-      if(!departure){strong.textContent=friendlyDate(arrival);summary.append(strong,document.createTextNode(' selected for arrival. Now choose your checkout date.'));return;}
-      const nights=stayNights(arrival,departure);strong.textContent=`${friendlyDate(arrival)} → ${friendlyDate(departure)}`;summary.append(strong,document.createTextNode(` · ${nights} night${nights===1?'':'s'}${form.elements.guests.value?'':' · Estimate below uses the 1–4 guest tier.'}`));
-    }
-    function renderCalendars(){renderCalendar(1);}
-    function chooseCalendarDate(index,value){
-      if(!pricingState.loaded||value<minimum)return;
-      const arrival=form.elements[`arrival${index}`],departure=form.elements[`departure${index}`];
-      if(!arrival.value||departure.value||value<=arrival.value){if(unavailableNight(value))return;arrival.value=value;departure.value='';}
-      else {if(stayConflicts(arrival.value,value))return;departure.value=value;}
-      delete pricingState.discountQuotes[index];quoteChanged(index);
-    }
-    form.addEventListener('click',(event)=>{
-      const day=event.target.closest('[data-calendar-day]');if(day&&!day.disabled){chooseCalendarDate(day.dataset.calendarIndex,day.dataset.calendarDay);return;}
-      const previous=event.target.closest('[data-calendar-prev]'),next=event.target.closest('[data-calendar-next]');
-      if(previous||next){const index=Number((previous||next).dataset[previous?'calendarPrev':'calendarNext']),amount=previous?-1:1;calendarState[index].month=addMonths(calendarState[index].month,amount);renderCalendar(index);}
-    });
-    const normalizedPhone=()=>{const digits=String(form.elements.phone.value||'').replace(/\D/g,'');return digits.length===11&&digits.startsWith('1')?digits.slice(1):digits;};
-    const quoteSignature=(index)=>`${form.elements[`arrival${index}`].value}|${form.elements[`departure${index}`].value}|${form.elements.guests.value}|${form.elements.dogs.value}|${form.elements.lateCheckout.checked?'1':'0'}|${normalizedPhone()}`;
-    function renderQuote(index){
-      const box=document.getElementById(`quote-${index}`),arrival=form.elements[`arrival${index}`].value,departure=form.elements[`departure${index}`].value,guests=Number(form.elements.guests.value),dogs=Number(form.elements.dogs.value);
-      if(!pricingState.loaded||!guests||!validDate(arrival)||!validDate(departure)||departure<=arrival){box.hidden=true;friendsPayment.hidden=true;return;}
-      const lateCheckout=form.elements.lateCheckout.checked,cached=pricingState.discountQuotes[index];if(pricingState.invitePricing&&cached?.signature!==quoteSignature(index)){box.hidden=true;return;}const quote=cached?.signature===quoteSignature(index)?cached.quote:quoteStay({arrival,departure,guests,dogs,lateCheckout,rates:pricingState.rates}); if(!quote){box.hidden=true;return;}
-      friendsPayment.hidden=!(quote.friendsAndFamilyDiscount&&!quote.complimentary);
-      const adjustment=quote.friendsAndFamilyDiscount?(quote.passThroughCents?'required fees itemized above':'no pass-through fees'):(quote.cleaningAdjustmentCents?`${money(quote.cleaningAdjustmentCents)} larger-group cleaning adjustment`:'standard $200 cleaning included');
-      box.classList.toggle('discounted',Boolean(quote.friendsAndFamilyDiscount));
-      box.querySelector('strong').textContent=quote.friendsAndFamilyDiscount?(quote.friendsAndFamilyDiscount.guestName?`Welcome, ${quote.friendsAndFamilyDiscount.guestName} — here’s your cabin price: ${money(quote.totalCents)}`:`Welcome — here’s your cabin price: ${money(quote.totalCents)}`):`${money(quote.totalCents)} estimated price`;
-      const feeParts=quote.passThroughFees?[quote.passThroughFees.cleaningFeeCents?`${money(quote.passThroughFees.cleaningFeeCents)} cleaning`:'',quote.passThroughFees.dogFeeCents?`${money(quote.passThroughFees.dogFeeCents)} dog fee`:'',quote.passThroughFees.lateCheckoutFeeCents?`${money(quote.passThroughFees.lateCheckoutFeeCents)} noon checkout`:'',quote.passThroughFees.customFeeCents?`${money(quote.passThroughFees.customFeeCents)} ${quote.passThroughFees.customFeeLabel}`:''].filter(Boolean):[];
-      const discountNote=quote.friendsAndFamilyDiscount?(pricingState.invitePricing?`${quote.friendsAndFamilyDiscount.label} already applied${feeParts.length?` · includes ${feeParts.join(', ')}`:''}`:`${quote.friendsAndFamilyDiscount.label} · standard price ${money(quote.standardTotalCents)} · you save ${money(quote.discountAmountCents)}${feeParts.length?` · includes ${feeParts.join(', ')}`:''}`):quote.automaticPromotion?`${quote.automaticPromotion.label} · ${quote.automaticPromotion.percentage}% applied automatically · standard price ${money(quote.standardTotalCents)} · you save ${money(quote.discountAmountCents)}`:'standard public rate';
-      const securityDeposit=quote.friendsAndFamilyDiscount?5000:30000,totalDue=quote.estimatedGrandTotalCents+securityDeposit;
-      box.querySelector('span').textContent=`Price does not include ${money(quote.estimatedTaxesAndFeesCents)} in estimated taxes and fees · estimated stay and taxes ${money(quote.estimatedGrandTotalCents)} · ${money(securityDeposit)} refundable security deposit · estimated total due ${money(totalDue)} · ${discountNote} · Check in ${friendlyDate(arrival)} at 4:00 PM · check out ${friendlyDate(departure)} at ${quote.checkoutTime}${quote.lateCheckout?' (+$50)':''} · ${quote.actualNights} night${quote.actualNights===1?'':'s'} · ${quote.pricingRule} · ${adjustment}`;
-      box.hidden=false;
-    }
-    function checkAvailability(index){
-      const fieldset=document.getElementById(`choice-${index}`),status=document.getElementById(`availability-${index}`),arrival=form.elements[`arrival${index}`].value,departure=form.elements[`departure${index}`].value;
-      fieldset.classList.remove('unavailable'); status.hidden=true; status.className='availability-status'; status.replaceChildren();
-      if(!pricingState.loaded||!validDate(arrival)||!validDate(departure)||departure<=arrival)return false;
-      const conflict=pricingState.unavailable.some((range)=>rangesOverlap({arrival,departure},range));
-      const text=document.createElement('span');
-      if(conflict){
-        fieldset.classList.add('unavailable'); status.classList.add('conflict'); text.textContent='These dates overlap a reserved or blocked stay. Choose different dates or '; status.append(text);
-        const link=document.createElement('a'); link.href='/availability.html'; link.textContent='view available dates on the calendar'; status.append(link,document.createTextNode('.'));
-      }else{
-        status.classList.add('available'); text.textContent='These dates are currently available. Continuing creates your reservation details; the first guest to complete both payment and the rental agreement secures them.'; status.append(text);
-      }
-      status.hidden=false; return conflict;
-    }
-    function hasAvailabilityConflict(){return checkAvailability(1);}
-    function quoteChanged(index){renderCalendar(index);renderQuote(index);checkAvailability(index);scheduleDiscountQuotes();}
-    function scheduleDiscountQuotes(){clearTimeout(pricingState.discountTimer);pricingState.discountTimer=setTimeout(refreshDiscountQuotes,350);}
-    function setDogsVisibility(approved){const field=document.getElementById('dog-field');field.hidden=!approved;if(!approved)form.elements.dogs.value='0';}
-    async function refreshDiscountQuotes(){
-      const phone=normalizedPhone(),requestId=++pricingState.discountRequest;
-      if(phone.length!==10&&!pricingState.inviteSession){pricingState.discountQuotes={};setDogsVisibility(false);renderCalendars();renderQuote(1);return;}
-      let approved=false;
-      await Promise.all([1].map(async(index)=>{const arrival=form.elements[`arrival${index}`].value,departure=form.elements[`departure${index}`].value,guests=Number(form.elements.guests.value),dogs=Number(form.elements.dogs.value);if(!guests||!validDate(arrival)||!validDate(departure)||departure<=arrival)return;const signature=quoteSignature(index);try{const response=await fetch('/api/quote',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({arrival,departure,guests,dogs,phone,lateCheckout:form.elements.lateCheckout.checked})}),data=await response.json();if(response.ok&&requestId===pricingState.discountRequest&&signature===quoteSignature(index)){pricingState.discountQuotes[index]={signature,quote:data.quote};approved=approved||Boolean(data.quote?.friendsAndFamilyDiscount);renderCalendar(index);renderQuote(index);}}catch{}}));
-      if(requestId===pricingState.discountRequest)setDogsVisibility(approved);
-    }
-    form.elements.guests.addEventListener('change',()=>quoteChanged(1));
-    form.elements.dogs.addEventListener('change',()=>quoteChanged(1));
-    form.elements.lateCheckout.addEventListener('change',()=>quoteChanged(1));
-    let returningGuestTimer=0,returningGuestSignature='';
-    async function restoreReturningGuest(){const phone=String(form.elements.phone.value||'').replace(/\D/g,'').replace(/^1(?=\d{10}$)/,''),email=String(form.elements.email.value||'').trim().toLowerCase(),signature=`${phone}|${email}`;if(phone.length!==10||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||signature===returningGuestSignature)return;returningGuestSignature=signature;try{const response=await fetch('/api/returning-guest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,email})}),data=await response.json();if(!response.ok||!data.found)return;for(const [name,value] of Object.entries(data.profile||{})){const field=form.elements[name];if(field&&!field.value&&value!==''&&value!==null)field.value=String(value);}message.className='message success';message.textContent='Welcome back! We filled in the booking details saved from your previous stay.';message.hidden=false;}catch{}}
-    function scheduleReturningGuest(){clearTimeout(returningGuestTimer);returningGuestTimer=setTimeout(restoreReturningGuest,450);}
-    form.elements.phone.addEventListener('input',()=>{setDogsVisibility(false);renderCalendars();renderQuote(1);scheduleDiscountQuotes();scheduleReturningGuest();});
-    form.elements.email.addEventListener('input',scheduleReturningGuest);
-    const ownerQuestionField=document.getElementById('owner-question-field'),ownerQuestions=form.elements.ownerQuestions;
-    function updateBookingIntent(){const intent=form.elements.bookingIntent.value,wantsQuestions=intent==='questions';ownerQuestionField.hidden=!wantsQuestions;ownerQuestions.required=wantsQuestions;button.textContent=wantsQuestions?'Send questions to owners':'Start secure checkout';}
-    form.elements.bookingIntent.forEach(input=>input.addEventListener('change',updateBookingIntent));
-    function updateOfferPolicy(index){renderCalendar(index);}
-    document.querySelectorAll('[data-discount-request]').forEach(select=>select.addEventListener('change',()=>updateOfferPolicy(Number(select.dataset.discountRequest))));
-    form.addEventListener('reset',()=>setTimeout(()=>updateOfferPolicy(1)));updateOfferPolicy(1);
-    const selectedParams=new URLSearchParams(location.search), selectedArrival=selectedParams.get('arrival1'), selectedDeparture=selectedParams.get('departure1'),selectedGuests=selectedParams.get('guests');
-    if(selectedGuests&&Number(selectedGuests)>=1&&Number(selectedGuests)<=11)form.elements.guests.value=selectedGuests;
-    if(selectedParams.get('lateCheckout')==='1')form.elements.lateCheckout.checked=true;
-    if(validDate(selectedArrival)&&validDate(selectedDeparture)&&selectedArrival>=minimum&&selectedDeparture>=addDays(selectedArrival,1)){
-      form.elements.arrival1.value=selectedArrival; form.elements.departure1.value=selectedDeparture; calendarState[1].month=monthStart(new Date(`${selectedArrival}T12:00:00`));
-      const selectionNote=document.getElementById('calendar-selection'); selectionNote.textContent=`Your calendar selection was added: ${friendlyDate(selectedArrival)} through ${friendlyDate(selectedDeparture)}.`; selectionNote.hidden=false;
-    }
-    if(selectedParams.get('invite')==='1')fetch('/api/invite-profile',{cache:'no-store'}).then(async(response)=>{
-      if(!response.ok)return;
-      const data=await response.json(),profile=data.bookingProfile||{};
-      if(String(data.visitorName||'').includes('owner preview'))return;
-      pricingState.inviteSession=true;pricingState.invitePricing=Boolean(data.complimentary||data.privatePricingConnected);
-      if(profile.guestName)form.elements.name.value=profile.guestName;
-      if(profile.email){form.elements.email.value=profile.email;form.elements.email.readOnly=true;}
-      if(profile.phone){const digits=String(profile.phone).replace(/\D/g,'').slice(-10);form.elements.phone.value=digits.length===10?`(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`:profile.phone;form.elements.phone.readOnly=true;const note=form.elements.phone.closest('label')?.querySelector('.field-note');if(note)note.textContent=data.privatePricingConnected?'Your private Friends & Family rate is already connected to this invitation.':'This invitation already has your phone number.';}
-      if(pricingState.invitePricing)document.getElementById('discount-guide').hidden=true;
-      scheduleDiscountQuotes();
-      if(profile.guests)form.elements.guests.value=profile.guests;
-      if(validDate(profile.arrival)&&validDate(profile.departure)){form.elements.arrival1.value=profile.arrival;form.elements.departure1.value=profile.departure;}
-    }).catch(()=>{});
-    renderCalendars();
-    fetch('/api/availability').then(async(response)=>{const data=await response.json();if(!response.ok)throw new Error(data.error||'Pricing could not be loaded.');pricingState.rates=data.rates||[];pricingState.unavailable=data.unavailable||[];pricingState.requested=data.requested||[];pricingState.loaded=true;renderCalendars();renderQuote(1);checkAvailability(1);scheduleDiscountQuotes();}).catch((error)=>{pricingState.calendarError=error.message||'Live availability could not be loaded.';renderCalendars();});
-    form.elements.formStartedAt.value=String(Date.now());
-    form.addEventListener('submit',async(event)=>{
-      event.preventDefault(); message.hidden=true;
-      if(!validDate(form.elements.arrival1.value)||!validDate(form.elements.departure1.value)){message.className='message error';message.textContent='Choose an arrival and checkout date.';message.hidden=false;document.getElementById('choice-1').scrollIntoView({behavior:'smooth',block:'center'});return;}
-      if(hasAvailabilityConflict()){message.className='message error';message.textContent='Those dates are unavailable. Choose different dates or use the availability calendar before continuing.';message.hidden=false;document.querySelector('.choice.unavailable')?.scrollIntoView({behavior:'smooth',block:'center'});return;}
-      button.disabled=true; button.textContent=form.elements.bookingIntent.value==='questions'?'Sending questions...':'Creating checkout...'; document.querySelectorAll('.choice').forEach((choice)=>choice.classList.remove('unavailable'));
-      const payload=Object.fromEntries(new FormData(form));
-      try {
-        const response=await fetch('/api/booking-requests',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-        const data=await response.json().catch(()=>({})); if(!response.ok) { const error=new Error(data.error || 'We could not create your checkout.'); error.unavailableChoices=data.unavailableChoices; throw error; }
-        const quote=data.quotes?.[0],questionsOnly=payload.bookingIntent==='questions',isFriendsAndFamily=Boolean(quote?.friendsAndFamilyDiscount),reservationDepositCents=quote?.complimentary?0:isFriendsAndFamily?2500:Math.round((Number(quote?.totalCents)||0)*.20),confirmation=[
-          questionsOnly?'WEEKS CREEK HAVEN — QUESTION REQUEST RECEIVED':'WEEKS CREEK HAVEN — CHECKOUT RECEIVED',
-          '',
-          `Confirmation: ${data.requestId||'Created'}`,
-          `Guest: ${payload.name}`,
-          `Stay: ${friendlyDate(payload.arrival1)} through ${friendlyDate(payload.departure1)}`,
-          `Guests: ${payload.guests}`,
-          quote?`Stay price before taxes: ${money(quote.totalCents)}`:'',
-          '',
-          questionsOnly?'STATUS: Sent to the owners for a reply':'STATUS: Payment and agreement pending',
-          questionsOnly?'No invoice was created. Lance or Heather will respond to your questions. This inquiry expires and is archived after 48 hours.':'Your Square invoice and reservation details have been emailed.',
-          questionsOnly?null:'',
-          questionsOnly?null:'100% REFUND POLICY',
-          questionsOnly?null:'Cancel by 4:00 PM Eastern on the day before check-in (at least 24 hours before arrival) for a 100% refund of all amounts paid.',
-          questionsOnly?null:'',
-          questionsOnly?null:`INSIDE 24 HOURS: ${money(reservationDepositCents)} will be retained as the reservation payment. This same amount is retained even if you paid the invoice in full; all remaining amounts paid will be refunded.`,
-          '',
-          'IMPORTANT: These dates remain available to others until both payment and the rental agreement are complete. The first guest to complete both steps locks in the dates.',
-          '',
-          'You may screenshot this confirmation.'
-        ].filter(line=>line!==null&&line!==undefined).join('\n');
-        form.reset(); form.elements.formStartedAt.value=String(Date.now()); setDogsVisibility(false); updateBookingIntent(); document.querySelectorAll('.stay-quote,.availability-status').forEach(box=>box.hidden=true);renderCalendars();message.className='message success'; message.textContent=questionsOnly?'Your questions and selected dates were sent to the owners. No invoice was created.':'Checkout received. Your screenshot-ready confirmation is shown, and your invoice and rental agreement were emailed.'; message.hidden=false; confirmationTitle.textContent=questionsOnly?'Inquiry received':'Booking checkout received'; confirmationCopy.textContent=confirmation; myBookingLink.hidden=questionsOnly||!data.bookingPacketUrl; confirmationClose.hidden=!questionsOnly&&Boolean(data.bookingPacketUrl); if(data.bookingPacketUrl)myBookingLink.href=data.bookingPacketUrl; confirmationDialog.showModal();
-      } catch(error) { if(Array.isArray(error.unavailableChoices)) error.unavailableChoices.forEach((blocked,index)=>{ if(blocked) document.getElementById(`choice-${index+1}`).classList.add('unavailable'); }); message.className='message error'; message.textContent=error.message; message.hidden=false; }
-      finally { button.disabled=false; updateBookingIntent(); }
-    });
-  </script>
+  <script type="module" src="/booking-flow.js"></script>
   <script src="/savings.js?v=1"></script>
 </body>
 </html>
