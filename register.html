@@ -56,7 +56,8 @@
     .card { background:rgba(255,253,248,.98); border-radius:22px; padding:32px; border-top:9px solid var(--pine); box-shadow:0 24px 70px rgba(0,0,0,.45); }
     .card h2 { font-size:2.25rem; color:var(--pine); }
     .helper { color:var(--muted); line-height:1.55; font-size:.82rem; }
-    .minimum { display:inline-flex; align-items:center; gap:7px; margin:10px 0 2px; padding:8px 12px; border-radius:999px; background:#e7efe8; color:var(--pine); font-size:.7rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
+    .minimum { display:inline-flex; align-items:center; justify-content:center; text-align:center; gap:7px; margin:10px 0 2px; padding:8px 12px; border-radius:999px; background:#e7efe8; color:var(--pine); font-size:.7rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
+    #check-profile { display:block; text-align:center; line-height:1.35; }
     .grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
     label { display:block; font-size:.67rem; text-transform:uppercase; letter-spacing:.11em; font-weight:800; margin-top:15px; }
     input,select,textarea { width:100%; margin-top:7px; padding:13px 14px; border:1px solid #cfc4b4; border-radius:9px; background:white; color:var(--ink); font:inherit; outline:none; }
@@ -110,7 +111,7 @@
     .calendar-price-detail { color:var(--muted); font-size:.61rem; line-height:1.45; }
     .calendar-price-detail span,.calendar-deposit-note { display:block; }
     .calendar-deposit-note { margin-top:5px; color:#315c73; font-size:.65rem; line-height:1.4; }
-    .calendar-season { grid-column:1/-1; margin:0; padding-top:8px; border-top:1px solid #c9d9cc; color:#41644c; font-size:.65rem; font-weight:700; line-height:1.45; }
+    .calendar-season { grid-column:1/-1; margin:0; padding-top:8px; border-top:1px solid #c9d9cc; color:#41644c; font-size:.65rem; font-weight:700; line-height:1.45; white-space:pre-line; }
     .field-note { display:block; margin-top:6px; color:var(--muted); font-size:.66rem; line-height:1.4; text-transform:none; letter-spacing:0; font-weight:600; }
     .offer-policy { margin-top:10px; padding:12px 13px; border:1px solid #d8b26d; border-radius:9px; background:#fff5d9; color:#69430e; }
     .offer-policy .check { margin-top:0; color:#69430e; }
@@ -223,8 +224,8 @@
         <div class="eyebrow">Step 1 · Dates &amp; price</div>
         <h2 id="dates-heading" tabindex="-1">Choose your dates. See your price.</h2>
         <p id="guest-welcome" class="helper" role="status">Choose available dates to see your full price before filling out a booking form.</p>
-        <button id="check-profile" class="clear-choice" type="button">Check your profile discount · phone number</button>
-        <div class="minimum">One-night stays available &middot; two-night minimum charge</div>
+        <button id="check-profile" class="clear-choice" type="button">Check your profile discount<br>Enter your phone number</button>
+        <div class="minimum"><span>One-night stays available<br>Two-night minimum charge</span></div>
         <div id="calendar-selection" class="message picked" hidden role="status"></div>
         <div class="grid">
           <label>Number of guests<select id="guest-count" name="guests" required><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select></label>

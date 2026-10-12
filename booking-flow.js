@@ -63,7 +63,7 @@ import { money } from '/pricing.js';
       panel.querySelector('.calendar-price-main strong').textContent=money(totalWithDeposit(quote));
       panel.querySelector('.calendar-price-detail span').textContent=`Stay ${money(quote.totalCents)} + estimated taxes and government fees ${money(quote.estimatedTaxesAndFeesCents)} + refundable security deposit ${money(deposit)}. Cleaning included${quote.passThroughCents?' · required charges included in stay price':''}.`;
       panel.querySelector('.calendar-deposit-note').textContent=quote.complimentary?'No payment required. Complete the rental agreement to confirm your stay.':quote.friendsAndFamilyDiscount?'Choose $25 toward your stay or payment in full at checkout. The separate $50 security deposit is refundable; balance due seven days before arrival.':`A 20% reservation payment (about ${money(Math.round(quote.totalCents*.20))}) is due ${quote.earlyBirdDiscount?'within seven days after booking':'within 24 hours after booking'}. Balance due seven days before arrival; stays starting within seven days require full payment.`;
-      panel.querySelector('.calendar-season').textContent=discountDescription(quote);
+      panel.querySelector('.calendar-season').textContent=discountDescription(quote).replace(' · You save', '\nYou save');
       renderPossibleSavings(index,quote);
     }
     function renderCalendar(index){
