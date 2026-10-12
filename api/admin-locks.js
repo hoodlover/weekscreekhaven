@@ -4,6 +4,7 @@ import { configuredDoors } from '../_lib/lock-service.js';
 import { createKKHomeLockProvider } from '../_lib/lock-providers/kkhome.js';
 import { getBookingRequests } from '../_lib/booking-store.js';
 import { getCleanerState } from '../_lib/cleaner-store.js';
+import { cleanerReservedCodes } from '../_lib/cleaner-profiles.js';
 import { json, requireAdmin, sameOriginRequest } from '../_lib/security.js';
 
 export const config = { maxDuration: 60 };
@@ -26,7 +27,7 @@ export default async function handler(request,response) {
         if (!/^[a-zA-Z0-9-]{8,80}$/.test(operationId)) throw new Error('Refresh the form and try again.');
         const existing = entries.find(item => item.operationId === operationId); if (existing) return existing;
         const [bookings,cleaner] = await Promise.all([getBookingRequests(),getCleanerState()]);
-        const usedCodes = new Set([...entries.map(e=>e.code),...bookings.flatMap(b=>[b.doorCode,...(b.retiredDoorCodes||[])]),cleaner.settings.doorCode].filter(Boolean).map(String));
+        const usedCodes = new Set([...entries.map(e=>e.code),...bookings.flatMap(b=>[b.doorCode,...(b.retiredDoorCodes||[])]),...cleaner.cleanerProfiles.flatMap(cleanerReservedCodes)].filter(Boolean).map(String));
         entry = {...newOwnerLock(request.body,{doors,usedCodes}),operationId};
         // Refuse to take over any existing unmanaged lock code with the same PIN.
         for (const id of entry.doorIds) if (await provider.findCode({door:doors.find(d=>d.id===id),code:entry.code})) throw new Error('This PIN already exists on a selected lock. Choose another PIN.');

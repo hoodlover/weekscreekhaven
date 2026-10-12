@@ -57,3 +57,13 @@ test('unchanged confirmed schedules do not rewrite records or contact locks ever
   const result=await reconcileCleanerLocks({state:s,bookings:[],doors,now:new Date(now.getTime()+300000),save:()=>assert.fail(),provider:{findCode:()=>assert.fail(),installCode:()=>assert.fail()}});
   assert.equal(result.status,'scheduled');
 });
+
+test('an uncertain insertion cannot be silently discarded on revoke or PIN change', async () => {
+  for (const dates of [[],['2026-09-10']]) {
+    const s=state(dates);s.settings.cleanerLockState={doors:{front:{code:'781259',uncertain:true,status:'failed'}}};
+    const result=await reconcileCleanerLocks({state:s,bookings:[],doors:[doors[0]],now,allowAdopt:false,save:async()=>{},provider:{
+      findCode:()=>assert.fail('Uncertain old PIN must be resolved first'),installCode:()=>assert.fail(),removeCode:()=>assert.fail(),
+    }});
+    assert.equal(result.status,'needs-attention');assert.equal(result.doors.front.code,'781259');assert.equal(result.doors.front.uncertain,true);
+  }
+});

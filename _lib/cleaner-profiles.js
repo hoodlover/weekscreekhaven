@@ -3,6 +3,7 @@ import { hashPasscode, normalizePasscode, verifyPasscode } from './security.js';
 
 export const LEGACY_CLEANER_ID = 'legacy-cleaner';
 const PROFILE_FIELDS = ['cleanerName', 'cleanerEmail', 'cleanerPhone', 'notes', 'standardPayCents', 'passcodeHash', 'passcodeSalt', 'cleanerAuthVersion'];
+const ACCESS_FIELDS = ['doorCode', 'closetCode', 'accessNotes', 'doorCodeUpdatedAt', 'cleanerAccessDates', 'cleanerAccessExcludedDates', 'cleanerLockState'];
 const blankProfile = id => ({ id, cleanerName: 'Cabin Care Team', cleanerEmail: '', cleanerPhone: '', notes: '', standardPayCents: 17500, passcodeHash: '', passcodeSalt: '', cleanerAuthVersion: '', enabled: true });
 const text = (value, max) => String(value ?? '').trim().slice(0, max);
 function invalid(message, status = 400) { throw Object.assign(new Error(message), { status }); }
@@ -21,6 +22,10 @@ export function buildCleanerProfiles(records) {
       if (changes.primaryCleanerId && profiles.has(changes.primaryCleanerId)) primaryCleanerId = changes.primaryCleanerId;
       const profile = profiles.get(primaryCleanerId);
       for (const key of PROFILE_FIELDS) if (Object.hasOwn(changes, key)) profile[key] = changes[key];
+      // Older shared lock settings always belong to the original cleaner, even
+      // if a different contact was subsequently made primary.
+      const original = profiles.get(LEGACY_CLEANER_ID);
+      for (const key of ACCESS_FIELDS) if (Object.hasOwn(changes, key)) original[key] = changes[key];
     }
   }
   const primary = profiles.get(primaryCleanerId);
@@ -28,6 +33,17 @@ export function buildCleanerProfiles(records) {
     cleanerProfiles: [...profiles.values()],
     settings: { primaryCleanerId, ...Object.fromEntries(PROFILE_FIELDS.map(key => [key, primary[key]])) },
   };
+}
+
+export function requireCleanerProfile(state, id) {
+  const profile = state.cleanerProfiles.find(item => item.id === id);
+  if (!profile) invalid('Choose a cleaner profile and try again.', 404);
+  return profile;
+}
+
+export function cleanerReservedCodes(profile) {
+  return [profile.doorCode, profile.keypadPlan?.code, profile.cleanerLockState?.code,
+    ...Object.values(profile.cleanerLockState?.doors || {}).map(door => door.code)].filter(Boolean).map(String);
 }
 
 export function publicCleanerProfiles(state) {

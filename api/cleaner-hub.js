@@ -3,12 +3,14 @@ import { appendCleanerRecord, getCleanerState } from '../_lib/cleaner-store.js';
 import { getBookingRequests } from '../_lib/booking-store.js';
 import { getSquareOrder } from '../_lib/square.js';
 import { json, requireAdmin, requireCleaner, sameOriginRequest } from '../_lib/security.js';
-import { cleanerForSession, cleanerProfileRecord, publicCleanerProfiles } from '../_lib/cleaner-profiles.js';
+import { cleanerForSession, cleanerProfileRecord, publicCleanerProfiles, requireCleanerProfile } from '../_lib/cleaner-profiles.js';
+import { appliedCleanerPlan, freezeCleanerPlan, profileAccessDates, savedCleanerAccess } from '../_lib/cleaner-access.js';
 import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
 import { normalizeTurnoverChecklist } from '../_lib/checklist-defaults.js';
-import { cleanerAccessDates, cleanerAccessWindow, syncCleanerLocks, validCleaningDate } from '../_lib/cleaner-locks.js';
+import { withOwnerLockLease } from '../_lib/owner-lock-store.js';
+import { syncCleanerLocks, validCleaningDate, visibleCleanerAccess } from '../_lib/cleaner-locks.js';
 
-export const config = { maxDuration: 60 };
+export const config = { maxDuration: 300 };
 
 const safe=(value,max=500)=>String(value||'').trim().slice(0,max);
 function safeProductUrl(value){const raw=safe(value,1000);if(!raw)return'';try{const url=new URL(raw);return ['http:','https:'].includes(url.protocol)?url.toString():'';}catch{return'';}}
@@ -49,6 +51,7 @@ async function syncTips(state){
 }
 
 function buildDashboard(bookings,state,isOwner,viewer=null){
+  const profile = viewer || requireCleanerProfile(state, state.settings.primaryCleanerId);
   const today=todayEastern();
   const booked=bookings.filter(b=>['booked','completed'].includes(b.status)||b.paymentFullyPaid);
   const bookedStays=booked.map(b=>({booking:b,dates:stay(b)})).filter(x=>x.dates.arrival&&x.dates.departure);
@@ -84,9 +87,9 @@ function buildDashboard(bookings,state,isOwner,viewer=null){
   const tipSummary={owedCents:paidTips.filter(t=>!t.paidOutAt).reduce((sum,t)=>sum+(Number(t.amountCents)||0),0),paidCents:paidTips.filter(t=>t.paidOutAt).reduce((sum,t)=>sum+(Number(t.amountCents)||0),0)};
   return {
     viewerCleanerName:viewer?.cleanerName||'',
-    ...(isOwner?{cleanerProfiles:publicCleanerProfiles(state),primaryCleanerId:state.settings.primaryCleanerId}:{}),
-    cleanerAccess: { dates: cleanerAccessDates(state).filter(date => date >= today), status: JSON.stringify(state.settings.cleanerLockState?.window) === JSON.stringify(state.settings.doorCode ? cleanerAccessWindow(state) : null) && state.settings.cleanerLockState?.code === String(state.settings.doorCode || '') ? state.settings.cleanerLockState.status : 'pending', window: state.settings.cleanerLockState?.window || null, checkedAt: state.settings.cleanerLockState?.checkedAt || '' },
-    isOwner, cleanerName:state.settings.cleanerName, cleanerEmail:isOwner?(state.settings.cleanerEmail||''):'', standardPayCents:state.settings.standardPayCents, doorCode:state.settings.doorCode||'', closetCode:state.settings.closetCode||'', doorCodeUpdatedAt:state.settings.doorCodeUpdatedAt||'', turnoverChecklistMaster:normalizeTurnoverChecklist(state.settings.turnoverChecklistMaster),
+    ...(isOwner?{cleanerProfiles:publicCleanerProfiles(state),primaryCleanerId:state.settings.primaryCleanerId,primaryCleanerName:state.settings.cleanerName}:{}),
+    selectedCleanerId:profile.id, cleanerEnabled:profile.enabled, cleanerAccess:visibleCleanerAccess(profile,state),
+    isOwner, cleanerName:profile.cleanerName, cleanerEmail:isOwner?(profile.cleanerEmail||''):'', standardPayCents:profile.standardPayCents, doorCode:profile.doorCode||'', closetCode:profile.closetCode||'', accessNotes:profile.accessNotes||'', doorCodeUpdatedAt:profile.doorCodeUpdatedAt||'', turnoverChecklistMaster:normalizeTurnoverChecklist(state.settings.turnoverChecklistMaster),
     inventory:state.inventory.filter(item=>!item.archivedAt).sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name)), archivedInventory:isOwner?state.inventory.filter(item=>item.archivedAt).sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name)):[], upcoming, recent,
     remarks:state.remarks.filter(r=>r.status!=='resolved').sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))),
     serviceOffers:state.serviceOffers.sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))).slice(0,50),
@@ -107,38 +110,56 @@ export default async function handler(request,response){
   try{
     if(request.method==='GET'){
       let state=await getCleanerState(); if(request.query?.readOnly !== '1') state=await syncTips(state);
-      return json(response,200,buildDashboard(await getBookingRequests(),state,owner,cleaner),{'Cache-Control':'private, no-store'});
+      const viewer=owner?requireCleanerProfile(state,request.query?.profileId||state.settings.primaryCleanerId):requireCleanerProfile(state,cleaner.id);
+      return json(response,200,buildDashboard(await getBookingRequests(),state,owner,viewer),{'Cache-Control':'private, no-store'});
     }
     if(request.method!=='POST')return json(response,405,{error:'Method not allowed.'});
     const action=safe(request.body?.action,40); const now=new Date().toISOString();
     if(['save-cleaner-profile','primary-cleaner','cleaner-profile-access'].includes(action)){
       if(!owner)return json(response,403,{error:'Only the owner can manage cleaner profiles.'});
-      const record=cleanerProfileRecord(action,request.body,await getCleanerState());
-      await appendCleanerRecord({...record,createdAt:now});
+      const saveProfile=async()=>{
+        const state=await getCleanerState(),record=cleanerProfileRecord(action,request.body,state);
+        if(action==='cleaner-profile-access' && request.body.enabled===false){
+          const profile=requireCleanerProfile(state,record.profileId);
+          record.changes.keypadPlan={...appliedCleanerPlan(profile,state),dates:[]};
+        }
+        await appendCleanerRecord(record);return record;
+      };
+      const record=action==='cleaner-profile-access'?await withOwnerLockLease(saveProfile):await saveProfile();
+      if(action==='cleaner-profile-access' && request.body.enabled===false){
+        try{await syncCleanerLocks(process.env,{action:'revoke-cleaner-keypad',profileId:record.profileId});}catch{/* Saved revocation is retried by the scheduler. */}
+      }
       return json(response,200,{ok:true,profileId:record.profileId},{'Cache-Control':'private, no-store'});
+    } else if(['apply-cleaner-keypad','revoke-cleaner-keypad'].includes(action)){
+      if(!owner)return json(response,403,{error:'Only the owner can apply cabin door access.'});
+      requireCleanerProfile(stateAtEntry,request.body?.profileId);
+      const result=await syncCleanerLocks(process.env,request.body);
+      if(result.status==='disabled')return json(response,409,{error:'Door lock automation is not enabled. The saved details have not been applied.'});
+      if(result.status==='queued')return json(response,409,{error:'Another door update is running. Wait a moment, then click Apply again.'});
+      return json(response,200,{ok:true,accessStatus:result.status},{'Cache-Control':'private, no-store'});
+    } else if(action==='save-cleaner-access'){
+      if(!owner)return json(response,403,{error:'Only the owner can save access details.'});
+      await withOwnerLockLease(async()=>{
+        const state=await getCleanerState(),profile=requireCleanerProfile(state,request.body?.profileId);
+        await appendCleanerRecord({type:'cleaner_profile',profileId:profile.id,changes:savedCleanerAccess(profile,request.body,state)});
+      });
     } else if(action==='cleaner-access-date'){
       if(!owner)return json(response,403,{error:'Only the owner can schedule door access.'});
       const date=safe(request.body?.date,10);
       if(!validCleaningDate(date)||date<todayEastern())return json(response,400,{error:'Choose today or a future cleaning date.'});
-      const state=await getCleanerState();
-      const dates=new Set(state.settings.cleanerAccessDates||[]),excluded=new Set(state.settings.cleanerAccessExcludedDates||[]);
-      if(request.body?.remove===true){dates.delete(date);excluded.add(date);}else{dates.add(date);excluded.delete(date);}
-      await appendCleanerRecord({type:'settings',createdAt:now,changes:{cleanerAccessDates:[...dates].sort(),cleanerAccessExcludedDates:[...excluded].sort()}});
+      await withOwnerLockLease(async()=>{
+        const state=await getCleanerState();
+        const profile=requireCleanerProfile(state,request.body?.profileId),dates=new Set(profileAccessDates(profile,state));
+        if(request.body?.remove===true)dates.delete(date);else dates.add(date);
+        if(dates.size>730)throw Object.assign(new Error('Keep no more than 730 access days on one profile.'),{status:400});
+        await appendCleanerRecord({type:'cleaner_profile',profileId:profile.id,changes:{...freezeCleanerPlan(profile,state),cleanerAccessDates:[...dates].sort(),cleanerAccessExcludedDates:[]}});
+      });
     } else if(action==='setup-access'){
       if(!owner)return json(response,403,{error:'Only the owner can change cleaner access.'});
       const state=await getCleanerState();
-      await appendCleanerRecord({...cleanerProfileRecord(action,{profileId:state.settings.primaryCleanerId,passcode:request.body?.passcode},state),createdAt:now});
+      await appendCleanerRecord({...cleanerProfileRecord(action,request.body,state),createdAt:now});
     } else if(action==='settings'){
-      if(!owner)return json(response,403,{error:'Only the owner can change pay settings.'});
-      const standardPayCents=cents(request.body?.standardPay); if(!Number.isInteger(standardPayCents)||standardPayCents<0||standardPayCents>100000)return json(response,400,{error:'Enter a valid standard cleaning pay.'});
-      const cleanerEmail=safe(request.body?.cleanerEmail,160).toLowerCase();
-      if(cleanerEmail&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanerEmail))return json(response,400,{error:'Enter a valid cleaner email address.'});
-      if(cleanerEmail&&stateAtEntry.cleanerProfiles.some(profile=>profile.id!==stateAtEntry.settings.primaryCleanerId&&profile.cleanerEmail.toLowerCase()===cleanerEmail))return json(response,400,{error:'Another cleaner profile already uses that email address.'});
-      const doorCode=safe(request.body?.doorCode,12).replace(/\s+/g,'');
-      if(doorCode&&!/^\d{4,10}$/.test(doorCode))return json(response,400,{error:'Use a 4–10 digit cleaner door code.'});
-      const closetCode=safe(request.body?.closetCode,12).replace(/\s+/g,'');
-      if(closetCode&&!/^\d{3,10}$/.test(closetCode))return json(response,400,{error:'Use a 3–10 digit closet-lock code.'});
-      await appendCleanerRecord({type:'settings',createdAt:now,changes:{cleanerName:safe(request.body?.cleanerName,80)||'Cabin Care Team',cleanerEmail,standardPayCents,doorCode,closetCode,doorCodeUpdatedAt:now}});
+      return json(response,409,{error:'Refresh the Hub, choose a cleaner, and use their Access details section.'});
     } else if(action==='inventory'){
       const id=safe(request.body?.id,80).toLowerCase().replace(/[^a-z0-9-]/g,'-'); const name=safe(request.body?.name,100); const level=safe(request.body?.level,20);
       if(!id||!name||!['stocked','low','out','unknown'].includes(level))return json(response,400,{error:'Choose an item and its current stock level.'});
@@ -277,18 +298,18 @@ export default async function handler(request,response){
     } else if(action==='send-email'){
       if(!owner)return json(response,403,{error:'Only the owner can email the cleaner.'});
       if(request.body?.confirmed!==true)return json(response,400,{error:'Review and confirm this cleaner email before sending.'});
-      const state=await getCleanerState(); const to=state.settings.cleanerEmail||'';
+      const state=await getCleanerState(),recipient=requireCleanerProfile(state,request.body?.profileId); const to=recipient.cleanerEmail||'';
       if(!to)return json(response,400,{error:'Add the cleaner email address in Cleaner setup first.'});
       const subject=safe(request.body?.subject,160),body=safe(request.body?.body,5000),operationId=safe(request.body?.operationId,80),bookingId=safe(request.body?.bookingId,100);
       if(subject.length<5||body.length<20||!operationId)return json(response,400,{error:'Finish the email subject and message before sending.'});
       if(bookingId){const bookings=await getBookingRequests();if(!bookings.some(item=>item.id===bookingId))return json(response,404,{error:'That booking is no longer available. Refresh the Cleaner Hub and choose it again.'});}
       const already=state.emailHistory.find(item=>item.operationId===operationId); if(already)return json(response,200,{ok:true,alreadySent:true});
       const htmlBody=escapeEmailHtml(body.replace(/\n+(?:Thank you,\s*\n+)?Heather\s*&\s*Lance(?:\s*\n+Weeks Creek Haven)?\s*$/i,'').trim()).replace(/\n/g,'<br>');
-      const result=await sendEmail({to,toName:state.settings.cleanerName||'Cabin Care Team',subject,idempotencyKey:`cleaner-${operationId}`,text:body,html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.65;max-width:640px"><div style="padding:22px;background:#183c2d;color:#fff"><div style="color:#e5b67e;font-size:12px;font-weight:bold;letter-spacing:.12em;text-transform:uppercase">Weeks Creek Haven · Cabin Care</div><h1 style="margin:6px 0 0;color:#fff;font-family:Georgia,serif">${escapeEmailHtml(subject)}</h1></div><div style="padding:24px;background:#fffdf8">${htmlBody}</div><div style="padding:16px 24px;background:#f4eee0;color:#76695e;font-size:12px">Weeks Creek Haven · Blue Ridge, Georgia</div></div>`});
+      const result=await sendEmail({to,toName:recipient.cleanerName||'Cabin Care Team',subject,idempotencyKey:`cleaner-${operationId}`,text:body,html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.65;max-width:640px"><div style="padding:22px;background:#183c2d;color:#fff"><div style="color:#e5b67e;font-size:12px;font-weight:bold;letter-spacing:.12em;text-transform:uppercase">Weeks Creek Haven · Cabin Care</div><h1 style="margin:6px 0 0;color:#fff;font-family:Georgia,serif">${escapeEmailHtml(subject)}</h1></div><div style="padding:24px;background:#fffdf8">${htmlBody}</div><div style="padding:16px 24px;background:#f4eee0;color:#76695e;font-size:12px">Weeks Creek Haven · Blue Ridge, Georgia</div></div>`});
       const templateId=safe(request.body?.templateId,50);await appendCleanerRecord({type:'cleaner_email_sent',createdAt:now,email:{id:crypto.randomUUID(),operationId,to,subject,templateId,bookingId,sentAt:now,provider:result?.provider||''}});if(bookingId)await appendCleanerRecord({type:'assignment',bookingId,createdAt:now,changes:{cleanerEmailSentAt:now,cleanerEmailTemplateId:templateId}});
     } else return json(response,400,{error:'Unknown cleaner hub update.'});
     let accessStatus;
-    if(['settings','cleaner-access-date','create-cleaning-session','assignment'].includes(action)){
+    if(['create-cleaning-session','assignment'].includes(action)){
       try{accessStatus=(await syncCleanerLocks()).status;}catch{accessStatus='needs-attention';}
     }
     return json(response,200,{ok:true,...(accessStatus?{accessStatus}:{})},{'Cache-Control':'private, no-store'});

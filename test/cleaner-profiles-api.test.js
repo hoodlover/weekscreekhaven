@@ -20,7 +20,9 @@ test('owner adds, edits, and reloads profiles through the actual API and encrypt
   const primary=await call(hub,{method:'POST',cookie,body:{action:'primary-cleaner',profileId}});
   assert.equal(primary.code,200);result=await call(hub,{cookie});
   assert.equal(result.body.cleanerName,'Backup Updated');assert.equal(result.body.cleanerEmail,'backup@example.test');
-  assert.equal(result.body.doorCode,'739426');assert.equal(result.body.closetCode,'412');
+  assert.equal(result.body.doorCode,'');assert.equal(result.body.closetCode,'');
+  const original=await call(hub,{cookie,query:{readOnly:'1',profileId:'legacy-cleaner'}});
+  assert.equal(original.body.doorCode,'739426');assert.equal(original.body.closetCode,'412');
 });
 
 test('cleaner sign-in is profile-specific; profile management is owner-only and revoked sessions cannot access photos', async () => {

@@ -3,6 +3,9 @@ import { createKKHomeLockProvider } from './lock-providers/kkhome.js';
 import { getCleanerState, appendCleanerRecord } from './cleaner-store.js';
 import { getBookingRequests } from './booking-store.js';
 import { get, put, del } from '@vercel/blob';
+import { LEGACY_CLEANER_ID, requireCleanerProfile } from './cleaner-profiles.js';
+import { appliedCleanerPlan, assertAvailableCleanerCode, cleanerAccessRevision, profileAccessDates, requestedCleanerPlan } from './cleaner-access.js';
+import { ownerLockEntries, withOwnerLockLease } from './owner-lock-store.js';
 
 export function validCleaningDate(value) {
   return /^\d{4}-\d{2}-\d{2}$/.test(value || '') && Number.isFinite(Date.parse(`${value}T12:00:00Z`))
@@ -29,7 +32,7 @@ export function cleanerAccessWindow(state, now = new Date()) {
   return { startsAt: localTime(dates[0], '00:00:00'), endsAt: localTime(last, '23:59:59'), timezone: 'America/New_York' };
 }
 
-export async function reconcileCleanerLocks({ state, bookings, provider, doors, save, now = new Date() }) {
+export async function reconcileCleanerLocks({ state, bookings, provider, doors, save, now = new Date(), allowAdopt = true, name = 'Cleaner scheduled access' }) {
   const desiredCode = String(state.settings.doorCode || '');
   if (desiredCode && !/^\d{4,10}$/.test(desiredCode)) throw new Error('Save a valid cleaner door code first.');
   if (desiredCode && bookings.some(b => [b.doorCode, ...(b.retiredDoorCodes || [])].map(String).includes(desiredCode))) {
@@ -50,20 +53,24 @@ export async function reconcileCleanerLocks({ state, bookings, provider, doors, 
   for (const door of doors) {
     let entry = ledger.doors[door.id] || {};
     try {
+      if (entry.uncertain && !entry.providerCodeId && entry.code !== desiredCode) throw new Error('Resolve the previous unconfirmed PIN before changing it.');
       if (entry.providerCodeId && entry.code !== desiredCode) {
         await provider.removeCode({ door, code: entry.code, providerCodeId: entry.providerCodeId });
         entry = {}; ledger.doors[door.id] = entry; await save(ledger);
       }
-      if (!entry.providerCodeId && desiredCode) {
+      if (!entry.providerCodeId && desiredCode && (window || allowAdopt)) {
         const found = await provider.findCode({ door, code: desiredCode });
+        if (found && !allowAdopt) throw new Error('This PIN already exists on the lock. Choose another PIN.');
         if (found) { entry = { code: desiredCode, ...found }; ledger.doors[door.id] = entry; await save(ledger); }
       }
       if (!window) {
+        if (entry.uncertain && !entry.providerCodeId) throw new Error('An unconfirmed lock entry needs owner review before removal can be confirmed.');
         if (entry.providerCodeId) await provider.removeCode({ door, code: entry.code, providerCodeId: entry.providerCodeId });
         entry = { status: 'removed' };
       } else {
-        entry = { ...entry, code: desiredCode };
-        const result = await provider.installCode({ door, code: desiredCode, name: 'Cleaner scheduled access', ...window, providerCodeId: entry.providerCodeId });
+        entry = { ...entry, code: desiredCode, status: 'updating', uncertain: !entry.providerCodeId };
+        ledger.doors[door.id] = entry; await save(ledger);
+        const result = await provider.installCode({ door, code: desiredCode, name, ...window, providerCodeId: entry.providerCodeId });
         entry = { code: desiredCode, providerCodeId: result.providerCodeId, status: result.status };
       }
     } catch (error) {
@@ -77,7 +84,32 @@ export async function reconcileCleanerLocks({ state, bookings, provider, doors, 
   return ledger;
 }
 
-export async function syncCleanerLocks(env = process.env) {
+export function profileLockState(profile, state) {
+  const plan = appliedCleanerPlan(profile, state);
+  return { settings: { doorCode: plan.code, cleanerAccessDates: profile.enabled ? plan.dates : [], cleanerLockState: profile.cleanerLockState }, assignments: [] };
+}
+
+export function visibleCleanerAccess(profile, state, now = new Date()) {
+  const active = profileLockState(profile, state), plan = appliedCleanerPlan(profile, state), ledger = profile.cleanerLockState;
+  const window = plan.code ? cleanerAccessWindow(active, now) : null;
+  const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now);
+  const dates = profileAccessDates(profile, state).filter(date => date >= today);
+  const needsApply = (profile.doorCode || '') !== plan.code || JSON.stringify(dates) !== JSON.stringify(plan.dates.filter(date => date >= today));
+  const confirmed = ledger?.code === plan.code && JSON.stringify(ledger?.window) === JSON.stringify(window);
+  return { dates, needsApply, revision: cleanerAccessRevision(profile, state), status: ledger?.status === 'needs-attention' ? 'needs-attention' : confirmed ? ledger.status : plan.code ? 'pending' : 'not-applied',
+    window, appliedCode: plan.code, appliedDates: plan.dates.filter(date => date >= today), checkedAt: ledger?.checkedAt || '',
+    doors: configuredDoors().map(({ id, name }) => ({ id, name, status: confirmed || ledger?.doors?.[id]?.status === 'failed' ? ledger?.doors?.[id]?.status || 'not-applied' : ledger ? 'pending' : 'not-applied' })) };
+}
+
+export async function reconcileCleanerProfile({ profile, state, bookings, ownerEntries = [], provider, doors, save, now = new Date() }) {
+  const active = profileLockState(profile, state);
+  // Revocation must remain possible even if a conflicting PIN was saved later.
+  if (cleanerAccessWindow(active, now)) assertAvailableCleanerCode(active.settings.doorCode, profile.id, state, bookings, ownerEntries);
+  return reconcileCleanerLocks({ state: active, bookings: cleanerAccessWindow(active, now) ? bookings : [], provider, doors, save, now,
+    allowAdopt: profile.id === LEGACY_CLEANER_ID && active.settings.doorCode === state.settings.doorCode, name: `${profile.cleanerName} · Cleaner access`.slice(0, 60) });
+}
+
+export async function syncCleanerLocks(env = process.env, command = null) {
   if (env.LOCK_PROVIDER !== 'kkhome' || env.KKHOME_LIVE_ENABLED !== 'true') return { status: 'disabled' };
   const token = env.INVITE_BLOB_READ_WRITE_TOKEN || env.BLOB_READ_WRITE_TOKEN;
   const path = 'secure-cleaner/lock-sync-lease.json';
@@ -96,10 +128,35 @@ export async function syncCleanerLocks(env = process.env) {
     throw error;
   }
   try {
-    const [state, bookings] = await Promise.all([getCleanerState(), getBookingRequests()]);
-    const provider = createKKHomeLockProvider(env, { fetchImpl: (url, options) => fetch(url, { ...options, signal: AbortSignal.timeout(10000) }) });
-    return await reconcileCleanerLocks({ state, bookings, provider, doors: configuredDoors(env),
-      save: cleanerLockState => appendCleanerRecord({ type: 'settings', createdAt: new Date().toISOString(), changes: { cleanerLockState } }) });
+    return await withOwnerLockLease(async () => {
+      const [state, bookings, ownerEntries] = await Promise.all([getCleanerState(), getBookingRequests(), ownerLockEntries()]);
+      let profiles = state.cleanerProfiles;
+      if (command) {
+        const profile = requireCleanerProfile(state, command.profileId);
+        const keypadPlan = requestedCleanerPlan(profile, command, state);
+        if (keypadPlan.dates.length) assertAvailableCleanerCode(keypadPlan.code, profile.id, state, bookings, ownerEntries);
+        await appendCleanerRecord({ type: 'cleaner_profile', profileId: profile.id, changes: { keypadPlan } });
+        profile.keypadPlan = keypadPlan;
+        profiles = [profile];
+      }
+      const provider = createKKHomeLockProvider(env, { fetchImpl: (url, options) => fetch(url, { ...options, signal: AbortSignal.timeout(10000) }) });
+      const started = Date.now(), results = [];
+      // Check the least recently checked profiles first so a failed door cannot
+      // starve another cleaner. Remaining profiles are picked up by the next cron.
+      profiles = profiles.filter(profile => appliedCleanerPlan(profile, state).code || Object.keys(profile.cleanerLockState?.doors || {}).length)
+        .sort((a, b) => String(a.cleanerLockState?.checkedAt || '').localeCompare(String(b.cleanerLockState?.checkedAt || '')));
+      for (const profile of profiles) {
+        if (Date.now() - started > 180000) { results.push({ status: 'queued' }); break; }
+        const save = async cleanerLockState => { await appendCleanerRecord({ type: 'cleaner_profile', profileId: profile.id, changes: { cleanerLockState } }); profile.cleanerLockState = structuredClone(cleanerLockState); };
+        try {
+          results.push(await reconcileCleanerProfile({ profile, state, bookings, ownerEntries, provider, doors: configuredDoors(env), save }));
+        } catch (error) {
+          const ledger = { ...profile.cleanerLockState, status: 'needs-attention', checkedAt: new Date().toISOString() };
+          await save(ledger); results.push(ledger);
+        }
+      }
+      return command ? results[0] || { status: 'inactive' } : { status: results.some(item => item.status === 'needs-attention') ? 'needs-attention' : results.some(item => item.status === 'queued') ? 'queued' : 'synced' };
+    });
   } finally {
     await del(path, { token, ifMatch: lease.etag }).catch(() => {});
   }
