@@ -2,7 +2,8 @@ import crypto from 'node:crypto';
 import { appendCleanerRecord, getCleanerState } from '../_lib/cleaner-store.js';
 import { getBookingRequests } from '../_lib/booking-store.js';
 import { getSquareOrder } from '../_lib/square.js';
-import { hashPasscode, json, requireAdmin, requireCleaner, sameOriginRequest } from '../_lib/security.js';
+import { json, requireAdmin, requireCleaner, sameOriginRequest } from '../_lib/security.js';
+import { cleanerForSession, cleanerProfileRecord, publicCleanerProfiles } from '../_lib/cleaner-profiles.js';
 import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
 import { normalizeTurnoverChecklist } from '../_lib/checklist-defaults.js';
 import { cleanerAccessDates, cleanerAccessWindow, syncCleanerLocks, validCleaningDate } from '../_lib/cleaner-locks.js';
@@ -47,7 +48,7 @@ async function syncTips(state){
   return changed?getCleanerState():state;
 }
 
-function buildDashboard(bookings,state,isOwner){
+function buildDashboard(bookings,state,isOwner,viewer=null){
   const today=todayEastern();
   const booked=bookings.filter(b=>['booked','completed'].includes(b.status)||b.paymentFullyPaid);
   const bookedStays=booked.map(b=>({booking:b,dates:stay(b)})).filter(x=>x.dates.arrival&&x.dates.departure);
@@ -82,6 +83,8 @@ function buildDashboard(bookings,state,isOwner){
   const paidFor=days=>compensation.filter(e=>within(e.paidOutAt,days)).reduce((sum,e)=>sum+e.amountCents,0);
   const tipSummary={owedCents:paidTips.filter(t=>!t.paidOutAt).reduce((sum,t)=>sum+(Number(t.amountCents)||0),0),paidCents:paidTips.filter(t=>t.paidOutAt).reduce((sum,t)=>sum+(Number(t.amountCents)||0),0)};
   return {
+    viewerCleanerName:viewer?.cleanerName||'',
+    ...(isOwner?{cleanerProfiles:publicCleanerProfiles(state),primaryCleanerId:state.settings.primaryCleanerId}:{}),
     cleanerAccess: { dates: cleanerAccessDates(state).filter(date => date >= today), status: JSON.stringify(state.settings.cleanerLockState?.window) === JSON.stringify(state.settings.doorCode ? cleanerAccessWindow(state) : null) && state.settings.cleanerLockState?.code === String(state.settings.doorCode || '') ? state.settings.cleanerLockState.status : 'pending', window: state.settings.cleanerLockState?.window || null, checkedAt: state.settings.cleanerLockState?.checkedAt || '' },
     isOwner, cleanerName:state.settings.cleanerName, cleanerEmail:isOwner?(state.settings.cleanerEmail||''):'', standardPayCents:state.settings.standardPayCents, doorCode:state.settings.doorCode||'', closetCode:state.settings.closetCode||'', doorCodeUpdatedAt:state.settings.doorCodeUpdatedAt||'', turnoverChecklistMaster:normalizeTurnoverChecklist(state.settings.turnoverChecklistMaster),
     inventory:state.inventory.filter(item=>!item.archivedAt).sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name)), archivedInventory:isOwner?state.inventory.filter(item=>item.archivedAt).sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name)):[], upcoming, recent,
@@ -98,17 +101,22 @@ function buildDashboard(bookings,state,isOwner){
 
 export default async function handler(request,response){
   const owner=Boolean(requireAdmin(request)); const stateAtEntry=await getCleanerState().catch(()=>({settings:{}})); const cleanerSession=requireCleaner(request);
-  const cleaner=Boolean(cleanerSession&&cleanerSession.authVersion===(stateAtEntry.settings?.cleanerAuthVersion||''));
-  if(!owner&&!cleaner)return json(response,401,{error:'Please sign in to the Cleaner Hub.',setupRequired:!stateAtEntry.settings?.passcodeHash},{'Cache-Control':'no-store'});
+  const cleaner=cleanerForSession(cleanerSession,stateAtEntry);
+  if(!owner&&!cleaner)return json(response,401,{error:'Please sign in to the Cleaner Hub.',setupRequired:!stateAtEntry.cleanerProfiles?.some(profile=>profile.enabled&&profile.passcodeHash&&profile.passcodeSalt)},{'Cache-Control':'no-store'});
   if(request.method!=='GET'&&!sameOriginRequest(request))return json(response,403,{error:'This update was blocked.'});
   try{
     if(request.method==='GET'){
       let state=await getCleanerState(); if(request.query?.readOnly !== '1') state=await syncTips(state);
-      return json(response,200,buildDashboard(await getBookingRequests(),state,owner),{'Cache-Control':'private, no-store'});
+      return json(response,200,buildDashboard(await getBookingRequests(),state,owner,cleaner),{'Cache-Control':'private, no-store'});
     }
     if(request.method!=='POST')return json(response,405,{error:'Method not allowed.'});
     const action=safe(request.body?.action,40); const now=new Date().toISOString();
-    if(action==='cleaner-access-date'){
+    if(['save-cleaner-profile','primary-cleaner','cleaner-profile-access'].includes(action)){
+      if(!owner)return json(response,403,{error:'Only the owner can manage cleaner profiles.'});
+      const record=cleanerProfileRecord(action,request.body,await getCleanerState());
+      await appendCleanerRecord({...record,createdAt:now});
+      return json(response,200,{ok:true,profileId:record.profileId},{'Cache-Control':'private, no-store'});
+    } else if(action==='cleaner-access-date'){
       if(!owner)return json(response,403,{error:'Only the owner can schedule door access.'});
       const date=safe(request.body?.date,10);
       if(!validCleaningDate(date)||date<todayEastern())return json(response,400,{error:'Choose today or a future cleaning date.'});
@@ -118,13 +126,14 @@ export default async function handler(request,response){
       await appendCleanerRecord({type:'settings',createdAt:now,changes:{cleanerAccessDates:[...dates].sort(),cleanerAccessExcludedDates:[...excluded].sort()}});
     } else if(action==='setup-access'){
       if(!owner)return json(response,403,{error:'Only the owner can change cleaner access.'});
-      const passcode=safe(request.body?.passcode,80); if(passcode.length<6)return json(response,400,{error:'Use at least 6 characters for the cleaner access code.'});
-      const hashed=hashPasscode(passcode); await appendCleanerRecord({type:'settings',createdAt:now,changes:{passcodeHash:hashed.hash,passcodeSalt:hashed.salt,cleanerAuthVersion:crypto.randomUUID()}});
+      const state=await getCleanerState();
+      await appendCleanerRecord({...cleanerProfileRecord(action,{profileId:state.settings.primaryCleanerId,passcode:request.body?.passcode},state),createdAt:now});
     } else if(action==='settings'){
       if(!owner)return json(response,403,{error:'Only the owner can change pay settings.'});
       const standardPayCents=cents(request.body?.standardPay); if(!Number.isInteger(standardPayCents)||standardPayCents<0||standardPayCents>100000)return json(response,400,{error:'Enter a valid standard cleaning pay.'});
       const cleanerEmail=safe(request.body?.cleanerEmail,160).toLowerCase();
       if(cleanerEmail&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanerEmail))return json(response,400,{error:'Enter a valid cleaner email address.'});
+      if(cleanerEmail&&stateAtEntry.cleanerProfiles.some(profile=>profile.id!==stateAtEntry.settings.primaryCleanerId&&profile.cleanerEmail.toLowerCase()===cleanerEmail))return json(response,400,{error:'Another cleaner profile already uses that email address.'});
       const doorCode=safe(request.body?.doorCode,12).replace(/\s+/g,'');
       if(doorCode&&!/^\d{4,10}$/.test(doorCode))return json(response,400,{error:'Use a 4–10 digit cleaner door code.'});
       const closetCode=safe(request.body?.closetCode,12).replace(/\s+/g,'');
@@ -217,8 +226,8 @@ export default async function handler(request,response){
       await appendCleanerRecord({type:'service_offer_update',offerId:offer.id,createdAt:now,changes});
       const verb=decision==='accepted'?'accepted':'declined',note=changes.responseNote?`\n\nCleaner note: ${changes.responseNote}`:'';
       await Promise.allSettled([
-        hubEmail({to:state.settings.cleanerEmail,toName:state.settings.cleanerName,subject:`Service offer ${verb} · ${offer.title}`,text:`Hi ${state.settings.cleanerName},\n\nYou ${verb} “${offer.title}” for ${money(offer.amountCents)}.${decision==='accepted'?` It is due by ${dateTime(offer.completeBy)}.`:''}${note}`,key:`cleaner-offer-${offer.id}-${verb}-cleaner`}),
-        hubEmail({to:process.env.OWNER_EMAIL,toName:'Heather & Lance',subject:`Cleaner ${verb} service offer · ${offer.title}`,text:`${state.settings.cleanerName} ${verb} “${offer.title}” for ${money(offer.amountCents)}.${note}`,key:`cleaner-offer-${offer.id}-${verb}-owner`}),
+        hubEmail({to:cleaner.cleanerEmail,toName:cleaner.cleanerName,subject:`Service offer ${verb} · ${offer.title}`,text:`Hi ${cleaner.cleanerName},\n\nYou ${verb} “${offer.title}” for ${money(offer.amountCents)}.${decision==='accepted'?` It is due by ${dateTime(offer.completeBy)}.`:''}${note}`,key:`cleaner-offer-${offer.id}-${verb}-cleaner`}),
+        hubEmail({to:process.env.OWNER_EMAIL,toName:'Heather & Lance',subject:`Cleaner ${verb} service offer · ${offer.title}`,text:`${cleaner.cleanerName} ${verb} “${offer.title}” for ${money(offer.amountCents)}.${note}`,key:`cleaner-offer-${offer.id}-${verb}-owner`}),
       ]);
     } else if(action==='complete-service-offer'){
       if(!cleaner)return json(response,403,{error:'Sign in as the cleaner to complete this service.'});
@@ -229,8 +238,8 @@ export default async function handler(request,response){
       await appendCleanerRecord({type:'service_offer_update',offerId:offer.id,createdAt:now,changes:{status:'completed',completedAt:now,completionNote}});
       const note=completionNote?`\n\nCompletion note: ${completionNote}`:'';
       await Promise.allSettled([
-        hubEmail({to:process.env.OWNER_EMAIL,toName:'Heather & Lance',subject:`Ready to pay · ${offer.title}`,text:`${state.settings.cleanerName} marked “${offer.title}” complete. Amount due: ${money(offer.amountCents)}.${note}\n\nOpen the Cleaner Hub to review and mark it paid.`,key:`cleaner-offer-${offer.id}-completed-owner`}),
-        hubEmail({to:state.settings.cleanerEmail,toName:state.settings.cleanerName,subject:`Completion recorded · ${offer.title}`,text:`Hi ${state.settings.cleanerName},\n\nYour completion of “${offer.title}” was recorded. ${money(offer.amountCents)} now appears as owed in your Cleaner Hub.${note}`,key:`cleaner-offer-${offer.id}-completed-cleaner`}),
+        hubEmail({to:process.env.OWNER_EMAIL,toName:'Heather & Lance',subject:`Ready to pay · ${offer.title}`,text:`${cleaner.cleanerName} marked “${offer.title}” complete. Amount due: ${money(offer.amountCents)}.${note}\n\nOpen the Cleaner Hub to review and mark it paid.`,key:`cleaner-offer-${offer.id}-completed-owner`}),
+        hubEmail({to:cleaner.cleanerEmail,toName:cleaner.cleanerName,subject:`Completion recorded · ${offer.title}`,text:`Hi ${cleaner.cleanerName},\n\nYour completion of “${offer.title}” was recorded. ${money(offer.amountCents)} now appears as owed in your Cleaner Hub.${note}`,key:`cleaner-offer-${offer.id}-completed-cleaner`}),
       ]);
     } else if(action==='close-service-offer'){
       if(!owner)return json(response,403,{error:'Only the owner can close or pay an offer.'});
@@ -247,18 +256,18 @@ export default async function handler(request,response){
     } else if(action==='start-conversation'){
       const state=await getCleanerState(),subject=safe(request.body?.subject,120),body=safe(request.body?.body,1500),author=owner?'owner':'cleaner',alsoEmail=request.body?.alsoEmail===true;
       if(!subject||!body)return json(response,400,{error:'Add a short subject and message.'});
-      const id=crypto.randomUUID(),message={id:crypto.randomUUID(),body,author,createdAt:now,delivery:alsoEmail?'email-pending':'hub'};
+      const id=crypto.randomUUID(),message={id:crypto.randomUUID(),body,author,authorName:owner?'Heather & Lance':cleaner.cleanerName,cleanerId:cleaner?.id||'',createdAt:now,delivery:alsoEmail?'email-pending':'hub'};
       await appendCleanerRecord({type:'conversation',createdAt:now,conversation:{id,subject,status:'open',createdAt:now,createdBy:author,messages:[message]}});
-      const to=owner?state.settings.cleanerEmail:process.env.OWNER_EMAIL,toName=owner?state.settings.cleanerName:'Heather & Lance',from=owner?'Heather & Lance':state.settings.cleanerName;
+      const to=owner?state.settings.cleanerEmail:process.env.OWNER_EMAIL,toName=owner?state.settings.cleanerName:'Heather & Lance',from=owner?'Heather & Lance':cleaner.cleanerName;
       if(alsoEmail){let changes={delivery:'email-failed'};try{const result=await hubEmail({to,toName,subject:`Cleaner Hub message · ${subject}`,text:`${from} posted a new message:\n\n${body}\n\nReply inside the Cleaner Hub so the full conversation stays together.`,key:`cleaner-conversation-${id}-message-${message.id}`});if(!result?.skipped)changes={delivery:'email',emailedAt:now}}catch(error){console.error('Cleaner Hub conversation email failed',error)}await appendCleanerRecord({type:'conversation_message_delivery',conversationId:id,messageId:message.id,createdAt:now,changes});}
     } else if(action==='reply-conversation'){
       const state=await getCleanerState(),conversation=state.conversations.find(item=>item.id===safe(request.body?.conversationId,80)),body=safe(request.body?.body,1500),author=owner?'owner':'cleaner',alsoEmail=request.body?.alsoEmail===true;
       if(!conversation)return json(response,404,{error:'This conversation could not be found.'});
       if(conversation.status==='closed')return json(response,409,{error:'Reopen this conversation before replying.'});
       if(!body)return json(response,400,{error:'Write a reply first.'});
-      const message={id:crypto.randomUUID(),body,author,createdAt:now,delivery:alsoEmail?'email-pending':'hub'};
+      const message={id:crypto.randomUUID(),body,author,authorName:owner?'Heather & Lance':cleaner.cleanerName,cleanerId:cleaner?.id||'',createdAt:now,delivery:alsoEmail?'email-pending':'hub'};
       await appendCleanerRecord({type:'conversation_message',conversationId:conversation.id,createdAt:now,message});
-      const to=owner?state.settings.cleanerEmail:process.env.OWNER_EMAIL,toName=owner?state.settings.cleanerName:'Heather & Lance',from=owner?'Heather & Lance':state.settings.cleanerName;
+      const to=owner?state.settings.cleanerEmail:process.env.OWNER_EMAIL,toName=owner?state.settings.cleanerName:'Heather & Lance',from=owner?'Heather & Lance':cleaner.cleanerName;
       if(alsoEmail){let changes={delivery:'email-failed'};try{const result=await hubEmail({to,toName,subject:`Reply · ${conversation.subject}`,text:`${from} replied in the Cleaner Hub:\n\n${body}\n\nOpen the conversation to reply.`,key:`cleaner-conversation-${conversation.id}-message-${message.id}`});if(!result?.skipped)changes={delivery:'email',emailedAt:now}}catch(error){console.error('Cleaner Hub reply email failed',error)}await appendCleanerRecord({type:'conversation_message_delivery',conversationId:conversation.id,messageId:message.id,createdAt:now,changes});}
     } else if(action==='conversation-status'){
       const state=await getCleanerState(),conversation=state.conversations.find(item=>item.id===safe(request.body?.conversationId,80)),status=safe(request.body?.status,20);
@@ -283,5 +292,5 @@ export default async function handler(request,response){
       try{accessStatus=(await syncCleanerLocks()).status;}catch{accessStatus='needs-attention';}
     }
     return json(response,200,{ok:true,...(accessStatus?{accessStatus}:{})},{'Cache-Control':'private, no-store'});
-  }catch(error){console.error(error);return json(response,503,{error:error.message||'The Cleaner Hub is temporarily unavailable.'});}
+  }catch(error){if(!error.status)console.error(error);return json(response,error.status||503,{error:error.message||'The Cleaner Hub is temporarily unavailable.'});}
 }

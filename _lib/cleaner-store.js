@@ -1,6 +1,7 @@
 import { get, list, put } from '@vercel/blob';
 import { decryptRecord, encryptRecord } from './security.js';
 import { normalizeFamilyChecklist, normalizeTurnoverChecklist } from './checklist-defaults.js';
+import { buildCleanerProfiles } from './cleaner-profiles.js';
 
 const PREFIX = 'secure-cleaner/records/';
 const DEFAULT_LOCATIONS = {
@@ -176,5 +177,7 @@ export async function getCleanerState() {
   for(const item of inventory.values())if(LEGACY_CATEGORIES.has(item.category)&&ORGANIZED_CATEGORIES[item.id])item.category=ORGANIZED_CATEGORIES[item.id];
   settings.familyCheckoutChecklist=normalizeFamilyChecklist(settings.familyCheckoutChecklist);
   settings.turnoverChecklistMaster=normalizeTurnoverChecklist(settings.turnoverChecklistMaster);
-  return { settings, inventory:[...inventory.values()], assignments:[...assignments.values()], remarks:[...remarks.values()], tips:[...tips.values()], serviceOffers:[...serviceOffers.values()], conversations:[...conversations.values()], cleaningPhotos:[...cleaningPhotos.values()], emailHistory };
+  const profiles=buildCleanerProfiles(records);
+  Object.assign(settings,profiles.settings);
+  return { settings, cleanerProfiles:profiles.cleanerProfiles, inventory:[...inventory.values()], assignments:[...assignments.values()], remarks:[...remarks.values()], tips:[...tips.values()], serviceOffers:[...serviceOffers.values()], conversations:[...conversations.values()], cleaningPhotos:[...cleaningPhotos.values()], emailHistory };
 }
