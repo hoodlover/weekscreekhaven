@@ -8,7 +8,7 @@ export function validStayDates(arrival, departure) {
 }
 
 export function pricingIdentity(input, invite) {
-  return invite ? { phone: invite.recipientPhone || '', email: invite.recipientEmail || '' } : { phone: input.phone, email: input.email };
+  return { phone: invite ? invite.recipientPhone || '' : input.phone };
 }
 
 export function guestQuote(input, calendar, invite) {

@@ -19,7 +19,7 @@ export default async function handler(request, response) {
     const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
     const todayValues = Object.fromEntries(parts.map((part) => [part.type, part.value]));
     const today = `${todayValues.year}-${todayValues.month}-${todayValues.day}`;
-    const privatePricingConnected = Boolean(matchingGuestDiscount({ phone: invite.recipientPhone, email: invite.recipientEmail }, calendar.discounts || []));
+    const privatePricingConnected = Boolean(matchingGuestDiscount({ phone: invite.recipientPhone }, calendar.discounts || []));
     return json(response, 200, {
       visitorName: session.visitorName,
       inviteLabel: invite.label,

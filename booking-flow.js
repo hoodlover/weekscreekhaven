@@ -122,7 +122,7 @@ import { money } from '/pricing.js';
       if(previous||next){const index=Number((previous||next).dataset[previous?'calendarPrev':'calendarNext']),amount=previous?-1:1;calendarState[index].month=addMonths(calendarState[index].month,amount);renderCalendar(index);}
     });
     const normalizedPhone=()=>{const digits=String(form.elements.phone.value||'').replace(/\D/g,'');return digits.length===11&&digits.startsWith('1')?digits.slice(1):digits;};
-    const quoteSignature=(index)=>`${form.elements[`arrival${index}`].value}|${form.elements[`departure${index}`].value}|${form.elements.guests.value}|${form.elements.dogs.value}|${form.elements.lateCheckout.checked?'1':'0'}|${normalizedPhone()}|${normalizedEmail(form.elements.email.value)}`;
+    const quoteSignature=(index)=>`${form.elements[`arrival${index}`].value}|${form.elements[`departure${index}`].value}|${form.elements.guests.value}|${form.elements.dogs.value}|${form.elements.lateCheckout.checked?'1':'0'}|${normalizedPhone()}`;
     function renderQuote(){
       const quote=currentQuote();friendsPayment.hidden=!(quote?.friendsAndFamilyDiscount&&!quote.complimentary);
       form.elements.lateCheckout.closest('label').querySelector('span').textContent=quote?.friendsAndFamilyDiscount?'Noon checkout · any charge follows your saved rate and appears in the total. Check-in begins at 4:00 PM.':'Add noon checkout for $50. Standard checkout is 11:00 AM. Check-in begins at 4:00 PM.';
@@ -158,7 +158,7 @@ import { money } from '/pricing.js';
       const requestId=++pricingState.discountRequest,signature=quoteSignature(1);
       pricingState.quoteError='';renderCalendars();renderQuote();
       try {
-        const response=await fetch('/api/quote',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({arrival,departure,guests,dogs,phone:normalizedPhone(),email:normalizedEmail(form.elements.email.value),lateCheckout:form.elements.lateCheckout.checked})});
+        const response=await fetch('/api/quote',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({arrival,departure,guests,dogs,phone:normalizedPhone(),lateCheckout:form.elements.lateCheckout.checked})});
         const data=await response.json();
         if(requestId!==pricingState.discountRequest||signature!==quoteSignature(1))return;
         if(!response.ok||!data.quote)throw new Error(data.error||'Your price could not be checked. Please try again.');
@@ -179,7 +179,7 @@ import { money } from '/pricing.js';
     async function restoreReturningGuest(){const phone=String(form.elements.phone.value||'').replace(/\D/g,'').replace(/^1(?=\d{10}$)/,''),email=String(form.elements.email.value||'').trim().toLowerCase(),signature=`${phone}|${email}`;if(phone.length!==10||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||signature===returningGuestSignature)return;returningGuestSignature=signature;try{const response=await fetch('/api/returning-guest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,email})}),data=await response.json();if(!response.ok||!data.found||signature!==`${normalizedPhone()}|${normalizedEmail(form.elements.email.value)}`)return;for(const [name,value] of Object.entries(data.profile||{})){const field=form.elements[name];if(field&&!field.value&&value!==''&&value!==null)field.value=String(value);}message.className='message success';message.textContent='Welcome back! We filled in the booking details saved from your previous stay.';message.hidden=false;}catch{}}
     function scheduleReturningGuest(){clearTimeout(returningGuestTimer);returningGuestTimer=setTimeout(restoreReturningGuest,450);}
     form.elements.phone.addEventListener('input',()=>{quoteChanged(1);scheduleReturningGuest();});
-    form.elements.email.addEventListener('input',()=>{quoteChanged(1);scheduleReturningGuest();});
+    form.elements.email.addEventListener('input',scheduleReturningGuest);
     const ownerQuestionField=document.getElementById('owner-question-field'),ownerQuestions=form.elements.ownerQuestions;
     function updateBookingIntent(){const intent=form.elements.bookingIntent.value,wantsQuestions=intent==='questions';ownerQuestionField.hidden=!wantsQuestions;ownerQuestions.required=wantsQuestions;button.textContent=wantsQuestions?'Send questions to owners':'Start secure checkout';}
     form.elements.bookingIntent.forEach(input=>input.addEventListener('change',updateBookingIntent));
@@ -199,7 +199,7 @@ import { money } from '/pricing.js';
     function updateWelcome(privatePricing){
       const first=greetingName.trim().split(/\s+/)[0],name=first==='Abigail'?'Abby':first;
       const welcome=name?`Welcome, ${name}! `:'Welcome! ';
-      document.getElementById('guest-welcome').textContent=welcome+(privatePricing?'Choose your dates to see your discount from Lance and Heather, already included in your price.':'Choose your dates to see your price and any automatic savings. You can check a guest profile discount with your phone number or email anytime.');
+      document.getElementById('guest-welcome').textContent=welcome+(privatePricing?'Choose your dates to see your discount from Lance and Heather, already included in your price.':'Choose your dates to see your price and any automatic savings. You can check a guest profile discount with your phone number anytime.');
     }
     function showDates(focus=true){datesStep.hidden=false;detailsStep.hidden=true;if(focus){document.getElementById('dates-heading').focus();datesStep.scrollIntoView({behavior:'smooth',block:'start'});}}
     function continueWithDates(){
@@ -222,16 +222,14 @@ import { money } from '/pricing.js';
     guestCheck.elements.contact.addEventListener('input',()=>guestCheck.elements.contact.setCustomValidity(''));
     guestCheck.addEventListener('submit',async event=>{
       event.preventDefault();guestError.hidden=true;
-      const contact=guestCheck.elements.contact.value.trim(),email=contact.includes('@')?normalizedEmail(contact):'',phone=contact.includes('@')?'':cleanPhone(contact);
-      if(!email&&!phone){guestCheck.elements.contact.setCustomValidity('Enter a valid phone number or email. You only need one.');guestCheck.elements.contact.reportValidity();return;}
+      const contact=guestCheck.elements.contact.value.trim(),phone=/^[+\d\s().-]+$/.test(contact)?cleanPhone(contact):'';
+      if(!phone){guestCheck.elements.contact.setCustomValidity('Enter a valid 10-digit phone number.');guestCheck.elements.contact.reportValidity();return;}
       const requestId=++identityRequest;guestSubmit.disabled=true;
       try {
-        const response=await fetch('/api/quote',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'identify',phone,email})}),data=await response.json();
+        const response=await fetch('/api/quote',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'identify',phone})}),data=await response.json();
         if(requestId!==identityRequest)return;
         if(!response.ok)throw new Error(data.error||'We could not check your profile. Please try again.');
-        if(!pricingState.inviteSession){form.elements.phone.value=phone;form.elements.email.value=email;}
-        greetingName=guestCheck.elements.firstName.value.trim();
-        if(greetingName&&!form.elements.name.value)form.elements.name.value=greetingName;
+        if(!pricingState.inviteSession)form.elements.phone.value=phone;
         pricingState.invitePricing=data.privatePricing;pricingState.identityReady=true;setDogsVisibility(data.privatePricing);
         updateWelcome(data.privatePricing);guestDialog.close();showDates();focusPriceWhenReady=Boolean(form.elements.departure1.value);quoteChanged(1);
       }catch(error){if(requestId===identityRequest){guestError.textContent=error.message;guestError.hidden=false;}}

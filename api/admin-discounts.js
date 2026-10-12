@@ -7,7 +7,8 @@ const safeText = (value, max = 120) => String(value || '').trim().slice(0, max);
 
 function contactValues(phoneValue, emailValue) {
   const phone = normalizePhone(phoneValue), email = normalizedEmail(emailValue);
-  if ((String(phoneValue || '').trim() && !phone) || (String(emailValue || '').trim() && !email) || (!phone && !email)) throw new Error('Add a valid 10-digit phone number or email. You may save both.');
+  if (!phone) throw new Error('Add a valid 10-digit phone number so this guest can find their profile discount.');
+  if (String(emailValue || '').trim() && !email) throw new Error('Enter a valid email or leave it blank.');
   return { matchType: phone ? 'phone' : 'email', target: phone || email, email };
 }
 
@@ -76,7 +77,7 @@ export default async function handler(request, response) {
       const suppliedTargets = String(request.body?.target || '').split(/[\n,;]+/).map((value) => value.trim()).filter(Boolean);
       let parsedTargets;
       try { parsedTargets = suppliedTargets.map(parseContactLine); } catch (error) { return json(response, 400, { error: error.message }); }
-      if (!parsedTargets.length) return json(response, 400, { error: 'Enter at least one phone number or email.' });
+      if (!parsedTargets.length) return json(response, 400, { error: 'Enter at least one phone number.' });
       let values;
       try { values = pricingValues(request.body); } catch (error) { return json(response, 400, { error: error.message }); }
       const calendar = await getBookingCalendar();

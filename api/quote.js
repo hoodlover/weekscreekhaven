@@ -1,7 +1,7 @@
 import { getBookingCalendar } from '../_lib/booking-store.js';
 import { getInvites } from '../_lib/invite-store.js';
 import { guestQuote, pricingIdentity } from '../_lib/guest-quote.js';
-import { matchingGuestDiscount, normalizedEmail, normalizedPhone } from '../guest-identity.js';
+import { matchingGuestDiscount, normalizedPhone } from '../guest-identity.js';
 import { enforceRateLimit, json, rateLimitJson, requireInvite, sameOriginRequest } from '../_lib/security.js';
 
 export default async function handler(request, response) {
@@ -20,7 +20,7 @@ export default async function handler(request, response) {
     const activeInvite = invites.find((item) => item.id === inviteSession?.inviteId && !item.archivedAt && !item.revokedAt && (!item.expiresAt || Date.parse(item.expiresAt) >= Date.now()));
     const identity = pricingIdentity(request.method === 'POST' ? input : {}, activeInvite);
     if (request.method === 'POST' && input.action === 'identify') {
-      if (!activeInvite && !normalizedPhone(input.phone) && !normalizedEmail(input.email)) return json(response, 400, { error: 'Enter a valid phone number or email to check your guest profile.' }, { 'Cache-Control': 'private, no-store' });
+      if (!activeInvite && (!/^[+\d\s().-]+$/.test(String(input.phone || '')) || !normalizedPhone(input.phone))) return json(response, 400, { error: 'Enter a valid 10-digit phone number to check your guest profile.' }, { 'Cache-Control': 'private, no-store' });
       const rule = matchingGuestDiscount(identity, calendar.discounts || []);
       return json(response, 200, { privatePricing: Boolean(rule || activeInvite?.complimentary), complimentary: Boolean(activeInvite?.complimentary || rule?.discountType === 'complimentary') }, { 'Cache-Control': 'private, no-store' });
     }

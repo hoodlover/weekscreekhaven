@@ -208,7 +208,7 @@
       <section class="intro">
         <div class="eyebrow">Your Blue Ridge stay</div>
         <h1><span class="hero-line">Pick your dates.</span><span class="hero-line">Picture the rest.</span></h1>
-        <p>Find your dates and see the full price in one place. Have a guest profile? Your phone number or email checks for a discount from Lance and Heather.</p>
+        <p>Find your dates and see the full price in one place. Have a guest profile? Your phone number checks for a discount from Lance and Heather.</p>
         <h3 class="next-title">Plan your stay</h3>
         <div class="steps">
           <div class="step"><b>1</b><span>Choose available dates and see your discount, stay charges, taxes, and refundable deposit together.</span></div>
@@ -223,7 +223,7 @@
         <div class="eyebrow">Step 1 · Dates &amp; price</div>
         <h2 id="dates-heading" tabindex="-1">Choose your dates. See your price.</h2>
         <p id="guest-welcome" class="helper" role="status">Choose available dates to see your full price before filling out a booking form.</p>
-        <button id="check-profile" class="clear-choice" type="button">Check your profile discount · phone or email</button>
+        <button id="check-profile" class="clear-choice" type="button">Check your profile discount · phone number</button>
         <div class="minimum">One-night stays available &middot; two-night minimum charge</div>
         <div id="calendar-selection" class="message picked" hidden role="status"></div>
         <div class="grid">
@@ -292,7 +292,7 @@
         <input name="formStartedAt" type="hidden">
         <label class="honeypot">Website<input name="website" tabindex="-1" autocomplete="off"></label>
         <button id="submit" type="submit">Start secure checkout</button>
-        <p class="fine">Displayed estimates include the standard $200 cleaning cost and any larger-group cleaning adjustment. Eligible Friends &amp; Family pricing is applied automatically when your phone number or email matches your saved guest profile. Dog fees or other required costs appear only when they apply to that rate. Estimated taxes and government lodging fees are shown separately and added when a stay is booked. Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the applicable reservation payment is retained and the remaining amount paid is refunded. The separately listed refundable security deposit is $50 for Friends &amp; Family stays and $300 for public-rate stays; it is normally refunded within seven days after checkout, less documented damage, missing property, rule-violation costs, or excessive cleaning.</p>
+        <p class="fine">Displayed estimates include the standard $200 cleaning cost and any larger-group cleaning adjustment. Eligible Friends &amp; Family pricing is applied automatically when your phone number matches your saved guest profile. Dog fees or other required costs appear only when they apply to that rate. Estimated taxes and government lodging fees are shown separately and added when a stay is booked. Cancel at least 24 hours before the 4:00 PM Eastern check-in time for a full refund. Inside 24 hours, the applicable reservation payment is retained and the remaining amount paid is refunded. The separately listed refundable security deposit is $50 for Friends &amp; Family stays and $300 for public-rate stays; it is normally refunded within seven days after checkout, less documented damage, missing property, rule-violation costs, or excessive cleaning.</p>
         </section>
       </form>
     </main>
@@ -300,9 +300,9 @@
   <dialog id="guest-dialog" class="confirmation-dialog" aria-labelledby="guest-dialog-title" aria-describedby="guest-dialog-help"><form id="guest-check" class="confirmation-dialog-inner">
     <div class="eyebrow">Welcome to Weeks Creek Haven</div>
     <h2 id="guest-dialog-title">Have a guest profile?</h2>
-    <p id="guest-dialog-help" class="helper">Enter your phone number or email to check whether your guest profile has a discount from Lance and Heather. You only need one.</p>
-    <label>Your first name <small>(optional)</small><input name="firstName" autocomplete="given-name" maxlength="60"></label>
-    <label>Phone number or email<input name="contact" type="text" autocomplete="on" maxlength="160" placeholder="555 867-5309 or you@example.com" required aria-describedby="guest-dialog-help"></label>
+    <p id="guest-dialog-help" class="helper">Enter your phone number to check whether your guest profile has a discount from Lance and Heather.</p>
+    <p id="guest-call-promise" class="helper">We won’t call you unless you ask us to later.</p>
+    <label>Phone number<input name="contact" type="text" inputmode="tel" autocomplete="tel" maxlength="40" placeholder="(555) 867-5309" required aria-describedby="guest-dialog-help guest-call-promise"></label>
     <p id="guest-error" class="message error" role="alert" hidden></p>
     <button id="guest-check-submit" type="submit">Check my discount &amp; choose dates</button>
     <button id="guest-skip" class="clear-choice" type="button">Just browse dates &amp; prices</button>
