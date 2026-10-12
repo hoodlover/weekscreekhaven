@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { matchingGuestDiscount } from '../guest-identity.js';
+import { guestFirstName, matchingGuestDiscount } from '../guest-identity.js';
 import { applyFriendsAndFamilyDiscount, quoteStay } from '../pricing.js';
 import { discountDescription, securityDepositCents, totalWithDeposit } from '../booking-price.js';
 import { validStayDates } from '../_lib/guest-quote.js';
@@ -37,14 +37,15 @@ test('owner rejects duplicate contact aliases, malformed email, unauthenticated 
   assert.equal((await getBookingCalendar()).discounts.length,1);
 });
 
-test('profile check returns only pricing flags; public GET and availability never expose private profiles',async()=>{
+test('profile check returns a first name and pricing flags; quotes and availability omit private profiles',async()=>{
   reset();await seedFriend();
   const identified=await call(quote,{body:{action:'identify',phone:'+1 (555) 867-5309'}});
   assert.equal((await call(quote,{body:{action:'identify',email:friend.email}})).code,400);
-  assert.deepEqual(identified.body,{privatePricing:true,complimentary:false});
+  assert.deepEqual(identified.body,{privatePricing:true,complimentary:false,firstName:'Private'});
   assert.match(identified.headers['Cache-Control'],/no-store/);
   const unknown=await call(quote,{body:{action:'identify',phone:'5559998888'}});
   assert.equal(unknown.body.privatePricing,false);
+  assert.equal(unknown.body.firstName,'');
   const publicQuote=await call(quote,{method:'GET',query:{...stay,email:friend.email,phone:friend.target}});
   assert.equal(publicQuote.code,200);assert.equal(publicQuote.body.quote.friendsAndFamilyDiscount,undefined);
   const privateQuote=await call(quote,{body:{...stay,phone:friend.target}});
@@ -54,6 +55,37 @@ test('profile check returns only pricing flags; public GET and availability neve
   const calendar=await call(availability,{method:'GET'});
   assert.equal(JSON.stringify(calendar.body).includes(friend.email),false);
   assert.equal(JSON.stringify(calendar.body).includes(friend.guestName),false);
+});
+
+test('greetings use only the saved first name and Abigail’s preferred name',()=>{
+  assert.equal(guestFirstName('  Charles Example  '),'Charles');
+  assert.equal(guestFirstName('Abigail Example'),'Abby');
+  assert.equal(guestFirstName(''), '');
+});
+
+test('weekend nightly edits update the phone quote and final booking uses the latest price',async()=>{
+  reset();await seedFriend({...friend,guestName:'Charles Example',percentage:60});
+  const dates={arrival:'2027-11-05',departure:'2027-11-07',guests:4,dogs:0};
+  const rate={id:'weekend-test',...dates,amountCents:60000,pricingMode:'nightly',nightCount:2};
+  await appendBookingRecord({type:'rate_created',rate,createdAt:new Date().toISOString()});
+  const identity=await call(quote,{body:{action:'identify',phone:friend.target}});
+  assert.equal(identity.body.firstName,'Charles');
+  const priced=await call(quote,{body:{...dates,phone:friend.target}});
+  assert.equal(priced.body.quote.baseStayCents,120000);
+  assert.equal(priced.body.quote.discountAmountCents,72000);
+  assert.equal(priced.body.quote.totalCents,48000);
+  assert.equal(totalWithDeposit(priced.body.quote),60240);
+  await appendBookingRecord({type:'rate_removed',rateId:rate.id,createdAt:new Date().toISOString()});
+  await appendBookingRecord({type:'rate_created',rate:{...rate,id:'updated-weekend',amountCents:70000},createdAt:new Date().toISOString()});
+  const updated=await call(quote,{body:{...dates,phone:friend.target}});
+  assert.equal(updated.body.quote.baseStayCents,140000);
+  assert.equal(updated.body.quote.totalCents,56000);
+  const body=bookingBody({arrival1:dates.arrival,departure1:dates.departure,reviewedTotalCents:totalWithDeposit(priced.body.quote)});
+  const stale=await call(booking,{body});
+  assert.equal(stale.code,409);assert.equal(stale.body.priceChanged,true);
+  assert.equal((await getBookingCalendar()).bookings.length,0);
+  const saved=await call(booking,{body:{...body,reviewedTotalCents:totalWithDeposit(updated.body.quote)}});
+  assert.equal(saved.code,201);assert.equal(saved.body.quotes[0].baseStayCents,140000);
 });
 
 test('phone quote and final booking agree despite a different email; a changed reviewed total creates no booking or invoice',async()=>{

@@ -1,7 +1,7 @@
 import { getBookingCalendar } from '../_lib/booking-store.js';
 import { getInvites } from '../_lib/invite-store.js';
 import { guestQuote, pricingIdentity } from '../_lib/guest-quote.js';
-import { matchingGuestDiscount, normalizedPhone } from '../guest-identity.js';
+import { guestFirstName, matchingGuestDiscount, normalizedPhone } from '../guest-identity.js';
 import { enforceRateLimit, json, rateLimitJson, requireInvite, sameOriginRequest } from '../_lib/security.js';
 
 export default async function handler(request, response) {
@@ -22,7 +22,7 @@ export default async function handler(request, response) {
     if (request.method === 'POST' && input.action === 'identify') {
       if (!activeInvite && (!/^[+\d\s().-]+$/.test(String(input.phone || '')) || !normalizedPhone(input.phone))) return json(response, 400, { error: 'Enter a valid 10-digit phone number to check your guest profile.' }, { 'Cache-Control': 'private, no-store' });
       const rule = matchingGuestDiscount(identity, calendar.discounts || []);
-      return json(response, 200, { privatePricing: Boolean(rule || activeInvite?.complimentary), complimentary: Boolean(activeInvite?.complimentary || rule?.discountType === 'complimentary') }, { 'Cache-Control': 'private, no-store' });
+      return json(response, 200, { privatePricing: Boolean(rule || activeInvite?.complimentary), complimentary: Boolean(activeInvite?.complimentary || rule?.discountType === 'complimentary'), firstName: guestFirstName(rule?.guestName || activeInvite?.label) }, { 'Cache-Control': 'private, no-store' });
     }
     const quote = guestQuote({
       arrival: String(input.arrival || ''),
@@ -33,7 +33,7 @@ export default async function handler(request, response) {
       ...identity,
     }, calendar, activeInvite);
     if (!quote) return json(response, 400, { error: 'Choose valid arrival and checkout dates, up to 365 nights apart.' });
-    // A contact lookup reveals the rate, never the saved guest's name or other profile fields.
+    // Quotes omit saved profile details; the identify step returns only a greeting name.
     if (quote.friendsAndFamilyDiscount) quote.friendsAndFamilyDiscount = { ...quote.friendsAndFamilyDiscount, guestName: '', id: undefined };
     return json(response, 200, { quote }, { 'Cache-Control': 'private, no-store' });
   } catch (error) {

@@ -1,12 +1,12 @@
 import { money } from '/pricing.js';
-    import { normalizedEmail, normalizedPhone as cleanPhone } from '/guest-identity.js';
+    import { guestFirstName, normalizedEmail, normalizedPhone as cleanPhone } from '/guest-identity.js';
     import { discountDescription, securityDepositCents, totalWithDeposit } from '/booking-price.js';
     const form=document.getElementById('booking-form'); const button=document.getElementById('submit'); const message=document.getElementById('form-message');
     const confirmationDialog=document.getElementById('confirmation-dialog'),confirmationTitle=document.getElementById('confirmation-title'),confirmationCopy=document.getElementById('confirmation-copy'),myBookingLink=document.getElementById('my-booking-link'),confirmationClose=document.getElementById('confirmation-close');
     confirmationClose.addEventListener('click',()=>confirmationDialog.close());
     const pricingState={rates:[],unavailable:[],requested:[],loaded:false,calendarError:'',discountQuotes:{},discountTimer:null,discountRequest:0,inviteSession:false,invitePricing:false,identityReady:false,quoteError:''};
     const friendsPayment=document.getElementById('friends-payment');
-    let focusPriceWhenReady=false;
+    let focusPriceWhenReady=false,greetingName='';
     const today=new Date(); today.setHours(0,0,0,0); const minimum=today.toISOString().slice(0,10);
     const addDays=(value,days)=>{ const date=new Date(`${value}T12:00:00`); date.setDate(date.getDate()+days); return date.toISOString().slice(0,10); };
     const validDate=(value)=>/^\d{4}-\d{2}-\d{2}$/.test(value||'')&&!Number.isNaN(Date.parse(`${value}T12:00:00`));
@@ -55,7 +55,8 @@ import { money } from '/pricing.js';
       const valid=pricingState.loaded&&pricingState.identityReady&&validDate(arrival)&&validDate(departure)&&departure>arrival&&!stayConflicts(arrival,departure);
       document.getElementById('continue-dates').disabled=!valid||!quote;
       const status=document.getElementById('price-status');
-      status.textContent=pricingState.quoteError||(valid?(quote?'Price includes the discount shown above. Continue when these dates work for you.':'Checking your price…'):'Select available arrival and checkout dates to see your total.');
+      const first=guestFirstName(greetingName);
+      status.textContent=pricingState.quoteError||(valid?(quote?`${first?`${first}, your price`:'Your price'} includes the discount shown above. Continue when these dates work for you.`:'Checking your price…'):'Select available arrival and checkout dates to see your total.');
       document.getElementById('retry-price').hidden=!pricingState.quoteError;
       panel.hidden=!valid||!quote;
       if(panel.hidden){renderPossibleSavings(index,null);return;}
@@ -195,16 +196,18 @@ import { money } from '/pricing.js';
     }
     const guestDialog=document.getElementById('guest-dialog'),guestCheck=document.getElementById('guest-check'),guestError=document.getElementById('guest-error'),guestSubmit=document.getElementById('guest-check-submit');
     const datesStep=document.getElementById('dates-step'),detailsStep=document.getElementById('details-step');
-    let greetingName='',identityRequest=0,reviewedTotal=null;
+    let identityRequest=0,reviewedTotal=null;
     function updateWelcome(privatePricing){
-      const first=greetingName.trim().split(/\s+/)[0],name=first==='Abigail'?'Abby':first;
-      const welcome=name?`Welcome, ${name}! `:'Welcome! ';
+      const name=guestFirstName(greetingName);
+      const welcome=name?`Hey ${name}! `:'Welcome! ';
       document.getElementById('guest-welcome').textContent=welcome+(privatePricing?'Choose your dates to see your discount from Lance and Heather, already included in your price.':'Choose your dates to see your price and any automatic savings. You can check a guest profile discount with your phone number anytime.');
     }
     function showDates(focus=true){datesStep.hidden=false;detailsStep.hidden=true;if(focus){document.getElementById('dates-heading').focus();datesStep.scrollIntoView({behavior:'smooth',block:'start'});}}
     function continueWithDates(){
       const quote=currentQuote();if(!quote||!pricingState.loaded||hasAvailabilityConflict())return;
       reviewedTotal=totalWithDeposit(quote);datesStep.hidden=true;detailsStep.hidden=false;renderQuote();
+      const first=guestFirstName(greetingName);
+      document.getElementById('details-heading').textContent=first?`${first}, make this stay yours`:'Make this stay yours';
       document.getElementById('details-heading').focus();detailsStep.scrollIntoView({behavior:'smooth',block:'start'});
     }
     document.getElementById('continue-dates').addEventListener('click',continueWithDates);
@@ -230,6 +233,7 @@ import { money } from '/pricing.js';
         if(requestId!==identityRequest)return;
         if(!response.ok)throw new Error(data.error||'We could not check your profile. Please try again.');
         if(!pricingState.inviteSession)form.elements.phone.value=phone;
+        greetingName=data.firstName||'';
         pricingState.invitePricing=data.privatePricing;pricingState.identityReady=true;setDogsVisibility(data.privatePricing);
         updateWelcome(data.privatePricing);guestDialog.close();showDates();focusPriceWhenReady=Boolean(form.elements.departure1.value);quoteChanged(1);
       }catch(error){if(requestId===identityRequest){guestError.textContent=error.message;guestError.hidden=false;}}

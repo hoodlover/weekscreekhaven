@@ -98,7 +98,7 @@ export function weekPlan(dateKey, rates = []) {
   const season = seasonForDate(friday);
   const weekendCents = Number(weekendOverride?.totalCents) || (weekendOverride ? Number(weekendOverride.amountCents || 0) * Number(weekendOverride.nightCount || daysBetween(weekendOverride.arrival, weekendOverride.departure)) : season.weekendCents);
   const derivedWeeknightCents = roundUpCents(weekendCents * 0.4);
-  const nightlyOverride = weekendOverride ? null : customNightlyRate(dateKey, rates);
+  const nightlyOverride = customNightlyRate(dateKey, rates);
   const weeknightCents = Number(nightlyOverride?.amountCents) || derivedWeeknightCents;
   return {
     friday,
@@ -163,7 +163,8 @@ export function quoteStay({ arrival, departure, guests = 1, dogs = 0, rates = []
   } else if (actualNights === 1) {
     const plan = weekPlan(arrival, rates);
     const day = new Date(`${arrival}T12:00:00`).getDay();
-    lodgingCents = day === 5 || day === 6 ? plan.weekendCents : plan.twoNightCents;
+    const nightlyOverride = customNightlyRate(arrival, rates);
+    lodgingCents = nightlyOverride ? Number(nightlyOverride.amountCents) * 2 : day === 5 || day === 6 ? plan.weekendCents : plan.twoNightCents;
     pricingRule = 'One night · two-night minimum price';
     minimumApplied = true;
   } else if (actualNights >= 7) {
@@ -179,14 +180,21 @@ export function quoteStay({ arrival, departure, guests = 1, dogs = 0, rates = []
     for (let index = 0; index < actualNights; index++) {
       const date = addDays(arrival, index);
       const day = new Date(`${date}T12:00:00`).getDay();
+      const nightlyOverride = customNightlyRate(date, rates);
       let amountCents;
       let kind;
-      if ([5, 6].includes(day)) {
+      if (nightlyOverride) {
+        amountCents = Number(nightlyOverride.amountCents);
+        kind = 'owner-nightly';
+      } else if ([5, 6].includes(day)) {
         const friday = fridayForCalendarWeek(date);
+        // When a selected weekend night has its own rate, price each selected
+        // night separately so the seasonal package cannot replace or double it.
+        const selectedNightlyOverride = [friday, addDays(friday, 1)].some((night) => night >= arrival && night < departure && customNightlyRate(night, rates));
         const alreadyCharged = chargedWeekends.has(friday);
-        amountCents = alreadyCharged ? 0 : weekPlan(date, rates).weekendCents;
-        kind = alreadyCharged ? 'weekend-included' : 'weekend-package';
-        chargedWeekends.add(friday);
+        amountCents = selectedNightlyOverride ? weekPlan(date, rates).weekendCents / 2 : alreadyCharged ? 0 : weekPlan(date, rates).weekendCents;
+        kind = selectedNightlyOverride ? 'weekend-night' : alreadyCharged ? 'weekend-included' : 'weekend-package';
+        if (!selectedNightlyOverride) chargedWeekends.add(friday);
       } else {
         amountCents = weekPlan(date, rates).weeknightCents;
         kind = 'weeknight';
@@ -197,6 +205,7 @@ export function quoteStay({ arrival, departure, guests = 1, dogs = 0, rates = []
     pricingRule = chargedWeekends.size
       ? `${actualNights === 5 ? 'Five-night price' : 'Stay price'} · full weekend package${chargedWeekends.size > 1 ? 's' : ''} + weeknights`
       : actualNights === 5 ? 'Five-night price · included dates' : 'Night-by-night price';
+    if (nightly.some((night) => night.kind === 'owner-nightly')) pricingRule = 'Owner-set nightly rates · seasonal prices for other nights';
   }
 
   lodgingCents = roundUpCents(lodgingCents);

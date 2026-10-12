@@ -1,4 +1,9 @@
 // Shared contact matching; names personalize greetings but never select private pricing.
+export function guestFirstName(value) {
+  const first = String(value || '').trim().split(/\s+/)[0].slice(0, 60);
+  return first.toLowerCase() === 'abigail' ? 'Abby' : first;
+}
+
 export function normalizedPhone(value) {
   const digits = String(value || '').replace(/\D/g, '');
   const phone = digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : digits;
