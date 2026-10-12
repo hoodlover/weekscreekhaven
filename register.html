@@ -55,9 +55,11 @@
     .confidence-item span { display:block; margin-top:4px; color:var(--muted); font-size:.68rem; line-height:1.45; }
     .card { background:rgba(255,253,248,.98); border-radius:22px; padding:32px; border-top:9px solid var(--pine); box-shadow:0 24px 70px rgba(0,0,0,.45); }
     .card h2 { font-size:2.25rem; color:var(--pine); }
+    #dates-heading:focus,#details-heading:focus { outline:none; }
     .helper { color:var(--muted); line-height:1.55; font-size:.82rem; }
-    .minimum { display:inline-flex; align-items:center; justify-content:center; text-align:center; gap:7px; margin:10px 0 2px; padding:8px 12px; border-radius:999px; background:#e7efe8; color:var(--pine); font-size:.7rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
-    #check-profile { display:block; text-align:center; line-height:1.35; }
+    .minimum { display:flex; width:fit-content; max-width:100%; align-items:center; justify-content:center; text-align:center; gap:7px; margin:12px auto 2px; padding:8px 12px; border-radius:999px; background:#e7efe8; color:var(--pine); font-size:.7rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
+    #check-profile { display:block; max-width:100%; margin-inline:auto; text-align:center; line-height:1.35; }
+    #guest-skip { display:block; max-width:100%; margin:12px auto 0; text-align:center; line-height:1.4; }
     .grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
     label { display:block; font-size:.67rem; text-transform:uppercase; letter-spacing:.11em; font-weight:800; margin-top:15px; }
     input,select,textarea { width:100%; margin-top:7px; padding:13px 14px; border:1px solid #cfc4b4; border-radius:9px; background:white; color:var(--ink); font:inherit; outline:none; }
