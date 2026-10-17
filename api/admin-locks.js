@@ -10,7 +10,7 @@ import { json, requireAdmin, sameOriginRequest } from '../_lib/security.js';
 export const config = { maxDuration: 60 };
 const visible = entry => {
   const { pendingCodeChange, ...safeEntry } = entry;
-  return { ...safeEntry, ...(pendingCodeChange ? { pinChangePending:true } : {}), doors:Object.fromEntries(Object.entries(entry.doors).map(([id,value]) => [id,{status:value.status,...(value.failure?.reason?{failure:{reason:value.failure.reason}}:{})}])) };
+  return { ...safeEntry, ...(pendingCodeChange ? { pinChangePending:true } : {}), doors:Object.fromEntries(Object.entries(entry.doors).map(([id,value]) => [id,{status:value.status,...(value.failure?.reason?{failure:{reason:value.failure.reason,...(value.failure.operation?{operation:value.failure.operation}:{}),...(Number.isInteger(value.failure.providerCode)?{providerCode:value.failure.providerCode}:{})}}:{})}])) };
 };
 export default async function handler(request,response) {
   response.setHeader('Cache-Control','private, no-store');

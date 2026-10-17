@@ -53,7 +53,8 @@ export async function changeOwnerLockCode(entry, { code, provider, doors, save }
       entry.doors[doorId] = { ...previous, status:'installed', providerCodeId:result.providerCodeId, verification:result.verification, failure:undefined };
       pending.updatedDoorIds.push(doorId);
     } catch (error) {
-      entry.doors[doorId] = { ...previous, status:'failed', failure:{ reason:safeDoorFailure(error) } };
+      console.error('Owner lock PIN update failed', { doorId, name:error?.name || 'Error', operation:error?.operation || null, providerCode:error?.providerCode ?? null });
+      entry.doors[doorId] = { ...previous, status:'failed', failure:safeDoorFailureDetails(error) };
     }
     await save(entry);
   }
@@ -104,7 +105,8 @@ export async function applyOwnerLock(entry, { provider, doors, save, revoke = fa
         entry.doors[doorId] = { status: result.status, providerCodeId: result.providerCodeId, verification: result.verification };
       }
     } catch (error) {
-      entry.doors[doorId] = { ...previous, status:'failed', failure:{ reason:safeDoorFailure(error) }, ...(error.providerCodeId ? {providerCodeId:error.providerCodeId} : {}) };
+      console.error(`Owner lock ${revoke?'removal':'installation'} failed`, { doorId, name:error?.name || 'Error', operation:error?.operation || null, providerCode:error?.providerCode ?? null });
+      entry.doors[doorId] = { ...previous, status:'failed', failure:safeDoorFailureDetails(error), ...(error.providerCodeId ? {providerCodeId:error.providerCodeId} : {}) };
     }
     await save(entry);
   }
@@ -112,11 +114,16 @@ export async function applyOwnerLock(entry, { provider, doors, save, revoke = fa
   entry.updatedAt = new Date().toISOString(); await save(entry); return entry;
 }
 
-function safeDoorFailure(error) {
+function safeDoorFailureDetails(error) {
   const message = String(error?.message || '');
-  if (/^KK Home did not verify/.test(message)) return 'KK Home did not confirm the change. Check this lock in the KK Home app before retrying.';
-  if (/^Saved code entry/.test(message)) return 'The saved lock entry changed. Review this door in KK Home before retrying.';
-  if (/^The saved KK Home code reference/.test(message)) return 'The saved lock reference is missing or invalid. Review this door in KK Home.';
-  if (/^KK Home returned an (?:unreadable|unexpected) response/.test(message)) return 'KK Home returned an unexpected response. Check this door in the KK Home app before retrying.';
-  return 'KK Home could not confirm this door. Check it in the KK Home app before retrying.';
+  const reason = /^KK Home did not verify/.test(message)
+    ? 'KK Home did not confirm the change. Check this lock in the KK Home app before retrying.'
+    : /^Saved code entry/.test(message)
+      ? 'The saved lock entry changed. Review this door in KK Home before retrying.'
+      : /^The saved KK Home code reference/.test(message)
+        ? 'The saved lock reference is missing or invalid. Review this door in KK Home.'
+        : /^KK Home returned an (?:unreadable|unexpected) response/.test(message)
+          ? 'KK Home returned an unexpected response. Check this door in the KK Home app before retrying.'
+          : 'KK Home could not confirm this door. Check it in the KK Home app before retrying.';
+  return { reason, ...(error?.operation ? { operation:String(error.operation).slice(0,80) } : {}), ...(Number.isInteger(error?.providerCode) ? { providerCode:error.providerCode } : {}) };
 }

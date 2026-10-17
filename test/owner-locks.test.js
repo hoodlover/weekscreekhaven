@@ -66,7 +66,7 @@ test('deleting a named code covers all three doors and preserves a failed remova
   let fail=true;const removed=[];
   const provider={removeCode:async({door,providerCodeId})=>{
     assert.equal(providerCodeId,door.id+'-ref');
-    if(door.id==='front'&&fail)throw new Error('offline');
+    if(door.id==='front'&&fail)throw Object.assign(new Error('offline'),{operation:'remove-pwd',providerCode:401});
     removed.push(door.id);
   }};
   const deps={doors:allDoors,provider,save:async()=>{},revoke:true};
@@ -74,6 +74,7 @@ test('deleting a named code covers all three doors and preserves a failed remova
   assert.equal(entry.status,'revoking');assert.deepEqual(removed,['deck','basement']);
   assert.equal(entry.doors.front.providerCodeId,'front-ref');assert.equal(entry.doors.front.status,'failed');
   assert.equal(entry.doors.front.failure.reason,'KK Home could not confirm this door. Check it in the KK Home app before retrying.');
+  assert.equal(entry.doors.front.failure.operation,'remove-pwd');assert.equal(entry.doors.front.failure.providerCode,401);
   fail=false;await applyOwnerLock(entry,deps);
   assert.equal(entry.status,'revoked');assert.ok(allDoors.every(d=>entry.doors[d.id].status==='removed'));
 });
