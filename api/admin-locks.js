@@ -61,7 +61,13 @@ export default async function handler(request,response) {
     });
     return json(response,200,{entry:visible(result)});
   } catch(error) {
-    console.error('Owner lock API failure', { name:error?.name || 'Error', operation:error?.operation || null });
+    const source = typeof error?.stack === 'string'
+      ? error.stack.split('\n').slice(1).flatMap(line => {
+        const match = line.match(/(?:^|[/(])([^/()]+\.js):(\d+):(\d+)/);
+        return match ? [`${match[1]}:${match[2]}`] : [];
+      }).slice(0, 2)
+      : [];
+    console.error('Owner lock API failure', { name:error?.name || 'Error', operation:error?.operation || null, source });
     const raw=String(error.message||'');
     const safe = /^(Enter|Choose|Select|One successful|Use |That PIN|This PIN|This time|This code|This scheduled|The end|Refresh|Access code|Unknown lock|Another lock|KK Home returned an (?:unreadable|unexpected) response)/.test(raw);
     return json(response,409,{error:safe?raw:'The lock update could not be confirmed. Refresh the list before trying again.',
