@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { newOwnerLock, easternInput, applyOwnerLock, changeOwnerLockCode, confirmOwnerLockDoorAbsent } from '../_lib/owner-locks.js';
+import { newOwnerLock, easternInput, applyOwnerLock, changeOwnerLockCode, confirmOwnerLockDoorAbsent, forgetInactiveOneTimeLock } from '../_lib/owner-locks.js';
 import { createKKHomeLockProvider } from '../_lib/lock-providers/kkhome.js';
 
 const doors=[{id:'deck',name:'Deck',deviceId:'D'},{id:'front',name:'Front',deviceId:'F'}];
@@ -108,6 +108,17 @@ test('confirmed absent doors clear only owner status and revoke after every assi
   confirmOwnerLockDoorAbsent(entry,'front');
   assert.equal(entry.status,'revoked');assert.ok(entry.doorIds.every(id=>entry.doors[id].status==='removed'));
   assert.throws(()=>confirmOwnerLockDoorAbsent(entry,'front'),/Confirm absence/);
+});
+test('only confirmed inactive one-time records can be removed from history',async()=>{
+  const entry=newOwnerLock({name:'Deck single-use test',mode:'once',doorIds:['deck']},options);
+  entry.status='not-active';let removed;
+  assert.deepEqual(await forgetInactiveOneTimeLock(entry,{remove:async id=>removed=id}),{forgotten:true,id:entry.id});
+  assert.equal(removed,entry.id);
+  for(const invalid of [{...entry,status:'installed'},{...entry,status:'not-active',mode:'permanent'}]) {
+    let calls=0;
+    await assert.rejects(()=>forgetInactiveOneTimeLock(invalid,{remove:async()=>calls++}),/Only one-time codes confirmed/);
+    assert.equal(calls,0);
+  }
 });
 test('permanent access uses native attribute zero rather than a distant expiry',async()=>{
   let keys=[],payload;

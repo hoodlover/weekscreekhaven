@@ -90,6 +90,14 @@ export function confirmOwnerLockDoorAbsent(entry, doorId) {
   return entry;
 }
 
+export async function forgetInactiveOneTimeLock(entry, { remove }) {
+  if (entry.mode !== 'once' || entry.status !== 'not-active') {
+    throw new Error('Only one-time codes confirmed as no longer active can be removed from history.');
+  }
+  await remove(entry.id);
+  return { forgotten:true, id:entry.id };
+}
+
 export async function applyOwnerLock(entry, { provider, doors, save, revoke = false }) {
   if (entry.pendingCodeChange && !revoke) return changeOwnerLockCode(entry, { code:entry.pendingCodeChange.to, provider, doors, save });
   if (entry.pendingCodeChange && revoke) throw new Error('This PIN change needs attention. Retry it before deleting access.');

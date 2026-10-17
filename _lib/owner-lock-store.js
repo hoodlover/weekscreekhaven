@@ -19,6 +19,10 @@ export async function saveOwnerLock(entry) {
   if (!/^[a-zA-Z0-9-]{8,80}$/.test(entry.id)) throw new Error('Invalid access record.');
   await put(`${prefix}${entry.id}.enc`, encryptRecord(entry), { token: token(), access: 'private', addRandomSuffix: false, allowOverwrite: true, contentType: 'text/plain' });
 }
+export async function deleteOwnerLock(entryId) {
+  if (!/^[a-zA-Z0-9-]{8,80}$/.test(entryId)) throw new Error('Invalid access record.');
+  await del(`${prefix}${entryId}.enc`, { token: token() });
+}
 export async function withOwnerLockLease(work) {
   const path = 'secure-owner-locks/lease.json';
   const existing = await get(path, { token: token(), access: 'private', useCache: false });

@@ -1,5 +1,5 @@
-import { ownerLockEntries, saveOwnerLock, withOwnerLockLease } from '../_lib/owner-lock-store.js';
-import { applyOwnerLock, changeOwnerLockCode, confirmOwnerLockDoorAbsent, newOwnerLock } from '../_lib/owner-locks.js';
+import { deleteOwnerLock, ownerLockEntries, saveOwnerLock, withOwnerLockLease } from '../_lib/owner-lock-store.js';
+import { applyOwnerLock, changeOwnerLockCode, confirmOwnerLockDoorAbsent, forgetInactiveOneTimeLock, newOwnerLock } from '../_lib/owner-locks.js';
 import { configuredDoors } from '../_lib/lock-service.js';
 import { createKKHomeLockProvider } from '../_lib/lock-providers/kkhome.js';
 import { getBookingRequests } from '../_lib/booking-store.js';
@@ -20,9 +20,13 @@ export default async function handler(request,response) {
     if (request.method === 'GET') return json(response,200,{entries:(await ownerLockEntries()).map(visible),doors:doors.map(({id,name})=>({id,name}))});
     if (request.method !== 'POST') return json(response,405,{error:'Use GET or POST.'});
     if (!sameOriginRequest(request)) return json(response,403,{error:'Submit lock changes from the owner site.'});
-    if (process.env.LOCK_PROVIDER !== 'kkhome' || process.env.KKHOME_LIVE_ENABLED !== 'true') return json(response,409,{error:'KK Home automation is not enabled.'});
     const result = await withOwnerLockLease(async () => {
       const entries = await ownerLockEntries(); const action = request.body?.action;
+      if (action === 'forget-history') {
+        const entry = entries.find(e=>e.id===request.body?.id); if (!entry) throw new Error('Access code not found.');
+        return forgetInactiveOneTimeLock(entry,{remove:deleteOwnerLock});
+      }
+      if (process.env.LOCK_PROVIDER !== 'kkhome' || process.env.KKHOME_LIVE_ENABLED !== 'true') throw new Error('KK Home automation is not enabled.');
       const provider = createKKHomeLockProvider(process.env,{fetchImpl:(url,options)=>fetch(url,{...options,signal:AbortSignal.timeout(10000)})});
       let entry;
       if (action === 'create') {
@@ -65,7 +69,7 @@ export default async function handler(request,response) {
       }
       return applyOwnerLock(entry,{provider,doors,save:saveOwnerLock,revoke:action==='revoke'});
     });
-    return json(response,200,result.doorConfirmedAbsent ? {...result,entry:visible(result.entry)} : {entry:visible(result)});
+    return json(response,200,result.forgotten ? result : result.doorConfirmedAbsent ? {...result,entry:visible(result.entry)} : {entry:visible(result)});
   } catch(error) {
     const source = typeof error?.stack === 'string'
       ? error.stack.split('\n').slice(1).flatMap(line => {
@@ -75,7 +79,7 @@ export default async function handler(request,response) {
       : [];
     console.error('Owner lock API failure', { name:error?.name || 'Error', operation:error?.operation || null, source });
     const raw=String(error.message||'');
-    const safe = /^(Enter|Choose|Select|One successful|Use |That PIN|This PIN|This time|This code|This scheduled|The end|Refresh|Access code|Unknown lock|Another lock|KK Home returned an (?:unreadable|unexpected) response)/.test(raw);
+    const safe = /^(Enter|Choose|Select|One successful|Use |That PIN|This PIN|This time|This code|This scheduled|The end|Refresh|Access code|Unknown lock|Another lock|Only one-time codes|KK Home automation|KK Home returned an (?:unreadable|unexpected) response)/.test(raw);
     return json(response,409,{error:safe?raw:'The lock update could not be confirmed. Refresh the list before trying again.',
       ...(error.operation ? {operation:error.operation,providerCode:error.providerCode} : {})});
   }
