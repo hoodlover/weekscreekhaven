@@ -14,8 +14,8 @@ const visible = entry => {
 };
 export default async function handler(request,response) {
   response.setHeader('Cache-Control','private, no-store');
-  if (!requireAdmin(request)) return json(response,401,{error:'Owner sign-in required.'});
   try {
+    if (!requireAdmin(request)) return json(response,401,{error:'Owner sign-in required.'});
     const doors = configuredDoors();
     if (request.method === 'GET') return json(response,200,{entries:(await ownerLockEntries()).map(visible),doors:doors.map(({id,name})=>({id,name}))});
     if (request.method !== 'POST') return json(response,405,{error:'Use GET or POST.'});
@@ -61,6 +61,7 @@ export default async function handler(request,response) {
     });
     return json(response,200,{entry:visible(result)});
   } catch(error) {
+    console.error('Owner lock API failure', { name:error?.name || 'Error', operation:error?.operation || null });
     const raw=String(error.message||'');
     const safe = /^(Enter|Choose|Select|One successful|Use |That PIN|This PIN|This time|This code|This scheduled|The end|Refresh|Access code|Unknown lock|Another lock)/.test(raw);
     return json(response,409,{error:safe?raw:'The lock update could not be confirmed. Refresh the list before trying again.',

@@ -4,7 +4,10 @@ let entries = [], doors = [], operationId = crypto.randomUUID(), busy = false;
 const date = value => value ? new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',dateStyle:'medium',timeStyle:'short'}).format(new Date(value))+' Eastern' : '';
 async function api(body) {
   const response = await fetch('/api/admin-locks',body ? {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)} : {});
-  const data = await response.json(); if (!response.ok) throw new Error(data.error || 'Unable to update lock codes.'); return data;
+  let data;
+  try { data = JSON.parse(await response.text()); }
+  catch { throw new Error(`The lock server returned an unexpected response (HTTP ${response.status}). Refresh the codes before retrying.`); }
+  if (!response.ok) throw new Error(data.error || 'Unable to update lock codes.'); return data;
 }
 function mode() {
   const value = $('owner-lock-mode').value;
