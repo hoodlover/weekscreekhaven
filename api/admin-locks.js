@@ -10,7 +10,7 @@ import { json, requireAdmin, sameOriginRequest } from '../_lib/security.js';
 export const config = { maxDuration: 60 };
 const visible = entry => {
   const { pendingCodeChange, ...safeEntry } = entry;
-  return { ...safeEntry, ...(pendingCodeChange ? { pinChangePending:true } : {}), doors:Object.fromEntries(Object.entries(entry.doors).map(([id,value]) => [id,{status:value.status}])) };
+  return { ...safeEntry, ...(pendingCodeChange ? { pinChangePending:true } : {}), doors:Object.fromEntries(Object.entries(entry.doors).map(([id,value]) => [id,{status:value.status,...(value.failure?.reason?{failure:{reason:value.failure.reason}}:{})}])) };
 };
 export default async function handler(request,response) {
   response.setHeader('Cache-Control','private, no-store');
@@ -63,7 +63,7 @@ export default async function handler(request,response) {
   } catch(error) {
     console.error('Owner lock API failure', { name:error?.name || 'Error', operation:error?.operation || null });
     const raw=String(error.message||'');
-    const safe = /^(Enter|Choose|Select|One successful|Use |That PIN|This PIN|This time|This code|This scheduled|The end|Refresh|Access code|Unknown lock|Another lock)/.test(raw);
+    const safe = /^(Enter|Choose|Select|One successful|Use |That PIN|This PIN|This time|This code|This scheduled|The end|Refresh|Access code|Unknown lock|Another lock|KK Home returned an (?:unreadable|unexpected) response)/.test(raw);
     return json(response,409,{error:safe?raw:'The lock update could not be confirmed. Refresh the list before trying again.',
       ...(error.operation ? {operation:error.operation,providerCode:error.providerCode} : {})});
   }

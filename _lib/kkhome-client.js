@@ -71,10 +71,20 @@ export function createKKHomeClient({ email, password, appPrivateKey, fetchImpl=g
       method:'POST', headers, ...(body === undefined ? {} : { body:JSON.stringify(encryptBody ? encrypted(body) : signed(body)) }),
     });
     let parsed;
-    try { parsed = await response.json(); } catch { parsed = {}; }
+    try { parsed = await response.json(); }
+    catch {
+      const error = new Error('KK Home returned an unreadable response.');
+      error.operation = path.split('/').at(-1);
+      throw error;
+    }
+    if (!parsed || typeof parsed !== 'object') {
+      const error = new Error('KK Home returned an unexpected response.');
+      error.operation = path.split('/').at(-1);
+      throw error;
+    }
     if (parsed?.encryptData) parsed = decrypt(parsed.encryptData);
     const message = parsed?.msg || parsed?.message;
-    if (!response.ok || parsed?.success === false || ('code' in (parsed || {}) && ![0,200,'0','200'].includes(parsed.code))) {
+    if (!response.ok || parsed?.success === false || (Object.hasOwn(parsed, 'code') && ![0,200,'0','200'].includes(parsed.code))) {
       const error = new Error(`KK Home request failed${message ? `: ${message}` : ` (HTTP ${response.status})`}.`);
       error.operation = path.split('/').at(-1);
       error.providerCode = typeof parsed?.code === 'number' ? parsed.code : undefined;

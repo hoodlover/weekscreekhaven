@@ -73,6 +73,7 @@ test('deleting a named code covers all three doors and preserves a failed remova
   await applyOwnerLock(entry,deps);
   assert.equal(entry.status,'revoking');assert.deepEqual(removed,['deck','basement']);
   assert.equal(entry.doors.front.providerCodeId,'front-ref');assert.equal(entry.doors.front.status,'failed');
+  assert.equal(entry.doors.front.failure.reason,'KK Home could not confirm this door. Check it in the KK Home app before retrying.');
   fail=false;await applyOwnerLock(entry,deps);
   assert.equal(entry.status,'revoked');assert.ok(allDoors.every(d=>entry.doors[d.id].status==='removed'));
 });
