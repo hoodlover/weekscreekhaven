@@ -77,6 +77,19 @@ export async function changeOwnerLockCode(entry, { code, provider, doors, save }
   await save(entry);
   return entry;
 }
+
+export function confirmOwnerLockDoorAbsent(entry, doorId) {
+  if (entry.status !== 'revoking' || entry.mode !== 'permanent' || !entry.doorIds.includes(doorId)
+    || entry.doors[doorId]?.status !== 'failed') {
+    throw new Error('Confirm absence only for a failed permanent-code removal on an assigned door.');
+  }
+  const { providerCodeId, ...previous } = entry.doors[doorId];
+  entry.doors[doorId] = { ...previous, status:'removed', failure:undefined };
+  entry.status = entry.doorIds.every(id => entry.doors[id]?.status === 'removed') ? 'revoked' : 'revoking';
+  entry.updatedAt = new Date().toISOString();
+  return entry;
+}
+
 export async function applyOwnerLock(entry, { provider, doors, save, revoke = false }) {
   if (entry.pendingCodeChange && !revoke) return changeOwnerLockCode(entry, { code:entry.pendingCodeChange.to, provider, doors, save });
   if (entry.pendingCodeChange && revoke) throw new Error('This PIN change needs attention. Retry it before deleting access.');

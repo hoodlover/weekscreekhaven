@@ -1,5 +1,5 @@
 import { ownerLockEntries, saveOwnerLock, withOwnerLockLease } from '../_lib/owner-lock-store.js';
-import { applyOwnerLock, changeOwnerLockCode, newOwnerLock } from '../_lib/owner-locks.js';
+import { applyOwnerLock, changeOwnerLockCode, confirmOwnerLockDoorAbsent, newOwnerLock } from '../_lib/owner-locks.js';
 import { configuredDoors } from '../_lib/lock-service.js';
 import { createKKHomeLockProvider } from '../_lib/lock-providers/kkhome.js';
 import { getBookingRequests } from '../_lib/booking-store.js';
@@ -49,22 +49,12 @@ export default async function handler(request,response) {
           if (await provider.findCode({door:doors.find(item=>item.id===id),code})) throw new Error('This PIN already exists on a selected lock. Choose another PIN.');
         }
         return changeOwnerLockCode(entry,{code,provider,doors,save:saveOwnerLock});
-      } else if (action === 'remove-pin-slot') {
+      } else if (action === 'confirm-door-absent') {
         entry = entries.find(e=>e.id===request.body?.id); if (!entry) throw new Error('Access code not found.');
         const doorId = String(request.body?.doorId || '');
-        const keyNum = Number(request.body?.keyNum);
-        if (!entry.doorIds.includes(doorId)) throw new Error('Choose a door assigned to this access record.');
-        if (entry.status !== 'revoking' || entry.mode !== 'permanent' || entry.doors[doorId]?.status !== 'failed') throw new Error('Use this only for a failed permanent-code deletion on the selected door.');
-        if (!Number.isInteger(keyNum) || keyNum < 1 || keyNum > 99) throw new Error('Enter the PIN slot number shown in KK Home.');
-        const door = doors.find(item=>item.id===doorId); if (!door) throw new Error('Door configuration changed.');
-        const removed = await provider.removePinSlot({door,keyNum,code:entry.code});
-        const previous=entry.doors[doorId];
-        const {providerCodeId,...details}=previous;
-        entry.doors[doorId]={...details,status:'removed',failure:undefined};
-        entry.status=entry.doorIds.every(id=>entry.doors[id]?.status==='removed')?'revoked':'revoking';
-        entry.updatedAt=new Date().toISOString();
+        confirmOwnerLockDoorAbsent(entry,doorId);
         await saveOwnerLock(entry);
-        return {slotRemoved:true,doorId,keyNum,message:removed.message,entry};
+        return {doorConfirmedAbsent:true,doorId,entry};
       } else {
         entry = entries.find(e=>e.id===request.body?.id); if (!entry) throw new Error('Access code not found.');
         if (!['retry','revoke','check'].includes(action)) throw new Error('Unknown lock action.');
@@ -75,7 +65,7 @@ export default async function handler(request,response) {
       }
       return applyOwnerLock(entry,{provider,doors,save:saveOwnerLock,revoke:action==='revoke'});
     });
-    return json(response,200,result.slotRemoved ? {...result,entry:visible(result.entry)} : {entry:visible(result)});
+    return json(response,200,result.doorConfirmedAbsent ? {...result,entry:visible(result.entry)} : {entry:visible(result)});
   } catch(error) {
     const source = typeof error?.stack === 'string'
       ? error.stack.split('\n').slice(1).flatMap(line => {

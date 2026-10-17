@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { newOwnerLock, easternInput, applyOwnerLock, changeOwnerLockCode } from '../_lib/owner-locks.js';
+import { newOwnerLock, easternInput, applyOwnerLock, changeOwnerLockCode, confirmOwnerLockDoorAbsent } from '../_lib/owner-locks.js';
 import { createKKHomeLockProvider } from '../_lib/lock-providers/kkhome.js';
 
 const doors=[{id:'deck',name:'Deck',deviceId:'D'},{id:'front',name:'Front',deviceId:'F'}];
@@ -99,6 +99,15 @@ test('single-use deletion cannot hide access or claim it was removed',async()=>{
   const entry=newOwnerLock({name:'Visitor',mode:'once',doorIds:['deck']},options);
   await assert.rejects(()=>applyOwnerLock(entry,{doors,provider:{},save:async()=>{},revoke:true}),/cannot be safely revoked/);
   assert.equal(entry.status,'pending');
+});
+test('confirmed absent doors clear only owner status and revoke after every assigned door is confirmed',()=>{
+  const entry=newOwnerLock({name:'Honestay',mode:'permanent',doorIds:['deck','front'],code:'552233'},options);
+  entry.status='revoking';entry.doors.deck={status:'failed',failure:{reason:'not found'}};entry.doors.front={status:'failed',failure:{reason:'not found'}};
+  confirmOwnerLockDoorAbsent(entry,'deck');
+  assert.equal(entry.doors.deck.status,'removed');assert.equal(entry.doors.front.status,'failed');assert.equal(entry.status,'revoking');
+  confirmOwnerLockDoorAbsent(entry,'front');
+  assert.equal(entry.status,'revoked');assert.ok(entry.doorIds.every(id=>entry.doors[id].status==='removed'));
+  assert.throws(()=>confirmOwnerLockDoorAbsent(entry,'front'),/Confirm absence/);
 });
 test('permanent access uses native attribute zero rather than a distant expiry',async()=>{
   let keys=[],payload;

@@ -24,7 +24,7 @@ function render() {
     const label = entry.status === 'installed' ? (ended ? 'Expired' : entry.mode === 'once' ? 'One-time command confirmed' : 'Installed') : ({'revoked':'Access deleted','revoking':'Removal needs attention','updating':'Updating locks','pending':'Pending','unconfirmed':'Not yet confirmed — check the lock','not-active':'No longer active','needs-attention':'Needs attention'}[entry.status] || entry.status);
     const window = entry.mode === 'permanent' ? 'Permanent · until deleted' : entry.mode === 'once' ? 'One successful unlock · one door' : `${date(entry.startsAt)} → ${date(entry.endsAt)}`;
     const clearButtons = entry.status !== 'revoking' || entry.mode !== 'permanent' ? '' : entry.doorIds.map(id => entry.doors[id]?.status === 'failed'
-      ? `<button type="button" class="ghost" data-owner-lock-clear-slot data-lock-id="${escape(entry.id)}" data-door-id="${escape(id)}">Remove this PIN slot from ${escape(doors.find(door=>door.id===id)?.name||id)}</button>` : '').join('');
+      ? `<button type="button" class="ghost" data-owner-lock-confirm-absent data-lock-id="${escape(entry.id)}" data-door-id="${escape(id)}">Confirm absent on ${escape(doors.find(door=>door.id===id)?.name||id)}</button>` : '').join('');
     return `<article class="door-code-box"><strong>${escape(entry.name)}</strong><span class="badge">${escape(label)}</span><div>${entry.pinChangePending?'<span class="helper"><strong>PIN change incomplete. Do not share either code yet.</strong></span>':`<span class="door-code-value">${escape(entry.code)}</span>`}</div><p class="helper">${escape(window)}</p><p class="helper">${entry.doorIds.map(id=>{const doorName=escape(doors.find(d=>d.id===id)?.name||id),door=entry.doors[id];const detail=door?.failure?.reason?` — ${escape(door.failure.reason)}${door.failure.operation?` (KK Home step: ${escape(door.failure.operation)})`:''}${Number.isInteger(door.failure.providerCode)?` (response ${door.failure.providerCode})`:''}`:'';return door?`${doorName}: ${escape(door.status)}${detail}`:doorName;}).join(' · ')}</p>${clearButtons?`<div class="booking-tools">${clearButtons}</div>`:''}${entry.mode==='once'?'<p class="helper">Early deletion of a single-use code is not verified yet. Its record stays visible.</p>':''}${entry.failure?.reason?`<p class="helper">${escape(entry.failure.reason)}</p>`:''}<div class="booking-tools">${entry.pinChangePending?'':`<button type="button" class="copy" data-copy-owner-lock="${escape(entry.id)}">Copy PIN</button>`}${entry.mode==='once'?`<button type="button" class="ghost" data-owner-lock-action="check" data-lock-id="${escape(entry.id)}">Check status</button>`:entry.status!=='revoked'?`${entry.status==='installed'&&!entry.pinChangePending?`<button type="button" class="ghost" data-owner-lock-edit-open="${escape(entry.id)}">Change PIN</button>`:''}${(!ended||entry.pinChangePending)&&['pending','needs-attention','updating'].includes(entry.status)?`<button type="button" class="primary" data-owner-lock-action="retry" data-lock-id="${escape(entry.id)}">${entry.pinChangePending?'Retry PIN change':'Retry installation'}</button>`:''}${entry.pinChangePending?'':`<button type="button" class="danger" data-owner-lock-action="revoke" data-lock-id="${escape(entry.id)}">${entry.status==='revoking'?'Retry deletion':'Delete access'}</button>`}`:''}</div>${entry.mode!=='once'&&entry.status==='installed'&&!entry.pinChangePending?`<form class="owner-lock-edit" data-owner-lock-edit-form="${escape(entry.id)}" hidden><label>New PIN<input name="code" inputmode="numeric" pattern="[0-9]{4,8}" minlength="4" maxlength="8" autocomplete="off" required placeholder="4–8 digits"></label><div class="booking-tools"><button type="submit" class="primary">Save new PIN</button><button type="button" class="ghost" data-owner-lock-edit-cancel>Cancel</button></div></form>`:''}</article>`;
   }).join('') : '<div class="empty">No matching access codes. Deleted access is available in history.</div>';
 }
@@ -37,11 +37,11 @@ async function load() {
 }
 async function action(body) {
   if (busy) return;
-  busy = true; $('owner-lock-message').textContent = 'Updating the selected locks…';
+  busy = true; $('owner-lock-message').textContent = body.action === 'confirm-door-absent' ? 'Recording the confirmed absence…' : 'Updating the selected locks…';
   document.querySelectorAll('#panel-locks button').forEach(button=>button.disabled=true);
   try {
     const data = await api(body);
-    $('owner-lock-message').textContent = data.slotRemoved ? `${data.message} ${data.entry.status === 'revoked' ? 'Access is deleted from all assigned doors.' : 'Use Retry deletion to finish the remaining doors.'}` : body.action === 'edit' && data.entry.status === 'installed' ? 'PIN updated on every selected lock. Check the keypads before sharing it.' : body.action === 'edit' ? 'PIN change incomplete. Retry before sharing either code.' : data.entry.status === 'installed' ? 'Confirmed by KK Home. Check the keypad before sharing a new code.' : data.entry.status === 'revoked' ? 'Access deleted from every assigned door. The record is saved in history.' : 'Saved. Review the code status below.';
+    $('owner-lock-message').textContent = data.doorConfirmedAbsent ? (data.entry.status === 'revoked' ? 'Confirmed absent; the Owner record is now deleted. No lock PIN was changed.' : `Confirmed absent on ${doors.find(door=>door.id===data.doorId)?.name||data.doorId}. No lock PIN was changed. Confirm other doors as needed.`) : body.action === 'edit' && data.entry.status === 'installed' ? 'PIN updated on every selected lock. Check the keypads before sharing it.' : body.action === 'edit' ? 'PIN change incomplete. Retry before sharing either code.' : data.entry.status === 'installed' ? 'Confirmed by KK Home. Check the keypad before sharing a new code.' : data.entry.status === 'revoked' ? 'Access deleted from every assigned door. The record is saved in history.' : 'Saved. Review the code status below.';
     if (body.action === 'create') { operationId = crypto.randomUUID(); $('owner-lock-form').reset(); }
     await load();
   } catch(error) { $('owner-lock-message').textContent = error.message; await load(); }
@@ -63,16 +63,12 @@ $('owner-lock-list').addEventListener('click',async event=>{
     const targets=entry.doorIds.map(id=>doors.find(door=>door.id===id)?.name||id).join(', ');
     if(!window.confirm(`Delete access for ${entry.name} from ${targets}? This removes this PIN from every listed door and keeps its history.`))return;
   }
-  if(button.hasAttribute('data-owner-lock-clear-slot')) {
+  if(button.hasAttribute('data-owner-lock-confirm-absent')) {
     const entry=entries.find(item=>item.id===button.dataset.lockId);
     const doorId=button.dataset.doorId;
     const doorName=doors.find(item=>item.id===doorId)?.name||doorId;
-    const entered=window.prompt(`Enter the PIN slot number shown in KK Home for ${entry.name} on the ${doorName}.`, '07');
-    if(entered===null)return;
-    if(!/^0?[1-9]\d?$/.test(entered.trim())){$('owner-lock-message').textContent='Enter the PIN slot number shown in KK Home (for example, 07).';return;}
-    const keyNum=Number(entered);
-    if(!window.confirm(`Remove slot ${String(keyNum).padStart(2,'0')} for ${entry.name} (${entry.code}) from the ${doorName} only? Other doors will stay unchanged.`))return;
-    action({action:'remove-pin-slot',id:entry.id,doorId,keyNum});
+    if(!window.confirm(`Confirm ${entry.name} (${entry.code}) is not listed in KK Home on the ${doorName}? This only clears Owner status; it does not change any PIN on the lock.`))return;
+    action({action:'confirm-door-absent',id:entry.id,doorId});
     return;
   }
   if(button.dataset.ownerLockAction)action({action:button.dataset.ownerLockAction,id:button.dataset.lockId});
