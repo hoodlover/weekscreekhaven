@@ -37,10 +37,17 @@ function resolveDevice(payload, deviceId) {
   };
 }
 
+function validKeyRecords(records) {
+  if (records.some(item => !item || typeof item !== 'object' || Array.isArray(item))) {
+    throw Object.assign(new Error('KK Home returned an invalid lock-code list; no change was attempted.'), { operation:'key-list-parse' });
+  }
+  return records;
+}
+
 function keysFrom(payload) {
-  if (Array.isArray(payload)) return payload;
-  if (Array.isArray(payload?.pwdList) || Array.isArray(payload?.timePwdList)) return [...(payload.pwdList || []), ...(payload.timePwdList || [])];
-  for (const key of ['list','records','items']) if (Array.isArray(payload?.[key])) return payload[key];
+  if (Array.isArray(payload)) return validKeyRecords(payload);
+  if (Array.isArray(payload?.pwdList) || Array.isArray(payload?.timePwdList)) return validKeyRecords([...(payload.pwdList || []), ...(payload.timePwdList || [])]);
+  for (const key of ['list','records','items']) if (Array.isArray(payload?.[key])) return validKeyRecords(payload[key]);
   return [];
 }
 

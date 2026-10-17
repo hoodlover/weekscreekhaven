@@ -32,6 +32,20 @@ test('does not insert a duplicate matching scheduled code', async () => {
   assert.equal(inserts,0);
 });
 
+test('refuses to change a lock when KK Home returns malformed key rows', async () => {
+  let inserts = 0;
+  const client = {
+    async listDevices() { return [{ id:'lock-1', esn:'LOCK-ESN' }]; },
+    async listKeys() { return { pwdList:[null] }; },
+    async insertKey() { inserts += 1; },
+  };
+  await assert.rejects(
+    () => createKKHomeLockProvider({}, { client }).installCode(request),
+    error => error.operation === 'key-list-parse' && /invalid lock-code list/.test(error.message),
+  );
+  assert.equal(inserts, 0);
+});
+
 test('changes an existing PIN in place and preserves leading zeros', async () => {
   let keys=[];
   const client={

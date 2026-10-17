@@ -1,5 +1,13 @@
 import { randomInt, randomUUID } from 'node:crypto';
 
+function safeErrorSource(error) {
+  if (typeof error?.stack !== 'string') return [];
+  return error.stack.split('\n').slice(1).flatMap(line => {
+    const match = line.match(/(?:^|[/(])([^/()]+\.js):(\d+):(\d+)/);
+    return match ? [`${match[1]}:${match[2]}`] : [];
+  }).slice(0, 2);
+}
+
 export function easternInput(value) {
   if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value || '')) throw new Error('Enter a valid Eastern date and time.');
   const target = value.replace('T', ' '), matches = [];
@@ -53,7 +61,7 @@ export async function changeOwnerLockCode(entry, { code, provider, doors, save }
       entry.doors[doorId] = { ...previous, status:'installed', providerCodeId:result.providerCodeId, verification:result.verification, failure:undefined };
       pending.updatedDoorIds.push(doorId);
     } catch (error) {
-      console.error('Owner lock PIN update failed', { doorId, name:error?.name || 'Error', operation:error?.operation || null, providerCode:error?.providerCode ?? null });
+      console.error('Owner lock PIN update failed', { doorId, name:error?.name || 'Error', operation:error?.operation || null, providerCode:error?.providerCode ?? null, source:safeErrorSource(error) });
       entry.doors[doorId] = { ...previous, status:'failed', failure:safeDoorFailureDetails(error) };
     }
     await save(entry);
@@ -105,7 +113,7 @@ export async function applyOwnerLock(entry, { provider, doors, save, revoke = fa
         entry.doors[doorId] = { status: result.status, providerCodeId: result.providerCodeId, verification: result.verification };
       }
     } catch (error) {
-      console.error(`Owner lock ${revoke?'removal':'installation'} failed`, { doorId, name:error?.name || 'Error', operation:error?.operation || null, providerCode:error?.providerCode ?? null });
+      console.error(`Owner lock ${revoke?'removal':'installation'} failed`, { doorId, name:error?.name || 'Error', operation:error?.operation || null, providerCode:error?.providerCode ?? null, source:safeErrorSource(error) });
       entry.doors[doorId] = { ...previous, status:'failed', failure:safeDoorFailureDetails(error), ...(error.providerCodeId ? {providerCodeId:error.providerCodeId} : {}) };
     }
     await save(entry);
