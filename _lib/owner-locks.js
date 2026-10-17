@@ -103,9 +103,18 @@ export async function applyOwnerLock(entry, { provider, doors, save, revoke = fa
     try {
       if (!door) throw new Error('Door configuration changed.');
       if (revoke) {
-        const ref = previous.providerCodeId || (await provider.findCode({ door, code: entry.code }))?.providerCodeId;
+        let ref = previous.providerCodeId || (await provider.findCode({ door, code: entry.code }))?.providerCodeId;
         if (!ref && previous.status === 'failed') throw new Error('An uncertain insertion needs owner review before removal can be confirmed.');
-        if (ref) await provider.removeCode({ door, code: entry.code, providerCodeId: ref });
+        if (ref) {
+          try { await provider.removeCode({ door, code: entry.code, providerCodeId: ref }); }
+          catch (error) {
+            if (!previous.providerCodeId || error?.operation !== 'key-list-verify-reference') throw error;
+            const current = await provider.findCode({ door, code: entry.code });
+            if (!current?.providerCodeId || current.providerCodeId === ref) throw error;
+            ref = current.providerCodeId;
+            await provider.removeCode({ door, code: entry.code, providerCodeId: ref });
+          }
+        }
         entry.doors[doorId] = { ...previous, status: 'removed' };
       } else {
         const result = await provider.installCode({ door, code: entry.code, name: entry.name, accessType: entry.mode,

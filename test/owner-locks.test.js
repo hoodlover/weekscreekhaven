@@ -79,6 +79,22 @@ test('deleting a named code covers all three doors and preserves a failed remova
   assert.equal(entry.status,'revoked');assert.ok(allDoors.every(d=>entry.doors[d.id].status==='removed'));
 });
 
+test('deletion re-finds the exact PIN when its saved lock slot moved',async()=>{
+  const entry=newOwnerLock({name:'Lover',mode:'permanent',doorIds:['deck'],code:'523111'},options);
+  entry.status='revoking';entry.doors.deck={status:'failed',providerCodeId:'stale-reference'};
+  const removed=[];
+  const provider={
+    async removeCode({providerCodeId}){
+      if(providerCodeId==='stale-reference')throw Object.assign(new Error('Saved code entry changed.'),{operation:'key-list-verify-reference'});
+      removed.push(providerCodeId);
+    },
+    async findCode({code}){assert.equal(code,'523111');return{providerCodeId:'current-exact-pin-reference'};},
+  };
+  await applyOwnerLock(entry,{provider,doors,save:async()=>{},revoke:true});
+  assert.deepEqual(removed,['current-exact-pin-reference']);
+  assert.equal(entry.status,'revoked');
+});
+
 test('single-use deletion cannot hide access or claim it was removed',async()=>{
   const entry=newOwnerLock({name:'Visitor',mode:'once',doorIds:['deck']},options);
   await assert.rejects(()=>applyOwnerLock(entry,{doors,provider:{},save:async()=>{},revoke:true}),/cannot be safely revoked/);

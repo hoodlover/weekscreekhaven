@@ -217,22 +217,24 @@ export function createKKHomeLockProvider(env=process.env, options={}) {
       if (remains) throw Object.assign(new Error(`KK Home did not verify code removal from ${door.name}.`), { operation:'key-list-verify-removal' });
       return { status:'removed', providerCodeId, verification:'cloud-record', message:'Code removal confirmed in KK Home.' };
     },
-    async removeOneTimeSlot({ door, keyNum }) {
-      if (!Number.isInteger(keyNum) || keyNum < 1 || keyNum > 99) throw new Error('Enter the one-time PIN slot number shown in KK Home.');
+    async removePinSlot({ door, keyNum, code }) {
+      if (!Number.isInteger(keyNum) || keyNum < 1 || keyNum > 99) throw new Error('Enter the PIN slot number shown in KK Home.');
       const device = await selectedDevice(door);
       const esn = device.partSn || device.esn;
       const current = keysFrom(await client.listKeys(esn));
       const matches = current.filter(item => keyNumber(item) === keyNum);
-      if (matches.length !== 1 || keyAttribute(matches[0]) !== 253
-        || Number(matches[0].startTime) !== 0 || Number(matches[0].endTime) !== 0) {
-        throw Object.assign(new Error(`KK Home slot ${keyNum} is not a confirmed one-time PIN slot on ${door.name}; it was left unchanged.`), { operation:'key-list-verify-reference' });
+      const row = matches[0];
+      if (matches.length !== 1 || keyAttribute(row) === 253
+        || Number(row.startTime) !== 0 || Number(row.endTime) !== 0
+        || (keyCode(row) && keyCode(row) !== String(code))) {
+        throw Object.assign(new Error(`KK Home slot ${keyNum} does not match this permanent PIN on ${door.name}; it was left unchanged.`), { operation:'key-list-verify-reference' });
       }
       await client.removeKey({ esn:device.esn, params:{ keyNum, keyType:0, partsSn:device.partSn || '', partsMac:device.partMac || '' } });
       await client.removeKeyMetadata({ esn, pwdList:[{ num:keyNum, pwdType:1 }] });
       if (await verify(device, keys => !keys.some(item => keyNumber(item) === keyNum))) {
-        return { status:'removed', verification:'cloud-record', message:`One-time PIN slot ${keyNum} removed from ${door.name}.` };
+        return { status:'removed', verification:'cloud-record', message:`PIN slot ${keyNum} removed from ${door.name}.` };
       }
-      throw Object.assign(new Error(`KK Home did not verify removal of one-time PIN slot ${keyNum} from ${door.name}.`), { operation:'key-list-verify-removal' });
+      throw Object.assign(new Error(`KK Home did not verify removal of PIN slot ${keyNum} from ${door.name}.`), { operation:'key-list-verify-removal' });
     },
   };
 }

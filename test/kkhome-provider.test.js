@@ -61,8 +61,8 @@ test('a one-time slot does not block a permanent code with the 1970 time window'
   assert.ok(records.some(item=>item.num===7&&item.attribute===253));
 });
 
-test('removes only the specifically confirmed one-time PIN slot', async () => {
-  let records=[{num:7,key:'',attribute:253,startTime:0,endTime:0}];
+test('removes only the specifically selected hidden permanent PIN slot', async () => {
+  let records=[{num:7,key:'',attribute:0,startTime:0,endTime:0}];
   let removed,metadata;
   const client={
     async listDevices(){return [{id:'lock-1',esn:'LOCK-ESN'}];},
@@ -70,20 +70,20 @@ test('removes only the specifically confirmed one-time PIN slot', async () => {
     async removeKey(payload){removed=payload;records=[];},
     async removeKeyMetadata(payload){metadata=payload;},
   };
-  const result=await createKKHomeLockProvider({}, {client,wait:async()=>{}}).removeOneTimeSlot({door,keyNum:7});
+  const result=await createKKHomeLockProvider({}, {client,wait:async()=>{}}).removePinSlot({door,keyNum:7,code:'523111'});
   assert.equal(removed.params.keyNum,7);
   assert.deepEqual(metadata.pwdList,[{num:7,pwdType:1}]);
   assert.equal(result.status,'removed');
 });
 
-test('refuses to clear a slot unless KK Home identifies it as one-time', async () => {
+test('refuses a one-time slot in the permanent-code cleanup flow', async () => {
   let removals=0;
   const client={
     async listDevices(){return [{id:'lock-1',esn:'LOCK-ESN'}];},
-    async listKeys(){return [{num:7,key:'',attribute:0,startTime:0,endTime:0}];},
+    async listKeys(){return [{num:7,key:'',attribute:253,startTime:0,endTime:0}];},
     async removeKey(){removals+=1;},
   };
-  await assert.rejects(()=>createKKHomeLockProvider({}, {client}).removeOneTimeSlot({door,keyNum:7}),/not a confirmed one-time PIN slot/);
+  await assert.rejects(()=>createKKHomeLockProvider({}, {client}).removePinSlot({door,keyNum:7,code:'523111'}),/does not match this permanent PIN/);
   assert.equal(removals,0);
 });
 
