@@ -1,5 +1,5 @@
 import { ownerLockEntries, saveOwnerLock, withOwnerLockLease } from '../_lib/owner-lock-store.js';
-import { applyOwnerLock, newOwnerLock } from '../_lib/owner-locks.js';
+import { applyOwnerLock, changeOwnerLockCode, newOwnerLock } from '../_lib/owner-locks.js';
 import { configuredDoors } from '../_lib/lock-service.js';
 import { createKKHomeLockProvider } from '../_lib/lock-providers/kkhome.js';
 import { getBookingRequests } from '../_lib/booking-store.js';
@@ -8,7 +8,10 @@ import { cleanerReservedCodes } from '../_lib/cleaner-profiles.js';
 import { json, requireAdmin, sameOriginRequest } from '../_lib/security.js';
 
 export const config = { maxDuration: 60 };
-const visible = entry => ({ ...entry, doors: Object.fromEntries(Object.entries(entry.doors).map(([id,value]) => [id,{status:value.status}])) });
+const visible = entry => {
+  const { pendingCodeChange, ...safeEntry } = entry;
+  return { ...safeEntry, ...(pendingCodeChange ? { pinChangePending:true } : {}), doors:Object.fromEntries(Object.entries(entry.doors).map(([id,value]) => [id,{status:value.status}])) };
+};
 export default async function handler(request,response) {
   response.setHeader('Cache-Control','private, no-store');
   if (!requireAdmin(request)) return json(response,401,{error:'Owner sign-in required.'});
@@ -32,6 +35,20 @@ export default async function handler(request,response) {
         // Refuse to take over any existing unmanaged lock code with the same PIN.
         for (const id of entry.doorIds) if (await provider.findCode({door:doors.find(d=>d.id===id),code:entry.code})) throw new Error('This PIN already exists on a selected lock. Choose another PIN.');
         await saveOwnerLock(entry);
+      } else if (action === 'edit') {
+        entry = entries.find(e=>e.id===request.body?.id); if (!entry) throw new Error('Access code not found.');
+        const code = request.body?.code;
+        if (typeof code !== 'string' || !/^\d{4,8}$/.test(code)) throw new Error('Use a 4–8 digit PIN.');
+        if (entry.pendingCodeChange) throw new Error('This PIN change needs attention. Retry it before starting another change.');
+        const [bookings,cleaner] = await Promise.all([getBookingRequests(),getCleanerState()]);
+        const usedCodes = new Set([...entries.filter(item=>item.id!==entry.id).map(item=>item.code),
+          ...bookings.flatMap(b=>[b.doorCode,...(b.retiredDoorCodes||[])]),...cleaner.cleanerProfiles.flatMap(cleanerReservedCodes)]
+          .filter(Boolean).map(String));
+        if (usedCodes.has(code)) throw new Error('This PIN is already reserved. Choose a different PIN.');
+        if (entry.mode !== 'once') for (const id of entry.doorIds) {
+          if (await provider.findCode({door:doors.find(item=>item.id===id),code})) throw new Error('This PIN already exists on a selected lock. Choose another PIN.');
+        }
+        return changeOwnerLockCode(entry,{code,provider,doors,save:saveOwnerLock});
       } else {
         entry = entries.find(e=>e.id===request.body?.id); if (!entry) throw new Error('Access code not found.');
         if (!['retry','revoke','check'].includes(action)) throw new Error('Unknown lock action.');

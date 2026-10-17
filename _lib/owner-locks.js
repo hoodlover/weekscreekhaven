@@ -23,7 +23,7 @@ export function newOwnerLock(input, { doors, usedCodes, now = new Date() }) {
   if (!code) {
     for (let count=0; count<200; count++) { const candidate=String(randomInt(100000,1000000)); if (!usedCodes.has(candidate)) { code=candidate; break; } }
   }
-  if (!/^\d{6}$/.test(code)) throw new Error('Use a six-digit PIN or leave it blank to generate one.');
+  if (!/^\d{4,8}$/.test(code)) throw new Error('Use a 4–8 digit PIN or leave it blank to generate a six-digit one.');
   if (usedCodes.has(code)) throw new Error('That PIN is already reserved. Choose a different PIN.');
   let startsAt = null, endsAt = null;
   if (mode === 'scheduled') {
@@ -32,7 +32,45 @@ export function newOwnerLock(input, { doors, usedCodes, now = new Date() }) {
   }
   return { id: randomUUID(), name, code, mode, doorIds, startsAt, endsAt, createdAt: now.toISOString(), status: 'pending', doors: {} };
 }
+export async function changeOwnerLockCode(entry, { code, provider, doors, save }) {
+  if (entry.mode === 'once') throw new Error('One successful PINs cannot be changed through this integration.');
+  if (!entry.pendingCodeChange && entry.status !== 'installed') throw new Error('This code must be installed before its PIN can be changed.');
+  if (!entry.pendingCodeChange) {
+    if (code === entry.code) throw new Error('Choose a different PIN.');
+    entry.pendingCodeChange = { from:entry.code, to:code, updatedDoorIds:[] };
+    entry.status = 'updating';
+    await save(entry);
+  }
+  const pending = entry.pendingCodeChange;
+  for (const doorId of entry.doorIds) {
+    if (pending.updatedDoorIds.includes(doorId)) continue;
+    const door = doors.find(item => item.id === doorId);
+    const previous = entry.doors[doorId] || {};
+    try {
+      if (!door || !['installed','failed'].includes(previous.status) || !previous.providerCodeId) throw new Error('A saved lock reference is missing; this door needs owner review.');
+      const result = await provider.changeCode({ door, fromCode:pending.from, code:pending.to, providerCodeId:previous.providerCodeId,
+        name:entry.name, accessType:entry.mode, startsAt:entry.startsAt, endsAt:entry.endsAt });
+      entry.doors[doorId] = { ...previous, status:'installed', providerCodeId:result.providerCodeId, verification:result.verification, failure:undefined };
+      pending.updatedDoorIds.push(doorId);
+    } catch (error) {
+      entry.doors[doorId] = { ...previous, status:'failed', failure:error.message || 'PIN update was not confirmed.' };
+    }
+    await save(entry);
+  }
+  if (entry.doorIds.every(id => pending.updatedDoorIds.includes(id))) {
+    entry.code = pending.to;
+    delete entry.pendingCodeChange;
+    entry.status = 'installed';
+    entry.updatedAt = new Date().toISOString();
+  } else {
+    entry.status = 'needs-attention';
+  }
+  await save(entry);
+  return entry;
+}
 export async function applyOwnerLock(entry, { provider, doors, save, revoke = false }) {
+  if (entry.pendingCodeChange && !revoke) return changeOwnerLockCode(entry, { code:entry.pendingCodeChange.to, provider, doors, save });
+  if (entry.pendingCodeChange && revoke) throw new Error('This PIN change needs attention. Retry it before deleting access.');
   if (entry.mode === 'once') {
     if (revoke) throw new Error('Use KK Home to clear an unused one-time code. It cannot be safely revoked through this integration yet.');
     if (entry.attemptedAt) return entry; // Never rearm a potentially consumed one-time code.

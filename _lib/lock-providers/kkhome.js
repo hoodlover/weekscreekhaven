@@ -143,6 +143,31 @@ export function createKKHomeLockProvider(env=process.env, options={}) {
       }
       return { status:'installed', providerCodeId:reference, verification:'cloud-record', message:'Code and local schedule confirmed in KK Home.' };
     },
+    async changeCode({ door, fromCode, code, startsAt, endsAt, name, providerCodeId, timezone = 'America/New_York', accessType = 'scheduled' }) {
+      const device = await selectedDevice(door);
+      const saved = decodeReference(providerCodeId);
+      if (saved.esn !== device.esn || saved.partSn !== device.partSn || saved.codeHash !== codeHash(fromCode)) throw new Error('Saved code reference does not match this door and PIN.');
+      if (!['scheduled','permanent'].includes(accessType)) throw new Error('Unsupported access type.');
+      const attribute = accessType === 'permanent' ? 0 : 1;
+      const startTime = attribute ? kkhomeLocalTimestamp(startsAt, timezone) : 0;
+      const endTime = attribute ? kkhomeLocalTimestamp(endsAt, timezone) : 0;
+      if (!Number.isFinite(startTime) || !Number.isFinite(endTime) || (attribute && endTime <= startTime)) throw new Error('The lock-code access window is invalid.');
+      const keys = keysFrom(await client.listKeys(device.partSn || device.esn));
+      const matches = keys.filter(item => keyNumber(item) === saved.keyNum);
+      if (matches.length !== 1) throw new Error('Saved code entry changed; owner review is required.');
+      const current = matches[0], currentCode = keyCode(current);
+      if (currentCode && currentCode !== fromCode && currentCode !== code) throw new Error('Saved code entry changed; owner review is required.');
+      const reference = encodeReference(device, saved.keyNum, code);
+      if (currentCode !== code || !sameWindow(current, startTime, endTime)) {
+        await client.updateKey({ esn:device.esn, ...(device.partSn ? { partSn:device.partSn } : {}), keyNum:saved.keyNum,
+          keyType:0, key:code, attribute, week:0, startTime, endTime });
+      }
+      await client.saveKeyMetadata({ esn:device.partSn || device.esn, pwdList:[{ num:saved.keyNum, pwdType:1, type:attribute,
+        pwdValue:code, startTime, endTime, createTime:first(current,'createTime') || kkhomeLocalTimestamp(new Date()), nickName:name || current.nickName || 'WCH owner' }] });
+      const verified = await verify(device, list => list.some(item => keyNumber(item) === saved.keyNum && keyCode(item) === code && sameWindow(item,startTime,endTime)));
+      if (!verified) throw Object.assign(new Error(`KK Home did not verify the changed code on ${door.name}.`), { providerCodeId:reference });
+      return { status:'installed', providerCodeId:reference, verification:'cloud-record', message:'Changed PIN verified in KK Home.' };
+    },
     async inspectOneTime({ door, code }) {
       const device = await selectedDevice(door);
       const records = keysFrom(await client.listKeys(device.partSn || device.esn)).filter(item => Number(first(item,'attribute','type')) === 253);

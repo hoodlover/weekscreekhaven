@@ -32,6 +32,38 @@ test('does not insert a duplicate matching scheduled code', async () => {
   assert.equal(inserts,0);
 });
 
+test('changes an existing PIN in place and preserves leading zeros', async () => {
+  let keys=[];
+  const client={
+    async listDevices(){return [{id:'lock-1',esn:'LOCK-ESN'}];},
+    async listKeys(){return {pwdList:keys};},
+    async insertKey(payload){keys=[{num:7,startTime:payload.startTime,endTime:payload.endTime}];},
+    async updateKey(payload){assert.equal(payload.key,'0042');keys=keys.map(item=>item.num===payload.keyNum?{...item,key:payload.key,startTime:payload.startTime,endTime:payload.endTime}:item);},
+    async saveKeyMetadata(payload){keys=payload.pwdList;},
+  };
+  const provider=createKKHomeLockProvider({}, {client,wait:async()=>{}});
+  const installed=await provider.installCode(request);
+  const changed=await provider.changeCode({door,fromCode:request.code,code:'0042',providerCodeId:installed.providerCodeId,
+    startsAt:request.startsAt,endsAt:request.endsAt,name:'Updated owner access'});
+  assert.equal(changed.status,'installed');assert.equal(keys[0].pwdValue,'0042');assert.ok(changed.providerCodeId);
+});
+
+test('retries a PIN change after an update succeeded but metadata confirmation failed', async () => {
+  let keys=[],failMetadata=false,updates=0;
+  const client={
+    async listDevices(){return [{id:'lock-1',esn:'LOCK-ESN'}];},
+    async listKeys(){return {pwdList:keys};},
+    async insertKey(payload){keys=[{num:7,startTime:payload.startTime,endTime:payload.endTime}];},
+    async updateKey(payload){updates++;keys=keys.map(item=>item.num===payload.keyNum?{...item,key:payload.key,startTime:payload.startTime,endTime:payload.endTime}:item);},
+    async saveKeyMetadata(payload){if(failMetadata){failMetadata=false;throw new Error('metadata offline');}keys=payload.pwdList;},
+  };
+  const provider=createKKHomeLockProvider({}, {client,wait:async()=>{}});
+  const installed=await provider.installCode(request);failMetadata=true;
+  await assert.rejects(()=>provider.changeCode({door,fromCode:request.code,code:'0042',providerCodeId:installed.providerCodeId,startsAt:request.startsAt,endsAt:request.endsAt}),/metadata offline/);
+  const changed=await provider.changeCode({door,fromCode:request.code,code:'0042',providerCodeId:installed.providerCodeId,startsAt:request.startsAt,endsAt:request.endsAt});
+  assert.equal(changed.status,'installed');assert.equal(updates,1);assert.equal(keys[0].pwdValue,'0042');
+});
+
 test('removes the exact saved key and verifies it is absent', async () => {
   let keys=[];
   let removed;

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { newOwnerLock, easternInput, applyOwnerLock } from '../_lib/owner-locks.js';
+import { newOwnerLock, easternInput, applyOwnerLock, changeOwnerLockCode } from '../_lib/owner-locks.js';
 import { createKKHomeLockProvider } from '../_lib/lock-providers/kkhome.js';
 
 const doors=[{id:'deck',name:'Deck',deviceId:'D'},{id:'front',name:'Front',deviceId:'F'}];
@@ -11,6 +11,29 @@ test('named permanent and scheduled entries enforce PIN uniqueness and selected 
   assert.throws(()=>newOwnerLock({name:'Kids',mode:'permanent',doorIds:['deck'],code:'123789'},options),/reserved/);
   assert.throws(()=>newOwnerLock({name:'Kids',mode:'permanent',doorIds:['other']},options),/valid cabin/);
   assert.throws(()=>newOwnerLock({name:'Visitor',mode:'once',doorIds:['deck','front']},options),/exactly one/);
+});
+test('owner PINs accept 4–8 digits, preserve leading zeros, and generate six digits by default',()=>{
+  for(const code of ['0042','123456','12345678']) {
+    assert.equal(newOwnerLock({name:'Owner',mode:'permanent',doorIds:['deck'],code},options).code,code);
+  }
+  for(const code of ['042','123456789','12ab']) {
+    assert.throws(()=>newOwnerLock({name:'Owner',mode:'permanent',doorIds:['deck'],code},options),/4–8 digit PIN/);
+  }
+  assert.match(newOwnerLock({name:'Owner',mode:'permanent',doorIds:['deck']},options).code,/^\d{6}$/);
+});
+test('changing a PIN retries only failed doors and commits the new code after every lock confirms',async()=>{
+  const entry=newOwnerLock({name:'Kids',mode:'permanent',doorIds:['deck','front'],code:'592718'},options);
+  entry.status='installed';for(const door of doors)entry.doors[door.id]={status:'installed',providerCodeId:`${door.id}-ref`};
+  let failFront=true;const calls=[];const deps={doors,save:async()=>{},provider:{changeCode:async({door,code})=>{calls.push(door.id);if(door.id==='front'&&failFront)throw new Error('offline');return{providerCodeId:`${door.id}-${code}`,verification:'cloud-record'};}}};
+  await changeOwnerLockCode(entry,{code:'0042',...deps});
+  assert.equal(entry.code,'592718');assert.equal(entry.status,'needs-attention');assert.deepEqual(entry.pendingCodeChange.updatedDoorIds,['deck']);
+  await assert.rejects(()=>applyOwnerLock(entry,{...deps,revoke:true}),/Retry it before deleting access/);
+  failFront=false;await applyOwnerLock(entry,deps);
+  assert.equal(entry.code,'0042');assert.equal(entry.status,'installed');assert.equal(entry.pendingCodeChange,undefined);assert.equal(entry.doors.deck.providerCodeId,'deck-0042');assert.equal(entry.doors.front.providerCodeId,'front-0042');assert.deepEqual(calls,['deck','front','front']);
+});
+test('one-time PINs cannot be changed through the owner integration',async()=>{
+  const entry=newOwnerLock({name:'Visitor',mode:'once',doorIds:['deck']},options);
+  await assert.rejects(()=>changeOwnerLockCode(entry,{code:'0042',provider:{},doors,save:async()=>{}}),/One successful PINs cannot be changed/);
 });
 test('scheduled input is Eastern on any device and rejects DST gaps and ambiguous times',()=>{
   assert.equal(easternInput('2026-10-17T15:00'),'2026-10-17T19:00:00.000Z');
