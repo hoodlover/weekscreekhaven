@@ -82,8 +82,9 @@ export function createKKHomeLockProvider(env=process.env, options={}) {
   }
 
   async function selectedDevice(door) {
-    if (!door.deviceId) throw new Error(`${door.name} needs an exact KK Home deviceId in LOCK_DOORS_JSON.`);
-    return resolveDevice(await client.listDevices(), door.deviceId);
+    if (!door.deviceId) throw Object.assign(new Error(`${door.name} needs an exact KK Home deviceId in LOCK_DOORS_JSON.`), { operation:'device-config' });
+    try { return resolveDevice(await client.listDevices(), door.deviceId); }
+    catch (error) { error.operation ||= 'device-list'; throw error; }
   }
 
   return {
@@ -130,7 +131,7 @@ export function createKKHomeLockProvider(env=process.env, options={}) {
         });
       }
       const keyNum = keyNumber(match);
-      if (!match || !Number.isInteger(keyNum)) throw new Error(`KK Home did not verify the scheduled code on ${door.name}.`);
+      if (!match || !Number.isInteger(keyNum)) throw Object.assign(new Error(`KK Home did not verify the scheduled code on ${door.name}.`), { operation:'key-list-verify-insert' });
       const reference = encodeReference(device, keyNum, code);
       if (keyCode(match) !== code) {
         try {
@@ -165,7 +166,7 @@ export function createKKHomeLockProvider(env=process.env, options={}) {
       await client.saveKeyMetadata({ esn:device.partSn || device.esn, pwdList:[{ num:saved.keyNum, pwdType:1, type:attribute,
         pwdValue:code, startTime, endTime, createTime:first(current,'createTime') || kkhomeLocalTimestamp(new Date()), nickName:name || current.nickName || 'WCH owner' }] });
       const verified = await verify(device, list => list.some(item => keyNumber(item) === saved.keyNum && keyCode(item) === code && sameWindow(item,startTime,endTime)));
-      if (!verified) throw Object.assign(new Error(`KK Home did not verify the changed code on ${door.name}.`), { providerCodeId:reference });
+      if (!verified) throw Object.assign(new Error(`KK Home did not verify the changed code on ${door.name}.`), { operation:'key-list-verify-change', providerCodeId:reference });
       return { status:'installed', providerCodeId:reference, verification:'cloud-record', message:'Changed PIN verified in KK Home.' };
     },
     async inspectOneTime({ door, code }) {
@@ -190,7 +191,9 @@ export function createKKHomeLockProvider(env=process.env, options={}) {
       return { status: 'unconfirmed', commandSent:true, message: 'One-time command sent; check the lock. This code will not be automatically reissued.' };
     },
     async removeCode({ door, code, providerCodeId }) {
-      const saved = decodeReference(providerCodeId);
+      let saved;
+      try { saved = decodeReference(providerCodeId); }
+      catch (error) { error.operation ||= 'saved-reference'; throw error; }
       const device = await selectedDevice(door);
       if (saved.esn !== device.esn || saved.partSn !== device.partSn || saved.codeHash !== codeHash(code)) throw new Error('Saved code reference does not match this door and PIN.');
       const current = keysFrom(await client.listKeys(saved.partSn || saved.esn));
@@ -198,12 +201,12 @@ export function createKKHomeLockProvider(env=process.env, options={}) {
       if (!matches.length) {
         return { status:'removed', providerCodeId, message:'Code was already absent from KK Home.' };
       }
-      if (matches.length !== 1 || keyCode(matches[0]) !== code) throw new Error('Saved code entry changed; removal was not attempted.');
+      if (matches.length !== 1 || keyCode(matches[0]) !== code) throw Object.assign(new Error('Saved code entry changed; removal was not attempted.'), { operation:'key-list-verify-reference' });
       await client.removeKey({ esn:saved.esn, params:{ keyNum:saved.keyNum, keyType:0, partsSn:saved.partSn || '', partsMac:saved.partMac || '' } });
       await client.removeKeyMetadata({ esn:saved.partSn || saved.esn, pwdList:[{ num:saved.keyNum, pwdType:1 }] });
       const absent = await verify(saved, (keys) => !keys.some((item) => Number(first(item,'num','keyNum')) === saved.keyNum));
       const remains = !absent;
-      if (remains) throw new Error(`KK Home did not verify code removal from ${door.name}.`);
+      if (remains) throw Object.assign(new Error(`KK Home did not verify code removal from ${door.name}.`), { operation:'key-list-verify-removal' });
       return { status:'removed', providerCodeId, verification:'cloud-record', message:'Code removal confirmed in KK Home.' };
     },
   };

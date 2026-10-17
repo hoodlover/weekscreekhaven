@@ -84,7 +84,7 @@ test('removes the exact saved key and verifies it is absent', async () => {
 
 test('fails closed when the configured lock cannot be identified', async () => {
   const client={ async listDevices(){ return [{ id:'another-lock', esn:'OTHER' }]; } };
-  await assert.rejects(() => createKKHomeLockProvider({}, { client }).installCode(request), /was not found/);
+  await assert.rejects(() => createKKHomeLockProvider({}, { client }).installCode(request), error => /was not found/.test(error.message) && error.operation === 'device-list');
 });
 
 test('resolves a lock nested under its Wi-Fi parent', async () => {
