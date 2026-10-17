@@ -49,6 +49,15 @@ export default async function handler(request,response) {
           if (await provider.findCode({door:doors.find(item=>item.id===id),code})) throw new Error('This PIN already exists on a selected lock. Choose another PIN.');
         }
         return changeOwnerLockCode(entry,{code,provider,doors,save:saveOwnerLock});
+      } else if (action === 'clear-one-time-slot') {
+        entry = entries.find(e=>e.id===request.body?.id); if (!entry) throw new Error('Access code not found.');
+        const doorId = String(request.body?.doorId || '');
+        const keyNum = Number(request.body?.keyNum);
+        if (!entry.doorIds.includes(doorId)) throw new Error('Choose a door assigned to this access record.');
+        if (!Number.isInteger(keyNum) || keyNum < 1 || keyNum > 99) throw new Error('Enter the one-time PIN slot number shown in KK Home.');
+        const door = doors.find(item=>item.id===doorId); if (!door) throw new Error('Door configuration changed.');
+        const removed = await provider.removeOneTimeSlot({door,keyNum});
+        return {slotRemoved:true,doorId,keyNum,message:removed.message};
       } else {
         entry = entries.find(e=>e.id===request.body?.id); if (!entry) throw new Error('Access code not found.');
         if (!['retry','revoke','check'].includes(action)) throw new Error('Unknown lock action.');
@@ -59,7 +68,7 @@ export default async function handler(request,response) {
       }
       return applyOwnerLock(entry,{provider,doors,save:saveOwnerLock,revoke:action==='revoke'});
     });
-    return json(response,200,{entry:visible(result)});
+    return json(response,200,result.slotRemoved ? result : {entry:visible(result)});
   } catch(error) {
     const source = typeof error?.stack === 'string'
       ? error.stack.split('\n').slice(1).flatMap(line => {

@@ -59,6 +59,7 @@ function matchingKey(keys, code, startTime, endTime) {
 const codeHash = code => createHash('sha256').update(String(code)).digest('hex');
 const keyNumber = item => Number(first(item, 'num', 'keyNum'));
 const keyCode = item => String(first(item, 'key', 'pwdValue') || '');
+const keyAttribute = item => Number(first(item, 'attribute', 'type'));
 const sameWindow = (item, start, end) => Number(item.startTime) === start && Number(item.endTime) === end;
 
 function encodeReference(device, keyNum, code) {
@@ -125,7 +126,7 @@ export function createKKHomeLockProvider(env=process.env, options={}) {
         }
       }
       if (!match) {
-        if (initial.some(item => !keyCode(item) && sameWindow(item, startTime, endTime))) throw new Error('An unconfirmed code already uses this window; owner review is required before retrying.');
+        if (initial.some(item => keyAttribute(item) !== 253 && !keyCode(item) && sameWindow(item, startTime, endTime))) throw new Error('An unconfirmed code already uses this window; owner review is required before retrying.');
         if (initial.some(item => keyCode(item) === code)) throw new Error('This PIN already has another access window; owner review is required.');
         const before = new Set(initial.map(keyNumber));
         await client.insertKey({ attribute, key:code, keyType:0, week:0, startTime, endTime, esn:device.esn,
@@ -215,6 +216,23 @@ export function createKKHomeLockProvider(env=process.env, options={}) {
       const remains = !absent;
       if (remains) throw Object.assign(new Error(`KK Home did not verify code removal from ${door.name}.`), { operation:'key-list-verify-removal' });
       return { status:'removed', providerCodeId, verification:'cloud-record', message:'Code removal confirmed in KK Home.' };
+    },
+    async removeOneTimeSlot({ door, keyNum }) {
+      if (!Number.isInteger(keyNum) || keyNum < 1 || keyNum > 99) throw new Error('Enter the one-time PIN slot number shown in KK Home.');
+      const device = await selectedDevice(door);
+      const esn = device.partSn || device.esn;
+      const current = keysFrom(await client.listKeys(esn));
+      const matches = current.filter(item => keyNumber(item) === keyNum);
+      if (matches.length !== 1 || keyAttribute(matches[0]) !== 253
+        || Number(matches[0].startTime) !== 0 || Number(matches[0].endTime) !== 0) {
+        throw Object.assign(new Error(`KK Home slot ${keyNum} is not a confirmed one-time PIN slot on ${door.name}; it was left unchanged.`), { operation:'key-list-verify-reference' });
+      }
+      await client.removeKey({ esn:device.esn, params:{ keyNum, keyType:0, partsSn:device.partSn || '', partsMac:device.partMac || '' } });
+      await client.removeKeyMetadata({ esn, pwdList:[{ num:keyNum, pwdType:1 }] });
+      if (await verify(device, keys => !keys.some(item => keyNumber(item) === keyNum))) {
+        return { status:'removed', verification:'cloud-record', message:`One-time PIN slot ${keyNum} removed from ${door.name}.` };
+      }
+      throw Object.assign(new Error(`KK Home did not verify removal of one-time PIN slot ${keyNum} from ${door.name}.`), { operation:'key-list-verify-removal' });
     },
   };
 }

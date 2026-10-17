@@ -46,6 +46,47 @@ test('refuses to change a lock when KK Home returns malformed key rows', async (
   assert.equal(inserts, 0);
 });
 
+test('a one-time slot does not block a permanent code with the 1970 time window', async () => {
+  const records=[{num:7,key:'',attribute:253,startTime:0,endTime:0}];
+  let inserted;
+  const client={
+    async listDevices(){return [{id:'lock-1',esn:'LOCK-ESN'}];},
+    async listKeys(){return records;},
+    async insertKey(payload){inserted=payload;records.push({num:8,key:'',attribute:0,startTime:0,endTime:0});},
+    async saveKeyMetadata(payload){records.push(...payload.pwdList);},
+  };
+  const result=await createKKHomeLockProvider({}, {client,wait:async()=>{}}).installCode({...request,accessType:'permanent'});
+  assert.equal(inserted.key,request.code);
+  assert.equal(result.status,'installed');
+  assert.ok(records.some(item=>item.num===7&&item.attribute===253));
+});
+
+test('removes only the specifically confirmed one-time PIN slot', async () => {
+  let records=[{num:7,key:'',attribute:253,startTime:0,endTime:0}];
+  let removed,metadata;
+  const client={
+    async listDevices(){return [{id:'lock-1',esn:'LOCK-ESN'}];},
+    async listKeys(){return records;},
+    async removeKey(payload){removed=payload;records=[];},
+    async removeKeyMetadata(payload){metadata=payload;},
+  };
+  const result=await createKKHomeLockProvider({}, {client,wait:async()=>{}}).removeOneTimeSlot({door,keyNum:7});
+  assert.equal(removed.params.keyNum,7);
+  assert.deepEqual(metadata.pwdList,[{num:7,pwdType:1}]);
+  assert.equal(result.status,'removed');
+});
+
+test('refuses to clear a slot unless KK Home identifies it as one-time', async () => {
+  let removals=0;
+  const client={
+    async listDevices(){return [{id:'lock-1',esn:'LOCK-ESN'}];},
+    async listKeys(){return [{num:7,key:'',attribute:0,startTime:0,endTime:0}];},
+    async removeKey(){removals+=1;},
+  };
+  await assert.rejects(()=>createKKHomeLockProvider({}, {client}).removeOneTimeSlot({door,keyNum:7}),/not a confirmed one-time PIN slot/);
+  assert.equal(removals,0);
+});
+
 test('changes an existing PIN in place and preserves leading zeros', async () => {
   let keys=[];
   const client={
