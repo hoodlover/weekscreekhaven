@@ -65,7 +65,7 @@ function buildDashboard(bookings,state,isOwner,viewer=null){
       bookingId:booking.id, arrival:dates.arrival, cleanDate:dates.departure, guests:Number(booking.guests)||1, dogs:Number(booking.dogs)||0, guestFirstName:firstName(booking.name), guestRating:Number(assignment.guestRating)||0, guestReview:assignment.guestReview||'', guestRatedAt:assignment.guestRatedAt||'', familyChecklist:assignment.familyChecklist||{}, familyChecklistNote:assignment.familyChecklistNote||'', familyChecklistUpdatedAt:assignment.familyChecklistUpdatedAt||'', turnoverChecklist:assignment.turnoverChecklist||{}, turnoverChecklistNote:assignment.turnoverChecklistNote||'', turnoverChecklistUpdatedAt:assignment.turnoverChecklistUpdatedAt||'', checkoutReport:checkoutReportFor(booking), cleanerScheduled:true,
       sessionType:assignment.sessionType||(booking.friendsAndFamilyDiscount||dates.quote?.friendsAndFamilyDiscount?'friends-family':'guest'),
       sameDayTurnaround:Boolean(nextArrival), nextGuestCount:nextArrival?Number(nextArrival.booking.guests)||1:0,
-      status:assignment.status||'scheduled', ownerNote:assignment.ownerNote||'', cleanerNote:assignment.cleanerNote||'',
+      cleanerEmailSentAt:assignment.cleanerEmailSentAt||'',status:assignment.status||'scheduled', ownerNote:assignment.ownerNote||'', cleanerNote:assignment.cleanerNote||'',
       basePayCents:Number.isFinite(Number(assignment.basePayCents))?Number(assignment.basePayCents):(Number.isFinite(Number(booking.accountingCleaningFeeCents))?Number(booking.accountingCleaningFeeCents):Number(state.settings.standardPayCents)||17500),
       extraPayCents:Number(assignment.extraPayCents)||0, extraTask:assignment.extraTask||'', completedAt:assignment.completedAt||'', paidAt:assignment.paidAt||'',
       photos:photosFor(booking.id),
@@ -76,8 +76,8 @@ function buildDashboard(bookings,state,isOwner,viewer=null){
     const report=checkoutReportFor(booking); const assignment=assignmentMap.get(booking.id)||{};
     return { bookingId:booking.id,departure:dates.departure,guests:Number(booking.guests)||1,guestFirstName:firstName(booking.name),guestRating:Number(assignment.guestRating)||0,guestReview:assignment.guestReview||'',guestRatedAt:assignment.guestRatedAt||'',sessionType:assignment.sessionType||(booking.friendsAndFamilyDiscount||dates.quote?.friendsAndFamilyDiscount?'friends-family':'guest'),familyChecklist:assignment.familyChecklist||{},familyChecklistNote:assignment.familyChecklistNote||'',familyChecklistUpdatedAt:assignment.familyChecklistUpdatedAt||'',turnoverChecklist:assignment.turnoverChecklist||{},turnoverChecklistNote:assignment.turnoverChecklistNote||'',turnoverChecklistUpdatedAt:assignment.turnoverChecklistUpdatedAt||'',checkoutReport:report,cleanerScheduled:cleanerScheduled(booking),restock:report?.restock||[],maintenanceCategories:report?.maintenanceCategories||[],maintenanceLocation:report?.maintenanceLocation||'',maintenancePriority:report?.maintenancePriority||'',maintenanceIssue:report?.maintenanceIssue||'',nothingToReport:report?.nothingToReport===true,cleanerNote:assignment.cleanerNote||'',status:assignment.status||'',completedAt:assignment.completedAt||'',ownerCompletedAt:assignment.ownerCompletedAt||'',photos:photosFor(booking.id),...(isOwner?{guestName:booking.name||'Guest'}:{}) };
   });
-  const customSessions=state.assignments.filter(item=>item.customSession&&item.cleanDate).map(item=>({bookingId:item.bookingId,arrival:item.cleanDate,cleanDate:item.cleanDate,departure:item.cleanDate,guests:Number(item.guests)||0,guestFirstName:'the group',guestRating:Number(item.guestRating)||0,guestReview:item.guestReview||'',guestRatedAt:item.guestRatedAt||'',familyChecklist:item.familyChecklist||{},familyChecklistNote:item.familyChecklistNote||'',familyChecklistUpdatedAt:item.familyChecklistUpdatedAt||'',turnoverChecklist:item.turnoverChecklist||{},turnoverChecklistNote:item.turnoverChecklistNote||'',turnoverChecklistUpdatedAt:item.turnoverChecklistUpdatedAt||'',checkoutReport:null,cleanerScheduled:true,dogs:0,sameDayTurnaround:false,nextGuestCount:0,status:item.status||'scheduled',sessionType:item.sessionType||'guest',ownerNote:item.ownerNote||'',cleanerNote:item.cleanerNote||'',basePayCents:Number(item.basePayCents)||0,extraPayCents:Number(item.extraPayCents)||0,extraTask:item.extraTask||'',completedAt:item.completedAt||'',ownerCompletedAt:item.ownerCompletedAt||'',paidAt:item.paidAt||'',customSession:true,sessionLabel:item.sessionLabel||'Additional cabin care',photos:photosFor(item.bookingId)}));
-  upcoming=[...upcoming,...customSessions.filter(item=>item.cleanDate>=today)].sort((a,b)=>a.cleanDate.localeCompare(b.cleanDate)).slice(0,20);
+  const customSessions=state.assignments.filter(item=>item.customSession&&item.cleanDate&&!item.archivedAt&&item.status!=='cancelled').map(item=>({bookingId:item.bookingId,arrival:item.cleanDate,cleanDate:item.cleanDate,departure:item.cleanDate,guests:Number(item.guests)||0,guestFirstName:'the group',guestRating:Number(item.guestRating)||0,guestReview:item.guestReview||'',guestRatedAt:item.guestRatedAt||'',familyChecklist:item.familyChecklist||{},familyChecklistNote:item.familyChecklistNote||'',familyChecklistUpdatedAt:item.familyChecklistUpdatedAt||'',turnoverChecklist:item.turnoverChecklist||{},turnoverChecklistNote:item.turnoverChecklistNote||'',turnoverChecklistUpdatedAt:item.turnoverChecklistUpdatedAt||'',checkoutReport:null,cleanerScheduled:true,dogs:0,sameDayTurnaround:false,nextGuestCount:0,status:item.status||'scheduled',sessionType:item.sessionType||'guest',ownerNote:item.ownerNote||'',cleanerNote:item.cleanerNote||'',basePayCents:Number(item.basePayCents)||0,extraPayCents:Number(item.extraPayCents)||0,extraTask:item.extraTask||'',completedAt:item.completedAt||'',ownerCompletedAt:item.ownerCompletedAt||'',paidAt:item.paidAt||'',cleanerEmailSentAt:item.cleanerEmailSentAt||'',customSession:true,sessionLabel:item.sessionLabel||'Additional cabin care',photos:photosFor(item.bookingId)}));
+  upcoming=[...upcoming.filter(item=>item.status!=='cancelled'),...customSessions.filter(item=>item.cleanDate>=today)].sort((a,b)=>a.cleanDate.localeCompare(b.cleanDate)).slice(0,20);
   recent=[...recent,...customSessions.filter(item=>item.cleanDate<today)].sort((a,b)=>b.departure.localeCompare(a.departure)).slice(0,12);
   const paidTips=state.tips.filter(t=>t.status==='paid');
   const completedJobs=state.assignments.filter(a=>a.completedAt).map(a=>({...a,earnedCents:(Number(a.basePayCents)||Number(state.settings.standardPayCents)||17500)+(Number(a.extraPayCents)||0),earnedAt:a.completedAt}));
@@ -87,6 +87,7 @@ function buildDashboard(bookings,state,isOwner,viewer=null){
   const paidFor=days=>compensation.filter(e=>within(e.paidOutAt,days)).reduce((sum,e)=>sum+e.amountCents,0);
   const tipSummary={owedCents:paidTips.filter(t=>!t.paidOutAt).reduce((sum,t)=>sum+(Number(t.amountCents)||0),0),paidCents:paidTips.filter(t=>t.paidOutAt).reduce((sum,t)=>sum+(Number(t.amountCents)||0),0)};
   return {
+    archivedCleanings:isOwner?state.assignments.filter(item=>item.customSession&&(item.archivedAt||item.status==='cancelled')).map(item=>({bookingId:item.bookingId,sessionLabel:item.sessionLabel,cleanDate:item.cleanDate})):[],
     viewerCleanerName:viewer?.cleanerName||'',
     ...(isOwner?{cleanerProfiles:publicCleanerProfiles(state),primaryCleanerId:state.settings.primaryCleanerId,primaryCleanerName:state.settings.cleanerName}:{}),
     selectedCleanerId:profile.id, cleanerEnabled:profile.enabled, cleanerAccess:visibleCleanerAccess(profile,state),
@@ -185,11 +186,20 @@ export default async function handler(request,response){
       await appendCleanerRecord({type:'remark_update',remarkId:safe(request.body?.remarkId,80),createdAt:now,changes:{status:'resolved',resolvedAt:now,resolvedBy:owner?'owner':'cleaner'}});
     } else if(action==='create-cleaning-session'){
       if(!owner)return json(response,403,{error:'Only the owner can add a cleaning session.'});
-      const cleanDate=safe(request.body?.cleanDate,10),sessionLabel=safe(request.body?.sessionLabel,100)||'Additional cabin care',sessionType=request.body?.sessionType==='friends-family'?'friends-family':'guest',guests=Number(request.body?.guests)||0,basePayCents=cents(request.body?.basePay||0),ownerNote=safe(request.body?.ownerNote,500);
+      const operationId=safe(request.body?.operationId,80),existingState=await getCleanerState();
+      if(operationId&&existingState.assignments.some(item=>item.creationOperationId===operationId))return json(response,200,{ok:true,alreadyCreated:true});
+      const cleanDate=safe(request.body?.cleanDate,10),sessionLabel=safe(request.body?.sessionLabel,100)||'Additional cabin care',sessionType=request.body?.sessionType==='friends-family'?'friends-family':'guest',guests=Number(request.body?.guests)||0,basePayCents=cents(request.body?.basePay||0),ownerNote=safe(request.body?.ownerNote,5000);
       if(!/^\d{4}-\d{2}-\d{2}$/.test(cleanDate)||Number.isNaN(Date.parse(`${cleanDate}T12:00:00`)))return json(response,400,{error:'Choose a valid cleaning date.'});
       if(!Number.isInteger(basePayCents)||basePayCents<0||basePayCents>100000)return json(response,400,{error:'Enter a valid cleaning amount.'});
       if(!Number.isInteger(guests)||guests<0||guests>30)return json(response,400,{error:'Enter a guest count from 0 to 30.'});
-      await appendCleanerRecord({type:'assignment',bookingId:`custom-${crypto.randomUUID()}`,createdAt:now,changes:{customSession:true,cleanDate,sessionLabel,sessionType,guests,basePayCents,extraPayCents:0,extraTask:'',ownerNote,status:'scheduled'}});
+      await appendCleanerRecord({type:'assignment',bookingId:`custom-${crypto.randomUUID()}`,createdAt:now,changes:{creationOperationId:operationId,customSession:true,cleanDate,sessionLabel,sessionType,guests,basePayCents,extraPayCents:0,extraTask:'',ownerNote,status:'scheduled'}});
+    } else if(action==='archive-cleaning-session'){
+      if(!owner)return json(response,403,{error:'Only the owner can remove a cleaning.'});
+      const bookingId=safe(request.body?.bookingId,100),state=await getCleanerState(),current=state.assignments.find(item=>item.bookingId===bookingId&&item.customSession);
+      if(!current)return json(response,404,{error:'Only an off-calendar cleaning can be removed here. Guest bookings are managed in Owner Hub.'});
+      if(current.completedAt||current.paidAt)return json(response,409,{error:'A completed or paid cleaning must stay in your records.'});
+      const restore=request.body?.restore===true;
+      await appendCleanerRecord({type:'assignment',bookingId,createdAt:now,changes:{archivedAt:restore?'':now,status:restore?'scheduled':'cancelled'}});
     } else if(action==='owner-cleaning-complete'){
       if(!owner)return json(response,403,{error:'Only the owner can override a cleaning record.'});
       const bookingId=safe(request.body?.bookingId,100); if(!bookingId)return json(response,400,{error:'Choose a cleaning record.'});
@@ -201,7 +211,13 @@ export default async function handler(request,response){
       if(owner){
         const basePayCents=cents(request.body?.basePay); const extraPayCents=cents(request.body?.extraPay||0);
         if(!Number.isInteger(basePayCents)||basePayCents<0||basePayCents>100000||!Number.isInteger(extraPayCents)||extraPayCents<0||extraPayCents>100000)return json(response,400,{error:'Enter valid cleaning and extra-task pay amounts.'});
-        changes={basePayCents,extraPayCents,extraTask:safe(request.body?.extraTask,500),ownerNote:safe(request.body?.ownerNote,500),status:safe(request.body?.status,30)||current.status||'scheduled',sessionType:request.body?.sessionType==='friends-family'?'friends-family':'guest'};
+        changes={basePayCents,extraPayCents,extraTask:safe(request.body?.extraTask,500),ownerNote:safe(request.body?.ownerNote,5000),status:safe(request.body?.status,30)||current.status||'scheduled',sessionType:request.body?.sessionType==='friends-family'?'friends-family':'guest'};
+        if(current.customSession){
+          const cleanDate=safe(request.body?.cleanDate||current.cleanDate,10),guests=Number(request.body?.guests??current.guests)||0;
+          if(!/^\d{4}-\d{2}-\d{2}$/.test(cleanDate)||Number.isNaN(Date.parse(cleanDate+'T12:00:00')))return json(response,400,{error:'Choose a valid cleaning date.'});
+          if(!Number.isInteger(guests)||guests<0||guests>30)return json(response,400,{error:'Enter a guest count from 0 to 30.'});
+          Object.assign(changes,{cleanDate,guests,sessionLabel:safe(request.body?.sessionLabel||current.sessionLabel,100)});
+        }
         if(request.body?.markPaid===true)changes.paidAt=now;
       } else {
         const status=safe(request.body?.status,30); if(!['accepted','declined','completed'].includes(status))return json(response,400,{error:'Choose accepted, declined, or completed.'});
@@ -308,7 +324,7 @@ export default async function handler(request,response){
       if(request.body?.confirmed!==true)return json(response,400,{error:'Review and confirm this cleaner email before scheduling.'});
       const state=await getCleanerState(),recipient=requireCleanerProfile(state,request.body?.profileId);
       const bookingId=safe(request.body?.bookingId,100);
-      if(bookingId){const bookings=await getBookingRequests();if(!bookings.some(item=>item.id===bookingId))return json(response,404,{error:'That booking is no longer available. Refresh the Cleaner Hub and choose it again.'});}
+      if(bookingId){const bookings=await getBookingRequests(),custom=state.assignments.find(item=>item.bookingId===bookingId&&item.customSession&&!item.archivedAt&&item.status!=='cancelled');if(!custom&&!bookings.some(item=>item.id===bookingId))return json(response,404,{error:'That cleaning is no longer available. Refresh the Cleaner Hub and choose it again.'});}
       const email=await scheduleCleanerEmail({...request.body,profileId:recipient.id,to:recipient.cleanerEmail||'',toName:recipient.cleanerName||'Cabin Care Team',bookingId,templateId:safe(request.body?.templateId,50)});
       return json(response,200,{ok:true,email},{'Cache-Control':'private, no-store'});
     } else if(action==='send-email'){
@@ -317,9 +333,9 @@ export default async function handler(request,response){
       const state=await getCleanerState(),recipient=requireCleanerProfile(state,request.body?.profileId); const to=recipient.cleanerEmail||'';
       if(!to)return json(response,400,{error:'Add the cleaner email address in Cleaner setup first.'});
       const cc=normalizeEmailCc(request.body?.cc,to);
-      const subject=safe(request.body?.subject,160),body=safe(request.body?.body,5000),operationId=safe(request.body?.operationId,80),bookingId=safe(request.body?.bookingId,100);
+      const subject=safe(request.body?.subject,160),body=safe(request.body?.body,12000),operationId=safe(request.body?.operationId,80),bookingId=safe(request.body?.bookingId,100);
       if(subject.length<5||body.length<20||!operationId)return json(response,400,{error:'Finish the email subject and message before sending.'});
-      if(bookingId){const bookings=await getBookingRequests();if(!bookings.some(item=>item.id===bookingId))return json(response,404,{error:'That booking is no longer available. Refresh the Cleaner Hub and choose it again.'});}
+      if(bookingId){const bookings=await getBookingRequests(),custom=state.assignments.find(item=>item.bookingId===bookingId&&item.customSession&&!item.archivedAt&&item.status!=='cancelled');if(!custom&&!bookings.some(item=>item.id===bookingId))return json(response,404,{error:'That cleaning is no longer available. Refresh the Cleaner Hub and choose it again.'});}
       const already=state.emailHistory.find(item=>item.operationId===operationId); if(already)return json(response,200,{ok:true,alreadySent:true});
       const htmlBody=escapeEmailHtml(body.replace(/\n+(?:Thank you,\s*\n+)?Heather\s*&\s*Lance(?:\s*\n+Weeks Creek Haven)?\s*$/i,'').trim()).replace(/\n/g,'<br>');
       const result=await sendEmail({to,cc,toName:recipient.cleanerName||'Cabin Care Team',subject,idempotencyKey:`cleaner-${operationId}`,text:body,html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.65;max-width:640px"><div style="padding:22px;background:#183c2d;color:#fff"><div style="color:#e5b67e;font-size:12px;font-weight:bold;letter-spacing:.12em;text-transform:uppercase">Weeks Creek Haven · Cabin Care</div><h1 style="margin:6px 0 0;color:#fff;font-family:Georgia,serif">${escapeEmailHtml(subject)}</h1></div><div style="padding:24px;background:#fffdf8">${htmlBody}</div><div style="padding:16px 24px;background:#f4eee0;color:#76695e;font-size:12px">Weeks Creek Haven · Blue Ridge, Georgia</div></div>`});
