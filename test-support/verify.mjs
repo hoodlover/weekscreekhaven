@@ -11,7 +11,7 @@ const source=fs.readFileSync(new URL('../'+path,import.meta.url),'utf8');new Fun
 const prefix=script.slice(0,script.indexOf('const emailTemplates='));
 const helpers=script.slice(script.indexOf('function photoSection'),script.indexOf('function checkoutReportBox'));
 const checklist=script.slice(script.indexOf('function turnoverChecklist'),script.indexOf('function guestReport'));
-const special=script.slice(script.indexOf('function specialRequestSection'),script.indexOf("document.addEventListener('submit',async event=>"));
+const special=script.slice(script.indexOf('function cleaningWindowText'),script.indexOf("document.addEventListener('submit',async event=>"));
 const simple=special+script.slice(script.indexOf('function simpleAssignmentCard'),script.indexOf('function simplifyCleanerView'));
 const context=vm.createContext({document:{getElementById:()=>({})},sessionStorage:{getItem:()=>''},Intl,Date});
 vm.runInContext(prefix+helpers+checklist+simple+`;state={isOwner:false,turnoverChecklistMaster:${JSON.stringify(DEFAULT_TURNOVER_CHECKLIST)}};function guestReport(){return ''}function checkoutReportBox(){return ''}function photoWhen(){return ''}function assignmentCard(item){return simpleAssignmentCard(item)}`,context);
@@ -21,6 +21,9 @@ let markup=render(item);assert.match(markup,/Accept job/);assert.match(markup,/C
 markup=render({...item,status:'accepted'});assert.match(markup,/Start \/ continue cleaning/);assert.match(markup,/Getting the Haven Guest-Ready/);assert.match(markup,/60-75/);assert.match(markup,/5th level/);assert.match(markup,/trails down to the fire pit and creek/);assert.match(markup,/Finish cleaning/);
 assert.match(render({...item,status:'declined'}),/You cannot take this job/);
 assert.doesNotMatch(render({...item,status:'completed'}),/Finish cleaning/);
+assert.match(render({...item,cleanStartTime:'11:00',cleanEndTime:'15:00'}),/4 hours/);
+assert.match(render({...item,status:'accepted',specialRequest:{description:'Flowers'}}),/name="actualCost"[^>]*disabled/);
+assert.doesNotMatch(render({...item,status:'completed',specialRequest:{description:'Flowers'}}),/name="actualCost"[^>]*disabled/);
 vm.runInContext(script.slice(script.indexOf('async function request('),script.indexOf('function notify('))+';cleanerPreview=true;',context);
 await assert.rejects(()=>vm.runInContext("request('/api/cleaner-hub',{method:'POST'})",context),/read-only cleaner preview/);
 const custom=normalizeTurnoverChecklist([{id:'custom',name:'Custom owner group',tasks:[{id:'linens_wash',title:'Our laundry',detail:'Keep this custom instruction.'}]}]);assert.equal(custom[0].tasks[0].title,'Our laundry');assert.match(custom[0].tasks[0].detail,/Keep this custom instruction/);assert.match(custom[0].tasks[0].detail,/5th level/);
