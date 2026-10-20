@@ -31,13 +31,13 @@ export const DEFAULT_TURNOVER_CHECKLIST = [
     { id:'bath_toilets', title:'Toilets—complete clean', detail:'Disinfect bowl, seat, hinges, front, base, surrounding wall, and floor.' },
     { id:'bath_sinks', title:'Sinks, counters, and faucets', detail:'Clean, disinfect, dry, and polish fixtures.' },
     { id:'bath_mirrors', title:'Mirrors and glass', detail:'Leave glass streak-free.' },
-    { id:'bath_showers', title:'Showers, tubs, and drains', detail:'Remove hair and residue; clean fixtures, ledges, curtains, and doors.' },
+    { id:'bath_showers', title:'Showers, tubs, and drains', detail:'Remove hair and residue; clean fixtures, ledges, curtains, and doors. Include the lower-level jetted soaking tub using its posted care instructions.' },
     { id:'bath_linens', title:'Towels, mats, and toiletries', detail:'Replace linens and neatly reset the guest supplies.' },
     { id:'bath_trash_floors', title:'Bathroom trash and floors', detail:'Empty bins, replace liners, vacuum, and mop corners and behind doors.' },
   ]},
   { id:'bedrooms', name:'Bedrooms & laundry', tasks:[
     { id:'beds_strip', title:'Strip and inspect used beds', detail:'Look for stains, damage, and forgotten items before laundering.' },
-    { id:'linens_wash', title:'Wash and fully dry linens', detail:'Use the cabin procedure and never put away damp linens.' },
+    { id:'linens_wash', title:'Wash and fully dry linens', detail:'Empty the dryer lint screen before each load. Dryer heat: Full High, 5th level, for linens suitable for high heat; follow fabric care labels for other items. Never put away damp linens.' },
     { id:'beds_remake', title:'Remake every used bed', detail:'Use fresh linens and make the room arrival-ready.' },
     { id:'protectors', title:'Inspect protectors and pillows', detail:'Check mattress and pillow protectors; replace or report anything soiled or damaged.' },
     { id:'bedroom_surfaces', title:'Bedroom reset', detail:'Dust, wipe touchpoints, empty trash, and reset nightstands, closets, and luggage areas.' },
@@ -49,9 +49,9 @@ export const DEFAULT_TURNOVER_CHECKLIST = [
     { id:'fireplace', title:'Fireplace area', detail:'Remove safe, fully cold debris as directed; clean the hearth and reset controls and screens.' },
   ]},
   { id:'outdoors', name:'Hot tub & outdoors', tasks:[
-    { id:'hot_tub_water', title:'Hot-tub water check', detail:'Follow the cabin testing and treatment procedure; record or report anything outside the target range.' },
+    { id:'hot_tub_water', title:'Empty, clean, refill & balance the hot tub', detail:'Follow the posted draining and refill procedure. Test fresh water, balance using the approved product instructions, then retest and record readings in the visit notes. Ask Heather & Lance if instructions or chemicals are unclear; do not guess doses.' },
     { id:'hot_tub_area', title:'Hot-tub cover, rail, and towels', detail:'Clean and secure the area, reset towels, and report damage or cloudy water.' },
-    { id:'outdoor_reset', title:'Decks, porches, and furniture', detail:'Sweep, remove trash, wipe obvious messes, and reset furniture.' },
+    { id:'outdoor_reset', title:'Wipe deck furniture & clear outdoor paths', detail:'Wipe down all deck furniture and tables. Blow leaves off porches and the trails down to the fire pit and creek. Pick up litter and leave paths clear.' },
     { id:'grill_fireplace', title:'Grill and outdoor fire areas', detail:'Clean only when safely cool; remove residue and report unsafe conditions.' },
     { id:'fuel_check', title:'Propane and charcoal', detail:'Check supply levels and record anything low or empty.' },
   ]},
@@ -61,10 +61,12 @@ export const DEFAULT_TURNOVER_CHECKLIST = [
     { id:'doors_windows', title:'Windows and exterior doors', detail:'Close, lock, and verify the three smart doors.' },
     { id:'vacuum_charge', title:'Empty and charge the stick vacuum', detail:'Empty the bin, clear the brush if needed, and plug it back in.' },
     { id:'final_walkthrough', title:'Final cabin-feel walk-through', detail:'Check temperature, scent, lighting, staging, and the view from the front door.' },
-    { id:'after_photos', title:'Take completion photos', detail:'Capture the finished rooms plus anything the owners need to review.' },
+    { id:'after_photos', title:'Upload 60–75 visit photos', detail:'Photograph the finished rooms, beds, bathrooms, kitchen, outdoor spaces, and hot tub, plus any issues. Upload about 60–75 photos for this cleaning; notes are optional.' },
   ]},
 ];
 
+const CABIN_TURNOVER_NOTES={"linens_wash":"Empty the dryer lint screen before each load. Dryer heat: Full High, 5th level, for linens suitable for high heat; follow fabric care labels for other items. Never put away damp linens.","hot_tub_water":"Follow the posted draining and refill procedure. Test fresh water, balance using the approved product instructions, then retest and record readings in the visit notes. Ask Heather & Lance if instructions or chemicals are unclear; do not guess doses.","outdoor_reset":"Wipe down all deck furniture and tables. Blow leaves off porches and the trails down to the fire pit and creek. Pick up litter and leave paths clear.","bath_showers":"Remove hair and residue; clean fixtures, ledges, curtains, and doors. Include the lower-level jetted soaking tub using its posted care instructions.","after_photos":"Photograph the finished rooms, beds, bathrooms, kitchen, outdoor spaces, and hot tub, plus any issues. Upload about 60–75 photos for this cleaning; notes are optional."};
+const cabinDetail=(id,detail)=>CABIN_TURNOVER_NOTES[id]&&!detail.includes(CABIN_TURNOVER_NOTES[id])?(detail?detail+' ':'')+CABIN_TURNOVER_NOTES[id]:detail;
 const clean=(value,max)=>String(value||'').trim().slice(0,max);
 const cleanId=(value,fallback)=>clean(value,80).toLowerCase().replace(/[^a-z0-9_-]/g,'-').replace(/-+/g,'-')||fallback;
 
@@ -84,7 +86,7 @@ export function normalizeTurnoverChecklist(value){
     let id=cleanId(group?.id,`group-${index+1}`);while(groupIds.has(id))id=`${id}-${index+1}`;groupIds.add(id);
     const tasks=(Array.isArray(group?.tasks)?group.tasks:[]).slice(0,60).map((task,taskIndex)=>{
       let taskId=cleanId(task?.id,`${id}-task-${taskIndex+1}`);while(taskIds.has(taskId))taskId=`${taskId}-${taskIndex+1}`;taskIds.add(taskId);
-      return {id:taskId,title:clean(task?.title,100)||`Turnover item ${taskIndex+1}`,detail:clean(task?.detail,500)};
+      return {id:taskId,title:clean(task?.title,100)||`Turnover item ${taskIndex+1}`,detail:cabinDetail(taskId,clean(task?.detail,500))};
     });
     return {id,name:clean(group?.name,100)||`Area ${index+1}`,tasks};
   }).filter(group=>group.tasks.length);

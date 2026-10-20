@@ -204,7 +204,8 @@ export default async function handler(request,response){
         changes={basePayCents,extraPayCents,extraTask:safe(request.body?.extraTask,500),ownerNote:safe(request.body?.ownerNote,500),status:safe(request.body?.status,30)||current.status||'scheduled',sessionType:request.body?.sessionType==='friends-family'?'friends-family':'guest'};
         if(request.body?.markPaid===true)changes.paidAt=now;
       } else {
-        const status=safe(request.body?.status,30); if(!['accepted','completed'].includes(status))return json(response,400,{error:'Choose accepted or completed.'});
+        const status=safe(request.body?.status,30); if(!['accepted','declined','completed'].includes(status))return json(response,400,{error:'Choose accepted, declined, or completed.'});
+        if(current.completedAt&&status!=='completed')return json(response,409,{error:'This cleaning is already complete. Contact the owners to change it.'});
         changes={status,cleanerNote:safe(request.body?.cleanerNote,500)}; if(status==='completed')changes.completedAt=now;
       }
       await appendCleanerRecord({type:'assignment',bookingId,createdAt:now,changes});
