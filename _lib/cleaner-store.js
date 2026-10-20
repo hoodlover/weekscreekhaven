@@ -124,7 +124,7 @@ export async function uploadCleanerPhoto(bookingId, buffer, contentType, details
   const id=crypto.randomUUID();
   const pathname=`secure-cleaner/photos/${bookingId}/${id}.${extension}`;
   await put(pathname,buffer,{access:'private',token:token(),contentType,addRandomSuffix:false,cacheControlMaxAge:3600});
-  const photo={id,pathname,contentType,uploadId:String(details.uploadId||'').slice(0,80),note:String(details.note||'').slice(0,500),capturedAt:details.capturedAt||'',uploadedAt:new Date().toISOString(),uploadedBy:details.uploadedBy||'cleaner'};
+  const photo={id,pathname,contentType,purpose:details.purpose==='guest-feedback'?'guest-feedback':'cleaning',uploadId:String(details.uploadId||'').slice(0,80),note:String(details.note||'').slice(0,500),capturedAt:details.capturedAt||'',uploadedAt:new Date().toISOString(),uploadedBy:details.uploadedBy||'cleaner'};
   await appendCleanerRecord({type:'cleaning_photo',bookingId,photo,createdAt:photo.uploadedAt});
   return photo;
 }

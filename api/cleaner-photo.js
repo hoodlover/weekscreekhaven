@@ -34,6 +34,8 @@ export default async function handler(request,response){
     const rate=enforceRateLimit(request,'cleaner-photo',250,30*60*1000);
     if(!rate.allowed)return json(response,429,{error:'Too many photos at once. Wait a few minutes and try again.'});
     const bookingId=String(request.body?.bookingId||'').trim().slice(0,100);
+    const purpose=request.body?.purpose==='guest-feedback'?'guest-feedback':'cleaning';
+    if(purpose==='guest-feedback'&&!owner)return json(response,403,{error:'Only the owner can attach prior guest feedback photos.'});
     const contentType=String(request.body?.contentType||'').toLowerCase();
     const note=String(request.body?.note||'').trim().slice(0,500);
     const capturedAt=String(request.body?.capturedAt||'').trim();
@@ -43,17 +45,17 @@ export default async function handler(request,response){
     const sessionExists=bookings.some(item=>item.id===bookingId)||state.assignments.some(item=>item.bookingId===bookingId&&item.customSession);
     if(!sessionExists)return json(response,404,{error:'Cleaning session not found.'});
     const uploadId=String(request.body?.uploadId||'').slice(0,80);
-    const duplicate=uploadId&&state.cleaningPhotos.find(item=>item.bookingId===bookingId&&item.uploadId===uploadId);
+    const duplicate=uploadId&&state.cleaningPhotos.find(item=>item.bookingId===bookingId&&(item.purpose||'cleaning')===purpose&&item.uploadId===uploadId);
     if(duplicate)return json(response,200,{photo:{id:duplicate.id}});
-    const existing=state.cleaningPhotos.filter(item=>item.bookingId===bookingId);
-    if(existing.length>=100)return json(response,400,{error:'This cleaning session already has 100 photos.'});
+    const existing=state.cleaningPhotos.filter(item=>item.bookingId===bookingId&&(item.purpose||'cleaning')===purpose),limit=purpose==='guest-feedback'?5:100;
+    if(existing.length>=limit)return json(response,400,{error:`This section already has ${limit} photos.`});
     if(!ALLOWED_TYPES.has(contentType))return json(response,400,{error:'Use a JPG, PNG, or WebP photo.'});
     const match=data.match(/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/);
     if(!match||match[1]!==contentType)return json(response,400,{error:'That photo could not be read.'});
     const buffer=Buffer.from(match[2],'base64');
     if(!buffer.length||buffer.length>MAX_BYTES)return json(response,400,{error:'Keep each prepared photo under 2 MB.'});
     const normalizedCapturedAt=Number.isNaN(Date.parse(capturedAt))?'':new Date(capturedAt).toISOString();
-    const photo=await uploadCleanerPhoto(bookingId,buffer,contentType,{uploadId,note,capturedAt:normalizedCapturedAt,uploadedBy:owner?'owner':cleaner.cleanerName});
+    const photo=await uploadCleanerPhoto(bookingId,buffer,contentType,{purpose,uploadId,note,capturedAt:normalizedCapturedAt,uploadedBy:owner?'owner':cleaner.cleanerName});
     return json(response,201,{photo:{id:photo.id,note:photo.note,capturedAt:photo.capturedAt,uploadedAt:photo.uploadedAt,uploadedBy:photo.uploadedBy}});
   }catch(error){
     console.error(error);

@@ -98,7 +98,7 @@ export async function scheduleCleanerEmail(input, now = new Date()) {
   const cc = normalizeEmailCc(input.cc, to);
   const subject = typeof input.subject === 'string' ? input.subject.trim() : '';
   const body = typeof input.body === 'string' ? input.body.trim() : '';
-  if (subject.length < 5 || subject.length > 160 || /[\r\n]/.test(subject) || body.length < 20 || body.length > 5000) throw error('Use a subject of 5–160 characters and a message of 20–5,000 characters.');
+  if (subject.length < 5 || subject.length > 160 || /[\r\n]/.test(subject) || body.length < 20 || body.length > 12000) throw error('Use a subject of 5–160 characters and a message of 20–12,000 characters.');
   const sendAt = cleanerEmailSendAt(input.sendLocal, input.timeZone);
   const payload = { id, profileId: input.profileId, to, toName: input.toName, cc, subject, body,
     templateId: input.templateId || '', bookingId: input.bookingId || '', sendAt,
