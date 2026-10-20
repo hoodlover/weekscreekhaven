@@ -5,7 +5,8 @@ import { getSquareOrder } from '../_lib/square.js';
 import { json, requireAdmin, requireCleaner, sameOriginRequest } from '../_lib/security.js';
 import { cleanerForSession, cleanerProfileRecord, publicCleanerProfiles, requireCleanerProfile } from '../_lib/cleaner-profiles.js';
 import { appliedCleanerPlan, freezeCleanerPlan, profileAccessDates, savedCleanerAccess } from '../_lib/cleaner-access.js';
-import { escapeEmailHtml, sendEmail } from '../_lib/email.js';
+import { emailCapabilities, escapeEmailHtml, normalizeEmailCc, sendEmail } from '../_lib/email.js';
+import { cancelCleanerEmail, listCleanerEmailJobs, scheduleCleanerEmail } from '../_lib/cleaner-email-jobs.js';
 import { normalizeTurnoverChecklist } from '../_lib/checklist-defaults.js';
 import { withOwnerLockLease } from '../_lib/owner-lock-store.js';
 import { syncCleanerLocks, validCleaningDate, visibleCleanerAccess } from '../_lib/cleaner-locks.js';
@@ -111,7 +112,9 @@ export default async function handler(request,response){
     if(request.method==='GET'){
       let state=await getCleanerState(); if(request.query?.readOnly !== '1') state=await syncTips(state);
       const viewer=owner?requireCleanerProfile(state,request.query?.profileId||state.settings.primaryCleanerId):requireCleanerProfile(state,cleaner.id);
-      return json(response,200,buildDashboard(await getBookingRequests(),state,owner,viewer),{'Cache-Control':'private, no-store'});
+      const dashboard=buildDashboard(await getBookingRequests(),state,owner,viewer);
+      if(owner){dashboard.scheduledEmails=await listCleanerEmailJobs();dashboard.emailCapabilities={...emailCapabilities(),scheduling:Boolean(process.env.CRON_SECRET)};}
+      return json(response,200,dashboard,{'Cache-Control':'private, no-store'});
     }
     if(request.method!=='POST')return json(response,405,{error:'Method not allowed.'});
     const action=safe(request.body?.action,40); const now=new Date().toISOString();
@@ -295,18 +298,31 @@ export default async function handler(request,response){
       if(!conversation)return json(response,404,{error:'This conversation could not be found.'});
       if(!['open','closed'].includes(status))return json(response,400,{error:'Choose open or closed.'});
       await appendCleanerRecord({type:'conversation_update',conversationId:conversation.id,createdAt:now,changes:{status,[status==='closed'?'closedAt':'reopenedAt']:now}});
+    } else if(action==='cancel-scheduled-email'){
+      if(!owner)return json(response,403,{error:'Only the owner can cancel a scheduled cleaner email.'});
+      const email=await cancelCleanerEmail(request.body?.emailId);
+      return json(response,200,{ok:true,email},{'Cache-Control':'private, no-store'});
+    } else if(action==='schedule-email'){
+      if(!owner)return json(response,403,{error:'Only the owner can schedule cleaner emails.'});
+      if(request.body?.confirmed!==true)return json(response,400,{error:'Review and confirm this cleaner email before scheduling.'});
+      const state=await getCleanerState(),recipient=requireCleanerProfile(state,request.body?.profileId);
+      const bookingId=safe(request.body?.bookingId,100);
+      if(bookingId){const bookings=await getBookingRequests();if(!bookings.some(item=>item.id===bookingId))return json(response,404,{error:'That booking is no longer available. Refresh the Cleaner Hub and choose it again.'});}
+      const email=await scheduleCleanerEmail({...request.body,profileId:recipient.id,to:recipient.cleanerEmail||'',toName:recipient.cleanerName||'Cabin Care Team',bookingId,templateId:safe(request.body?.templateId,50)});
+      return json(response,200,{ok:true,email},{'Cache-Control':'private, no-store'});
     } else if(action==='send-email'){
       if(!owner)return json(response,403,{error:'Only the owner can email the cleaner.'});
       if(request.body?.confirmed!==true)return json(response,400,{error:'Review and confirm this cleaner email before sending.'});
       const state=await getCleanerState(),recipient=requireCleanerProfile(state,request.body?.profileId); const to=recipient.cleanerEmail||'';
       if(!to)return json(response,400,{error:'Add the cleaner email address in Cleaner setup first.'});
+      const cc=normalizeEmailCc(request.body?.cc,to);
       const subject=safe(request.body?.subject,160),body=safe(request.body?.body,5000),operationId=safe(request.body?.operationId,80),bookingId=safe(request.body?.bookingId,100);
       if(subject.length<5||body.length<20||!operationId)return json(response,400,{error:'Finish the email subject and message before sending.'});
       if(bookingId){const bookings=await getBookingRequests();if(!bookings.some(item=>item.id===bookingId))return json(response,404,{error:'That booking is no longer available. Refresh the Cleaner Hub and choose it again.'});}
       const already=state.emailHistory.find(item=>item.operationId===operationId); if(already)return json(response,200,{ok:true,alreadySent:true});
       const htmlBody=escapeEmailHtml(body.replace(/\n+(?:Thank you,\s*\n+)?Heather\s*&\s*Lance(?:\s*\n+Weeks Creek Haven)?\s*$/i,'').trim()).replace(/\n/g,'<br>');
-      const result=await sendEmail({to,toName:recipient.cleanerName||'Cabin Care Team',subject,idempotencyKey:`cleaner-${operationId}`,text:body,html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.65;max-width:640px"><div style="padding:22px;background:#183c2d;color:#fff"><div style="color:#e5b67e;font-size:12px;font-weight:bold;letter-spacing:.12em;text-transform:uppercase">Weeks Creek Haven · Cabin Care</div><h1 style="margin:6px 0 0;color:#fff;font-family:Georgia,serif">${escapeEmailHtml(subject)}</h1></div><div style="padding:24px;background:#fffdf8">${htmlBody}</div><div style="padding:16px 24px;background:#f4eee0;color:#76695e;font-size:12px">Weeks Creek Haven · Blue Ridge, Georgia</div></div>`});
-      const templateId=safe(request.body?.templateId,50);await appendCleanerRecord({type:'cleaner_email_sent',createdAt:now,email:{id:crypto.randomUUID(),operationId,to,subject,templateId,bookingId,sentAt:now,provider:result?.provider||''}});if(bookingId)await appendCleanerRecord({type:'assignment',bookingId,createdAt:now,changes:{cleanerEmailSentAt:now,cleanerEmailTemplateId:templateId}});
+      const result=await sendEmail({to,cc,toName:recipient.cleanerName||'Cabin Care Team',subject,idempotencyKey:`cleaner-${operationId}`,text:body,html:`<div style="font-family:Arial,sans-serif;color:#332820;line-height:1.65;max-width:640px"><div style="padding:22px;background:#183c2d;color:#fff"><div style="color:#e5b67e;font-size:12px;font-weight:bold;letter-spacing:.12em;text-transform:uppercase">Weeks Creek Haven · Cabin Care</div><h1 style="margin:6px 0 0;color:#fff;font-family:Georgia,serif">${escapeEmailHtml(subject)}</h1></div><div style="padding:24px;background:#fffdf8">${htmlBody}</div><div style="padding:16px 24px;background:#f4eee0;color:#76695e;font-size:12px">Weeks Creek Haven · Blue Ridge, Georgia</div></div>`});
+      const templateId=safe(request.body?.templateId,50);await appendCleanerRecord({type:'cleaner_email_sent',createdAt:now,email:{id:crypto.randomUUID(),operationId,to,cc,subject,templateId,bookingId,sentAt:now,provider:result?.provider||''}});if(bookingId)await appendCleanerRecord({type:'assignment',bookingId,createdAt:now,changes:{cleanerEmailSentAt:now,cleanerEmailTemplateId:templateId}});
     } else return json(response,400,{error:'Unknown cleaner hub update.'});
     let accessStatus;
     if(['create-cleaning-session','assignment'].includes(action)){
@@ -315,3 +331,4 @@ export default async function handler(request,response){
     return json(response,200,{ok:true,...(accessStatus?{accessStatus}:{})},{'Cache-Control':'private, no-store'});
   }catch(error){if(!error.status)console.error(error);return json(response,error.status||503,{error:error.message||'The Cleaner Hub is temporarily unavailable.'});}
 }
+

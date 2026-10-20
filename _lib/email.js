@@ -61,10 +61,36 @@ export function emailConfigured() {
   );
 }
 
-async function sendWithResend({ to, subject, text, html, attachments, idempotencyKey }) {
+export function validateEmailAddress(value, label = 'Email address') {
+  const address = typeof value === 'string' ? value.trim() : '';
+  if (!address || address.length > 254 || !/^[^\s@<>,;]+@[^\s@<>,;]+\.[^\s@<>,;]+$/.test(address)) {
+    throw Object.assign(new Error(`${label} must be a valid email address.`), { status: 400 });
+  }
+  return address;
+}
+
+export function normalizeEmailCc(value = [], to = '') {
+  if (typeof value !== 'string' && !Array.isArray(value)) throw Object.assign(new Error('Enter CC email addresses separated by commas.'), { status: 400 });
+  const values = typeof value === 'string' ? (value.trim() ? value.split(/[,;]/) : []) : value;
+  if (values.length > 10) throw Object.assign(new Error('Use no more than 10 CC addresses.'), { status: 400 });
+  const seen = new Set([String(to).trim().toLowerCase()]);
+  return values.map(item => validateEmailAddress(item, 'Each CC address')).filter(address => {
+    const key = address.toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key); return true;
+  });
+}
+
+export function emailCapabilities() {
+  const resend = Boolean(process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL);
+  return { configured: emailConfigured(), cc: resend };
+}
+
+async function sendWithResend({ to, cc, subject, text, html, attachments, idempotencyKey, requestTimeoutMs }) {
   const fromName = process.env.RESEND_FROM_NAME || 'Weeks Creek Haven';
   const response = await fetch(RESEND_ENDPOINT, {
     method: 'POST',
+    ...(requestTimeoutMs ? { signal: AbortSignal.timeout(requestTimeoutMs) } : {}),
     headers: {
       Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
       'Content-Type': 'application/json',
@@ -73,6 +99,7 @@ async function sendWithResend({ to, subject, text, html, attachments, idempotenc
     body: JSON.stringify({
       from: `${fromName} <${process.env.RESEND_FROM_EMAIL}>`,
       to: [to],
+      ...(cc.length ? { cc } : {}),
       subject,
       text,
       html,
@@ -86,13 +113,15 @@ async function sendWithResend({ to, subject, text, html, attachments, idempotenc
   if (!response.ok) {
     throw new Error(result.message || result.error?.message || 'Resend could not deliver the email.');
   }
+  if (typeof result.id !== 'string' || !result.id) throw new Error('Email provider acceptance could not be confirmed. Check the provider before sending another copy.');
   return { ...result, provider: 'resend' };
 }
 
-async function sendWithSender({ to, toName, subject, text, html, attachments }) {
+async function sendWithSender({ to, toName, subject, text, html, attachments, requestTimeoutMs }) {
   if (attachments?.length) throw new Error('Email attachments require the Resend connection.');
   const response = await fetch(SENDER_ENDPOINT, {
     method: 'POST',
+    ...(requestTimeoutMs ? { signal: AbortSignal.timeout(requestTimeoutMs) } : {}),
     headers: {
       Authorization: `Bearer ${process.env.SENDER_API_TOKEN}`,
       'Content-Type': 'application/json',
@@ -113,10 +142,13 @@ async function sendWithSender({ to, toName, subject, text, html, attachments }) 
   if (!response.ok || result.success === false) {
     throw new Error(result.message || 'Sender.com could not deliver the email.');
   }
+  if (result.success !== true || typeof result.emailId !== 'string' || !result.emailId) throw new Error('Email provider acceptance could not be confirmed. Check the provider before sending another copy.');
   return { ...result, provider: 'sender' };
 }
 
-export async function sendEmail({ to, toName = '', subject, text, html, attachments = [], idempotencyKey = '', templateKey = '', templateVariables = {} }) {
+export async function sendEmail({ to, cc = [], toName = '', subject, text, html, attachments = [], idempotencyKey = '', templateKey = '', templateVariables = {}, requestTimeoutMs = 0 }) {
+  cc = normalizeEmailCc(cc, to);
+  if (cc.length && !emailCapabilities().cc) throw Object.assign(new Error('CC requires the Resend email connection. No email was sent.'), { status: 400 });
   if (templateKey) {
     try {
       const { mergeEmailTemplates, renderTemplate } = await import('./email-library.js');
@@ -148,10 +180,10 @@ export async function sendEmail({ to, toName = '', subject, text, html, attachme
   const ownerAddress=String(process.env.OWNER_EMAIL||'').trim().toLowerCase();
   if(!ownerAddress||String(to||'').trim().toLowerCase()!==ownerAddress)({text,html}=warmPersonalEmail(text,html));
   if (process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL) {
-    return sendWithResend({ to, toName, subject, text, html, attachments, idempotencyKey });
+    return sendWithResend({ to, cc, toName, subject, text, html, attachments, idempotencyKey, requestTimeoutMs });
   }
   if (process.env.SENDER_API_TOKEN && process.env.SENDER_FROM_EMAIL) {
-    return sendWithSender({ to, toName, subject, text, html, attachments });
+    return sendWithSender({ to, toName, subject, text, html, attachments, requestTimeoutMs });
   }
   throw new Error('Transactional email is not connected yet.');
 }
@@ -161,3 +193,4 @@ export function escapeEmailHtml(value) {
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
   }[character]));
 }
+

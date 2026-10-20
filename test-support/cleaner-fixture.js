@@ -26,8 +26,9 @@ registerHooks({
     if (url !== 'test:cleaner-blob') return nextLoad(url, context);
     return { format: 'module', shortCircuit: true, source: `
       export const blobs = new Map();
+      export const storageFaults = { beforePut: null, afterPut: null };
       let serial=0;
-      export async function put(pathname, data, options) { if(options.allowOverwrite===false && blobs.has(pathname))throw new Error('Blob already exists');const etag=String(++serial);blobs.set(pathname, { data, ...options, etag }); return { pathname, etag }; }
+      export async function put(pathname, data, options) { if(storageFaults.beforePut)await storageFaults.beforePut(pathname,data,options);if(options.allowOverwrite===false && blobs.has(pathname))throw new Error('Blob already exists');if(options.ifMatch && options.ifMatch!==blobs.get(pathname)?.etag)throw Object.assign(new Error('Precondition failed'),{name:'BlobPreconditionFailedError'});const etag=String(++serial);blobs.set(pathname, { data, ...options, etag });if(storageFaults.afterPut)await storageFaults.afterPut(pathname,data,options);return { pathname, etag }; }
       export async function get(pathname) { const blob=blobs.get(pathname);return blob?{statusCode:200,blob,stream:new Response(blob.data).body}:null; }
       export async function list({prefix}) { return {blobs:[...blobs.keys()].filter(pathname=>pathname.startsWith(prefix)).map(pathname=>({pathname})),hasMore:false}; }
       export async function del(pathname,options={}) { if(options.ifMatch && options.ifMatch!==blobs.get(pathname)?.etag)throw new Error('Precondition failed');blobs.delete(pathname); }
@@ -40,11 +41,11 @@ export const { default: login } = await import('../api/cleaner-login.js');
 export const { default: photo } = await import('../api/cleaner-photo.js');
 export const { appendCleanerRecord, getCleanerState } = await import('../_lib/cleaner-store.js');
 export const { createSession, hashPasscode } = await import('../_lib/security.js');
-export const { blobs } = await import('test:cleaner-blob');
+export const { blobs, storageFaults } = await import('test:cleaner-blob');
 export const { lockCalls, lockEntries, lockFailures } = await import('test:cleaner-lock-provider');
 
 export async function seedCleaner() {
-  blobs.clear();
+  blobs.clear();storageFaults.beforePut=null;storageFaults.afterPut=null;
   lockCalls.length=0;lockEntries.clear();lockFailures.clear();process.env.LOCK_PROVIDER='manual';process.env.KKHOME_LIVE_ENABLED='false';
   const access = hashPasscode('original-test-code');
   await appendCleanerRecord({ type: 'settings', createdAt: '2026-01-01T00:00:00.000Z', changes: { cleanerName: 'Original Cleaner', cleanerEmail: 'original@example.test', passcodeHash: access.hash, passcodeSalt: access.salt, cleanerAuthVersion: 'original-version', doorCode: '739426', closetCode: '412' } });
@@ -56,3 +57,4 @@ export async function call(handler, { method = 'GET', cookie = '', body = {}, qu
   await handler({ method, body, query, headers: { host: 'cleaner.example.test', origin, cookie, 'x-forwarded-for': '127.0.0.1' } }, response);
   return response;
 }
+
