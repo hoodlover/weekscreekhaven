@@ -5,7 +5,7 @@ import { getSquareOrder } from '../_lib/square.js';
 import { json, requireAdmin, requireCleaner, sameOriginRequest } from '../_lib/security.js';
 import { cleanerForSession, cleanerProfileRecord, publicCleanerProfiles, requireCleanerProfile } from '../_lib/cleaner-profiles.js';
 import { appliedCleanerPlan, freezeCleanerPlan, profileAccessDates, savedCleanerAccess } from '../_lib/cleaner-access.js';
-import { emailCapabilities, escapeEmailHtml, normalizeEmailCc, sendEmail } from '../_lib/email.js';
+import { checkResendConnection, emailCapabilities, escapeEmailHtml, normalizeEmailCc, sendEmail } from '../_lib/email.js';
 import { cleanerEmailSendAt, cancelCleanerEmail, listCleanerEmailJobs, scheduleCleanerEmail } from '../_lib/cleaner-email-jobs.js';
 import { normalizeTurnoverChecklist } from '../_lib/checklist-defaults.js';
 import { withOwnerLockLease } from '../_lib/owner-lock-store.js';
@@ -114,6 +114,10 @@ export default async function handler(request,response){
   const owner=Boolean(requireAdmin(request)); const stateAtEntry=await getCleanerState().catch(()=>({settings:{}})); const cleanerSession=requireCleaner(request);
   const cleaner=cleanerForSession(cleanerSession,stateAtEntry);
   if(!owner&&!cleaner)return json(response,401,{error:'Please sign in to the Cleaner Hub.',setupRequired:!stateAtEntry.cleanerProfiles?.some(profile=>profile.enabled&&profile.passcodeHash&&profile.passcodeSalt)},{'Cache-Control':'no-store'});
+  if(request.method==='GET'&&request.query?.emailCheck==='1'){
+    if(!owner)return json(response,403,{error:'Only the owner can check the email connection.'});
+    try{return json(response,200,await checkResendConnection(),{'Cache-Control':'private, no-store'});}catch(error){return json(response,503,{provider:'resend',configured:true,reachable:false,error:error.message},{'Cache-Control':'private, no-store'});}
+  }
   if(request.method!=='GET'&&!sameOriginRequest(request))return json(response,403,{error:'This update was blocked.'});
   try{
     if(request.method==='GET'){

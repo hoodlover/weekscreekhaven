@@ -1,3 +1,5 @@
+import { request as httpsRequest } from 'node:https';
+import { resolve4, resolve6 } from 'node:dns/promises';
 import { guestFirstName } from './guest-name.js';
 
 const RESEND_ENDPOINT = 'https://api.resend.com/emails';
@@ -86,10 +88,62 @@ export function emailCapabilities() {
   return { configured: emailConfigured(), cc: resend };
 }
 
+
+function resendLookup(hostname, options, callback) {
+  // c-ares DNS queries avoid the OS getaddrinfo threadpool that returned EBUSY.
+  const resolve = options?.family === 6 ? resolve6 : resolve4;
+  const family = options?.family === 6 ? 6 : 4;
+  resolve(hostname).then(addresses => {
+    if (!addresses.length) throw Object.assign(new Error('No Resend address was returned.'), { code:'ENOTFOUND' });
+    if (options?.all) callback(null, addresses.map(address => ({ address, family })));
+    else callback(null, addresses[0], family);
+  }).catch(callback);
+}
+function resendHttpsRequest(url, options = {}) {
+  const target = new URL(url);
+  if (target.protocol !== 'https:' || target.hostname !== 'api.resend.com') throw new Error('Invalid Resend endpoint.');
+  return new Promise((resolve, reject) => {
+    const request = httpsRequest(target, {
+      method:options.method || 'GET', headers:options.headers,
+      lookup:resendLookup, signal:AbortSignal.timeout(options.requestTimeoutMs || 15000),
+    }, response => {
+      const chunks=[];let size=0;
+      response.on('data', chunk => {size+=chunk.length;if(size>2*1024*1024){response.destroy(new Error('Resend response exceeded the allowed size.'));return;}chunks.push(chunk);});
+      response.on('error', reject);
+      response.on('end', () => resolve(new Response(Buffer.concat(chunks), {status:response.statusCode,headers:response.headers})));
+    });
+    request.on('error', reject);
+    if (options.body) request.write(options.body);
+    request.end();
+  });
+}
+async function resendApiFetch(url, options = {}) {
+  try { return await fetch(url, options); }
+  catch (error) {
+    // Retry only a DNS failure, which happens before any email reaches Resend.
+    // Keep the same request body and Idempotency-Key.
+    if (!['EBUSY','EAI_AGAIN','ENOTFOUND'].includes(error?.cause?.code || error?.code)) throw error;
+    try { return await resendHttpsRequest(url, options); }
+    catch (fallbackError) { throw new Error('Could not connect to Resend. The send was not confirmed; retry the same reviewed email.', {cause:fallbackError}); }
+  }
+}
+export async function checkResendConnection() {
+  if (!process.env.RESEND_API_KEY || !process.env.RESEND_FROM_EMAIL) return {provider:'resend',configured:false,reachable:false};
+  const response = await resendApiFetch('https://api.resend.com/domains', {
+    headers:{Authorization:`Bearer ${process.env.RESEND_API_KEY}`},
+    signal:AbortSignal.timeout(15000), requestTimeoutMs:15000,
+  });
+  if (response.ok) return {provider:'resend',configured:true,reachable:true,authenticated:true,cc:true};
+  if (response.status===401) return {provider:'resend',configured:true,reachable:true,authenticated:false,cc:true};
+  if (response.status===403) return {provider:'resend',configured:true,reachable:true,authenticated:null,permissionLimited:true,cc:true};
+  return {provider:'resend',configured:true,reachable:true,authenticated:null,status:response.status,cc:true};
+}
+
 async function sendWithResend({ to, cc, subject, text, html, attachments, idempotencyKey, requestTimeoutMs }) {
   const fromName = process.env.RESEND_FROM_NAME || 'Weeks Creek Haven';
-  const response = await fetch(RESEND_ENDPOINT, {
+  const response = await resendApiFetch(RESEND_ENDPOINT, {
     method: 'POST',
+    requestTimeoutMs:requestTimeoutMs || 15000,
     ...(requestTimeoutMs ? { signal: AbortSignal.timeout(requestTimeoutMs) } : {}),
     headers: {
       Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
