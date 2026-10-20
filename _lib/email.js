@@ -1,3 +1,4 @@
+import { isIP } from 'node:net';
 import { request as httpsRequest } from 'node:https';
 import { resolve4, resolve6 } from 'node:dns/promises';
 import { guestFirstName } from './guest-name.js';
@@ -89,11 +90,35 @@ export function emailCapabilities() {
 }
 
 
+
+function encryptedResendAddresses(hostname, family) {
+  if(hostname!=='api.resend.com')return Promise.reject(new Error('Invalid email DNS target.'));
+  return new Promise((resolve,reject)=>{
+    const url=new URL('https://cloudflare-dns.com/dns-query');url.searchParams.set('name',hostname);url.searchParams.set('type',family===6?'AAAA':'A');
+    // Bootstrap the public resolver by its published IP; TLS still verifies cloudflare-dns.com.
+    // Only the public hostname is sent here, never credentials, recipients or email contents.
+    const req=httpsRequest(url,{headers:{Accept:'application/dns-json'},signal:AbortSignal.timeout(5000),
+      lookup:(_host,options,callback)=>options?.all?callback(null,[{address:'1.1.1.1',family:4}]):callback(null,'1.1.1.1',4)
+    },response=>{
+      let text='';response.on('data',chunk=>{text+=chunk;if(text.length>65536)response.destroy(new Error('DNS response is too large.'));});response.on('error',reject);
+      response.on('end',()=>{try{
+        if(response.statusCode!==200)throw new Error('Encrypted DNS lookup was unavailable.');
+        const data=JSON.parse(text),type=family===6?28:1,addresses=(data.Answer||[]).filter(record=>record.type===type&&isIP(record.data)===family).map(record=>record.data);
+        if(data.Status!==0||!addresses.length)throw new Error('No Resend address was returned by encrypted DNS.');resolve(addresses);
+      }catch(error){reject(error);}});
+    });req.on('error',reject);req.end();
+  });
+}
+function encryptedResendLookup(hostname,options,callback){
+ const family=options?.family===6?6:4;
+ encryptedResendAddresses(hostname,family).then(addresses=>options?.all?callback(null,addresses.map(address=>({address,family}))):callback(null,addresses[0],family)).catch(callback);
+}
+
 function resendLookup(hostname, options, callback) {
   // c-ares DNS queries avoid the OS getaddrinfo threadpool that returned EBUSY.
   const resolve = options?.family === 6 ? resolve6 : resolve4;
   const family = options?.family === 6 ? 6 : 4;
-  resolve(hostname).then(addresses => {
+  resolve(hostname).catch(()=>encryptedResendAddresses(hostname,family)).then(addresses => {
     if (!addresses.length) throw Object.assign(new Error('No Resend address was returned.'), { code:'ENOTFOUND' });
     if (options?.all) callback(null, addresses.map(address => ({ address, family })));
     else callback(null, addresses[0], family);
@@ -105,7 +130,7 @@ function resendHttpsRequest(url, options = {}) {
   return new Promise((resolve, reject) => {
     const request = httpsRequest(target, {
       method:options.method || 'GET', headers:options.headers,
-      lookup:resendLookup, signal:AbortSignal.timeout(options.requestTimeoutMs || 15000),
+      lookup:options.forceEncryptedDns?encryptedResendLookup:resendLookup, signal:AbortSignal.timeout(options.requestTimeoutMs || 15000),
     }, response => {
       const chunks=[];let size=0;
       response.on('data', chunk => {size+=chunk.length;if(size>2*1024*1024){response.destroy(new Error('Resend response exceeded the allowed size.'));return;}chunks.push(chunk);});
@@ -129,14 +154,15 @@ async function resendApiFetch(url, options = {}) {
 }
 export async function checkResendConnection() {
   if (!process.env.RESEND_API_KEY || !process.env.RESEND_FROM_EMAIL) return {provider:'resend',configured:false,reachable:false};
-  const response = await resendApiFetch('https://api.resend.com/domains', {
+  const response = await resendHttpsRequest('https://api.resend.com/domains', {
+    forceEncryptedDns:true,
     headers:{Authorization:`Bearer ${process.env.RESEND_API_KEY}`},
     signal:AbortSignal.timeout(15000), requestTimeoutMs:15000,
   });
-  if (response.ok) return {provider:'resend',configured:true,reachable:true,authenticated:true,cc:true};
-  if (response.status===401) return {provider:'resend',configured:true,reachable:true,authenticated:false,cc:true};
-  if (response.status===403) return {provider:'resend',configured:true,reachable:true,authenticated:null,permissionLimited:true,cc:true};
-  return {provider:'resend',configured:true,reachable:true,authenticated:null,status:response.status,cc:true};
+  if (response.ok) return {provider:'resend',dnsMode:'encrypted',configured:true,reachable:true,authenticated:true,cc:true};
+  if (response.status===401) return {provider:'resend',dnsMode:'encrypted',configured:true,reachable:true,authenticated:false,cc:true};
+  if (response.status===403) return {provider:'resend',dnsMode:'encrypted',configured:true,reachable:true,authenticated:null,permissionLimited:true,cc:true};
+  return {provider:'resend',dnsMode:'encrypted',configured:true,reachable:true,authenticated:null,status:response.status,cc:true};
 }
 
 async function sendWithResend({ to, cc, subject, text, html, attachments, idempotencyKey, requestTimeoutMs }) {
