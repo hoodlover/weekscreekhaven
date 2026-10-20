@@ -21,7 +21,9 @@ let markup=render(item);assert.match(markup,/Accept job/);assert.match(markup,/C
 markup=render({...item,status:'accepted'});assert.match(markup,/Start \/ continue cleaning/);assert.match(markup,/Getting the Haven Guest-Ready/);assert.match(markup,/60-75/);assert.match(markup,/5th level/);assert.match(markup,/trails down to the fire pit and creek/);assert.match(markup,/Finish cleaning/);
 assert.match(render({...item,status:'declined'}),/You cannot take this job/);
 assert.doesNotMatch(render({...item,status:'completed'}),/Finish cleaning/);
-assert.match(render({...item,cleanStartTime:'11:00',cleanEndTime:'15:00'}),/4 hours/);
+assert.match(render({...item,cleanStartTime:'11:00',cleanEndTime:'15:00'}),/complete all cleaning by 3:00 PM/);
+assert.doesNotMatch(render({...item,cleanStartTime:'11:00',cleanEndTime:'15:00'}),/4 hours/);
+assert.equal(vm.runInContext("normalizeCleanerEmailBody('Cleaning window: 12:15 PM - 5:00 PM Eastern � 4.75 hours\\nCleaning window: 12:15 PM - 5:00 PM Eastern � 4.75 hours')",context).split('\n').length,1);
 assert.match(render({...item,status:'accepted',specialRequest:{description:'Flowers'}}),/name="actualCost"[^>]*disabled/);
 assert.doesNotMatch(render({...item,status:'completed',specialRequest:{description:'Flowers'}}),/name="actualCost"[^>]*disabled/);
 vm.runInContext(script.slice(script.indexOf('async function request('),script.indexOf('function notify('))+';cleanerPreview=true;',context);
