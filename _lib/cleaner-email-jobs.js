@@ -1,7 +1,8 @@
+import { cleaningCleanerId } from './cleaner-assignments.js';
 import crypto from 'node:crypto';
 import { get, list, put } from '@vercel/blob';
 import { decryptRecord, encryptRecord } from './security.js';
-import { appendCleanerRecord } from './cleaner-store.js';
+import { appendCleanerRecord, getCleanerState } from './cleaner-store.js';
 import { emailCapabilities, escapeEmailHtml, normalizeEmailCc, sendEmail, validateEmailAddress } from './email.js';
 
 const PREFIX = 'secure-cleaner/email-jobs/';
@@ -148,6 +149,14 @@ export async function processScheduledCleanerEmails(now = new Date()) {
   for (const candidate of due) {
     const found = await readJob(candidate.id);
     if (!found || found.job.status !== 'queued') continue;
+    if(found.job.bookingId){
+      const state=await getCleanerState();
+      if(cleaningCleanerId(state,found.job.bookingId)!==found.job.profileId){
+        const job={...found.job,status:'attention',statusNote:'The assigned cleaner changed. No email was sent. Review the job and schedule a new email.'};
+        try{await writeJob(job,found.etag);summary.attention++;}catch{}
+        continue;
+      }
+    }
     const capabilities = emailCapabilities();
     if (!capabilities.configured || (found.job.cc.length && !capabilities.cc)) {
       const job = { ...found.job, status: 'attention', statusNote: 'The required email connection is unavailable. No send was attempted. Review before scheduling a new copy.' };

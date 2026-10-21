@@ -154,3 +154,13 @@ test('new cron is separate from unchanged hourly guest scheduling; UI exposes CC
   const page=await readFile(new URL('../cleaner.html',import.meta.url),'utf8');
   for(const marker of ['id="email-cc"','id="email-send-at"','America/New_York','data-cancel-email','sessionStorage.setItem(key'])assert.ok(page.includes(marker));
 });
+
+test('a queued job email is held for review when the assigned cleaner changes',async()=>{
+ await setup();
+ await appendCleanerRecord({type:'assignment',bookingId:'custom-reassigned',createdAt:now.toISOString(),changes:{customSession:true,cleanDate:'2026-10-23',cleanerId:'legacy-cleaner'}});
+ await scheduleCleanerEmail({...base,bookingId:'custom-reassigned'},now);
+ await appendCleanerRecord({type:'assignment',bookingId:'custom-reassigned',createdAt:now.toISOString(),changes:{cleanerId:'another-cleaner'}});
+ const summary=await processScheduledCleanerEmails(due);
+ assert.equal(summary.sent,0);assert.equal(summary.attention,1);assert.equal(deliveries.length,0);
+ assert.match((await listCleanerEmailJobs(due))[0].statusNote,/assigned cleaner changed/);
+});

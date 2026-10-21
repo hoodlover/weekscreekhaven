@@ -157,7 +157,7 @@ export async function getCleanerState() {
       const productUrl=record.item.productUrl||current.productUrl||'',level=record.item.level==='unknown'&&productUrl?'stocked':record.item.level;
       inventory.set(record.item.id,{...current,...record.item,level,location:record.item.location||current.location||'',productUrl,productNote:record.item.productNote||current.productNote||''});
     }
-    if(record.type==='assignment') assignments.set(record.bookingId,{...(assignments.get(record.bookingId)||{bookingId:record.bookingId}),...(record.changes||{}),updatedAt:record.createdAt});
+    if(record.type==='assignment') assignments.set(record.bookingId,{...(assignments.get(record.bookingId)||{bookingId:record.bookingId,cleanerId:settings.primaryCleanerId||'legacy-cleaner'}),...(record.changes||{}),updatedAt:record.createdAt});
     if(record.type==='remark') remarks.set(record.remark.id,record.remark);
     if(record.type==='remark_update'&&remarks.has(record.remarkId)) Object.assign(remarks.get(record.remarkId),record.changes,{updatedAt:record.createdAt});
     if(record.type==='tip') tips.set(record.tip.id,record.tip);

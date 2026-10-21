@@ -1,3 +1,4 @@
+import { cleanerOwnsCleaning } from './cleaner-assignments.js';
 import crypto from 'node:crypto';
 import { LEGACY_CLEANER_ID, cleanerReservedCodes } from './cleaner-profiles.js';
 
@@ -5,7 +6,7 @@ import { LEGACY_CLEANER_ID, cleanerReservedCodes } from './cleaner-profiles.js';
 // Thereafter only an explicitly applied snapshot is sent to the locks.
 export function profileAccessDates(profile, state) {
   const custom = profile.id === LEGACY_CLEANER_ID && !profile.keypadPlan
-    ? (state.assignments || []).filter(item => item.customSession && !['cancelled', 'declined'].includes(item.status)).map(item => item.cleanDate) : [];
+    ? (state.assignments || []).filter(item => item.customSession && cleanerOwnsCleaning(state,item.bookingId,profile.id) && !['cancelled', 'declined'].includes(item.status)).map(item => item.cleanDate) : [];
   return [...new Set([...(profile.cleanerAccessDates || []), ...custom])]
     .filter(date => /^\d{4}-\d{2}-\d{2}$/.test(date || '') && !(profile.cleanerAccessExcludedDates || []).includes(date)).sort();
 }

@@ -1,3 +1,4 @@
+import { cleanerOwnsCleaning } from '../_lib/cleaner-assignments.js';
 import { getCleanerPhoto, getCleanerState, uploadCleanerPhoto } from '../_lib/cleaner-store.js';
 import { getBookingRequests } from '../_lib/booking-store.js';
 import { enforceRateLimit, json, requireAdmin, requireCleaner, sameOriginRequest } from '../_lib/security.js';
@@ -21,11 +22,12 @@ export default async function handler(request,response){
     if(request.method==='GET'){
       const photo=state.cleaningPhotos.find(item=>item.id===String(request.query?.photoId||''));
       if(!photo)return response.status(404).end();
+      if(!owner&&!cleanerOwnsCleaning(state,photo.bookingId,cleaner.id))return json(response,403,{error:'This cleaning is assigned to another cleaner.'});
       const result=await getCleanerPhoto(photo.pathname);
       if(!result||result.statusCode!==200)return response.status(404).end();
       const body=Buffer.from(await new Response(result.stream).arrayBuffer());
       response.setHeader('Content-Type',result.blob.contentType||photo.contentType||'image/jpeg');
-      response.setHeader('Cache-Control','private, max-age=3600');
+      response.setHeader('Cache-Control','private, no-store');
       response.setHeader('X-Content-Type-Options','nosniff');
       return response.status(200).end(body);
     }
@@ -43,6 +45,7 @@ export default async function handler(request,response){
     if(!bookingId)return json(response,400,{error:'Choose a cleaning session first.'});
     const bookings=await getBookingRequests();
     const sessionExists=bookings.some(item=>item.id===bookingId)||state.assignments.some(item=>item.bookingId===bookingId&&item.customSession);
+    if(!owner&&!cleanerOwnsCleaning(state,bookingId,cleaner.id))return json(response,403,{error:'This cleaning is assigned to another cleaner.'});
     if(!sessionExists)return json(response,404,{error:'Cleaning session not found.'});
     const uploadId=String(request.body?.uploadId||'').slice(0,80);
     const duplicate=uploadId&&state.cleaningPhotos.find(item=>item.bookingId===bookingId&&(item.purpose||'cleaning')===purpose&&item.uploadId===uploadId);
