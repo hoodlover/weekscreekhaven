@@ -16,6 +16,7 @@ export function buildCleanerProfiles(records) {
     if (record.type === 'cleaner_profile') {
       const current = profiles.get(record.profileId) || blankProfile(record.profileId);
       profiles.set(record.profileId, { ...current, ...record.changes, id: record.profileId, updatedAt: record.createdAt });
+      if(record.replacementPrimaryId && primaryCleanerId===record.profileId)primaryCleanerId=record.replacementPrimaryId;
     }
     if (record.type === 'settings') {
       const changes = record.changes || {};
@@ -35,9 +36,9 @@ export function buildCleanerProfiles(records) {
   };
 }
 
-export function requireCleanerProfile(state, id) {
+export function requireCleanerProfile(state, id, includeDeleted = false) {
   const profile = state.cleanerProfiles.find(item => item.id === id);
-  if (!profile) invalid('Choose a cleaner profile and try again.', 404);
+  if (!profile || (profile.deletedAt && !includeDeleted)) invalid('Choose a cleaner profile and try again.', 404);
   return profile;
 }
 
@@ -47,7 +48,7 @@ export function cleanerReservedCodes(profile) {
 }
 
 export function publicCleanerProfiles(state) {
-  return state.cleanerProfiles.map(profile => ({
+  return state.cleanerProfiles.filter(profile=>!profile.deletedAt).map(profile => ({
     id: profile.id, cleanerName: profile.cleanerName, cleanerEmail: profile.cleanerEmail,
     cleanerPhone: profile.cleanerPhone, notes: profile.notes, standardPayCents: profile.standardPayCents,
     enabled: profile.enabled, hasAccess: Boolean(profile.passcodeHash && profile.passcodeSalt),
@@ -58,12 +59,12 @@ export function publicCleanerProfiles(state) {
 export function cleanerForSession(session, state) {
   if (!session) return null;
   const profile = state.cleanerProfiles?.find(item => item.id === (session.cleanerId || LEGACY_CLEANER_ID));
-  return profile?.enabled && profile.passcodeHash && profile.passcodeSalt && session.authVersion === profile.cleanerAuthVersion ? profile : null;
+  return !profile?.deletedAt && profile?.enabled && profile.passcodeHash && profile.passcodeSalt && session.authVersion === profile.cleanerAuthVersion ? profile : null;
 }
 
 export function cleanerForPasscode(passcode, state) {
   if (typeof passcode !== 'string' || !passcode.trim() || passcode.length > 80) return null;
-  return state.cleanerProfiles.find(profile => profile.enabled && profile.passcodeHash && profile.passcodeSalt && verifyPasscode(passcode, profile.passcodeSalt, profile.passcodeHash)) || null;
+  return state.cleanerProfiles.find(profile => !profile.deletedAt && profile.enabled && profile.passcodeHash && profile.passcodeSalt && verifyPasscode(passcode, profile.passcodeSalt, profile.passcodeHash)) || null;
 }
 
 function accessChanges(passcode, profileId, state) {
@@ -76,13 +77,14 @@ function accessChanges(passcode, profileId, state) {
 export function cleanerProfileRecord(action, body, state) {
   const profileId = text(body.profileId, 80);
   const current = state.cleanerProfiles.find(profile => profile.id === profileId);
+  if(current?.deletedAt && action!=='restore-cleaner-profile')invalid('This cleaner was deleted. Restore the profile first.',404);
   if (action === 'save-cleaner-profile') {
     if (profileId && !current) invalid('That cleaner profile no longer exists. Refresh and try again.', 404);
-    if (!current && state.cleanerProfiles.length >= 50) invalid('You can save up to 50 cleaner profiles.');
+    if (!current && state.cleanerProfiles.filter(profile=>!profile.deletedAt).length >= 50) invalid('You can save up to 50 cleaner profiles.');
     const cleanerName = text(body.cleanerName, 80), cleanerEmail = text(body.cleanerEmail, 160).toLowerCase();
     if (!cleanerName) invalid('Enter the cleaner’s name.');
     if (cleanerEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanerEmail)) invalid('Enter a valid cleaner email address.');
-    if (cleanerEmail && state.cleanerProfiles.some(profile => profile.id !== profileId && profile.cleanerEmail.toLowerCase() === cleanerEmail)) invalid('A cleaner profile already uses that email address. Edit that profile instead.');
+    if (cleanerEmail && state.cleanerProfiles.some(profile => !profile.deletedAt && profile.id !== profileId && profile.cleanerEmail.toLowerCase() === cleanerEmail)) invalid('A cleaner profile already uses that email address. Edit that profile instead.');
     const standardPayCents = Math.round(Number(body.standardPay) * 100);
     if (body.standardPay === '' || body.standardPay == null || !Number.isInteger(standardPayCents) || standardPayCents < 0 || standardPayCents > 100000) invalid('Enter standard cleaning pay between $0 and $1,000.');
     const id = current?.id || crypto.randomUUID();
@@ -91,6 +93,15 @@ export function cleanerProfileRecord(action, body, state) {
     return { type: 'cleaner_profile', profileId: id, changes };
   }
   if (!current) invalid('Choose an existing cleaner profile.', 404);
+  if(action==='delete-cleaner-profile'){
+    const replacement=current.id===state.settings.primaryCleanerId?state.cleanerProfiles.find(profile=>profile.id!==profileId&&!profile.deletedAt&&profile.enabled):null;
+    if(current.id===state.settings.primaryCleanerId&&!replacement)invalid('Add or enable another cleaner before deleting the primary cleaner.');
+    return {type:'cleaner_profile',profileId,...(replacement?{replacementPrimaryId:replacement.id}:{}),changes:{deletedAt:new Date().toISOString(),enabled:false,passcodeHash:'',passcodeSalt:'',cleanerAuthVersion:crypto.randomUUID()}};
+  }
+  if(action==='restore-cleaner-profile'){
+    if(!current.deletedAt)invalid('This cleaner is already on the list.');
+    return {type:'cleaner_profile',profileId,changes:{deletedAt:'',enabled:false}};
+  }
   if (action === 'primary-cleaner') {
     if (!current.enabled) invalid('Enable this cleaner profile before making it primary.');
     return { type: 'settings', changes: { primaryCleanerId: current.id } };

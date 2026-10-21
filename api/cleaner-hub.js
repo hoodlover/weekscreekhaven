@@ -98,7 +98,7 @@ function buildDashboard(bookings,state,isOwner,viewer=null){
   return {
     archivedCleanings:isOwner?state.assignments.filter(item=>item.customSession&&(item.archivedAt||item.status==='cancelled')).map(item=>({bookingId:item.bookingId,sessionLabel:item.sessionLabel,cleanDate:item.cleanDate})):[],
     viewerCleanerName:viewer?.cleanerName||'',
-    ...(isOwner?{cleanerProfiles:publicCleanerProfiles(state),primaryCleanerId:state.settings.primaryCleanerId,primaryCleanerName:state.settings.cleanerName}:{}),
+    ...(isOwner?{cleanerProfiles:publicCleanerProfiles(state),deletedCleanerProfiles:state.cleanerProfiles.filter(profile=>profile.deletedAt).map(profile=>({id:profile.id,cleanerName:profile.cleanerName})),primaryCleanerId:state.settings.primaryCleanerId,primaryCleanerName:state.settings.cleanerName}:{}),
     selectedCleanerId:profile.id, cleanerEnabled:profile.enabled, cleanerAccess:visibleCleanerAccess(profile,state),
     isOwner, cleanerName:profile.cleanerName, cleanerEmail:isOwner?(profile.cleanerEmail||''):'', standardPayCents:profile.standardPayCents, doorCode:profile.doorCode||'', closetCode:profile.closetCode||'', accessNotes:profile.accessNotes||'', doorCodeUpdatedAt:profile.doorCodeUpdatedAt||'', turnoverChecklistMaster:normalizeTurnoverChecklist(state.settings.turnoverChecklistMaster),
     inventory:state.inventory.filter(item=>!item.archivedAt).sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name)), archivedInventory:isOwner?state.inventory.filter(item=>item.archivedAt).sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name)):[], upcoming, recent,
@@ -125,7 +125,8 @@ export default async function handler(request,response){
   try{
     if(request.method==='GET'){
       let state=await getCleanerState(); if(request.query?.readOnly !== '1') state=await syncTips(state);
-      const viewer=owner?requireCleanerProfile(state,request.query?.profileId||state.settings.primaryCleanerId):requireCleanerProfile(state,cleaner.id);
+      const requestedProfile=state.cleanerProfiles.find(profile=>profile.id===request.query?.profileId&&!profile.deletedAt);
+      const viewer=owner?requireCleanerProfile(state,requestedProfile?.id||state.settings.primaryCleanerId):requireCleanerProfile(state,cleaner.id);
       const dashboard=buildDashboard(await getBookingRequests(),state,owner,viewer);
       if(owner){dashboard.scheduledEmails=await listCleanerEmailJobs();dashboard.emailCapabilities={...emailCapabilities(),scheduling:Boolean(process.env.CRON_SECRET)};}
       return json(response,200,dashboard,{'Cache-Control':'private, no-store'});
@@ -139,18 +140,18 @@ export default async function handler(request,response){
       if(!cleanerOwnsCleaning(stateAtEntry,bookingId,cleaner.id))return json(response,403,{error:'This cleaning is assigned to another cleaner.'});
       if(current?.archivedAt||current?.status==='cancelled')return json(response,409,{error:'This cleaning is no longer available.'});
     }
-    if(['save-cleaner-profile','primary-cleaner','cleaner-profile-access'].includes(action)){
+    if(['save-cleaner-profile','primary-cleaner','cleaner-profile-access','delete-cleaner-profile','restore-cleaner-profile'].includes(action)){
       if(!owner)return json(response,403,{error:'Only the owner can manage cleaner profiles.'});
       const saveProfile=async()=>{
         const state=await getCleanerState(),record=cleanerProfileRecord(action,request.body,state);
-        if(action==='cleaner-profile-access' && request.body.enabled===false){
+        if(action==='delete-cleaner-profile'||(action==='cleaner-profile-access' && request.body.enabled===false)){
           const profile=requireCleanerProfile(state,record.profileId);
           record.changes.keypadPlan={...appliedCleanerPlan(profile,state),dates:[]};
         }
         await appendCleanerRecord(record);return record;
       };
-      const record=action==='cleaner-profile-access'?await withOwnerLockLease(saveProfile):await saveProfile();
-      if(action==='cleaner-profile-access' && request.body.enabled===false){
+      const record=['cleaner-profile-access','delete-cleaner-profile'].includes(action)?await withOwnerLockLease(saveProfile):await saveProfile();
+      if(action==='delete-cleaner-profile'||(action==='cleaner-profile-access' && request.body.enabled===false)){
         try{await syncCleanerLocks(process.env,{action:'revoke-cleaner-keypad',profileId:record.profileId});}catch{/* Saved revocation is retried by the scheduler. */}
       }
       return json(response,200,{ok:true,profileId:record.profileId},{'Cache-Control':'private, no-store'});

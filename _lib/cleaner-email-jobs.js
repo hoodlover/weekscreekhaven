@@ -149,10 +149,10 @@ export async function processScheduledCleanerEmails(now = new Date()) {
   for (const candidate of due) {
     const found = await readJob(candidate.id);
     if (!found || found.job.status !== 'queued') continue;
-    if(found.job.bookingId){
-      const state=await getCleanerState();
-      if(cleaningCleanerId(state,found.job.bookingId)!==found.job.profileId){
-        const job={...found.job,status:'attention',statusNote:'The assigned cleaner changed. No email was sent. Review the job and schedule a new email.'};
+    {
+      const state=await getCleanerState(),profile=state.cleanerProfiles.find(item=>item.id===found.job.profileId);
+      if(profile?.deletedAt||(found.job.bookingId&&cleaningCleanerId(state,found.job.bookingId)!==found.job.profileId)){
+        const job={...found.job,status:'attention',statusNote:'The assigned cleaner changed or was deleted. No email was sent. Review the job and schedule a new email.'};
         try{await writeJob(job,found.etag);summary.attention++;}catch{}
         continue;
       }

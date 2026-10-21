@@ -132,7 +132,7 @@ export async function syncCleanerLocks(env = process.env, command = null) {
       const [state, bookings, ownerEntries] = await Promise.all([getCleanerState(), getBookingRequests(), ownerLockEntries()]);
       let profiles = state.cleanerProfiles;
       if (command) {
-        const profile = requireCleanerProfile(state, command.profileId);
+        const profile = requireCleanerProfile(state, command.profileId, command.action==='revoke-cleaner-keypad');
         const keypadPlan = requestedCleanerPlan(profile, command, state);
         if (keypadPlan.dates.length) assertAvailableCleanerCode(keypadPlan.code, profile.id, state, bookings, ownerEntries);
         await appendCleanerRecord({ type: 'cleaner_profile', profileId: profile.id, changes: { keypadPlan } });

@@ -164,3 +164,10 @@ test('a queued job email is held for review when the assigned cleaner changes',a
  assert.equal(summary.sent,0);assert.equal(summary.attention,1);assert.equal(deliveries.length,0);
  assert.match((await listCleanerEmailJobs(due))[0].statusNote,/assigned cleaner changed/);
 });
+
+test('deleting a cleaner holds their queued emails instead of sending them',async()=>{
+ await setup();await scheduleCleanerEmail(base,now);
+ await appendCleanerRecord({type:'cleaner_profile',profileId:'legacy-cleaner',createdAt:now.toISOString(),changes:{deletedAt:now.toISOString(),enabled:false}});
+ const result=await processScheduledCleanerEmails(due);
+ assert.equal(result.sent,0);assert.equal(result.attention,1);assert.equal(deliveries.length,0);
+});
