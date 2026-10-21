@@ -68,7 +68,7 @@ export function cleanerForPasscode(passcode, state) {
 }
 
 function accessChanges(passcode, profileId, state) {
-  if (typeof passcode !== 'string' || normalizePasscode(passcode).length < 6 || passcode.length > 80) invalid('Use 6–80 characters (excluding spaces) for the Cleaner Hub password.');
+  if (typeof passcode !== 'string' || normalizePasscode(passcode).length < 4 || passcode.length > 80) invalid('Use 4–80 characters (excluding spaces) for the Cleaner Hub password.');
   if (state.cleanerProfiles.some(profile => profile.id !== profileId && profile.passcodeHash && profile.passcodeSalt && verifyPasscode(passcode, profile.passcodeSalt, profile.passcodeHash))) invalid('Choose a different Hub password. Another cleaner profile already uses this one.');
   const hashed = hashPasscode(passcode);
   return { passcodeHash: hashed.hash, passcodeSalt: hashed.salt, cleanerAuthVersion: crypto.randomUUID() };

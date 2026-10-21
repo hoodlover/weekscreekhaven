@@ -1,4 +1,4 @@
-const CACHE_NAME = 'friends-hub-v65';
+const CACHE_NAME = 'friends-hub-v66';
 const PRIVATE_APP_URLS = self.location.hostname === 'owner.weekscreekhaven.com'
   ? [
       '/admin.html',

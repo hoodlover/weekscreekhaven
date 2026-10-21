@@ -57,3 +57,15 @@ test('invalid profile data returns a helpful client error without a storage writ
   assert.equal(result.code,400);assert.match(result.body.error,/name/);assert.equal(blobs.size,before);
   assert.equal((await call(hub)).code,401);
 });
+
+
+test('four-character cleaner passcodes support leading zeros and letters for create, reset and sign-in',async()=>{
+ await seedCleaner();
+ const added=await call(hub,{method:'POST',cookie:adminCookie(),body:{action:'save-cleaner-profile',cleanerName:'Four Character Cleaner',cleanerEmail:'four@example.test',standardPay:175,passcode:'0042'}});
+ assert.equal(added.code,200);
+ assert.equal((await call(login,{method:'POST',body:{passcode:'0042'}})).code,200);
+ const changed=await call(hub,{method:'POST',cookie:adminCookie(),body:{action:'setup-access',profileId:added.body.profileId,passcode:'A2b3'}});
+ assert.equal(changed.code,200);
+ assert.equal((await call(login,{method:'POST',body:{passcode:'a2B3'}})).code,200);
+ assert.equal((await call(hub,{method:'POST',cookie:adminCookie(),body:{action:'setup-access',profileId:added.body.profileId,passcode:'123'}})).code,400);
+});
