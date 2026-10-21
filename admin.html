@@ -429,7 +429,7 @@
   </main>
   <script>
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => navigator.serviceWorker.register('/friends-sw.js?v=62').catch(() => {}));
+      window.addEventListener('load', () => navigator.serviceWorker.register('/friends-sw.js?v=63').catch(() => {}));
     }
 
     (() => {
@@ -568,6 +568,7 @@
     async function load(notify = false) {
       if(notify&&(state.checklistDirty.family||state.checklistDirty.turnover))return;
       try {
+        await request('/api/admin-session', {method:'POST'});
         const [data, bookingData, reviewData, discountData, emailData, checklistData, calendarFeed] = await Promise.all([request('/api/admin-invites'), request('/api/admin-bookings'), request('/api/admin-reviews'), request('/api/admin-discounts'), request('/api/admin-email-library'), request('/api/admin-checklists'), request('/api/admin-calendar-feed')]);
         if (notify && state.initialized) sendBrowserAlert((bookingData.bookings||[]).filter(item=>!state.knownBookingIds.has(item.id)),(data.access||[]).filter(item=>!state.knownAccessIds.has(item.id)));
         state.invites = data.invites; state.access = data.access;

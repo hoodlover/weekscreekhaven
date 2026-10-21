@@ -3,6 +3,7 @@ import { createCipheriv, createDecipheriv, createHash, createHmac, randomBytes, 
 const textEncoder = new TextEncoder();
 
 export const ADMIN_COOKIE = 'wch_admin';
+export const ADMIN_SESSION_SECONDS = 180 * 86400;
 export const INVITE_COOKIE = 'wch_invite';
 export const CLEANER_COOKIE = 'wch_cleaner';
 
@@ -144,7 +145,9 @@ export function anonymizeIp(ip) {
 }
 
 export function requireAdmin(request) {
-  return verifySession(parseCookies(request)[ADMIN_COOKIE], 'admin');
+  // Old host-only cookies can coexist with the shared owner cookie.
+  // Accept a valid owner token even when a stale duplicate is present.
+  return String(request.headers.cookie || '').split(';').map(part => part.trim()).filter(part => part.startsWith(ADMIN_COOKIE + '=')).map(part => { try { return verifySession(decodeURIComponent(part.slice(ADMIN_COOKIE.length + 1)), 'admin'); } catch { return null; } }).find(Boolean) || null;
 }
 
 export function requireCleaner(request) {
