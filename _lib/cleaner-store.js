@@ -2,6 +2,7 @@ import { get, list, put } from '@vercel/blob';
 import { decryptRecord, encryptRecord } from './security.js';
 import { normalizeFamilyChecklist, normalizeTurnoverChecklist } from './checklist-defaults.js';
 import { buildCleanerProfiles } from './cleaner-profiles.js';
+import { createBlobRecordReader } from './blob-record-cache.js';
 
 const PREFIX = 'secure-cleaner/records/';
 const DEFAULT_LOCATIONS = {
@@ -115,6 +116,7 @@ export async function appendCleanerRecord(record) {
   await put(`${PREFIX}${stamp}-${crypto.randomUUID()}.json.enc`, encryptRecord(value), {
     access:'private', token:token(), contentType:'text/plain; charset=utf-8', addRandomSuffix:false, cacheControlMaxAge:60,
   });
+  readCleanerRecords.invalidate();
   return value;
 }
 
@@ -134,15 +136,27 @@ export async function getCleanerPhoto(pathname) {
   return get(pathname,{access:'private',token:token()});
 }
 
+const CHECKPOINT = 'secure-cleaner/cache/records-v1.json.enc';
+const readCleanerRecords = createBlobRecordReader({
+  prefix: PREFIX,
+  listPage: cursor => list({ prefix:PREFIX, cursor, limit:1000, token:token() }),
+  readRecord: async blob => decryptRecord(await readBlob(blob)),
+  readSnapshot: async () => {
+    // The checkpoint is mutable; bypass CDN cache so writes are immediately visible.
+    const result = await get(CHECKPOINT, { access:'private', token:token(), useCache:false });
+    if (!result) return null;
+    if (result.statusCode !== 200) throw new Error('Cleaner history checkpoint is unavailable.');
+    return decryptRecord(await new Response(result.stream).text());
+  },
+  writeSnapshot: snapshot => put(CHECKPOINT, encryptRecord(snapshot), {
+    access:'private', token:token(), contentType:'text/plain; charset=utf-8',
+    addRandomSuffix:false, allowOverwrite:true, cacheControlMaxAge:60,
+  }),
+});
+
 export async function getCleanerRecords() {
   ensureConfigured();
-  const records=[]; let cursor;
-  do {
-    const page=await list({ prefix:PREFIX, cursor, limit:1000, token:token() });
-    const values=await Promise.all(page.blobs.map(async blob=>{ try{return decryptRecord(await readBlob(blob));}catch{return null;} }));
-    records.push(...values.filter(Boolean)); cursor=page.hasMore?page.cursor:undefined;
-  } while(cursor);
-  return records.sort((a,b)=>String(a.createdAt).localeCompare(String(b.createdAt)));
+  return readCleanerRecords();
 }
 
 export async function getCleanerState() {
@@ -181,3 +195,4 @@ export async function getCleanerState() {
   Object.assign(settings,profiles.settings);
   return { settings, cleanerProfiles:profiles.cleanerProfiles, inventory:[...inventory.values()], assignments:[...assignments.values()], remarks:[...remarks.values()], tips:[...tips.values()], serviceOffers:[...serviceOffers.values()], conversations:[...conversations.values()], cleaningPhotos:[...cleaningPhotos.values()], emailHistory };
 }
+

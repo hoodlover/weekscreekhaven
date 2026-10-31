@@ -124,7 +124,7 @@ export default async function handler(request,response){
   if(request.method!=='GET'&&!sameOriginRequest(request))return json(response,403,{error:'This update was blocked.'});
   try{
     if(request.method==='GET'){
-      let state=await getCleanerState(); if(request.query?.readOnly !== '1') state=await syncTips(state);
+      let state=stateAtEntry; if(request.query?.readOnly !== '1') state=await syncTips(state);
       const requestedProfile=state.cleanerProfiles.find(profile=>profile.id===request.query?.profileId&&!profile.deletedAt);
       const viewer=owner?requireCleanerProfile(state,requestedProfile?.id||state.settings.primaryCleanerId):requireCleanerProfile(state,cleaner.id);
       const dashboard=buildDashboard(await getBookingRequests(),state,owner,viewer);
@@ -387,4 +387,5 @@ export default async function handler(request,response){
     return json(response,200,{ok:true,...(accessStatus?{accessStatus}:{})},{'Cache-Control':'private, no-store'});
   }catch(error){if(!error.status)console.error(error);return json(response,error.status||503,{error:error.message||'The Cleaner Hub is temporarily unavailable.'});}
 }
+
 
