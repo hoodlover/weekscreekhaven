@@ -15,10 +15,6 @@
       "schedule": "0 * * * *"
     },
     {
-      "path": "/api/cleaner-email-scheduler",
-      "schedule": "*/5 * * * *"
-    },
-    {
       "path": "/api/cleaner-lock-scheduler",
       "schedule": "*/5 * * * *"
     }
@@ -31,4 +27,3 @@
     }
   ]
 }
-

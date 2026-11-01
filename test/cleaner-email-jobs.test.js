@@ -147,10 +147,11 @@ test('scheduler requires its secret and GET; invalid/past/too-far schedules crea
   delete process.env.CRON_SECRET;await assert.rejects(scheduleCleanerEmail(base,now),/not configured/);
 });
 
-test('new cron is separate from unchanged hourly guest scheduling; UI exposes CC, Eastern schedule and cancellation',async()=>{
+test('paused cleaner email cron is removed while hourly guest scheduling and review UI remain intact',async()=>{
   const config=JSON.parse(await readFile(new URL('../vercel.json',import.meta.url),'utf8'));
   assert.equal(config.crons.find(item=>item.path==='/api/email-scheduler').schedule,'0 * * * *');
-  assert.equal(config.crons.find(item=>item.path==='/api/cleaner-email-scheduler').schedule,'*/5 * * * *');
+  assert.equal(config.crons.find(item=>item.path==='/api/cleaner-email-scheduler'),undefined);
+  assert.equal(config.crons.find(item=>item.path==='/api/cleaner-lock-scheduler').schedule,'*/5 * * * *');
   const page=await readFile(new URL('../cleaner.html',import.meta.url),'utf8');
   for(const marker of ['id="email-cc"','id="email-send-at"','America/New_York','data-cancel-email','sessionStorage.setItem(key'])assert.ok(page.includes(marker));
 });
@@ -171,3 +172,4 @@ test('deleting a cleaner holds their queued emails instead of sending them',asyn
  const result=await processScheduledCleanerEmails(due);
  assert.equal(result.sent,0);assert.equal(result.attention,1);assert.equal(deliveries.length,0);
 });
+

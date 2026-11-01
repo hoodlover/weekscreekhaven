@@ -1,9 +1,11 @@
+import { cleanerRequestPaused, CLEANER_PAUSE_MESSAGE, CLEANER_APP_PAUSED, cleanerRemindersPaused } from '../_lib/cleaner-pause.js';
 import { CLEANER_COOKIE, cookieHeader, createSession, enforceRateLimit, json, rateLimitJson, sameOriginRequest } from '../_lib/security.js';
 import { getCleanerState } from '../_lib/cleaner-store.js';
 import { cleanerForPasscode } from '../_lib/cleaner-profiles.js';
 
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 export default async function handler(request,response){
+  if(CLEANER_APP_PAUSED)return json(response,503,{error:CLEANER_PAUSE_MESSAGE,paused:true},{'Cache-Control':'no-store'});
   if(request.method!=='POST')return json(response,405,{error:'Method not allowed.'});
   if(!sameOriginRequest(request))return json(response,403,{error:'Open the cleaner sign-in from this website.'});
   const rate=enforceRateLimit(request,'cleaner-login',6,15*60*1000); if(!rate.allowed)return rateLimitJson(response,rate);
@@ -16,3 +18,4 @@ export default async function handler(request,response){
     return json(response,200,{ok:true},{'Set-Cookie':cookieHeader(CLEANER_COOKIE,createSession({role:'cleaner',cleanerId:profile.id,authVersion:profile.cleanerAuthVersion},maxAge),maxAge),'Cache-Control':'no-store'});
   }catch(error){return json(response,503,{error:error.message||'Cleaner sign-in is unavailable.'});}
 }
+

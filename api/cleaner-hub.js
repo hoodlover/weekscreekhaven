@@ -1,3 +1,4 @@
+import { cleanerRequestPaused, CLEANER_PAUSE_MESSAGE, CLEANER_APP_PAUSED, cleanerRemindersPaused } from '../_lib/cleaner-pause.js';
 import { cleaningCleanerId, cleanerOwnsCleaning } from '../_lib/cleaner-assignments.js';
 import crypto from 'node:crypto';
 import { appendCleanerRecord, getCleanerState } from '../_lib/cleaner-store.js';
@@ -96,6 +97,7 @@ function buildDashboard(bookings,state,isOwner,viewer=null){
   const paidFor=days=>compensation.filter(e=>within(e.paidOutAt,days)).reduce((sum,e)=>sum+e.amountCents,0);
   const tipSummary={owedCents:paidTips.filter(t=>!t.paidOutAt).reduce((sum,t)=>sum+(Number(t.amountCents)||0),0),paidCents:paidTips.filter(t=>t.paidOutAt).reduce((sum,t)=>sum+(Number(t.amountCents)||0),0)};
   return {
+    cleanerAppPaused:CLEANER_APP_PAUSED, cleanerRemindersPaused:cleanerRemindersPaused(),
     archivedCleanings:isOwner?state.assignments.filter(item=>item.customSession&&(item.archivedAt||item.status==='cancelled')).map(item=>({bookingId:item.bookingId,sessionLabel:item.sessionLabel,cleanDate:item.cleanDate})):[],
     viewerCleanerName:viewer?.cleanerName||'',
     ...(isOwner?{cleanerProfiles:publicCleanerProfiles(state),deletedCleanerProfiles:state.cleanerProfiles.filter(profile=>profile.deletedAt).map(profile=>({id:profile.id,cleanerName:profile.cleanerName})),primaryCleanerId:state.settings.primaryCleanerId,primaryCleanerName:state.settings.cleanerName}:{}),
@@ -114,7 +116,9 @@ function buildDashboard(bookings,state,isOwner,viewer=null){
 }
 
 export default async function handler(request,response){
-  const owner=Boolean(requireAdmin(request)); const stateAtEntry=await getCleanerState().catch(()=>({settings:{}})); const cleanerSession=requireCleaner(request);
+  const owner=Boolean(requireAdmin(request));
+  if(cleanerRequestPaused(request, owner))return json(response,503,{error:CLEANER_PAUSE_MESSAGE,paused:true},{'Cache-Control':'no-store'});
+  const stateAtEntry=await getCleanerState().catch(()=>({settings:{}})); const cleanerSession=requireCleaner(request);
   const cleaner=cleanerForSession(cleanerSession,stateAtEntry);
   if(!owner&&!cleaner)return json(response,401,{error:'Please sign in to the Cleaner Hub.',setupRequired:!stateAtEntry.cleanerProfiles?.some(profile=>profile.enabled&&profile.passcodeHash&&profile.passcodeSalt)},{'Cache-Control':'no-store'});
   if(request.method==='GET'&&request.query?.emailCheck==='1'){
@@ -128,7 +132,7 @@ export default async function handler(request,response){
       const requestedProfile=state.cleanerProfiles.find(profile=>profile.id===request.query?.profileId&&!profile.deletedAt);
       const viewer=owner?requireCleanerProfile(state,requestedProfile?.id||state.settings.primaryCleanerId):requireCleanerProfile(state,cleaner.id);
       const dashboard=buildDashboard(await getBookingRequests(),state,owner,viewer);
-      if(owner){dashboard.scheduledEmails=await listCleanerEmailJobs();dashboard.emailCapabilities={...emailCapabilities(),scheduling:Boolean(process.env.CRON_SECRET)};}
+      if(owner){dashboard.scheduledEmails=await listCleanerEmailJobs();dashboard.emailCapabilities={...emailCapabilities(),scheduling:Boolean(process.env.CRON_SECRET)&&!cleanerRemindersPaused()};}
       return json(response,200,dashboard,{'Cache-Control':'private, no-store'});
     }
     if(request.method!=='POST')return json(response,405,{error:'Method not allowed.'});
@@ -387,5 +391,6 @@ export default async function handler(request,response){
     return json(response,200,{ok:true,...(accessStatus?{accessStatus}:{})},{'Cache-Control':'private, no-store'});
   }catch(error){if(!error.status)console.error(error);return json(response,error.status||503,{error:error.message||'The Cleaner Hub is temporarily unavailable.'});}
 }
+
 
 

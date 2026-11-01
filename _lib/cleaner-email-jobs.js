@@ -1,3 +1,4 @@
+import { cleanerRemindersPaused, cleanerReminderEligible } from './cleaner-pause.js';
 import { cleaningCleanerId } from './cleaner-assignments.js';
 import crypto from 'node:crypto';
 import { get, list, put } from '@vercel/blob';
@@ -63,6 +64,10 @@ async function writeJob(job, etag) {
 
 function viewJob(job, now = new Date()) {
   const { fingerprint, attemptId, ...view } = job;
+  if(job.status === 'queued' && !cleanerReminderEligible(job.sendAt)) {
+    view.deliveryPaused = true;
+    view.statusNote = 'Held: Cleaner Hub reminders are paused. Old scheduled times will not automatically replay when the app reopens; review and schedule a new email if still needed.';
+  }
   if (job.status === 'sending' && Number(now) - Date.parse(job.attemptedAt) >= 10 * 60000) {
     view.status = 'attention';
     view.statusNote = 'Delivery could not be confirmed. Check the provider before sending another copy; this email will not be retried automatically.';
@@ -94,6 +99,7 @@ export async function listCleanerEmailJobs(now = new Date()) {
 }
 
 export async function scheduleCleanerEmail(input, now = new Date()) {
+  if(cleanerRemindersPaused())throw error('Cleaner reminders are paused. Nothing was scheduled.',503);
   const id = input.operationId; jobPath(id);
   const to = validateEmailAddress(input.to, 'Cleaner email');
   const cc = normalizeEmailCc(input.cc, to);
@@ -144,11 +150,12 @@ export async function cancelCleanerEmail(id, now = new Date()) {
 }
 
 export async function processScheduledCleanerEmails(now = new Date()) {
-  const due = (await listCleanerEmailJobs(now)).filter(job => job.status === 'queued' && Date.parse(job.sendAt) <= Number(now)).slice(0, 10);
+  if(cleanerRemindersPaused())return {checked:0,sent:0,attention:0,paused:true};
+  const due = (await listCleanerEmailJobs(now)).filter(job => job.status === 'queued' && cleanerReminderEligible(job.sendAt) && Date.parse(job.sendAt) <= Number(now)).slice(0, 10);
   const summary = { checked: due.length, sent: 0, attention: 0 };
   for (const candidate of due) {
     const found = await readJob(candidate.id);
-    if (!found || found.job.status !== 'queued') continue;
+    if (!found || found.job.status !== 'queued' || !cleanerReminderEligible(found.job.sendAt)) continue;
     {
       const state=await getCleanerState(),profile=state.cleanerProfiles.find(item=>item.id===found.job.profileId);
       if(profile?.deletedAt||(found.job.bookingId&&cleaningCleanerId(state,found.job.bookingId)!==found.job.profileId)){
@@ -191,3 +198,4 @@ export async function processScheduledCleanerEmails(now = new Date()) {
   }
   return summary;
 }
+

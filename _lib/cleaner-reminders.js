@@ -1,3 +1,4 @@
+import { cleanerRemindersPaused, cleanerReminderEligible } from './cleaner-pause.js';
 import { appendCleanerRecord, getCleanerState } from './cleaner-store.js';
 import { escapeEmailHtml, sendEmail } from './email.js';
 
@@ -12,21 +13,22 @@ async function emailCleaner(settings,{subject,text,key}){
 }
 
 export async function processCleanerReminders(now=new Date()){
+  if(cleanerRemindersPaused())return 0;
   const state=await getCleanerState(); let sent=0; const nowMs=now.getTime();
   for(const offer of state.serviceOffers){
     const acceptMs=Date.parse(offer.acceptBy||''),completeMs=Date.parse(offer.completeBy||'');
-    if(offer.status==='offered'&&Number.isFinite(acceptMs)&&nowMs>=acceptMs&&!offer.expiredAt){
+    if(offer.status==='offered'&&cleanerReminderEligible(offer.acceptBy)&&Number.isFinite(acceptMs)&&nowMs>=acceptMs&&!offer.expiredAt){
       const createdAt=now.toISOString();
       await appendCleanerRecord({type:'service_offer_update',offerId:offer.id,createdAt,changes:{status:'expired',expiredAt:createdAt}});
       if(await emailCleaner(state.settings,{subject:`Service offer expired · ${offer.title}`,text:`Hi ${state.settings.cleanerName},\n\nThe acceptance window closed for “${offer.title}.” No action is needed unless you and the owners decide to reopen it.`,key:`cleaner-offer-${offer.id}-expired`}))sent++;
       continue;
     }
-    if(offer.status==='offered'&&Number.isFinite(acceptMs)&&nowMs>=acceptMs-24*3600000&&!offer.acceptReminderSentAt){
+    if(offer.status==='offered'&&Number.isFinite(acceptMs)&&cleanerReminderEligible(new Date(acceptMs-24*3600000).toISOString())&&nowMs>=acceptMs-24*3600000&&!offer.acceptReminderSentAt){
       if(await emailCleaner(state.settings,{subject:`Reminder · service offer needs an answer`,text:`Hi ${state.settings.cleanerName},\n\nPlease accept or decline “${offer.title}” by ${when(offer.acceptBy)}. The offered amount is ${money(offer.amountCents)}.`,key:`cleaner-offer-${offer.id}-accept-reminder`})){
         const createdAt=now.toISOString();await appendCleanerRecord({type:'service_offer_update',offerId:offer.id,createdAt,changes:{acceptReminderSentAt:createdAt}});sent++;
       }
     }
-    if(offer.status==='accepted'&&Number.isFinite(completeMs)&&nowMs>=completeMs-24*3600000&&!offer.completeReminderSentAt){
+    if(offer.status==='accepted'&&Number.isFinite(completeMs)&&cleanerReminderEligible(new Date(completeMs-24*3600000).toISOString())&&nowMs>=completeMs-24*3600000&&!offer.completeReminderSentAt){
       if(await emailCleaner(state.settings,{subject:`Reminder · ${offer.title}`,text:`Hi ${state.settings.cleanerName},\n\nThis is a reminder that “${offer.title}” is due by ${when(offer.completeBy)}. Mark it complete in the Cleaner Hub when it is finished.`,key:`cleaner-offer-${offer.id}-complete-reminder`})){
         const createdAt=now.toISOString();await appendCleanerRecord({type:'service_offer_update',offerId:offer.id,createdAt,changes:{completeReminderSentAt:createdAt}});sent++;
       }
@@ -34,3 +36,4 @@ export async function processCleanerReminders(now=new Date()){
   }
   return sent;
 }
+

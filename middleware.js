@@ -1,3 +1,4 @@
+import { CLEANER_APP_PAUSED, CLEANER_HOST, OWNER_HOST, CLEANER_PAUSED_HTML } from './_lib/cleaner-pause.js';
 import { next, rewrite } from '@vercel/functions';
 
 const INVITE_COOKIE = 'wch_invite';
@@ -34,6 +35,16 @@ async function validSession(token, expectedRole) {
   }
 }
 
+async function anyAdminSession(request) {
+  // A stale host-only cookie can coexist with a valid shared owner session.
+  for (const part of (request.headers.get('cookie') || '').split(';')) {
+    const [name,...value]=part.trim().split('=');
+    if(name !== ADMIN_COOKIE) continue;
+    try { if(await validSession(decodeURIComponent(value.join('=')), 'admin')) return true; } catch {}
+  }
+  return false;
+}
+
 async function validAgreementToken(token) {
   try {
     const secret = process.env.SESSION_SECRET;
@@ -53,6 +64,12 @@ export default async function middleware(request) {
   const requestUrl = new URL(request.url);
   const pathname = requestUrl.pathname;
   const hostname = requestUrl.hostname.toLowerCase();
+  const cleanerPage = ['/cleaner', '/cleaner.html'].includes(pathname) || (hostname === CLEANER_HOST && pathname === '/');
+  if (CLEANER_APP_PAUSED && cleanerPage) {
+    const owner = hostname === OWNER_HOST && await anyAdminSession(request);
+    if (!owner) return new Response(CLEANER_PAUSED_HTML, { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow' } });
+    return next();
+  }
   const publicHosts = new Set(['weekscreekhaven.com', 'www.weekscreekhaven.com']);
 
   if (hostname === 'owner.weekscreekhaven.com' && pathname === '/') {
@@ -113,3 +130,4 @@ export default async function middleware(request) {
 export const config = {
   matcher: ['/', '/admin', '/admin.html', '/cleaner', '/cleaner.html', '/important-info', '/important-info.html', '/friends-hub', '/friends-hub.html', '/welcome-friends', '/welcome-friends.html', '/owner-emergency-handbook', '/owner-emergency-handbook.html'],
 };
+

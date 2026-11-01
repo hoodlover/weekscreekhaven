@@ -1,3 +1,4 @@
+import { cleanerRequestPaused, CLEANER_PAUSE_MESSAGE, CLEANER_APP_PAUSED, cleanerRemindersPaused } from '../_lib/cleaner-pause.js';
 import { cleanerOwnsCleaning } from '../_lib/cleaner-assignments.js';
 import { getCleanerPhoto, getCleanerState, uploadCleanerPhoto } from '../_lib/cleaner-store.js';
 import { getBookingRequests } from '../_lib/booking-store.js';
@@ -16,6 +17,7 @@ async function authorization(request){
 }
 
 export default async function handler(request,response){
+  if(cleanerRequestPaused(request, Boolean(requireAdmin(request))))return json(response,503,{error:CLEANER_PAUSE_MESSAGE,paused:true},{'Cache-Control':'no-store'});
   try{
     const {owner,cleaner,state}=await authorization(request);
     if(!owner&&!cleaner)return json(response,401,{error:'Please sign in to the Cleaner Hub.'},{'Cache-Control':'no-store'});
@@ -65,3 +67,4 @@ export default async function handler(request,response){
     return json(response,503,{error:'The photo could not be saved. Please try again.'});
   }
 }
+
