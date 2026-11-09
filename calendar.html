@@ -106,6 +106,24 @@
     body.embed .day { min-height:96px; padding:7px 7px 27px; }
     @media(max-width:1000px) { .layout { grid-template-columns:1fr; } .sidebar { grid-template-columns:1fr 1fr; } }
     @media(max-width:700px) { .shell { width:min(100% - 10px,1500px); padding-top:10px; } body.embed .layout { grid-template-columns:1fr; } .calendar-panel { overflow:hidden; } .calendar-wrap { min-width:0; padding:14px 8px; } .calendar-intro { padding:0 4px 12px; margin-bottom:12px; } .calendar-intro h2 { font-size:2.35rem; } .calendar-intro p { display:none; } .calendar-head { align-items:flex-end; } .calendar-head h2 { font-size:1.65rem; } .month-actions { gap:4px; } .month-actions button { padding:7px 9px; font-size:.68rem; } .sidebar { grid-template-columns:1fr; } .topbar { align-items:flex-start; } .brand img { width:70px; height:70px; } .day { min-height:62px; padding:4px 3px 17px; } .day-number { width:16px; height:16px; font-size:.58rem; margin-bottom:2px; } .day.today .day-number { outline:0; border:1.5px solid var(--rust); } .event { padding:3px; margin:1px 0; font-size:.48rem; } .event-note { display:none; } .day-rate { left:3px; bottom:4px; max-width:calc(100% - 6px); font-size:.48rem; } .weekdays div { padding:6px 1px; font-size:.5rem; } }
+    .calendar { display:block; }
+    .calendar-week { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:1px; position:relative; border-bottom:1px solid var(--line); --bar-height:27px; --bar-top:39px; }
+    .calendar-week:last-child { border-bottom:0; }
+    body.embed .calendar-week .day { min-height:max(96px,calc(var(--bar-top) + var(--lanes) * var(--bar-height) + 30px)); }
+    .calendar-week .day { min-height:max(125px,calc(var(--bar-top) + var(--lanes) * var(--bar-height) + 30px)); }
+    .week-events { position:absolute; top:var(--bar-top); left:0; right:0; display:grid; grid-template-columns:repeat(14,minmax(0,1fr)); grid-auto-rows:var(--bar-height); pointer-events:none; }
+    .week-events .event { pointer-events:auto; width:auto; min-width:0; margin:2px 0; border-radius:0; padding:4px 6px; cursor:pointer; }
+    .week-events .event.starts { border-radius:999px 0 0 999px; margin-left:2px; }
+    .week-events .event.ends { border-radius:0 999px 999px 0; margin-right:2px; }
+    .week-events .event.starts.ends { border-radius:999px; }
+    .event.external { background:#246e73; color:white; }
+    .turnover { color:var(--rust); font-size:.8rem; font-weight:900; margin-left:3px; }
+    @media(max-width:700px) {
+      .calendar-week { --bar-height:20px; --bar-top:24px; }
+      .calendar-week .day { min-height:max(62px,calc(var(--bar-top) + var(--lanes) * var(--bar-height) + 20px)); }
+      .week-events .event { padding:3px 4px; font-size:.48rem; }
+      .turnover { font-size:.6rem; margin-left:1px; }
+    }
   </style>
 </head>
 <body>
@@ -118,10 +136,11 @@
     <div class="layout">
       <section class="panel calendar-panel">
         <div class="calendar-wrap">
-          <div class="calendar-intro"><div class="eyebrow">Private owner calendar</div><h2>Plan the cabin</h2><div class="calendar-tip">Requests, stays &amp; owner holds</div><p>See every stay at a glance. Booked ranges show the renter, with payment and welcome-page details kept on the arrival date.</p></div>
+          <div class="calendar-intro"><div class="eyebrow">Private owner calendar</div><h2>Plan the cabin</h2><div class="calendar-tip">Requests, stays &amp; owner holds</div><p>Stay bars begin in the check-in half of the day and end in the checkout half. ↔ marks a same-day turnover. Owner holds cover full days; Airbnb ranges may include blocked dates. Select a booking for its details.</p></div>
           <div class="calendar-head"><h2 id="month-title"></h2><div class="month-actions"><button id="previous" aria-label="Previous month">&larr;</button><button id="today">Today</button><button id="next" aria-label="Next month">&rarr;</button></div></div>
           <div class="weekdays"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>
           <div id="calendar" class="calendar"></div>
+          <p class="helper calendar-legend">Bars: afternoon check-in → morning checkout. ↔ Same-day turnover.</p>
           <div class="calendar-bottom-actions"><div class="month-actions"><button id="previous-bottom" aria-label="Previous month">&larr;</button><button id="today-bottom">Today</button><button id="next-bottom" aria-label="Next month">&rarr;</button></div></div>
         </div>
       </section>
@@ -158,6 +177,7 @@
   <dialog id="edit-dialog"><form id="edit-form"><div class="eyebrow">Private calendar details</div><h2>Edit calendar item</h2><p class="helper">Dates, title, and note are visible only in the owner calendar and Admin tools.</p><label>Name / calendar title<input id="edit-name" maxlength="100" required></label><label>Start / arrival<input id="edit-arrival" type="date" required></label><label>End / checkout<input id="edit-departure" type="date" required></label><label>Private owner note<textarea id="edit-note" rows="4" maxlength="240" placeholder="Anything you and your wife should remember..."></textarea></label><div class="dialog-actions"><button id="edit-cancel" type="button">Cancel</button><button class="save" type="submit">Save changes</button></div></form></dialog>
   <script type="module">
     import { money, quoteStay } from '/pricing.js';
+    import { calendarWeeks, turnoverDates } from '/calendar-layout.js';
     const state={bookings:[],blocks:[],externalEntries:[],rates:[],defaultNightlyRateCents:0,editing:null,priceSelection:null,month:new Date(new Date().getFullYear(),new Date().getMonth(),1)};
     const $=(id)=>document.getElementById(id); const esc=(value)=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const key=(date)=>`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
@@ -184,15 +204,31 @@
       }
       for(const event of result) event.hiddenFromCalendar=Boolean(event.booking?.hiddenFromCalendar);
       for(const block of state.blocks) result.push({...block,departure:addDays(block.departure,-1),type:'blocked',label:`${block.label}${block.holdType==='flexible'?' · flexible hold':' · firm hold'}${block.note?` · ${block.note}`:''}`,name:`${block.label}${block.holdType==='flexible'?' · flexible hold':' · firm hold'}`,note:block.note||'',blockId:block.id});
-      for(const entry of state.externalEntries) result.push({...entry,departure:addDays(entry.departure,-1),type:'external',name:'Airbnb unavailable',label:'Airbnb unavailable',note:'Manage these dates on Airbnb.'});
+      for(const entry of state.externalEntries) result.push({...entry,type:'external',name:'Airbnb unavailable',label:'Airbnb unavailable',note:'Manage these dates on Airbnb.'});
       return result;
     }
     function paymentStatus(event){const booking=event.booking;if(!booking)return'';if(booking.paymentPlan==='complimentary'||Number(booking.amountCents)===0)return`<span class="item-note">No invoice needed · ${booking.agreementAcceptedAt?'agreement accepted':'agreement pending'}</span>`;if(!booking.squareInvoiceId)return`<span class="item-note">Invoice not sent · ${booking.agreementAcceptedAt?'agreement accepted':'agreement pending'}</span>`;const paid=Number(booking.squarePaidCents)||0,balance=Number.isFinite(Number(booking.squareBalanceCents))?Number(booking.squareBalanceCents):Math.max(0,(Number(booking.amountCents)||0)-paid),label=booking.paymentFullyPaid?'Paid in full':booking.paymentRequirementMet?'Deposit paid':paid?'Partial payment':'Invoice sent · unpaid';return`<span class="item-note"><strong>${label}</strong> · ${money(paid)} received · ${money(balance)} remaining<br>${booking.agreementAcceptedAt?'Agreement accepted':'Agreement pending'}</span>`;}
     function render(){
       $('month-title').textContent=new Intl.DateTimeFormat(undefined,{month:'long',year:'numeric'}).format(state.month);
       const start=new Date(state.month); start.setDate(1-start.getDay()); const all=events(); const today=key(new Date()); let html='';
-      for(let index=0;index<42;index++){ const date=new Date(start); date.setDate(start.getDate()+index); const dateKey=key(date); const outside=date.getMonth()!==state.month.getMonth(); const dayEvents=all.filter(event=>!event.hiddenFromCalendar&&dateKey>=event.arrival&&dateKey<=event.departure); const price=priceForDay(dateKey); const hasBooked=dayEvents.some(event=>event.type==='booked');
-        html+=`<div class="day ${outside?'outside':''} ${dateKey===today?'today':''}" data-date="${dateKey}" data-price-day="true"><div class="day-number">${date.getDate()}</div>${price&&!hasBooked?`<div class="day-rate ${price.special?'special':''} ${price.package?'package':''}" title="${esc(price.title)}">${esc(price.label)}</div>`:''}${dayEvents.map(event=>{ const checkout=dateKey===event.departure,checkin=dateKey===event.arrival; const title=event.status==='pending-payment'?`${event.name} · checkout pending`:`${event.name}${event.type==='request'?` · choice ${event.dateChoice}`:''}`; const boundary=checkout?'<span class="event-boundary-full">Check-out · </span><span class="event-boundary-short">O-</span>':checkin?'<span class="event-boundary-full">Check-in · </span><span class="event-boundary-short">I-</span>':''; const bookingUrl=event.bookingId?`https://owner.weekscreekhaven.com/?booking=${encodeURIComponent(event.bookingId)}`:''; const tag=bookingUrl?'a':'div'; return `<${tag} class="event ${event.type} ${checkout?'checkout':''}"${bookingUrl?` href="${esc(bookingUrl)}" aria-label="Open ${esc(event.name)} booking"`:''} title="${esc(title)}${event.note?` · ${esc(event.note)}`:''}${checkout?' · check-out':checkin?' · check-in':''}"><span class="event-main">${boundary}${esc(title)}</span>${event.note?`<small class="event-note">${esc(event.note)}</small>`:''}</${tag}>`; }).join('')}</div>`;
+      const weeks=calendarWeeks(all,key(start)), turns=turnoverDates(all);
+      for(let week=0;week<6;week++){
+        const layout=weeks[week];
+        html+=`<div class="calendar-week" style="--lanes:${Math.max(1,layout.laneCount)}">`;
+        for(let column=0;column<7;column++){
+          const date=new Date(start); date.setDate(start.getDate()+week*7+column); const dateKey=key(date); const outside=date.getMonth()!==state.month.getMonth();
+          const hasBooked=all.some(event=>!event.hiddenFromCalendar&&event.type==='booked'&&dateKey>=event.arrival&&dateKey<event.departure), price=priceForDay(dateKey);
+          html+=`<div class="day ${outside?'outside':''} ${dateKey===today?'today':''}" data-date="${dateKey}" data-price-day="true"><div class="day-number">${date.getDate()}</div>${turns.has(dateKey)?'<span class="turnover" title="Same-day turnover: checkout and check-in" aria-label="Same-day turnover">↔</span>':''}${price&&!hasBooked?`<div class="day-rate ${price.special?'special':''} ${price.package?'package':''}" title="${esc(price.title)}">${esc(price.label)}</div>`:''}</div>`;
+        }
+        html+='<div class="week-events">';
+        for(const segment of layout.segments){
+          const event=segment.event, title=event.status==='pending-payment'?`${event.name} · checkout pending`:`${event.name}${event.type==='request'?` · choice ${event.dateChoice}`:''}`;
+          const detail=`${title} · ${event.type==='blocked'?'Held dates':'Check-in'} ${event.arrival} · ${event.type==='blocked'?'through':'checkout'} ${event.departure}${event.note?` · ${event.note}`:''}`;
+          const bookingUrl=event.bookingId?`https://owner.weekscreekhaven.com/?booking=${encodeURIComponent(event.bookingId)}`:'';
+          const tag=bookingUrl?'a':'div';
+          html+=`<${tag} class="event ${event.type} ${segment.starts?'starts':'continues-before'} ${segment.ends?'ends':'continues-after'}" style="grid-column:${segment.left+1} / ${segment.right+1};grid-row:${segment.lane+1}" title="${esc(detail)}" aria-label="${esc(detail)}"${bookingUrl?` href="${esc(bookingUrl)}"`:''}><span class="event-main">${esc(title)}</span></${tag}>`;
+        }
+        html+='</div></div>';
       }
       $('calendar').innerHTML=html;
       const upcoming=all.filter(event=>event.departure>=today).sort((a,b)=>a.arrival.localeCompare(b.arrival));
