@@ -76,7 +76,8 @@ function decodeReference(value) {
 
 export function createKKHomeLockProvider(env=process.env, options={}) {
   const client = options.client || createKKHomeClient({ email:env.KKHOME_EMAIL, password:env.KKHOME_PASSWORD,
-    appPrivateKey:env.KKHOME_APP_PRIVATE_KEY, fetchImpl:options.fetchImpl });
+    appPrivateKey:env.KKHOME_APP_PRIVATE_KEY, fetchImpl:options.fetchImpl,
+    onCommandResponse:options.onCommandResponse });
   const wait = options.wait || ((milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds)));
 
   async function verify(device, predicate) {
@@ -219,3 +220,4 @@ export function createKKHomeLockProvider(env=process.env, options={}) {
     },
   };
 }
+

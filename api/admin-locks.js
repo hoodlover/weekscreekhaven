@@ -27,7 +27,10 @@ export default async function handler(request,response) {
         return forgetInactiveOneTimeLock(entry,{remove:deleteOwnerLock});
       }
       if (process.env.LOCK_PROVIDER !== 'kkhome' || process.env.KKHOME_LIVE_ENABLED !== 'true') throw new Error('KK Home automation is not enabled.');
-      const provider = createKKHomeLockProvider(process.env,{fetchImpl:(url,options)=>fetch(url,{...options,signal:AbortSignal.timeout(10000)})});
+      const provider = createKKHomeLockProvider(process.env,{
+        // Capture only owner-initiated creation/retry; never issue a diagnostic command.
+        onCommandResponse:['create', 'retry'].includes(action) ? summary => console.info('KK Home insert response (redacted)', summary) : undefined,
+        fetchImpl:(url,options)=>fetch(url,{...options,signal:AbortSignal.timeout(10000)})});
       let entry;
       if (action === 'create') {
         const operationId = String(request.body.operationId || '');
@@ -84,3 +87,4 @@ export default async function handler(request,response) {
       ...(error.operation ? {operation:error.operation,providerCode:error.providerCode} : {})});
   }
 }
+

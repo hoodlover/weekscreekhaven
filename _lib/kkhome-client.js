@@ -24,7 +24,29 @@ function findToken(value) {
   return null;
 }
 
-export function createKKHomeClient({ email, password, appPrivateKey, fetchImpl=globalThis.fetch, now=Date.now } = {}) {
+// Never include free text, identifiers, PINs, or credentials in command diagnostics.
+export function summarizeCommandResponse(value, depth = 0) {
+  const kind = value === null ? 'null' : Array.isArray(value) ? 'array' : typeof value;
+  const summary = { kind };
+  if (!value || kind !== 'object' || depth > 2) return summary;
+  for (const key of ['success', 'code', 'status', 'errCode', 'errorCode', 'resultCode']) {
+    if (!Object.hasOwn(value, key)) continue;
+    const item = value[key];
+    summary[key] = typeof item === 'boolean' ? item
+      : (Number.isInteger(item) && item >= -999 && item <= 999) ? item
+      : typeof item === 'string' && ['0', '1', '200', 'success', 'failed', 'fail', 'error', 'pending', 'timeout', 'offline', 'online', 'ok'].includes(item.toLowerCase()) ? item.toLowerCase()
+      : 'redacted';
+  }
+  for (const key of ['data', 'result']) {
+    if (Object.hasOwn(value, key)) summary[key] = summarizeCommandResponse(value[key], depth + 1);
+  }
+  for (const key of ['keyNum', 'num', 'pwdList', 'timePwdList']) {
+    if (Object.hasOwn(value, key)) summary[`${key}Present`] = true;
+  }
+  return summary;
+}
+
+export function createKKHomeClient({ email, password, appPrivateKey, fetchImpl=globalThis.fetch, now=Date.now, onCommandResponse } = {}) {
   if (!email || !password) throw new Error('KKHOME_EMAIL and KKHOME_PASSWORD are required.');
   if (!appPrivateKey) throw new Error('KKHOME_APP_PRIVATE_KEY is required.');
   if (typeof fetchImpl !== 'function') throw new Error('A fetch implementation is required.');
@@ -83,6 +105,10 @@ export function createKKHomeClient({ email, password, appPrivateKey, fetchImpl=g
       throw error;
     }
     if (parsed?.encryptData) parsed = decrypt(parsed.encryptData);
+    if (path === '/v3/device/insert-pwd' && typeof onCommandResponse === 'function') {
+      // Observes only a request already initiated by the caller. Never sends or retries one.
+      try { onCommandResponse({ operation:'insert-pwd', httpStatus:response.status, response:summarizeCommandResponse(parsed) }); } catch {}
+    }
     const message = parsed?.msg || parsed?.message;
     if (!response.ok || parsed?.success === false || (Object.hasOwn(parsed, 'code') && ![0,200,'0','200'].includes(parsed.code))) {
       const error = new Error(`KK Home request failed${message ? `: ${message}` : ` (HTTP ${response.status})`}.`);
@@ -115,3 +141,4 @@ export function createKKHomeClient({ email, password, appPrivateKey, fetchImpl=g
     async removeKeyMetadata(payload) { await authenticate(); return request('/v3/device/ble-remove-pwd-list', { body:payload, normalBody:true }); },
   };
 }
+
