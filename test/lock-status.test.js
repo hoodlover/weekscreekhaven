@@ -40,3 +40,46 @@ test('connection check blocks requests that could change a lock', async () => {
   }) })(request(), res);
   assert.equal(res.body.connected, false);
 });
+
+
+test('opt-in diagnostics return only status fields and inventory count', async () => {
+  const res = response();
+  const req = { ...request(), url: '/api/admin-lock-status?diagnostics=1' };
+  await createLockStatusHandler({ env, clientFactory: () => ({
+    listDevices: async () => [{ esn:'front-123', online:true, status:1, token:'secret-token', battery:99 }],
+    listKeys: async esn => { assert.equal(esn,'front-123'); return {pwdList:[{num:1,pwdValue:'secret-pin',nickName:'Private name'}]}; },
+  }) })(req,res);
+  assert.deepEqual(res.body.doors[0].deviceStatus,{online:true,status:1});
+  assert.deepEqual(res.body.doors[0].keyInventory,{readable:true,count:1});
+  assert.doesNotMatch(JSON.stringify(res.body),/secret-token|secret-pin|Private name|front-123|battery/);
+});
+
+test('diagnostics distinguish unknown list format from an empty inventory', async () => {
+  for (const [payload, expected] of [[{}, {readable:false,format:'unrecognized'}], [[], {readable:true,count:0}]]) {
+    const res=response();
+    await createLockStatusHandler({ env,clientFactory:()=>({listDevices:async()=>[{esn:'front-123'}],listKeys:async()=>payload}) })({...request(),url:'/?diagnostics=1'},res);
+    assert.deepEqual(res.body.doors[0].keyInventory,expected);
+  }
+});
+
+test('diagnostics hide key-list errors and retain device results', async () => {
+  const res=response();
+  await createLockStatusHandler({env,clientFactory:()=>({listDevices:async()=>[{esn:'front-123'}],listKeys:async()=>{throw Error('secret-pin');}})})({...request(),url:'/?diagnostics=1'},res);
+  assert.equal(res.body.connected,true);
+  assert.deepEqual(res.body.doors[0].keyInventory,{readable:false,failure:'key_list_failed'});
+  assert.doesNotMatch(JSON.stringify(res.body),/secret-pin/);
+});
+
+test('diagnostics cannot send physical commands through the guarded fetch', async () => {
+  const res=response();
+  await createLockStatusHandler({ env, fetchImpl:()=>assert.fail('must not contact provider'), clientFactory:({fetchImpl})=>({
+    listDevices:()=>fetchImpl('https://api.kksecurityhome.com/v3/device/insert-pwd',{}),
+  }) })({...request(),url:'/?diagnostics=1'},res);
+  assert.equal(res.body.connected,false);
+});
+
+test('default status check never requests keys', async () => {
+  const res=response();
+  await createLockStatusHandler({env,clientFactory:()=>({listDevices:async()=>[{esn:'front-123'}],listKeys:()=>assert.fail('not opted in')})})(request(),res);
+  assert.equal(res.body.connected,true);
+});
