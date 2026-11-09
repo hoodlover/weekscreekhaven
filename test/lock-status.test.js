@@ -50,12 +50,12 @@ test('opt-in diagnostics return only status fields and inventory count', async (
     listKeys: async esn => { assert.equal(esn,'front-123'); return {pwdList:[{num:1,pwdValue:'secret-pin',nickName:'Private name'}]}; },
   }) })(req,res);
   assert.deepEqual(res.body.doors[0].deviceStatus,{online:true,status:1});
-  assert.deepEqual(res.body.doors[0].keyInventory,{readable:true,count:1});
+  assert.deepEqual(res.body.doors[0].keyInventory,{readable:true,count:1,entries:[{num:1,pinRecorded:true,nameRecorded:true}]});
   assert.doesNotMatch(JSON.stringify(res.body),/secret-token|secret-pin|Private name|front-123|battery/);
 });
 
 test('diagnostics distinguish unknown list format from an empty inventory', async () => {
-  for (const [payload, expected] of [[{}, {readable:false,format:'unrecognized'}], [[], {readable:true,count:0}]]) {
+  for (const [payload, expected] of [[{}, {readable:false,format:'unrecognized'}], [[], {readable:true,count:0,entries:[]}]]) {
     const res=response();
     await createLockStatusHandler({ env,clientFactory:()=>({listDevices:async()=>[{esn:'front-123'}],listKeys:async()=>payload}) })({...request(),url:'/?diagnostics=1'},res);
     assert.deepEqual(res.body.doors[0].keyInventory,expected);

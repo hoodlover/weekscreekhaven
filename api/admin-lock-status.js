@@ -10,15 +10,25 @@ function keyInventory(payload) {
   if (!rows || rows.some(row => !row || typeof row !== 'object' || Array.isArray(row))) {
     return { readable: false, format: 'unrecognized' };
   }
-  return { readable: true, count: rows.length };
+  return { readable: true, count: rows.length, entries: rows.map(row => {
+    const entry = {};
+    for (const key of ['num', 'keyNum', 'attribute', 'type', 'pwdType', 'startTime', 'endTime']) {
+      const value = row[key];
+      if ((typeof value === 'number' && Number.isFinite(value)) || (typeof value === 'string' && /^-?\d{1,13}$/.test(value))) entry[key] = Number(value);
+    }
+    const code = row.key ?? row.pwdValue;
+    entry.pinRecorded = typeof code === 'string' ? code.length > 0 : typeof code === 'number';
+    entry.nameRecorded = typeof row.nickName === 'string' && row.nickName.length > 0;
+    return entry;
+  }) };
 }
 
 function deviceStatus(device) {
   // Report only explicit boolean/numeric status fields, never raw device data.
   const status = {};
-  for (const key of ['online', 'isOnline', 'onlineStatus', 'status']) {
+  for (const key of ['online', 'isOnline', 'onLine', 'onlineStatus', 'status', 'wifiStatus', 'netStatus', 'deviceStatus', 'isConnected', 'connectState']) {
     const value = device[key];
-    if (typeof value === 'boolean' || (typeof value === 'number' && Number.isFinite(value))) status[key] = value;
+    if (typeof value === 'boolean' || (typeof value === 'number' && Number.isFinite(value)) || ['online', 'offline', 'true', 'false', '0', '1'].includes(value)) status[key] = value;
   }
   return status;
 }
